@@ -142,14 +142,11 @@ class Connection extends Doctrine\DBAL\Connection
 		if ($this->getDriver() instanceof Doctrine\DBAL\Driver\PDOMySql\Driver) {
 			if ($info[0] == 23000 && $info[1] == 1062) { // unique fail
 				$columns = array();
-				if (preg_match('~Duplicate entry .*? for key \'([^\']+)\'~', $info[2], $m)) {
-					$key = $m[1];
-
-					if (($table = self::resolveExceptionTable($e))
-						&& ($indexes = $this->getSchemaManager()->listTableIndexes($table))
-						&& isset($indexes[$key])) {
-						$columns = $indexes[$key]->getColumns();
-					}
+				if (preg_match('~Duplicate entry .*? for key \'([^\']+)\'~', $info[2], $m)
+					&& ($table = self::resolveExceptionTable($e))
+					&& ($indexes = $this->getSchemaManager()->listTableIndexes($table))
+					&& isset($indexes[$m[1]])) {
+					$columns[$m[1]] = $indexes[$m[1]]->getColumns();
 				}
 
 				return new DuplicateEntryException($e, $columns, $query, $params);

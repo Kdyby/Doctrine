@@ -67,7 +67,7 @@ class ConnectionTest extends Tester\TestCase
 
 		return array(
 			array($empty, 'Kdyby\Doctrine\EmptyValueException', array('column' => 'name')),
-			array($unique, 'Kdyby\Doctrine\DuplicateEntryException', array('columns' => array('name', 'surname'))),
+			array($unique, 'Kdyby\Doctrine\DuplicateEntryException', array('columns' => array('uniq_name_surname' => array('name', 'surname')))),
 		);
 	}
 
