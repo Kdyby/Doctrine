@@ -17,7 +17,8 @@
 	},
 	"require": {
 		"nette/nette": "@dev",
-		"doctrine/orm": "2.3.*"
+		"doctrine/orm": "2.3.*",
+		"kdyby/events": "@dev"
 	},
 	"require-dev": {
 		"nette/tester": "@dev"
