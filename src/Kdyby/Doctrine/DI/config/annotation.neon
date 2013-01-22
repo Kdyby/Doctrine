@@ -1,0 +1,21 @@
+services:
+	reader:
+		class: Doctrine\Common\Annotations\AnnotationReader
+		setup:
+			- addGlobalIgnoredName("serializationVersion")
+			- addGlobalIgnoredName("todo:")
+			- addGlobalIgnoredName("see:")
+			- addGlobalIgnoredName("persistent")
+		autowired: no
+
+	readerIndexed:
+		class: Doctrine\Common\Annotations\IndexedReader(@doctrine.annotation.reader)
+		autowired: no
+
+	readerCached:
+		class: Doctrine\Common\Annotations\CachedReader
+		arguments: [@doctrine.annotation.readerIndexed, @doctrine.annotation.readerCached.cache]
+
+	readerCached.cache:
+		class: Kdyby\Doctrine\Cache(@kdyby.cacheStorage, 'Doctrine.Annotations')
+		autowired: no

@@ -9,7 +9,10 @@
  */
 
 namespace Kdyby\Doctrine;
+
 use Doctrine;
+use Doctrine\DBAL\Configuration;
+use Doctrine\Common\EventManager;
 use Kdyby;
 use Nette;
 use PDO;
@@ -116,6 +119,42 @@ class Connection extends Doctrine\DBAL\Connection
 		$stmt->setFetchMode(PDO::FETCH_ASSOC);
 
 		return $stmt;
+	}
+
+
+
+	/**
+	 * @param array $params
+	 * @param \Doctrine\DBAL\Configuration $config
+	 * @param \Doctrine\Common\EventManager $eventManager
+	 * @param array $dbalTypes
+	 * @param array $schemaTypes
+	 * @return Connection
+	 */
+	public static function create(array $params, Configuration $config, EventManager $eventManager, array $dbalTypes = array(), array $schemaTypes = array())
+	{
+		foreach ($dbalTypes as $name => $className) {
+			if (DbalType::hasType($name)) {
+				DbalType::overrideType($name, $className);
+
+			} else {
+				DbalType::addType($name, $className);
+			}
+		}
+
+		$params['wrapperClass'] = get_called_class();
+		$connection = Doctrine\DBAL\DriverManager::getConnection($params, $config, $eventManager);
+		$platform = $connection->getDatabasePlatform();
+
+		foreach ($schemaTypes as $dbType => $doctrineType) {
+			$platform->registerDoctrineTypeMapping($dbType, $doctrineType);
+		}
+
+		foreach ($dbalTypes as $type => $className) {
+			$platform->markDoctrineTypeCommented(DbalType::getType($type));
+		}
+
+		return $connection;
 	}
 
 
