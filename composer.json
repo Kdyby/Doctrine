@@ -25,7 +25,8 @@
 	},
 	"autoload": {
 		"psr-0": {
-			"Kdyby\\Doctrine\\": "src/"
+			"Kdyby\\Doctrine\\": "src/",
+			"Kdyby\\Persistence\\": "src/"
 		},
 		"classmap": [
 			"src/Kdyby/Doctrine/exceptions.php"
