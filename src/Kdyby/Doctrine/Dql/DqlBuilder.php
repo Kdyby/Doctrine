@@ -47,7 +47,7 @@ class DqlBuilder extends Nette\Object
 	/**
 	 * @var Condition
 	 */
-	public $where = array();
+	public $where;
 
 	/**
 	 * @var string
@@ -55,7 +55,7 @@ class DqlBuilder extends Nette\Object
 	public $groupBy;
 
 	/**
-	 * @var string
+	 * @var Condition
 	 */
 	public $having;
 
@@ -86,6 +86,7 @@ class DqlBuilder extends Nette\Object
 		$this->em = $em;
 		$this->parameters = new ArrayCollection();
 		$this->where = new Condition();
+		$this->having = new Condition();
 	}
 
 
@@ -111,7 +112,7 @@ class DqlBuilder extends Nette\Object
 		foreach ($this->set as $alias => $values) {
 			$prefix = Nette\Utils\Strings::random(5);
 			foreach ($values as $column => $value) {
-				$this->parameters[$param = $prefix . '_' . $column] = $value;
+				$this->parameters[$param = $alias . '_' . $prefix . '_' . $column] = $value;
 				$set[] = new Expr\Comparison($alias . '.' . $column, Expr\Comparison::EQ, ':' . $param);
 			}
 		}
@@ -151,7 +152,7 @@ class DqlBuilder extends Nette\Object
 		if ($this->groupBy) {
 			$return .= ' GROUP BY ' . $this->groupBy;
 		}
-		if ($this->having) {
+		if (!$this->having->isEmpty()) {
 			$return .= ' HAVING ' . $this->having;
 		}
 		if ($this->orderBy) {
@@ -171,6 +172,7 @@ class DqlBuilder extends Nette\Object
 	public function __clone()
 	{
 		$this->where = clone $this->where;
+		$this->having = clone $this->having;
 
 		$parameters = new ArrayCollection();
 		foreach ($this->parameters as $key => $parameter) {

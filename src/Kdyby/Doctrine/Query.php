@@ -236,15 +236,41 @@ class Query extends Nette\Object implements \IteratorAggregate
 
 	/**
 	 * @param $columns
-	 * @param null $having
 	 * @internal param string $by
 	 * @return Query
 	 */
-	public function group($columns, $having = NULL)
+	public function group($columns)
 	{
 		$this->state = self::STATE_DIRTY;
 		$this->builder->groupBy = $columns;
-		$this->builder->having = $having;
+
+		return $this;
+	}
+
+
+
+	/**
+	 * @param mixed $cond The restriction predicates.
+	 * @return Query This QueryBuilder instance.
+	 */
+	public function having($cond)
+	{
+		$this->state = self::STATE_DIRTY;
+		callback($this->builder->having, 'addAnd')->invokeArgs(func_get_args());
+
+		return $this;
+	}
+
+
+
+	/**
+	 * @param mixed $cond The restriction predicates.
+	 * @return Query This QueryBuilder instance.
+	 */
+	public function orHaving($cond)
+	{
+		$this->state = self::STATE_DIRTY;
+		callback($this->builder->having, 'addOr')->invokeArgs(func_get_args());
 
 		return $this;
 	}

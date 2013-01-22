@@ -298,10 +298,11 @@ class QueryBuilderTest extends KdybyTests\ORMTestCase
 
 	public function testHaving()
 	{
-		$qb = $this->em->createQueryBuilder()
-			->select('u')
+		$qb = $this->em->createQueryBuilder();
+		$qb->select('u')
 			->from('test:CmsUser', 'u')
-			->group('u.id', 'COUNT(u.id) > 1');
+			->group('u.id')
+			->having('COUNT(u.id) > 1');
 
 		Assert::match('SELECT u FROM test:CmsUser u GROUP BY u.id HAVING COUNT(u.id) > 1', $qb->getDQL());
 	}
@@ -310,32 +311,34 @@ class QueryBuilderTest extends KdybyTests\ORMTestCase
 
 	public function testAndHaving()
 	{
-		$qb = $this->em->createQueryBuilder()
-			->select('u')
+		$qb = $this->em->createQueryBuilder();
+		$qb->select('u')
 			->from('test:CmsUser', 'u')
-			->group('u.id', 'COUNT(u.id) > 1 AND COUNT(u.id) < 1');
+			->group('u.id')
+			->having('COUNT(u.id) > 1 AND COUNT(u.id) < 1');
 
-		Assert::match('SELECT u FROM test:CmsUser u GROUP BY u.id HAVING COUNT(u.id) > 1 AND COUNT(u.id) < 1', $qb->getDQL());
+		Assert::match('SELECT u FROM test:CmsUser u GROUP BY u.id HAVING (COUNT(u.id) > 1 AND COUNT(u.id) < 1)', $qb->getDQL());
 	}
 
 
 
 	public function testOrHaving()
 	{
-		$qb = $this->em->createQueryBuilder()
-			->select('u')
+		$qb = $this->em->createQueryBuilder();
+		$qb->select('u')
 			->from('test:CmsUser', 'u')
-			->group('u.id', '(COUNT(u.id) > 1 AND COUNT(u.id) < 1) OR COUNT(u.id) > 1');
+			->group('u.id')
+			->having('(COUNT(u.id) > 1 AND COUNT(u.id) < 1) OR COUNT(u.id) > 1');
 
-		Assert::match('SELECT u FROM test:CmsUser u GROUP BY u.id HAVING (COUNT(u.id) > 1 AND COUNT(u.id) < 1) OR COUNT(u.id) > 1', $qb->getDQL());
+		Assert::match('SELECT u FROM test:CmsUser u GROUP BY u.id HAVING ((COUNT(u.id) > 1 AND COUNT(u.id) < 1) OR COUNT(u.id) > 1)', $qb->getDQL());
 	}
 
 
 
 	public function testOrderBy()
 	{
-		$qb = $this->em->createQueryBuilder()
-			->select('u')
+		$qb = $this->em->createQueryBuilder();
+		$qb->select('u')
 			->from('test:CmsUser', 'u')
 			->order('u.username ASC');
 
