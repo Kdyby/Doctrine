@@ -19,17 +19,17 @@ use Nette;
 /**
  * @author Filip Procházka <filip@prochazka.su>
  *
- * @method \Kdyby\Doctrine\Dql\Join and(string $predicates)
- * @method \Kdyby\Doctrine\Dql\Join or(string $predicates)
- * @method \Kdyby\Doctrine\Dql\Join with(string $predicates)
- * @method \Kdyby\Doctrine\Dql\Join on(string $predicates)
+ * @method \Kdyby\Doctrine\Dql\Join and($predicates)
+ * @method \Kdyby\Doctrine\Dql\Join or($predicates)
+ * @method \Kdyby\Doctrine\Dql\Join with($predicates)
+ * @method \Kdyby\Doctrine\Dql\Join on($predicates)
  *
- * @method \Kdyby\Doctrine\Query join(string $join, string $alias, string $indexBy = NULL)
- * @method \Kdyby\Doctrine\Query leftJoin(string $join, string $alias, string $indexBy = NULL)
- * @method \Kdyby\Doctrine\Query where(mixed $predicates)
+ * @method \Kdyby\Doctrine\Query join($join, $alias, $indexBy = NULL)
+ * @method \Kdyby\Doctrine\Query leftJoin($join, $alias, $indexBy = NULL)
+ * @method \Kdyby\Doctrine\Query where($predicates)
  * @method \Kdyby\Doctrine\Query group($columns, $having = NULL)
  * @method \Kdyby\Doctrine\Query order($by)
- * @method \Kdyby\Doctrine\Query limit(int $limit, int $offset = NULL)
+ * @method \Kdyby\Doctrine\Query limit($limit, $offset = NULL)
  * @method \Doctrine\ORM\Query createQuery()
  * @method string getDQL()
  */
