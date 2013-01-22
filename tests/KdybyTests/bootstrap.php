@@ -8,10 +8,11 @@
  * For the full copyright and license information, please view the file license.md that was distributed with this source code.
  */
 
-if (@!include __DIR__ . '/../../vendor/autoload.php') {
+if (!$loader = @include __DIR__ . '/../../vendor/autoload.php') {
 	echo 'Install Nette Tester using `composer update --dev`';
 	exit(1);
 }
+$loader->add('KdybyTests', __DIR__ . '/../');
 
 // configure environment
 Tester\Helpers::setup();
