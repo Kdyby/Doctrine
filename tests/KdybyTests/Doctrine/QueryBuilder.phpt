@@ -569,7 +569,6 @@ class QueryBuilderTest extends KdybyTests\ORMTestCase
 			->where($expr->gt('u.id', $expr->all('SELECT a.id FROM test:CmsArticle a')));
 
 		Assert::match('SELECT u FROM test:CmsUser u WHERE u.id > ALL(SELECT a.id FROM test:CmsArticle a)', $qb->getDQL());
-
 	}
 
 
