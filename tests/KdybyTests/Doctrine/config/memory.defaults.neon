@@ -1,0 +1,3 @@
+doctrine:
+	driver: pdo_sqlite
+	memory: true

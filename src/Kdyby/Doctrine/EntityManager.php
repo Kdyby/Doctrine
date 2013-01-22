@@ -39,7 +39,7 @@ class EntityManager extends Doctrine\ORM\EntityManager
 
 	/**
 	 * @param string $entityName
-	 * @return Dao
+	 * @return EntityDao
 	 */
 	public function getRepository($entityName)
 	{
@@ -50,7 +50,7 @@ class EntityManager extends Doctrine\ORM\EntityManager
 
 	/**
 	 * @param string $entityName
-	 * @return Dao
+	 * @return EntityDao
 	 */
 	public function getDao($entityName)
 	{

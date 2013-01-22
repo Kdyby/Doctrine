@@ -1,5 +1,5 @@
 services:
-	reader:
+	reflectionReader:
 		class: Doctrine\Common\Annotations\AnnotationReader
 		setup:
 			- addGlobalIgnoredName("serializationVersion")
@@ -7,15 +7,11 @@ services:
 			- addGlobalIgnoredName("see:")
 			- addGlobalIgnoredName("persistent")
 		autowired: no
+		inject: no
 
-	readerIndexed:
-		class: Doctrine\Common\Annotations\IndexedReader(@doctrine.annotation.reader)
-		autowired: no
-
-	readerCached:
+	reader:
 		class: Doctrine\Common\Annotations\CachedReader
-		arguments: [@doctrine.annotation.readerIndexed, @doctrine.annotation.readerCached.cache]
-
-	readerCached.cache:
-		class: Kdyby\Doctrine\Cache(@kdyby.cacheStorage, 'Doctrine.Annotations')
-		autowired: no
+		arguments:
+			- Doctrine\Common\Annotations\IndexedReader(@doctrine.annotation.reflectionReader)
+			- Kdyby\Doctrine\Cache(@Nette\Caching\IStorage, 'Doctrine.Annotations')
+		inject: no

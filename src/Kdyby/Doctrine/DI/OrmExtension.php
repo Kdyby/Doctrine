@@ -33,7 +33,7 @@ class OrmExtension extends Nette\Config\CompilerExtension
 		'resultCache' => 'default',
 		'hydrationCache' => 'default',
 		'classMetadataFactory' => 'Kdyby\Doctrine\Mapping\ClassMetadataFactory',
-		'defaultRepositoryClassName' => 'Kdyby\Doctrine\Dao',
+		'defaultRepositoryClassName' => 'Kdyby\Doctrine\EntityDao',
 		'autoGenerateProxyClasses' => '%debugMode%',
 		'namingStrategy' => 'Doctrine\ORM\Mapping\DefaultNamingStrategy',
 		'quoteStrategy' => 'Doctrine\ORM\Mapping\DefaultQuoteStrategy',
@@ -41,12 +41,7 @@ class OrmExtension extends Nette\Config\CompilerExtension
 		'proxyNamespace' => 'Kdyby\GeneratedProxy',
 		'dql' => array('string' => array(), 'numeric' => array(), 'datetime' => array()),
 		'hydrators' => array(),
-		'metadata' => array(
-//			'app' => array(
-//				'dir' => '%appDir%',
-//				'driver' => 'annotation'
-//			)
-		),
+		'metadata' => array(),
 		'filters' => array(),
 		'namespaceAlias' => array(),
 		'customHydrators' => array(),
@@ -80,7 +75,7 @@ class OrmExtension extends Nette\Config\CompilerExtension
 	 * @var array
 	 */
 	public $metadataDriverClasses = array(
-		'annotation' => 'Kdyby\Doctrine\Mapping\Driver\AnnotationDriver',
+		'annotations' => 'Kdyby\Doctrine\Mapping\Driver\AnnotationDriver',
 	);
 
 	/**
@@ -100,17 +95,24 @@ class OrmExtension extends Nette\Config\CompilerExtension
 	public function loadConfiguration()
 	{
 		$config = $this->getConfig();
-//		$builder = $this->getContainerBuilder();
+		$builder = $this->getContainerBuilder();
 
 		$this->loadConfig('annotation');
+		$this->loadConfig('console');
 
-		if (isset($config['dbname']) || isset($config['connection'])) {
+		if (isset($config['dbname']) || isset($config['driver']) || isset($config['connection'])) {
 			$config = array('default' => $config);
 		}
 
 		foreach ($config as $name => $emConfig) {
 			$this->processEntityManager($name, $emConfig);
 		}
+
+		$builder->addDefinition($this->prefix('dao'))
+			->setClass('Kdyby\Doctrine\EntityDao')
+			->setFactory('@Kdyby\Doctrine\EntityManager::getDao', array('%entityName%'))
+			->setParameters(array('entityName'))
+			->setInject(FALSE);
 	}
 
 
@@ -126,8 +128,13 @@ class OrmExtension extends Nette\Config\CompilerExtension
 
 		$metadataDriver = $builder->addDefinition($this->prefix($name . '.metadataDriver'))
 			->setClass('Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain')
-			->setAutowired(FALSE);
+			->setAutowired(FALSE)
+			->setInject(FALSE);
 		/** @var Nette\DI\ServiceDefinition $metadataDriver */
+
+		$metadataDriver->addSetup('setDefaultDriver', array(
+			new Nette\DI\Statement('Doctrine\ORM\Mapping\Driver\AnnotationDriver', array(array('%appDir%')))
+		));
 
 		Validators::assertField($config, 'metadata', 'array');
 		foreach ($config['metadata'] as $namespace => $driver) {
@@ -140,11 +147,11 @@ class OrmExtension extends Nette\Config\CompilerExtension
 		Validators::assertField($config['dql'], 'string', 'array');
 		Validators::assertField($config['dql'], 'numeric', 'array');
 		Validators::assertField($config['dql'], 'datetime', 'array');
-		$configuration = $builder->addDefinition($this->prefix($name . '.configuration'))
+		$configuration = $builder->addDefinition($this->prefix($name . '.ormConfiguration'))
 			->setClass('Doctrine\ORM\Configuration')
 			->addSetup('setMetadataCacheImpl', array($this->processCache($config['metadataCache'], $name . '.metadataCache')))
 			->addSetup('setQueryCacheImpl', array($this->processCache($config['queryCache'], $name . '.queryCache')))
-			->addSetup('setResultCacheImpl', array($this->processCache($config['resultCache'], $name . '.resultCache')))
+			->addSetup('setResultCacheImpl', array($this->processCache($config['resultCache'], $name . '.ormResultCache')))
 			->addSetup('setHydrationCacheImpl', array($this->processCache($config['hydrationCache'], $name . '.hydrationCache')))
 			->addSetup('setMetadataDriverImpl', array($this->prefix('@' . $name . '.metadataDriver')))
 			->addSetup('setClassMetadataFactoryName', array($config['classMetadataFactory']))
@@ -159,7 +166,8 @@ class OrmExtension extends Nette\Config\CompilerExtension
 			->addSetup('setCustomDatetimeFunctions', array($config['dql']['datetime']))
 			->addSetup('setNamingStrategy', $this->filterArgs($config['namingStrategy']))
 			->addSetup('setQuoteStrategy', $this->filterArgs($config['quoteStrategy']))
-			->setAutowired(FALSE);
+			->setAutowired(FALSE)
+			->setInject(FALSE);
 		/** @var Nette\DI\ServiceDefinition $configuration */
 
 		Validators::assertField($config, 'filters', 'array');
@@ -171,15 +179,21 @@ class OrmExtension extends Nette\Config\CompilerExtension
 		$builder->addDefinition($this->prefix($name . '.entityManager'))
 			->setClass('Kdyby\Doctrine\EntityManager')
 			->setFactory('Kdyby\Doctrine\EntityManager::create', array(
-				$this->processConnection($name, $defaults),
-				$this->prefix('@' . $name . '.configuration'),
-				$this->prefix('@' . $name . '.eventManager')
+				$connectionService = $this->processConnection($name, $defaults),
+				$this->prefix('@' . $name . '.ormConfiguration')
 			))
-			->setAutowired($isDefault);
+			->setAutowired($isDefault)
+			->setInject(FALSE);
 
-		// event manager
-		$builder->addDefinition($this->prefix($name . '.eventManager'))
-			->setFactory($this->prefix('@' . (isset($defaults['connection']) ? $defaults['connection'] : $name) . '.eventManager'));
+		$builder->addDefinition($this->prefix($name . '.schemaValidator'))
+			->setClass('Doctrine\ORM\Tools\SchemaValidator', array($this->prefix('@' . $name . '.entityManager')))
+			->setAutowired($isDefault)
+			->setInject(FALSE);
+
+		$builder->addDefinition($this->prefix($name . '.schemaTool'))
+			->setClass('Doctrine\ORM\Tools\SchemaTool', array($this->prefix('@' . $name . '.entityManager')))
+			->setAutowired($isDefault)
+			->setInject(FALSE);
 	}
 
 
@@ -194,18 +208,11 @@ class OrmExtension extends Nette\Config\CompilerExtension
 		}
 
 		// config
-		$builder->addDefinition($this->prefix($name . '.configuration'))
+		$builder->addDefinition($this->prefix($name . '.dbalConfiguration'))
 			->setClass('Doctrine\DBAL\Configuration')
-			->addSetup('setResultCacheImpl', array($this->processCache($config['resultCache'], 'resultCache')))
-			->setAutowired(FALSE);
-
-		// event manager
-		$builder->addDefinition($this->prefix($name . '.eventManager')) // todo
-//			->setClass('Kdyby\Extension\EventDispatcher\LazyEventManager')
-//			->addSetup('addSubscribers', array(
-//				new Statement('Kdyby\Config\TaggedServices', array('doctrine.eventSubscriber.' . $config['name']))
-//			))
-			->setAutowired(FALSE);
+			->addSetup('setResultCacheImpl', array($this->processCache($config['resultCache'], $name . '.dbalResultCache')))
+			->setAutowired(FALSE)
+			->setInject(FALSE);
 
 		// types
 		Validators::assertField($config, 'types', 'array');
@@ -217,16 +224,25 @@ class OrmExtension extends Nette\Config\CompilerExtension
 			$schemaTypes[$dbType] = $typeInst->getName();
 		}
 
+		if ($this->connectionUsesMysqlDriver($config)) {
+			$builder->addDefinition($name . '.events.mysqlSessionInit')
+				->setClass('Doctrine\DBAL\Event\Listeners\MysqlSessionInit', array($config['charset']))
+				->addTag(Kdyby\Events\DI\EventsExtension::SUBSCRIBER_TAG)
+				->setAutowired(FALSE)
+				->setInject(FALSE);
+		}
+
 		// connection
+		$options = array_diff_key($config, array_flip(array('types', 'resultCache', 'connection', 'logging')));
 		$connection = $builder->addDefinition($this->prefix($name . '.connection'))
 			->setClass('Kdyby\Doctrine\Connection')
 			->setFactory('Kdyby\Doctrine\Connection::create', array(
-				$config,
-				$this->prefix('@' . $name . '.configuration'),
-				$this->prefix('@' . $name . '.eventManager'),
-				$dbalTypes,
+				$options,
+				$this->prefix('@' . $name . '.dbalConfiguration'),
+				3 => $dbalTypes,
 				$schemaTypes
-			));
+			))
+			->setInject(FALSE);
 		/** @var Nette\DI\ServiceDefinition $connection */
 
 		if ($config['logging']) {
@@ -234,6 +250,18 @@ class OrmExtension extends Nette\Config\CompilerExtension
 		}
 
 		return $this->prefix('@' . $name . '.connection');
+	}
+
+
+
+	/**
+	 * @param array $config
+	 * @return boolean
+	 */
+	protected function connectionUsesMysqlDriver(array $config)
+	{
+		return (isset($config['driver']) && stripos($config['driver'], 'mysql') !== FALSE)
+			|| (isset($config['driverClass']) && stripos($config['driverClass'], 'mysql') !== FALSE);
 	}
 
 
@@ -247,10 +275,19 @@ class OrmExtension extends Nette\Config\CompilerExtension
 	{
 		$builder = $this->getContainerBuilder();
 
+		$impl = $driver instanceof \stdClass ? $driver->value : (string) $driver;
+		list($driver) = $this->filterArgs($driver);
+		/** @var Nette\DI\Statement $driver */
 
+		if (isset($this->metadataDriverClasses[$impl])) {
+			$driver->entity = $this->metadataDriverClasses[$impl];
+		}
 
 		$builder->addDefinition($serviceName = $this->prefix($prefix . '.driver.' . $impl . 'Impl'))
-			->setAutowired(FALSE);
+			->setClass($driver->entity)
+			->setFactory($driver->entity, $driver->arguments)
+			->setAutowired(FALSE)
+			->setInject(FALSE);
 
 		return '@' . $serviceName;
 	}
@@ -259,10 +296,10 @@ class OrmExtension extends Nette\Config\CompilerExtension
 
 	/**
 	 * @param string|\stdClass $cache
-	 * @param string $prefix
+	 * @param string $suffix
 	 * @return string
 	 */
-	protected function processCache($cache, $prefix)
+	protected function processCache($cache, $suffix)
 	{
 		$builder = $this->getContainerBuilder();
 
@@ -275,13 +312,14 @@ class OrmExtension extends Nette\Config\CompilerExtension
 		}
 
 		if ($impl === 'default') {
-			$cache->arguments[1] = 'Doctrine.' . ucFirst($prefix);
+			$cache->arguments[1] = 'Doctrine.' . $suffix;
 		}
 
-		$builder->addDefinition($serviceName = $this->prefix($prefix . '.cache.' . $impl . 'Impl'))
+		$builder->addDefinition($serviceName = $this->prefix('cache.' . $suffix))
 			->setClass($cache->entity)
 			->setFactory($cache->entity, $cache->arguments)
-			->setAutowired(FALSE);
+			->setAutowired(FALSE)
+			->setInject(FALSE);
 
 		return '@'  . $serviceName;
 	}

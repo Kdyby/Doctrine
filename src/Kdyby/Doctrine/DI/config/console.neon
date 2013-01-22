@@ -1,0 +1,70 @@
+services:
+	import:
+		class: Doctrine\DBAL\Tools\Console\Command\ImportCommand()
+		tags: [kdyby.console.command]
+		autowired: no
+		inject: no
+
+	clearCache.metadata:
+		class: Doctrine\ORM\Tools\Console\Command\ClearCache\MetadataCommand()
+		tags: [kdyby.console.command]
+		autowired: no
+		inject: no
+
+	clearCache.result:
+		class: Doctrine\ORM\Tools\Console\Command\ClearCache\ResultCommand()
+		tags: [kdyby.console.command]
+		autowired: no
+		inject: no
+
+	clearCache.query:
+		class: Doctrine\ORM\Tools\Console\Command\ClearCache\QueryCommand()
+		tags: [kdyby.console.command]
+		autowired: no
+		inject: no
+
+	schema.create:
+		class: Doctrine\ORM\Tools\Console\Command\SchemaTool\CreateCommand()
+		tags: [kdyby.console.command]
+		autowired: no
+		inject: no
+
+	schema.update:
+		class: Doctrine\ORM\Tools\Console\Command\SchemaTool\UpdateCommand()
+		tags: [kdyby.console.command]
+		autowired: no
+		inject: no
+
+	schema.drop:
+		class: Doctrine\ORM\Tools\Console\Command\SchemaTool\DropCommand()
+		tags: [kdyby.console.command]
+		autowired: no
+		inject: no
+
+	generateProxies:
+		class: Doctrine\ORM\Tools\Console\Command\GenerateProxiesCommand()
+		tags: [kdyby.console.command]
+		autowired: no
+		inject: no
+
+	validateSchema:
+		class: Doctrine\ORM\Tools\Console\Command\ValidateSchemaCommand()
+		tags: [kdyby.console.command]
+		autowired: no
+		inject: no
+
+	info:
+		class: Doctrine\ORM\Tools\Console\Command\InfoCommand()
+		tags: [kdyby.console.command]
+		autowired: no
+		inject: no
+
+	entityManagerHelper:
+		class: Doctrine\ORM\Tools\Console\Helper\EntityManagerHelper()
+		tags: [kdyby.console.helper]
+		inject: no
+
+	connectionHelper:
+		class: Doctrine\DBAL\Tools\Console\Helper\ConnectionHelper()
+		tags: [kdyby.console.helper]
+		inject: no

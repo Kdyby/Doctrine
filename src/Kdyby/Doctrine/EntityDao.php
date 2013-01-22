@@ -24,7 +24,7 @@ use Nette;
 /**
  * @author Filip Procházka <filip@prochazka.su>
  */
-class Dao extends Doctrine\ORM\EntityRepository implements Persistence\ObjectDao, Persistence\QueryExecutor, Persistence\Queryable //, Persistence\ObjectFactory
+class EntityDao extends Doctrine\ORM\EntityRepository implements Persistence\ObjectDao, Persistence\QueryExecutor, Persistence\Queryable //, Persistence\ObjectFactory
 {
 
 	/**
@@ -461,7 +461,7 @@ class Dao extends Doctrine\ORM\EntityRepository implements Persistence\ObjectDao
 
 	/**
 	 * @param string $relation
-	 * @return Dao
+	 * @return EntityDao
 	 */
 	public function related($relation)
 	{
