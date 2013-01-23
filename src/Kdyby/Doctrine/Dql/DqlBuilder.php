@@ -152,7 +152,7 @@ class DqlBuilder extends Nette\Object
 			$return .= ' GROUP BY ' . $this->groupBy;
 		}
 		if (!$this->having->isEmpty()) {
-			$return .= ' HAVING ' . $this->having;
+			$return .= ' HAVING ' . $this->having->build($this->parameters);
 		}
 		if ($this->orderBy) {
 			$return .= ' ORDER BY ' . implode(', ', $this->orderBy);
