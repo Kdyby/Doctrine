@@ -605,3 +605,19 @@ class EntityDao extends Doctrine\ORM\EntityRepository implements Persistence\Obj
 	}
 
 }
+
+
+
+/**
+ * @author Filip Procházka <filip@prochazka.su>
+ */
+interface EntityDaoFactory
+{
+
+	/**
+	 * @param string $className
+	 * @return EntityDao
+	 */
+	function create($className);
+
+}

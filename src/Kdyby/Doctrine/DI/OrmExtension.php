@@ -75,7 +75,7 @@ class OrmExtension extends Nette\Config\CompilerExtension
 	 * @var array
 	 */
 	public $metadataDriverClasses = array(
-		'annotations' => 'Doctrine\ORM\Mapping\Driver\AnnotationDriver',
+		'annotations' => 'Kdyby\Doctrine\Mapping\AnnotationDriver',
 		'static' => 'Doctrine\Common\Persistence\Mapping\Driver\StaticPHPDriver',
 		'yml' => 'Doctrine\ORM\Mapping\Driver\YamlDriver',
 		'xml' => 'Doctrine\ORM\Mapping\Driver\XmlDriver',
@@ -116,6 +116,7 @@ class OrmExtension extends Nette\Config\CompilerExtension
 			->setClass('Kdyby\Doctrine\EntityDao')
 			->setFactory('@Kdyby\Doctrine\EntityManager::getDao', array('%entityName%'))
 			->setParameters(array('entityName'))
+			->setImplement('Kdyby\Doctrine\EntityDaoFactory')
 			->setInject(FALSE);
 
 		$builder->addDefinition($this->prefix('schemaValidator'))
@@ -161,10 +162,10 @@ class OrmExtension extends Nette\Config\CompilerExtension
 		Validators::assertField($config['dql'], 'datetime', 'array');
 		$configuration = $builder->addDefinition($this->prefix($name . '.ormConfiguration'))
 			->setClass('Doctrine\ORM\Configuration')
-			->addSetup('setMetadataCacheImpl', array($this->processCache($config['metadataCache'], $name . '.metadataCache')))
-			->addSetup('setQueryCacheImpl', array($this->processCache($config['queryCache'], $name . '.queryCache')))
-			->addSetup('setResultCacheImpl', array($this->processCache($config['resultCache'], $name . '.ormResultCache')))
-			->addSetup('setHydrationCacheImpl', array($this->processCache($config['hydrationCache'], $name . '.hydrationCache')))
+			->addSetup('setMetadataCacheImpl', array($this->processCache($config['metadataCache'], $name . '.metadata')))
+			->addSetup('setQueryCacheImpl', array($this->processCache($config['queryCache'], $name . '.query')))
+			->addSetup('setResultCacheImpl', array($this->processCache($config['resultCache'], $name . '.ormResult')))
+			->addSetup('setHydrationCacheImpl', array($this->processCache($config['hydrationCache'], $name . '.hydration')))
 			->addSetup('setMetadataDriverImpl', array($this->prefix('@' . $name . '.metadataDriver')))
 			->addSetup('setClassMetadataFactoryName', array($config['classMetadataFactory']))
 			->addSetup('setDefaultRepositoryClassName', array($config['defaultRepositoryClassName']))
@@ -212,7 +213,7 @@ class OrmExtension extends Nette\Config\CompilerExtension
 		// config
 		$builder->addDefinition($this->prefix($name . '.dbalConfiguration'))
 			->setClass('Doctrine\DBAL\Configuration')
-			->addSetup('setResultCacheImpl', array($this->processCache($config['resultCache'], $name . '.dbalResultCache')))
+			->addSetup('setResultCacheImpl', array($this->processCache($config['resultCache'], $name . '.dbalResult')))
 			->setAutowired(FALSE)
 			->setInject(FALSE);
 

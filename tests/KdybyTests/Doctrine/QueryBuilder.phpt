@@ -39,7 +39,7 @@ class QueryBuilderTest extends KdybyTests\ORMTestCase
 
 	protected function setUp()
 	{
-		$this->em = $this->createTestEntityManager();
+		$this->em = $this->newInstance('Kdyby\Doctrine\EntityManager');
 	}
 
 
@@ -315,9 +315,10 @@ class QueryBuilderTest extends KdybyTests\ORMTestCase
 		$qb->select('u')
 			->from('test:CmsUser', 'u')
 			->group('u.id')
-			->having('COUNT(u.id) > 1 AND COUNT(u.id) < 1');
+			->having('COUNT(u.id) > 1')
+			->having('COUNT(u.id) < 1');
 
-		Assert::match('SELECT u FROM test:CmsUser u GROUP BY u.id HAVING (COUNT(u.id) > 1 AND COUNT(u.id) < 1)', $qb->getDQL());
+		Assert::match('SELECT u FROM test:CmsUser u GROUP BY u.id HAVING COUNT(u.id) > 1 AND COUNT(u.id) < 1', $qb->getDQL());
 	}
 
 
@@ -328,9 +329,11 @@ class QueryBuilderTest extends KdybyTests\ORMTestCase
 		$qb->select('u')
 			->from('test:CmsUser', 'u')
 			->group('u.id')
-			->having('(COUNT(u.id) > 1 AND COUNT(u.id) < 1) OR COUNT(u.id) > 1');
+			->having('COUNT(u.id) > 1')
+			->having('COUNT(u.id) < 1')
+			->orHaving('COUNT(u.id) > 1');
 
-		Assert::match('SELECT u FROM test:CmsUser u GROUP BY u.id HAVING ((COUNT(u.id) > 1 AND COUNT(u.id) < 1) OR COUNT(u.id) > 1)', $qb->getDQL());
+		Assert::match('SELECT u FROM test:CmsUser u GROUP BY u.id HAVING (COUNT(u.id) > 1 AND COUNT(u.id) < 1) OR COUNT(u.id) > 1', $qb->getDQL());
 	}
 
 

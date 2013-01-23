@@ -11,36 +11,37 @@
 namespace KdybyTests\Doctrine;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Mapping as ORM;
 
 
 /**
  * CmsAddress
  *
  * @author Roman S. Borschel
- * @Entity
- * @Table(name="cms_addresses")
+ * @ORM\Entity
+ * @ORM\Table(name="cms_addresses")
  */
 class CmsAddress
 {
 
 	/**
-	 * @Column(type="integer")
-	 * @Id @GeneratedValue
+	 * @ORM\Column(type="integer")
+	 * @ORM\Id @ORM\GeneratedValue
 	 */
 	public $id;
 
 	/**
-	 * @Column(length=50)
+	 * @ORM\Column(length=50)
 	 */
 	public $country;
 
 	/**
-	 * @Column(length=50)
+	 * @ORM\Column(length=50)
 	 */
 	public $zip;
 
 	/**
-	 * @Column(length=50)
+	 * @ORM\Column(length=50)
 	 */
 	public $city;
 
@@ -50,8 +51,8 @@ class CmsAddress
 	public $street;
 
 	/**
-	 * @OneToOne(targetEntity="CmsUser", inversedBy="address")
-	 * @JoinColumn(referencedColumnName="id")
+	 * @ORM\OneToOne(targetEntity="CmsUser", inversedBy="address")
+	 * @ORM\JoinColumn(referencedColumnName="id")
 	 */
 	public $user;
 
@@ -70,42 +71,42 @@ class CmsAddress
 
 
 /**
- * @Entity
- * @Table(name="cms_articles")
+ * @ORM\Entity
+ * @ORM\Table(name="cms_articles")
  */
 class CmsArticle
 {
 
 	/**
-	 * @Id
-	 * @Column(type="integer")
-	 * @GeneratedValue(strategy="AUTO")
+	 * @ORM\Id
+	 * @ORM\Column(type="integer")
+	 * @ORM\GeneratedValue(strategy="AUTO")
 	 */
 	public $id;
 
 	/**
-	 * @Column(type="string", length=255)
+	 * @ORM\Column(type="string", length=255)
 	 */
 	public $topic;
 
 	/**
-	 * @Column(type="text")
+	 * @ORM\Column(type="text")
 	 */
 	public $text;
 
 	/**
-	 * @ManyToOne(targetEntity="CmsUser", inversedBy="articles")
-	 * @JoinColumn(name="user_id", referencedColumnName="id")
+	 * @ORM\ManyToOne(targetEntity="CmsUser", inversedBy="articles")
+	 * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
 	 */
 	public $user;
 
 	/**
-	 * @OneToMany(targetEntity="CmsComment", mappedBy="article")
+	 * @ORM\OneToMany(targetEntity="CmsComment", mappedBy="article")
 	 */
 	public $comments;
 
 	/**
-	 * @Version @column(type="integer")
+	 * @ORM\Version @ORM\Column(type="integer")
 	 */
 	public $version;
 
@@ -127,31 +128,31 @@ class CmsArticle
 
 
 /**
- * @Entity
- * @Table(name="cms_comments")
+ * @ORM\Entity
+ * @ORM\Table(name="cms_comments")
  */
 class CmsComment
 {
 
 	/**
-	 * @Column(type="integer")
-	 * @Id @GeneratedValue(strategy="AUTO")
+	 * @ORM\Column(type="integer")
+	 * @ORM\Id @ORM\GeneratedValue(strategy="AUTO")
 	 */
 	public $id;
 
 	/**
-	 * @Column(type="string", length=255)
+	 * @ORM\Column(type="string", length=255)
 	 */
 	public $topic;
 
 	/**
-	 * @Column(type="string")
+	 * @ORM\Column(type="string")
 	 */
 	public $text;
 
 	/**
-	 * @ManyToOne(targetEntity="CmsArticle", inversedBy="comments")
-	 * @JoinColumn(name="article_id", referencedColumnName="id")
+	 * @ORM\ManyToOne(targetEntity="CmsArticle", inversedBy="comments")
+	 * @ORM\JoinColumn(name="article_id", referencedColumnName="id")
 	 */
 	public $article;
 
@@ -167,25 +168,25 @@ class CmsComment
 /**
  * CmsEmail
  *
- * @Entity
- * @Table(name="cms_emails")
+ * @ORM\Entity
+ * @ORM\Table(name="cms_emails")
  */
 class CmsEmail
 {
 
 	/**
-	 * @Column(type="integer")
-	 * @Id @GeneratedValue
+	 * @ORM\Column(type="integer")
+	 * @ORM\Id @ORM\GeneratedValue
 	 */
 	public $id;
 
 	/**
-	 * @Column(length=250)
+	 * @ORM\Column(length=250)
 	 */
 	public $email;
 
 	/**
-	 * @OneToOne(targetEntity="CmsUser", mappedBy="email")
+	 * @ORM\OneToOne(targetEntity="CmsUser", mappedBy="email")
 	 */
 	public $user;
 
@@ -197,27 +198,27 @@ class CmsEmail
  * Description of CmsEmployee
  *
  * @author robo
- * @Entity
- * @Table(name="cms_employees")
+ * @ORM\Entity
+ * @ORM\Table(name="cms_employees")
  */
 class CmsEmployee
 {
 
 	/**
-	 * @Id
-	 * @Column(type="integer")
-	 * @GeneratedValue
+	 * @ORM\Id
+	 * @ORM\Column(type="integer")
+	 * @ORM\GeneratedValue
 	 */
 	public $id;
 
 	/**
-	 * @Column
+	 * @ORM\Column
 	 */
 	public $name;
 
 	/**
-	 * @OneToOne(targetEntity="CmsEmployee")
-	 * @JoinColumn(name="spouse_id", referencedColumnName="id")
+	 * @ORM\OneToOne(targetEntity="CmsEmployee")
+	 * @ORM\JoinColumn(name="spouse_id", referencedColumnName="id")
 	 */
 	public $spouse;
 
@@ -229,26 +230,26 @@ class CmsEmployee
  * Description of CmsGroup
  *
  * @author robo
- * @Entity
- * @Table(name="cms_groups")
+ * @ORM\Entity
+ * @ORM\Table(name="cms_groups")
  */
 class CmsGroup
 {
 
 	/**
-	 * @Id
-	 * @Column(type="integer")
-	 * @GeneratedValue
+	 * @ORM\Id
+	 * @ORM\Column(type="integer")
+	 * @ORM\GeneratedValue
 	 */
 	public $id;
 
 	/**
-	 * @Column(length=50)
+	 * @ORM\Column(length=50)
 	 */
 	public $name;
 
 	/**
-	 * @ManyToMany(targetEntity="CmsUser", mappedBy="groups")
+	 * @ORM\ManyToMany(targetEntity="CmsUser", mappedBy="groups")
 	 * @var ArrayCollection
 	 */
 	public $users;
@@ -265,20 +266,20 @@ class CmsGroup
 
 
 /**
- * @Entity
- * @Table(name="cms_phonenumbers")
+ * @ORM\Entity
+ * @ORM\Table(name="cms_phonenumbers")
  */
 class CmsPhoneNumber
 {
 
 	/**
-	 * @Id @Column(length=50)
+	 * @ORM\Id @ORM\Column(length=50)
 	 */
 	public $phoneNumber;
 
 	/**
-	 * @ManyToOne(targetEntity="CmsUser", inversedBy="phonenumbers", cascade={"merge"})
-	 * @JoinColumn(name="user_id", referencedColumnName="id")
+	 * @ORM\ManyToOne(targetEntity="CmsUser", inversedBy="phonenumbers", cascade={"merge"})
+	 * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
 	 */
 	public $user;
 
@@ -286,59 +287,59 @@ class CmsPhoneNumber
 
 
 /**
- * @Entity
- * @Table(name="cms_users")
+ * @ORM\Entity
+ * @ORM\Table(name="cms_users")
  */
 class CmsUser
 {
 
 	/**
-	 * @Id @Column(type="integer")
-	 * @GeneratedValue
+	 * @ORM\Id @ORM\Column(type="integer")
+	 * @ORM\GeneratedValue
 	 */
 	public $id;
 
 	/**
-	 * @Column(type="string", length=50, nullable=true)
+	 * @ORM\Column(type="string", length=50, nullable=true)
 	 */
 	public $status;
 
 	/**
-	 * @Column(type="string", length=255, unique=true)
+	 * @ORM\Column(type="string", length=255, unique=true)
 	 */
 	public $username;
 
 	/**
-	 * @Column(type="string", length=255)
+	 * @ORM\Column(type="string", length=255)
 	 */
 	public $name;
 
 	/**
-	 * @OneToMany(targetEntity="CmsPhoneNumber", mappedBy="user", cascade={"persist", "merge"}, orphanRemoval=true)
+	 * @ORM\OneToMany(targetEntity="CmsPhoneNumber", mappedBy="user", cascade={"persist", "merge"}, orphanRemoval=true)
 	 */
 	public $phoneNumbers;
 
 	/**
-	 * @OneToMany(targetEntity="CmsArticle", mappedBy="user", cascade={"detach"})
+	 * @ORM\OneToMany(targetEntity="CmsArticle", mappedBy="user", cascade={"detach"})
 	 */
 	public $articles;
 
 	/**
-	 * @OneToOne(targetEntity="CmsAddress", mappedBy="user", cascade={"persist"}, orphanRemoval=true)
+	 * @ORM\OneToOne(targetEntity="CmsAddress", mappedBy="user", cascade={"persist"}, orphanRemoval=true)
 	 */
 	public $address;
 
 	/**
-	 * @OneToOne(targetEntity="CmsEmail", inversedBy="user", cascade={"persist"}, orphanRemoval=true)
-	 * @JoinColumn(referencedColumnName="id", nullable=true)
+	 * @ORM\OneToOne(targetEntity="CmsEmail", inversedBy="user", cascade={"persist"}, orphanRemoval=true)
+	 * @ORM\JoinColumn(referencedColumnName="id", nullable=true)
 	 */
 	public $email;
 
 	/**
-	 * @ManyToMany(targetEntity="CmsGroup", inversedBy="users", cascade={"persist", "merge", "detach"})
-	 * @JoinTable(name="cms_users_groups",
-	 *      joinColumns={@JoinColumn(name="user_id", referencedColumnName="id")},
-	 *      inverseJoinColumns={@JoinColumn(name="group_id", referencedColumnName="id")}
+	 * @ORM\ManyToMany(targetEntity="CmsGroup", inversedBy="users", cascade={"persist", "merge", "detach"})
+	 * @ORM\JoinTable(name="cms_users_groups",
+	 *      joinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id")},
+	 *      inverseJoinColumns={@ORM\JoinColumn(name="group_id", referencedColumnName="id")}
 	 *      )
 	 */
 	public $groups;

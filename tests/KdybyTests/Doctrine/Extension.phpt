@@ -46,8 +46,15 @@ class ExtensionTest extends Tester\TestCase
 
 	public function testFunctionality()
 	{
-		$container = $this->createContainer('memory.defaults');
+		require_once __DIR__ . '/models/cms.php';
 
+		$container = $this->createContainer('memory.defaults');
+		$entityManager = $container->getByType('Kdyby\Doctrine\EntityManager');
+		Assert::true($entityManager instanceof Kdyby\Doctrine\EntityManager);
+		/** @var Kdyby\Doctrine\EntityManager $entityManager */
+
+		$userDao = $entityManager->getDao('KdybyTests\Doctrine\CmsUser');
+		Assert::true($userDao instanceof Kdyby\Doctrine\EntityDao);
 	}
 
 }

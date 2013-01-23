@@ -64,4 +64,16 @@ class ORMTestCase extends Tester\TestCase
 		return Doctrine\EntityManagerMock::create($conn, $config, $eventManager);
 	}
 
+
+
+	/**
+	 * @param string $className
+	 * @param array $props
+	 * @return object
+	 */
+	protected function newInstance($className, $props = array())
+	{
+		return Nette\PhpGenerator\Helpers::createObject($className, $props);
+	}
+
 }
