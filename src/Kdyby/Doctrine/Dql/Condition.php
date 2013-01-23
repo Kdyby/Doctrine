@@ -11,7 +11,9 @@
 namespace Kdyby\Doctrine\Dql;
 
 use Doctrine;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Query\Expr;
+use Doctrine\ORM\Query\Parameter;
 use Kdyby;
 use Nette;
 
@@ -144,6 +146,30 @@ class Condition extends Nette\Object
 		}
 
 		$this->conds[] = $cond;
+	}
+
+
+
+	/**
+	 * @param ArrayCollection $parameters
+	 */
+	public function build(ArrayCollection $parameters)
+	{
+		$cond = explode('?', $serialised = $this->__toString());
+		$prefix = substr(md5($serialised), 0, 5);
+
+		$result = array_shift($cond);
+		foreach ($this->params as $i => $value) {
+			$placeholders = array();
+			foreach (is_array($value) ? $value : array($value) as $l => $item) {
+				$placeholders[] = ':' . ($param = $prefix . '_' . $i . '_' . $l);
+				$parameters[':' . $param] = new Parameter($param, $item);
+			}
+
+			$result .= implode(', ', $placeholders) . array_shift($cond);
+		}
+
+		return $result;
 	}
 
 

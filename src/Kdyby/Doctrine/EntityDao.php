@@ -129,10 +129,10 @@ class EntityDao extends Doctrine\ORM\EntityRepository implements Persistence\Obj
 		}
 
 		$builder = $this->createQueryBuilder('e')
-			->select("e.$key, e.$value");
+			->select("e.$key", "e.$value");
 
 		foreach ($criteria as $k => $v) {
-			$builder->andWhere('e.' . $k . ' = :prop' . $k)
+			$builder->where('e.' . $k . ' = :prop' . $k)
 				->setParameter('prop' . $k, $v);
 		}
 		$query = $builder->createQuery();

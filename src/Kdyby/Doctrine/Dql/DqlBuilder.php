@@ -110,9 +110,8 @@ class DqlBuilder extends Nette\Object
 	{
 		$set = array();
 		foreach ($this->set as $alias => $values) {
-			$prefix = Nette\Utils\Strings::random(5);
 			foreach ($values as $column => $value) {
-				$this->parameters[$param = $alias . '_' . $prefix . '_' . $column] = $value;
+				$this->parameters[$param = $alias . '_' . $column] = $value;
 				$set[] = new Expr\Comparison($alias . '.' . $column, Expr\Comparison::EQ, ':' . $param);
 			}
 		}
@@ -147,7 +146,7 @@ class DqlBuilder extends Nette\Object
 	{
 		$return = '';
 		if (!$this->where->isEmpty()) {
-			$return .= ' WHERE ' . $this->where;
+			$return .= ' WHERE ' . $this->where->build($this->parameters);
 		}
 		if ($this->groupBy) {
 			$return .= ' GROUP BY ' . $this->groupBy;

@@ -70,7 +70,7 @@ class QueryBuilderTest extends KdybyTests\ORMTestCase
 		$qb = $this->em->createQueryBuilder()
 			->update('test:CmsUser', 'u', array('username' => ':username'));
 
-		Assert::match('UPDATE test:CmsUser u SET u.username = :%S%username', $qb->getDQL());
+		Assert::match('UPDATE test:CmsUser u SET u.username = :u_username', $qb->getDQL());
 	}
 
 
