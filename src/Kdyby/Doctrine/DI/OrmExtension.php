@@ -214,6 +214,7 @@ class OrmExtension extends Nette\Config\CompilerExtension
 		$builder->addDefinition($this->prefix($name . '.dbalConfiguration'))
 			->setClass('Doctrine\DBAL\Configuration')
 			->addSetup('setResultCacheImpl', array($this->processCache($config['resultCache'], $name . '.dbalResult')))
+			->addSetup('setSQLLogger', array(new Nette\DI\Statement('Doctrine\DBAL\Logging\LoggerChain')))
 			->setAutowired(FALSE)
 			->setInject(FALSE);
 
