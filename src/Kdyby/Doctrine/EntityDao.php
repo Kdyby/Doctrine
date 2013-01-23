@@ -128,29 +128,19 @@ class EntityDao extends Doctrine\ORM\EntityRepository implements Persistence\Obj
 			$criteria = array();
 		}
 
-		$builder = $this->createQueryBuilder('e')
-			->select("e.$key", "e.$value");
-
-		foreach ($criteria as $k => $v) {
-			$builder->where('e.' . $k . ' = :prop' . $k)
-				->setParameter('prop' . $k, $v);
-		}
-		$query = $builder->createQuery();
+		$query = $this->createQueryBuilder()
+			->select("e.$value")
+			->from($this->getEntityName(), 'e', 'e.' . $key)
+			->where($criteria)
+			->createQuery();
 
 		try {
-			$pairs = array();
-			foreach ($res = $query->getResult(AbstractQuery::HYDRATE_ARRAY) as $row) {
-				if (empty($row)) {
-					continue;
-				}
-
-				$pairs[$row[$key]] = $row[$value];
-			}
-
-			return $pairs;
+			return array_map(function ($row) {
+				return reset($row);
+			}, $query->getResult(AbstractQuery::HYDRATE_ARRAY));
 
 		} catch (\Exception $e) {
-			return $this->handleException($e, $query);
+			throw $this->handleException($e, $query);
 		}
 	}
 
@@ -162,6 +152,7 @@ class EntityDao extends Doctrine\ORM\EntityRepository implements Persistence\Obj
 	 * @param array $criteria
 	 * @param string $key
 	 *
+	 * @throws \Exception|QueryException
 	 * @return array
 	 */
 	public function findAssoc($criteria, $key = NULL)
@@ -171,22 +162,17 @@ class EntityDao extends Doctrine\ORM\EntityRepository implements Persistence\Obj
 			$criteria = array();
 		}
 
-		$query = $this->createQuery();
+		$query = $this->createQueryBuilder()
+			->select('e')
+			->from($this->getEntityName(), 'e', 'e.' . $key)
+			->where($criteria)
+			->createQuery();
+
 		try {
-			$where = $params = array();
-			foreach ($criteria as $k => $v) {
-				$where[] = "e.$k = :prop$k";
-				$params["prop$k"] = $v;
-			}
-
-			$where = $where ? 'WHERE ' . implode(' AND ', $where) : NULL;
-			$query->setDQL('SELECT e FROM ' . $this->getEntityName() . " e INDEX BY e.$key $where");
-			$query->setParameters($params);
-
 			return $query->getResult();
 
 		} catch (\Exception $e) {
-			return $this->handleException($e, $query);
+			throw $this->handleException($e, $query);
 		}
 	}
 
@@ -212,7 +198,7 @@ class EntityDao extends Doctrine\ORM\EntityRepository implements Persistence\Obj
 
 	/**
 	 * @param string $alias
-	 * @return \Kdyby\Doctrine\QueryBuilder $qb
+	 * @return \Kdyby\Doctrine\QueryBuilder
 	 */
 	public function createQueryBuilder($alias = NULL)
 	{
@@ -267,7 +253,8 @@ class EntityDao extends Doctrine\ORM\EntityRepository implements Persistence\Obj
 
 
 	/**
-	 * @param \Kdyby\Persistence\IQueryObject|\Kdyby\Doctrine\QueryObjectBase $queryObject
+	 * @param \Kdyby\Persistence\Query|\Kdyby\Doctrine\QueryObject $queryObject
+	 * @throws \Exception
 	 * @return integer
 	 */
 	public function count(Persistence\Query $queryObject)
@@ -276,14 +263,15 @@ class EntityDao extends Doctrine\ORM\EntityRepository implements Persistence\Obj
 			return $queryObject->count($this);
 
 		} catch (\Exception $e) {
-			return $this->handleQueryException($e, $queryObject);
+			throw $this->handleQueryException($e, $queryObject);
 		}
 	}
 
 
 
 	/**
-	 * @param \Kdyby\Persistence\IQueryObject|\Kdyby\Doctrine\QueryObjectBase $queryObject
+	 * @param \Kdyby\Persistence\Query|\Kdyby\Doctrine\QueryObject $queryObject
+	 * @throws \Exception
 	 * @return array|\Kdyby\Doctrine\ResultSet
 	 */
 	public function fetch(Persistence\Query $queryObject)
@@ -292,16 +280,17 @@ class EntityDao extends Doctrine\ORM\EntityRepository implements Persistence\Obj
 			return $queryObject->fetch($this);
 
 		} catch (\Exception $e) {
-			return $this->handleQueryException($e, $queryObject);
+			throw $this->handleQueryException($e, $queryObject);
 		}
 	}
 
 
 
 	/**
-	 * @param \Kdyby\Persistence\IQueryObject|\Kdyby\Doctrine\QueryObjectBase $queryObject
+	 * @param \Kdyby\Persistence\Query|\Kdyby\Doctrine\QueryObject $queryObject
 	 *
-	 * @throws \Kdyby\InvalidStateException
+	 * @throws InvalidStateException
+	 * @throws \Exception
 	 * @return object
 	 */
 	public function fetchOne(Persistence\Query $queryObject)
@@ -313,78 +302,10 @@ class EntityDao extends Doctrine\ORM\EntityRepository implements Persistence\Obj
 			return NULL;
 
 		} catch (NonUniqueResultException $e) { // this should never happen!
-			throw new Kdyby\InvalidStateException("You have to setup your query calling ->setMaxResult(1).", 0, $e);
+			throw new InvalidStateException("You have to setup your query calling ->setMaxResult(1).", 0, $e);
 
 		} catch (\Exception $e) {
-			return $this->handleQueryException($e, $queryObject);
-		}
-	}
-
-
-
-	/**
-	 * @param \Kdyby\Persistence\IQueryObject|\Kdyby\Doctrine\QueryObjectBase $queryObject
-	 * @param string $key
-	 * @param string $value
-	 *
-	 * @return array
-	 */
-	public function fetchPairs(Persistence\Query $queryObject, $key = NULL, $value = NULL)
-	{
-		try {
-			$pairs = array();
-			foreach ($queryObject->fetch($this, AbstractQuery::HYDRATE_ARRAY) as $row) {
-				$offset = $key ? $row[$key] : reset($row);
-				$pairs[$offset] = $value ? $value[$row] : next($row);
-			}
-
-			return array_filter($pairs); // todo: orly?
-
-		} catch (\Exception $e) {
-			return $this->handleQueryException($e, $queryObject);
-		}
-	}
-
-
-
-	/**
-	 * Fetches all records and returns an associative array indexed by key
-	 *
-	 * @param \Kdyby\Persistence\IQueryObject|\Kdyby\Doctrine\QueryObjectBase $queryObject
-	 * @param string $key
-	 *
-	 * @throws \Exception
-	 * @throws \Kdyby\InvalidStateException
-	 * @return array
-	 */
-	public function fetchAssoc(Persistence\Query $queryObject, $key = NULL)
-	{
-		try {
-			/** @var \Kdyby\Doctrine\ResultSet|mixed $resultSet */
-			$resultSet = $queryObject->fetch($this);
-			if (!$resultSet instanceof ResultSet || !($result = iterator_to_array($resultSet->getIterator()))) {
-				return NULL;
-			}
-
-			try {
-				$meta = $this->_em->getClassMetadata(get_class(current($result)));
-
-			} catch (\Exception $e) {
-				throw new Kdyby\InvalidStateException('Result of ' . get_class($queryObject) . ' is not list of entities.');
-			}
-
-			$assoc = array();
-			foreach ($result as $item) {
-				$assoc[$meta->getFieldValue($item, $key)] = $item;
-			}
-
-			return $assoc;
-
-		} catch (Kdyby\InvalidStateException $e) {
-			throw $e;
-
-		} catch (\Exception $e) {
-			return $this->handleQueryException($e, $queryObject);
+			throw $this->handleQueryException($e, $queryObject);
 		}
 	}
 
@@ -403,13 +324,13 @@ class EntityDao extends Doctrine\ORM\EntityRepository implements Persistence\Obj
 
 	/**
 	 * @param \Exception $e
-	 * @param \Kdyby\Doctrine\QueryObjectBase $queryObject
+	 * @param \Kdyby\Doctrine\QueryObject $queryObject
 	 *
 	 * @throws \Exception
 	 */
 	private function handleQueryException(\Exception $e, QueryObject $queryObject)
 	{
-		$this->handleException($e, $queryObject->getLastQuery(), '[' . get_class($queryObject) . '] ' . $e->getMessage());
+		return new QueryException($e, $queryObject->getLastQuery(), '[' . get_class($queryObject) . '] ' . $e->getMessage());
 	}
 
 
@@ -418,23 +339,14 @@ class EntityDao extends Doctrine\ORM\EntityRepository implements Persistence\Obj
 	 * @param \Exception $e
 	 * @param \Doctrine\ORM\Query $query
 	 * @param string $message
-	 *
-	 * @throws \Exception
-	 * @throws \Kdyby\Doctrine\QueryException
-	 * @throws \Kdyby\Doctrine\SqlException
 	 */
 	private function handleException(\Exception $e, Doctrine\ORM\Query $query = NULL, $message = NULL)
 	{
-//		if ($e instanceof Doctrine\ORM\Query\QueryException) {
-//			throw new QueryException($e, $query, $message);
-//
-//		} elseif ($e instanceof \PDOException) {
-//			throw new SqlException($e, $query, $message);
-//
-//		} else {
-//			throw $e;
-//		}
-		throw $e;
+		if ($e instanceof Doctrine\ORM\Query\QueryException) {
+			return new QueryException($e, $query, $message);
+		}
+
+		return $e;
 	}
 
 
