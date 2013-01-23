@@ -49,12 +49,7 @@ class ResultSet extends Nette\Object implements \Countable, \IteratorAggregate
 	 */
 	public function __construct(ORM\AbstractQuery $query)
 	{
-		if ($query instanceof ORM\AbstractQuery) {
-			$this->query = $query;
-
-		} else {
-			throw new InvalidArgumentException("Given argument is not instanceof Query or QueryBuilder.");
-		}
+		$this->query = $query;
 	}
 
 
@@ -166,7 +161,7 @@ class ResultSet extends Nette\Object implements \Countable, \IteratorAggregate
 	public function getIterator()
 	{
 		try {
-			return new \ArrayIterator($this->query->execute());
+			return $this->getPaginatedQuery()->getIterator();
 
 		} catch (ORMException $e) {
 			throw new QueryException($e, $this->query, $e->getMessage());

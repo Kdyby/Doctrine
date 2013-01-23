@@ -112,7 +112,7 @@ class QueryBuilder extends Nette\Object implements \IteratorAggregate
 
 	/**
 	 * @param string $select
-	 * @return QueryBuilder
+	 * @return \Kdyby\Doctrine\QueryBuilder
 	 */
 	public function select($select)
 	{
@@ -129,7 +129,7 @@ class QueryBuilder extends Nette\Object implements \IteratorAggregate
 	 * @param string $entity
 	 * @param string $alias
 	 * @param string $indexBy
-	 * @return QueryBuilder
+	 * @return \Kdyby\Doctrine\QueryBuilder
 	 */
 	public function from($entity, $alias, $indexBy = NULL)
 	{
@@ -144,7 +144,7 @@ class QueryBuilder extends Nette\Object implements \IteratorAggregate
 	/**
 	 * @param string $entity
 	 * @param string $alias
-	 * @return QueryBuilder
+	 * @return \Kdyby\Doctrine\QueryBuilder
 	 */
 	public function delete($entity, $alias)
 	{
@@ -159,7 +159,7 @@ class QueryBuilder extends Nette\Object implements \IteratorAggregate
 	 * @param string $entity
 	 * @param string $alias
 	 * @param array $values
-	 * @return QueryBuilder
+	 * @return \Kdyby\Doctrine\QueryBuilder
 	 */
 	public function update($entity, $alias, array $values)
 	{
@@ -208,7 +208,7 @@ class QueryBuilder extends Nette\Object implements \IteratorAggregate
 
 	/**
 	 * @param mixed $cond The restriction predicates.
-	 * @return QueryBuilder This QueryBuilder instance.
+	 * @return \Kdyby\Doctrine\QueryBuilder This QueryBuilder instance.
 	 */
 	public function where($cond)
 	{
@@ -222,7 +222,7 @@ class QueryBuilder extends Nette\Object implements \IteratorAggregate
 
 	/**
 	 * @param mixed $cond The restriction predicates.
-	 * @return QueryBuilder This QueryBuilder instance.
+	 * @return \Kdyby\Doctrine\QueryBuilder This QueryBuilder instance.
 	 */
 	public function orWhere($cond)
 	{
@@ -237,7 +237,7 @@ class QueryBuilder extends Nette\Object implements \IteratorAggregate
 	/**
 	 * @param $columns
 	 * @internal param string $by
-	 * @return QueryBuilder
+	 * @return \Kdyby\Doctrine\QueryBuilder
 	 */
 	public function group($columns)
 	{
@@ -251,7 +251,7 @@ class QueryBuilder extends Nette\Object implements \IteratorAggregate
 
 	/**
 	 * @param mixed $cond The restriction predicates.
-	 * @return QueryBuilder This QueryBuilder instance.
+	 * @return \Kdyby\Doctrine\QueryBuilder This QueryBuilder instance.
 	 */
 	public function having($cond)
 	{
@@ -265,7 +265,7 @@ class QueryBuilder extends Nette\Object implements \IteratorAggregate
 
 	/**
 	 * @param mixed $cond The restriction predicates.
-	 * @return QueryBuilder This QueryBuilder instance.
+	 * @return \Kdyby\Doctrine\QueryBuilder This QueryBuilder instance.
 	 */
 	public function orHaving($cond)
 	{
@@ -279,7 +279,7 @@ class QueryBuilder extends Nette\Object implements \IteratorAggregate
 
 	/**
 	 * @param string $by
-	 * @return QueryBuilder
+	 * @return \Kdyby\Doctrine\QueryBuilder
 	 */
 	public function order($by)
 	{
@@ -294,7 +294,7 @@ class QueryBuilder extends Nette\Object implements \IteratorAggregate
 	/**
 	 * @param int $limit
 	 * @param int $offset
-	 * @return QueryBuilder
+	 * @return \Kdyby\Doctrine\QueryBuilder
 	 */
 	public function limit($limit, $offset = NULL)
 	{
@@ -309,7 +309,7 @@ class QueryBuilder extends Nette\Object implements \IteratorAggregate
 	/**
 	 * @param string $param
 	 * @param mixed $value
-	 * @return QueryBuilder
+	 * @return \Kdyby\Doctrine\QueryBuilder
 	 */
 	public function setParameter($param, $value)
 	{
@@ -333,7 +333,7 @@ class QueryBuilder extends Nette\Object implements \IteratorAggregate
 
 	/**
 	 * @param array|ArrayCollection|Parameter[] $params
-	 * @return QueryBuilder
+	 * @return \Kdyby\Doctrine\QueryBuilder
 	 */
 	public function setParameters($params)
 	{
@@ -412,11 +412,11 @@ class QueryBuilder extends Nette\Object implements \IteratorAggregate
 
 
 	/**
-	 * @param \Doctrine\Common\Collections\ArrayCollection|array $parameters Query parameters.
 	 * @param integer $hydrationMode Processing mode to be used during the hydration process.
+	 * @param \Doctrine\Common\Collections\ArrayCollection|array $parameters Query parameters.
 	 * @return mixed
 	 */
-	public function execute($parameters = NULL, $hydrationMode = NULL)
+	public function execute($hydrationMode = NULL, $parameters = NULL)
 	{
 		return $this->createQuery()->execute($parameters, $hydrationMode);
 	}
