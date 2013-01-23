@@ -284,6 +284,24 @@ class QueryBuilderTest extends KdybyTests\ORMTestCase
 
 
 
+	public function testWhereInSubQuery()
+	{
+		$qb = $this->em->createQueryBuilder();
+		$qb->select('u')
+			->from('test:CmsUser', 'u')
+			->where('u.id = :uid')
+			->orWhere('u.id = :uid2');
+
+		$qb2 = $this->em->createQueryBuilder();
+		$qb2->select('u')
+			->from('test:CmsUser', 'u')
+			->where('u.id', $qb);
+
+		Assert::match('SELECT u FROM test:CmsUser u WHERE (u.id IN (SELECT u FROM test:CmsUser u WHERE u.id = :uid OR u.id = :uid2))', $qb2->getDQL());
+	}
+
+
+
 	public function testGroupBy()
 	{
 		$qb = $this->em->createQueryBuilder()

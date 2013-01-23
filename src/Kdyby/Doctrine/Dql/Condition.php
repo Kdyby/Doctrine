@@ -121,11 +121,13 @@ class Condition extends Nette\Object
 		} elseif ($params === NULL) { // where('column', NULL)
 			$cond .= ' IS NULL';
 
-		} elseif ($params instanceof Kdyby\Doctrine\QueryBuilder) { // where('column', $qb))
-			throw new Nette\NotImplementedException;
+		} elseif ($params instanceof Kdyby\Doctrine\QueryBuilder
+			|| $params instanceof Doctrine\ORM\Query) { // where('column', $qb))
+			if ($params instanceof Kdyby\Doctrine\QueryBuilder) {
+				$params = $params->createQuery();
+			}
 
-		} elseif ($params instanceof Doctrine\ORM\Query) { // where('column', $query))
-			throw new Nette\NotImplementedException;
+			$cond .= " IN ({$params->getDQL()})";
 
 		} elseif (!is_array($params)) { // where('column', 'x')
 			$cond .= ' = ?';
