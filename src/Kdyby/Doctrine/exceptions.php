@@ -10,6 +10,8 @@
 
 namespace Kdyby\Doctrine;
 
+use Doctrine;
+
 
 
 /**
@@ -45,6 +47,16 @@ class InvalidArgumentException extends \InvalidArgumentException implements Exce
 /**
  * @author Filip Procházka <filip@prochazka.su>
  */
+class UnexpectedValueException extends \UnexpectedValueException
+{
+
+}
+
+
+
+/**
+ * @author Filip Procházka <filip@prochazka.su>
+ */
 class DBALException extends \RuntimeException implements Exception
 {
 
@@ -58,18 +70,37 @@ class DBALException extends \RuntimeException implements Exception
 	 */
 	public $params = array();
 
+	/**
+	 * @var \Doctrine\DBAL\Connection
+	 */
+	public $connection;
+
 
 
 	/**
 	 * @param \Exception $previous
 	 * @param string $query
 	 * @param array $params
+	 * @param \Doctrine\DBAL\Connection $connection
 	 */
-	public function __construct(\Exception $previous, $query = NULL, $params = array())
+	public function __construct(\Exception $previous, $query = NULL, $params = array(), Doctrine\DBAL\Connection $connection = NULL)
 	{
 		parent::__construct($previous->getMessage(), $previous->getCode(), $previous);
 		$this->query = $query;
 		$this->params = $params;
+		$this->connection = $connection;
+	}
+
+
+
+	/**
+	 * This is just a paranoia, hopes no one actually serializes exceptions.
+	 *
+	 * @return array
+	 */
+	public function __sleep()
+	{
+		return array('message', 'code', 'file', 'line', 'errorInfo', 'query', 'params');
 	}
 
 }
@@ -94,11 +125,22 @@ class DuplicateEntryException extends DBALException
 	 * @param array $columns
 	 * @param string $query
 	 * @param array $params
+	 * @param \Doctrine\DBAL\Connection $connection
 	 */
-	public function __construct(\Exception $previous, $columns = array(), $query = NULL, $params = array())
+	public function __construct(\Exception $previous, $columns = array(), $query = NULL, $params = array(), Doctrine\DBAL\Connection $connection = NULL)
 	{
-		parent::__construct($previous, $query, $params);
+		parent::__construct($previous, $query, $params, $connection);
 		$this->columns = $columns;
+	}
+
+
+
+	/**
+	 * @return array
+	 */
+	public function __sleep()
+	{
+		return array_merge(parent::__sleep(), array('columns'));
 	}
 
 }
@@ -123,11 +165,50 @@ class EmptyValueException extends DBALException
 	 * @param string $column
 	 * @param string $query
 	 * @param array $params
+	 * @param \Doctrine\DBAL\Connection $connection
 	 */
-	public function __construct(\Exception $previous, $column = NULL, $query = NULL, $params = array())
+	public function __construct(\Exception $previous, $column = NULL, $query = NULL, $params = array(), Doctrine\DBAL\Connection $connection = NULL)
 	{
-		parent::__construct($previous, $query, $params);
+		parent::__construct($previous, $query, $params, $connection);
 		$this->column = $column;
+	}
+
+
+
+	/**
+	 * @return array
+	 */
+	public function __sleep()
+	{
+		return array_merge(parent::__sleep(), array('column'));
+	}
+
+}
+
+
+
+/**
+ * @author Filip Procházka <filip@prochazka.su>
+ */
+class QueryException extends \RuntimeException implements Exception
+{
+
+	/**
+	 * @var \Doctrine\ORM\Query
+	 */
+	public $query;
+
+
+
+	/**
+	 * @param \Exception $previous
+	 * @param \Doctrine\ORM\Query $query
+	 * @param string $message
+	 */
+	public function __construct(\Exception $previous, Doctrine\ORM\Query $query = NULL, $message = "")
+	{
+		parent::__construct($message ?: $previous->getMessage(), 0, $previous);
+		$this->query = $query;
 	}
 
 }

@@ -39,7 +39,7 @@ class Connection extends Doctrine\DBAL\Connection
 			return parent::executeQuery($query, $params, $types, $qcp);
 
 		} catch (\Exception $e) {
-			throw $this->resolveException($e);
+			throw $this->resolveException($e, $query, $params);
 		}
 	}
 
@@ -58,7 +58,7 @@ class Connection extends Doctrine\DBAL\Connection
 			return parent::executeUpdate($query, $params, $types);
 
 		} catch (\Exception $e) {
-			throw $this->resolveException($e);
+			throw $this->resolveException($e, $query, $params);
 		}
 	}
 
@@ -75,9 +75,8 @@ class Connection extends Doctrine\DBAL\Connection
 			return parent::exec($statement);
 
 		} catch (\Exception $e) {
-			throw $this->resolveException($e);
+			throw $this->resolveException($e, $statement);
 		}
-
 	}
 
 
@@ -93,7 +92,7 @@ class Connection extends Doctrine\DBAL\Connection
 			return call_user_func_array('parent::query', $args);
 
 		} catch (\Exception $e) {
-			throw $this->resolveException($e);
+			throw $this->resolveException($e, func_get_arg(0));
 		}
 	}
 
@@ -112,6 +111,7 @@ class Connection extends Doctrine\DBAL\Connection
 
 		try {
 			$stmt = new PDOStatement($statement, $this);
+
 		} catch (\Exception $ex) {
 			throw $this->resolveException(Doctrine\DBAL\DBALException::driverExceptionDuringQuery($ex, $statement), $statement);
 		}
@@ -175,20 +175,25 @@ class Connection extends Doctrine\DBAL\Connection
 			$info = $e->errorInfo;
 
 		} else {
-			return new DBALException($e, $query, $params);
+			return new DBALException($e, $query, $params, $this);
 		}
 
 		if ($this->getDriver() instanceof Doctrine\DBAL\Driver\PDOMySql\Driver) {
 			if ($info[0] == 23000 && $info[1] == 1062) { // unique fail
 				$columns = array();
-				if (preg_match('~Duplicate entry .*? for key \'([^\']+)\'~', $info[2], $m)
-					&& ($table = self::resolveExceptionTable($e))
-					&& ($indexes = $this->getSchemaManager()->listTableIndexes($table))
-					&& isset($indexes[$m[1]])) {
-					$columns[$m[1]] = $indexes[$m[1]]->getColumns();
-				}
 
-				return new DuplicateEntryException($e, $columns, $query, $params);
+				try {
+					if (preg_match('~Duplicate entry .*? for key \'([^\']+)\'~', $info[2], $m)
+						&& ($table = self::resolveExceptionTable($e))
+						&& ($indexes = $this->getSchemaManager()->listTableIndexes($table))
+						&& isset($indexes[$m[1]])
+					) {
+						$columns[$m[1]] = $indexes[$m[1]]->getColumns();
+					}
+
+				} catch (\Exception $e) { }
+
+				return new DuplicateEntryException($e, $columns, $query, $params, $this);
 
 			} elseif ($info[0] == 23000 && $info[1] == 1048) { // notnull fail
 				$column = NULL;
@@ -196,11 +201,11 @@ class Connection extends Doctrine\DBAL\Connection
 					$column = $m[1];
 				}
 
-				return new EmptyValueException($e, $column, $query, $params);
+				return new EmptyValueException($e, $column, $query, $params, $this);
 			}
 		}
 
-		return new DBALException($e, $query, $params);
+		return new DBALException($e, $query, $params, $this);
 	}
 
 
