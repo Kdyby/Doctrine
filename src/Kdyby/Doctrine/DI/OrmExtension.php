@@ -75,7 +75,11 @@ class OrmExtension extends Nette\Config\CompilerExtension
 	 * @var array
 	 */
 	public $metadataDriverClasses = array(
-		'annotations' => 'Kdyby\Doctrine\Mapping\Driver\AnnotationDriver',
+		'annotations' => 'Doctrine\ORM\Mapping\Driver\AnnotationDriver',
+		'static' => 'Doctrine\Common\Persistence\Mapping\Driver\StaticPHPDriver',
+		'yml' => 'Doctrine\ORM\Mapping\Driver\YamlDriver',
+		'xml' => 'Doctrine\ORM\Mapping\Driver\XmlDriver',
+		'db' => 'Doctrine\ORM\Mapping\Driver\DatabaseDriver',
 	);
 
 	/**
@@ -113,6 +117,14 @@ class OrmExtension extends Nette\Config\CompilerExtension
 			->setFactory('@Kdyby\Doctrine\EntityManager::getDao', array('%entityName%'))
 			->setParameters(array('entityName'))
 			->setInject(FALSE);
+
+		$builder->addDefinition($this->prefix('schemaValidator'))
+			->setClass('Doctrine\ORM\Tools\SchemaValidator')
+			->setInject(FALSE);
+
+		$builder->addDefinition($this->prefix('schemaTool'))
+			->setClass('Doctrine\ORM\Tools\SchemaTool')
+			->setInject(FALSE);
 	}
 
 
@@ -133,7 +145,7 @@ class OrmExtension extends Nette\Config\CompilerExtension
 		/** @var Nette\DI\ServiceDefinition $metadataDriver */
 
 		$metadataDriver->addSetup('setDefaultDriver', array(
-			new Nette\DI\Statement('Doctrine\ORM\Mapping\Driver\AnnotationDriver', array(array('%appDir%')))
+			new Nette\DI\Statement($this->metadataDriverClasses['annotations'], array(array('%appDir%')))
 		));
 
 		Validators::assertField($config, 'metadata', 'array');
@@ -182,16 +194,6 @@ class OrmExtension extends Nette\Config\CompilerExtension
 				$connectionService = $this->processConnection($name, $defaults),
 				$this->prefix('@' . $name . '.ormConfiguration')
 			))
-			->setAutowired($isDefault)
-			->setInject(FALSE);
-
-		$builder->addDefinition($this->prefix($name . '.schemaValidator'))
-			->setClass('Doctrine\ORM\Tools\SchemaValidator', array($this->prefix('@' . $name . '.entityManager')))
-			->setAutowired($isDefault)
-			->setInject(FALSE);
-
-		$builder->addDefinition($this->prefix($name . '.schemaTool'))
-			->setClass('Doctrine\ORM\Tools\SchemaTool', array($this->prefix('@' . $name . '.entityManager')))
 			->setAutowired($isDefault)
 			->setInject(FALSE);
 	}
