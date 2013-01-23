@@ -28,11 +28,11 @@ class EntityManager extends Doctrine\ORM\EntityManager
 {
 
 	/**
-	 * @return \Kdyby\Doctrine\Query
+	 * @return \Kdyby\Doctrine\QueryBuilder
 	 */
 	public function createQueryBuilder()
 	{
-		return new Query($this);
+		return new QueryBuilder($this);
 	}
 
 

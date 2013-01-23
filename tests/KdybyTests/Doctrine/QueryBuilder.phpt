@@ -14,7 +14,7 @@ use Doctrine;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Query\Parameter;
 use Kdyby;
-use Kdyby\Doctrine\Query;
+use Kdyby\Doctrine\QueryBuilder;
 use KdybyTests;
 use Nette;
 use Tester;
@@ -462,6 +462,18 @@ class QueryBuilderTest extends KdybyTests\ORMTestCase
 			->where('u.id = :uid2');
 
 		Assert::match('SELECT u FROM test:CmsUser u WHERE u.id = :uid AND u.id = :uid2', $qb->getDQL());
+
+		$qb = $this->em->createQueryBuilder();
+		$qb->select('u')
+			->from('test:CmsUser', 'u')
+			->where('u.id = ?', 23)
+			->where('u.id', 87);
+
+		Assert::match('SELECT u FROM test:CmsUser u WHERE u.id = :5f727_0_0 AND u.id = :5f727_1_0', $qb->getDQL());
+		Assert::equal(array(
+			':5f727_0_0' => new Parameter('5f727_0_0', 23),
+			':5f727_1_0' => new Parameter('5f727_1_0', 87),
+		), $qb->getParameters()->toArray());
 	}
 
 
@@ -651,7 +663,7 @@ class QueryBuilderTest extends KdybyTests\ORMTestCase
 	 */
 	public function testParametersAreCloned()
 	{
-		$originalQb = new Query($this->em);
+		$originalQb = new QueryBuilder($this->em);
 		$originalQb->setParameter('parameter1', 'value1');
 
 		$copy = clone $originalQb;

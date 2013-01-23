@@ -24,7 +24,7 @@ interface Queryable
 	 * Create a new QueryBuilder instance that is prepopulated for this entity name
 	 *
 	 * @param string|NULL $alias
-	 * @return \Kdyby\Doctrine\Query
+	 * @return \Kdyby\Doctrine\QueryBuilder
 	 */
 	function select($alias = NULL);
 
@@ -33,7 +33,7 @@ interface Queryable
 	 * Create a new QueryBuilder instance that is prepopulated for this entity name
 	 *
 	 * @param string|NULL $alias
-	 * @return \Kdyby\Doctrine\Query
+	 * @return \Kdyby\Doctrine\QueryBuilder
 	 */
 	function createQueryBuilder($alias = NULL);
 

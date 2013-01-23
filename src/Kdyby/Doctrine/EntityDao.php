@@ -196,7 +196,7 @@ class EntityDao extends Doctrine\ORM\EntityRepository implements Persistence\Obj
 	 * Create a new QueryBuilder instance that is prepopulated for this entity name
 	 *
 	 * @param string|NULL $alias
-	 * @return \Kdyby\Doctrine\Query
+	 * @return \Kdyby\Doctrine\QueryBuilder
 	 */
 	public function select($alias = NULL)
 	{
@@ -212,17 +212,17 @@ class EntityDao extends Doctrine\ORM\EntityRepository implements Persistence\Obj
 
 	/**
 	 * @param string $alias
-	 * @return \Kdyby\Doctrine\Query $qb
+	 * @return \Kdyby\Doctrine\QueryBuilder $qb
 	 */
 	public function createQueryBuilder($alias = NULL)
 	{
-		$qb = new Query($this->getEntityManager());
+		$qb = new QueryBuilder($this->getEntityManager());
 
 		if ($alias !== NULL) {
 			$qb->select($alias)->from($this->getEntityName(), $alias);
 		}
 
-		return new Query($this->getEntityManager());
+		return new QueryBuilder($this->getEntityManager());
 	}
 
 

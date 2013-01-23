@@ -121,7 +121,7 @@ class Condition extends Nette\Object
 		} elseif ($params === NULL) { // where('column', NULL)
 			$cond .= ' IS NULL';
 
-		} elseif ($params instanceof Kdyby\Doctrine\Query) { // where('column', $qb))
+		} elseif ($params instanceof Kdyby\Doctrine\QueryBuilder) { // where('column', $qb))
 			throw new Nette\NotImplementedException;
 
 		} elseif ($params instanceof Doctrine\ORM\Query) { // where('column', $query))

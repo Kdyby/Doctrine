@@ -11,7 +11,7 @@
 namespace Kdyby\Doctrine\Dql;
 
 use Doctrine\ORM\Query\Expr;
-use Kdyby\Doctrine\Query;
+use Kdyby\Doctrine\QueryBuilder;
 use Nette;
 
 
@@ -24,12 +24,12 @@ use Nette;
  * @method \Kdyby\Doctrine\Dql\Join with($predicates)
  * @method \Kdyby\Doctrine\Dql\Join on($predicates)
  *
- * @method \Kdyby\Doctrine\Query join($join, $alias, $indexBy = NULL)
- * @method \Kdyby\Doctrine\Query leftJoin($join, $alias, $indexBy = NULL)
- * @method \Kdyby\Doctrine\Query where($predicates)
- * @method \Kdyby\Doctrine\Query group($columns, $having = NULL)
- * @method \Kdyby\Doctrine\Query order($by)
- * @method \Kdyby\Doctrine\Query limit($limit, $offset = NULL)
+ * @method \Kdyby\Doctrine\QueryBuilder join($join, $alias, $indexBy = NULL)
+ * @method \Kdyby\Doctrine\QueryBuilder leftJoin($join, $alias, $indexBy = NULL)
+ * @method \Kdyby\Doctrine\QueryBuilder where($predicates)
+ * @method \Kdyby\Doctrine\QueryBuilder group($columns, $having = NULL)
+ * @method \Kdyby\Doctrine\QueryBuilder order($by)
+ * @method \Kdyby\Doctrine\QueryBuilder limit($limit, $offset = NULL)
  * @method \Doctrine\ORM\Query createQuery()
  * @method string getDQL()
  */
@@ -37,7 +37,7 @@ class Join extends Expr\Join
 {
 
 	/**
-	 * @var Query
+	 * @var QueryBuilder
 	 */
 	private $query;
 
@@ -49,10 +49,10 @@ class Join extends Expr\Join
 
 
 	/**
-	 * @param Query $query
+	 * @param QueryBuilder $query
 	 * @param DqlBuilder $builder
 	 */
-	public function injectQuery(Query $query, DqlBuilder $builder)
+	public function injectQuery(QueryBuilder $query, DqlBuilder $builder)
 	{
 		$this->query = $query;
 		$this->builder = $builder;
@@ -63,7 +63,7 @@ class Join extends Expr\Join
 	/**
 	 * @param string $name
 	 * @param array $arguments
-	 * @return Join|Query
+	 * @return Join|QueryBuilder
 	 */
 	public function __call($name, $arguments)
 	{

@@ -25,7 +25,7 @@ use Nette\Utils\Strings;
  *
  * @author Filip Procházka <filip@prochazka.su>
  */
-class Query extends Nette\Object implements \IteratorAggregate
+class QueryBuilder extends Nette\Object implements \IteratorAggregate
 {
 
 	/* The query types. */
@@ -112,7 +112,7 @@ class Query extends Nette\Object implements \IteratorAggregate
 
 	/**
 	 * @param string $select
-	 * @return Query
+	 * @return QueryBuilder
 	 */
 	public function select($select)
 	{
@@ -129,7 +129,7 @@ class Query extends Nette\Object implements \IteratorAggregate
 	 * @param string $entity
 	 * @param string $alias
 	 * @param string $indexBy
-	 * @return Query
+	 * @return QueryBuilder
 	 */
 	public function from($entity, $alias, $indexBy = NULL)
 	{
@@ -144,7 +144,7 @@ class Query extends Nette\Object implements \IteratorAggregate
 	/**
 	 * @param string $entity
 	 * @param string $alias
-	 * @return Query
+	 * @return QueryBuilder
 	 */
 	public function delete($entity, $alias)
 	{
@@ -159,7 +159,7 @@ class Query extends Nette\Object implements \IteratorAggregate
 	 * @param string $entity
 	 * @param string $alias
 	 * @param array $values
-	 * @return Query
+	 * @return QueryBuilder
 	 */
 	public function update($entity, $alias, array $values)
 	{
@@ -208,7 +208,7 @@ class Query extends Nette\Object implements \IteratorAggregate
 
 	/**
 	 * @param mixed $cond The restriction predicates.
-	 * @return Query This QueryBuilder instance.
+	 * @return QueryBuilder This QueryBuilder instance.
 	 */
 	public function where($cond)
 	{
@@ -222,7 +222,7 @@ class Query extends Nette\Object implements \IteratorAggregate
 
 	/**
 	 * @param mixed $cond The restriction predicates.
-	 * @return Query This QueryBuilder instance.
+	 * @return QueryBuilder This QueryBuilder instance.
 	 */
 	public function orWhere($cond)
 	{
@@ -237,7 +237,7 @@ class Query extends Nette\Object implements \IteratorAggregate
 	/**
 	 * @param $columns
 	 * @internal param string $by
-	 * @return Query
+	 * @return QueryBuilder
 	 */
 	public function group($columns)
 	{
@@ -251,7 +251,7 @@ class Query extends Nette\Object implements \IteratorAggregate
 
 	/**
 	 * @param mixed $cond The restriction predicates.
-	 * @return Query This QueryBuilder instance.
+	 * @return QueryBuilder This QueryBuilder instance.
 	 */
 	public function having($cond)
 	{
@@ -265,7 +265,7 @@ class Query extends Nette\Object implements \IteratorAggregate
 
 	/**
 	 * @param mixed $cond The restriction predicates.
-	 * @return Query This QueryBuilder instance.
+	 * @return QueryBuilder This QueryBuilder instance.
 	 */
 	public function orHaving($cond)
 	{
@@ -279,7 +279,7 @@ class Query extends Nette\Object implements \IteratorAggregate
 
 	/**
 	 * @param string $by
-	 * @return Query
+	 * @return QueryBuilder
 	 */
 	public function order($by)
 	{
@@ -294,7 +294,7 @@ class Query extends Nette\Object implements \IteratorAggregate
 	/**
 	 * @param int $limit
 	 * @param int $offset
-	 * @return Query
+	 * @return QueryBuilder
 	 */
 	public function limit($limit, $offset = NULL)
 	{
@@ -309,7 +309,7 @@ class Query extends Nette\Object implements \IteratorAggregate
 	/**
 	 * @param string $param
 	 * @param mixed $value
-	 * @return Query
+	 * @return QueryBuilder
 	 */
 	public function setParameter($param, $value)
 	{
@@ -333,7 +333,7 @@ class Query extends Nette\Object implements \IteratorAggregate
 
 	/**
 	 * @param array|ArrayCollection|Parameter[] $params
-	 * @return Query
+	 * @return QueryBuilder
 	 */
 	public function setParameters($params)
 	{
@@ -348,7 +348,7 @@ class Query extends Nette\Object implements \IteratorAggregate
 
 
 	/**
-	 * @return array
+	 * @return ArrayCollection
 	 */
 	public function getParameters()
 	{
