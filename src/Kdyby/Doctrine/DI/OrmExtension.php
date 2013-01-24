@@ -52,7 +52,7 @@ class OrmExtension extends Nette\Config\CompilerExtension
 	 */
 	public $connectionDefaults = array(
 		'dbname' => NULL,
-		'host' => NULL,
+		'host' => '127.0.0.1',
 		'port' => NULL,
 		'user' => NULL,
 		'password' => NULL,
