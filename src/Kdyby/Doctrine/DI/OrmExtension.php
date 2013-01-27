@@ -58,7 +58,7 @@ class OrmExtension extends Nette\Config\CompilerExtension
 		'port' => NULL,
 		'user' => NULL,
 		'password' => NULL,
-		'charset' => 'utf-8',
+		'charset' => 'UTF8',
 		'driver' => 'pdo_mysql',
 		'driverClass' => NULL,
 		'options' => NULL,
