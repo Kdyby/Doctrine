@@ -352,6 +352,7 @@ class OrmExtension extends Nette\Config\CompilerExtension
 
 		// just look it up, mother fucker!
 		$init->addBody('Doctrine\Common\Annotations\AnnotationRegistry::registerLoader("class_exists");');
+		$init->addBody('Kdyby\Doctrine\Diagnostics\Panel::registerBluescreen();');
 	}
 
 

@@ -238,30 +238,9 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel, Doctrin
 	 * @param \Exception $e
 	 * @return void|array
 	 */
-	public function renderException($e)
+	public function renderQueryException($e)
 	{
-		if ($e instanceof AnnotationException) {
-			if ($dump = $this->highlightAnnotationLine($e)) {
-				return array(
-					'tab' => 'Annotation',
-					'panel' => $dump,
-				);
-			}
-
-		} elseif ($e instanceof Doctrine\ORM\Mapping\MappingException) {
-			if ($invalidEntity = Strings::match($e->getMessage(), '~^Class ([^\\s]*?) is not .*? valid~i')) {
-				$refl = Nette\Reflection\ClassType::from($invalidEntity[1]);
-				$file = $refl->getFileName();
-				$errorLine = $refl->getStartLine();
-
-				return array(
-					'tab' => 'Invalid entity',
-					'panel' => '<p><b>File:</b> ' . Nette\Diagnostics\Helpers::editorLink($file, $errorLine) . '</p>' .
-						'<pre>' . Nette\Diagnostics\BlueScreen::highlightFile($file, $errorLine) . '</pre>',
-				);
-			}
-
-		} elseif ($e instanceof \PDOException && count($this->queries)) {
+		if ($e instanceof \PDOException && count($this->queries)) {
 			if ($this->connection !== NULL) {
 				if (!$e instanceof Kdyby\Doctrine\DBALException || $e->connection !== $this->connection) {
 					return NULL;
@@ -285,11 +264,42 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel, Doctrin
 				'panel' => $this->dumpQuery($sql, $params, $source),
 			);
 
-		} elseif ($e instanceof QueryException && $e->getQuery() !== NULL) {
+		} elseif ($e instanceof Kdyby\Doctrine\QueryException && $e->query !== NULL) {
 			return array(
 				'tab' => 'DQL',
-				'panel' => $this->dumpQuery($e->getQuery()->getDQL(), $e->getQuery()->getParameters()),
+				'panel' => $this->dumpQuery($e->query->getDQL(), $e->query->getParameters()->toArray()),
 			);
+		}
+	}
+
+
+
+	/**
+	 * @param \Exception $e
+	 * @return array
+	 */
+	public static function renderException($e)
+	{
+		if ($e instanceof AnnotationException) {
+			if ($dump = self::highlightAnnotationLine($e)) {
+				return array(
+					'tab' => 'Annotation',
+					'panel' => $dump,
+				);
+			}
+
+		} elseif ($e instanceof Doctrine\ORM\Mapping\MappingException) {
+			if ($invalidEntity = Strings::match($e->getMessage(), '~^Class ([^\\s]*?) is not .*? valid~i')) {
+				$refl = Nette\Reflection\ClassType::from($invalidEntity[1]);
+				$file = $refl->getFileName();
+				$errorLine = $refl->getStartLine();
+
+				return array(
+					'tab' => 'Invalid entity',
+					'panel' => '<p><b>File:</b> ' . Nette\Diagnostics\Helpers::editorLink($file, $errorLine) . '</p>' .
+						'<pre>' . Nette\Diagnostics\BlueScreen::highlightFile($file, $errorLine) . '</pre>',
+				);
+			}
 		}
 	}
 
@@ -398,7 +408,7 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel, Doctrin
 	 *
 	 * @return string
 	 */
-	protected function highlightAnnotationLine(AnnotationException $e)
+	public static function highlightAnnotationLine(AnnotationException $e)
 	{
 		foreach ($e->getTrace() as $step) {
 			if (@$step['class'] . @$step['type'] . @$step['function'] !== 'Doctrine\Common\Annotations\DocParser->parse') {
@@ -418,13 +428,14 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel, Doctrin
 		$line = NULL;
 
 		if ($context['type'] === 'property') {
-			$line = Kdyby\Doctrine\Helpers::getPropertyLine($refl->getProperty($context['property']));
+			$refl = $refl->getProperty($context['property']);
+			$line = Kdyby\Doctrine\Helpers::getPropertyLine($refl);
 
 		} elseif ($context['type'] === 'method') {
 			$refl = $refl->getProperty($context['method']);
 		}
 
-		if (($errorLine = $this->calculateErrorLine($refl, $e, $line)) === NULL) {
+		if (($errorLine = self::calculateErrorLine($refl, $e, $line)) === NULL) {
 			return FALSE;
 		}
 
@@ -442,18 +453,18 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel, Doctrin
 	 *
 	 * @return int|string
 	 */
-	protected function calculateErrorLine(\Reflector $refl, \Exception $e, $startLine = NULL)
+	public static function calculateErrorLine(\Reflector $refl, \Exception $e, $startLine = NULL)
 	{
 		if ($startLine === NULL) {
 			$startLine = $refl->getStartLine();
 		}
 
 		if ($pos = Strings::match($e->getMessage(), '~position\s*(\d+)~')) {
-			$targetLine = $this->calculateAffectedLine($refl, $pos[1]);
+			$targetLine = self::calculateAffectedLine($refl, $pos[1]);
 
 		} elseif ($notImported = Strings::match($e->getMessage(), '~^\[Semantical Error\] The annotation "([^"]*?)"~i')) {
-			$parts = explode($notImported[1], $this->cleanedPhpDoc($refl), 2);
-			$targetLine = $this->calculateAffectedLine($refl, strlen($parts[0]));
+			$parts = explode($notImported[1], self::cleanedPhpDoc($refl), 2);
+			$targetLine = self::calculateAffectedLine($refl, strlen($parts[0]));
 
 		} else {
 			return NULL;
@@ -472,10 +483,10 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel, Doctrin
 	 *
 	 * @return int
 	 */
-	protected function calculateAffectedLine(\Reflector $refl, $symbolPos)
+	protected static function calculateAffectedLine(\Reflector $refl, $symbolPos)
 	{
 		$doc = $refl->getDocComment();
-		$cleanedDoc = $this->cleanedPhpDoc($refl, $atPos);
+		$cleanedDoc = self::cleanedPhpDoc($refl, $atPos);
 		$beforeCleanLines = count(Strings::split(substr($doc, 0, $atPos), '~[\n\r]+~'));
 		$parsedDoc = substr($cleanedDoc, 0, $symbolPos + 1);
 		$parsedLines = count(Strings::split($parsedDoc, '~[\n\r]+~'));
@@ -493,9 +504,7 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel, Doctrin
 	 */
 	private static function cleanedPhpDoc(\Reflector $refl, &$atPos = NULL)
 	{
-		$doc = $refl->getDocComment();
-
-		return trim(substr($doc, $atPos = strpos($doc, '@') - 1), '* /');
+		return trim(substr($doc = $refl->getDocComment(), $atPos = strpos($doc, '@') - 1), '* /');
 	}
 
 
@@ -515,7 +524,7 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel, Doctrin
 
 		$panel->setConnection($connection);
 		$panel->registerBarPanel(Debugger::$bar);
-		$panel->registerBluescreen(Debugger::$blueScreen);
+		Debugger::$blueScreen->addPanel(callback($panel, 'renderQueryException'));
 
 		return $panel;
 	}
@@ -535,13 +544,11 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel, Doctrin
 
 
 	/**
-	 * Registers panel in bluescreen
-	 *
-	 * @param \Nette\Diagnostics\BlueScreen $blueScreen
+	 * Registers generic exception renderer
 	 */
-	public function registerBluescreen(BlueScreen $blueScreen)
+	public static function registerBluescreen()
 	{
-		$blueScreen->addPanel(callback($this, 'renderException'));
+		Debugger::$blueScreen->addPanel(callback(get_called_class() . '::renderException'));
 	}
 
 }
