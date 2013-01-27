@@ -15,6 +15,7 @@ use Kdyby;
 use Nette;
 use Nette\Reflection\ClassType;
 use Nette\Caching\Cache AS NCache;
+use Nette\Utils\Strings;
 
 
 
@@ -163,6 +164,14 @@ class Cache extends Doctrine\Common\Cache\CacheProvider
 			$files[] = ClassType::from($data->name)->getFileName();
 			foreach ($data->parentClasses as $class) {
 				$files[] = ClassType::from($class)->getFileName();
+			}
+		}
+
+		if (!empty($data)){
+			if ((is_array($data) && reset($data) instanceof Doctrine\ORM\Mapping\Annotation) || $data instanceof Doctrine\ORM\Mapping\Annotation) {
+				if (($m = Strings::match($id, '~^\[(?P<class>[^@$]+)(?:\$(?P<prop>[^@$]+))?\@\[Annot\]~i')) && class_exists($m['class'])) {
+					$files[] = ClassType::from($m['class'])->getFileName();
+				}
 			}
 		}
 
