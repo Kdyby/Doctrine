@@ -69,7 +69,13 @@ class OrmExtension extends Nette\Config\CompilerExtension
 		'platformService' => NULL,
 		'resultCache' => 'default',
 		'types' => array(
-			'enum' => 'Kdyby\Doctrine\Types\Enum'
+			'enum' => 'Kdyby\Doctrine\Types\Enum',
+			'point' => 'Kdyby\Doctrine\Types\Point',
+			'lineString' => 'Kdyby\Doctrine\Types\LineString',
+			'multiLineString' => 'Kdyby\Doctrine\Types\MultiLineString',
+			'polygon' => 'Kdyby\Doctrine\Types\Polygon',
+			'multiPolygon' => 'Kdyby\Doctrine\Types\MultiPolygon',
+			'geometryCollection' => 'Kdyby\Doctrine\Types\GeometryCollection',
 		),
 	);
 
