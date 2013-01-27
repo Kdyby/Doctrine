@@ -106,8 +106,10 @@ class OrmExtension extends Nette\Config\CompilerExtension
 
 	public function loadConfiguration()
 	{
-		$config = $this->getConfig();
+		$config = $this->getConfig(array('debug' => TRUE));
 		$builder = $this->getContainerBuilder();
+
+		$builder->parameters['doctrine.debug'] = !empty($config['debug']);
 
 		$this->loadConfig('annotation');
 		$this->loadConfig('console');
@@ -159,7 +161,7 @@ class OrmExtension extends Nette\Config\CompilerExtension
 
 		Validators::assertField($config, 'metadata', 'array');
 		foreach ($config['metadata'] as $namespace => $driver) {
-			$metadataDriver->addSetup('addDriver', array($this->processMetadataDriver($driver, $name . '.driver'), $namespace));
+			$this->processMetadataDriver($metadataDriver, $namespace, $driver, $name);
 		}
 
 		Validators::assertField($config, 'namespaceAlias', 'array');
@@ -279,14 +281,14 @@ class OrmExtension extends Nette\Config\CompilerExtension
 
 
 	/**
-	 * @param string|array|\stdClass $driver
+	 * @param \Nette\DI\ServiceDefinition $metadataDriver
+	 * @param string $namespace
+	 * @param string|object $driver
 	 * @param string $prefix
 	 * @return string
 	 */
-	protected function processMetadataDriver($driver, $prefix)
+	protected function processMetadataDriver(Nette\DI\ServiceDefinition $metadataDriver, $namespace, $driver, $prefix)
 	{
-		$builder = $this->getContainerBuilder();
-
 		$impl = $driver instanceof \stdClass ? $driver->value : (string) $driver;
 		list($driver) = $this->filterArgs($driver);
 		/** @var Nette\DI\Statement $driver */
@@ -299,12 +301,15 @@ class OrmExtension extends Nette\Config\CompilerExtension
 			$driver->arguments = array(Nette\Utils\Arrays::flatten($driver->arguments));
 		}
 
-		$builder->addDefinition($serviceName = $this->prefix($prefix . '.driver.' . $impl . 'Impl'))
+		$serviceName = $this->prefix($prefix . '.driver.' . str_replace('\\', '_', $namespace) . '.' . $impl . 'Impl');
+
+		$this->getContainerBuilder()->addDefinition($serviceName)
 			->setClass($driver->entity)
 			->setFactory($driver->entity, $driver->arguments)
 			->setAutowired(FALSE)
 			->setInject(FALSE);
 
+		$metadataDriver->addSetup('addDriver', array('@' . $serviceName, $namespace));
 		return '@' . $serviceName;
 	}
 
@@ -331,11 +336,15 @@ class OrmExtension extends Nette\Config\CompilerExtension
 			$cache->arguments[1] = 'Doctrine.' . $suffix;
 		}
 
-		$builder->addDefinition($serviceName = $this->prefix('cache.' . $suffix))
+		$def = $builder->addDefinition($serviceName = $this->prefix('cache.' . $suffix))
 			->setClass($cache->entity)
 			->setFactory($cache->entity, $cache->arguments)
 			->setAutowired(FALSE)
 			->setInject(FALSE);
+
+		if ($impl === 'default' && $builder->parameters['doctrine.debug']) {
+			$def->addSetup('setDebugging', array(TRUE));
+		}
 
 		return '@'  . $serviceName;
 	}

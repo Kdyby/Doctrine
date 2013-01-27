@@ -37,6 +37,11 @@ class Cache extends Doctrine\Common\Cache\CacheProvider
 	/** @var string The namespace to prefix all cache ids with */
 	private $namespace;
 
+	/**
+	 * @var bool
+	 */
+	private $debug = FALSE;
+
 
 
 	/**
@@ -46,6 +51,16 @@ class Cache extends Doctrine\Common\Cache\CacheProvider
 	public function __construct(Nette\Caching\IStorage $storage, $namespace = self::CACHE_NS)
 	{
 		$this->cache = new NCache($storage, $namespace);
+	}
+
+
+
+	/**
+	 * @param bool $debug
+	 */
+	public function setDebugging($debug = TRUE)
+	{
+		$this->debug = $debug;
 	}
 
 
@@ -159,6 +174,10 @@ class Cache extends Doctrine\Common\Cache\CacheProvider
 	 */
 	protected function doSave($id, $data, $lifeTime = 0)
 	{
+		if ($this->debug !== TRUE) {
+			return $this->doSaveDependingOnFiles($id, $data, array(), $lifeTime);
+		}
+
 		$files = array();
 		if ($data instanceof Doctrine\ORM\Mapping\ClassMetadata) {
 			$files[] = ClassType::from($data->name)->getFileName();
