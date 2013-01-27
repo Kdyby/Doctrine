@@ -61,10 +61,10 @@ services:
 
 	entityManagerHelper:
 		class: Doctrine\ORM\Tools\Console\Helper\EntityManagerHelper()
-		tags: [kdyby.console.helper]
+		tags: {kdyby.console.helper: em}
 		inject: no
 
 	connectionHelper:
 		class: Doctrine\DBAL\Tools\Console\Helper\ConnectionHelper()
-		tags: [kdyby.console.helper]
+		tags: {kdyby.console.helper: db}
 		inject: no
