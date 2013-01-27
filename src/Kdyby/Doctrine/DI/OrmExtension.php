@@ -161,6 +161,9 @@ class OrmExtension extends Nette\Config\CompilerExtension
 
 		Validators::assertField($config, 'metadata', 'array');
 		foreach ($config['metadata'] as $namespace => $driver) {
+			if (!Nette\PhpGenerator\Helpers::isIdentifier($namespace)) {
+				throw new Nette\Utils\AssertionException("The metadata namespace expects to be identifier, $namespace given.");
+			}
 			$this->processMetadataDriver($metadataDriver, $namespace, $driver, $name);
 		}
 
