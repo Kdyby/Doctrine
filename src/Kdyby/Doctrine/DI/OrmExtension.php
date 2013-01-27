@@ -24,6 +24,8 @@ use Nette\Utils\Validators;
 class OrmExtension extends Nette\Config\CompilerExtension
 {
 
+	const ANNOTATION_DRIVER = 'annotations';
+
 	/**
 	 * @var array
 	 */
@@ -75,7 +77,7 @@ class OrmExtension extends Nette\Config\CompilerExtension
 	 * @var array
 	 */
 	public $metadataDriverClasses = array(
-		'annotations' => 'Kdyby\Doctrine\Mapping\AnnotationDriver',
+		self::ANNOTATION_DRIVER => 'Kdyby\Doctrine\Mapping\AnnotationDriver',
 		'static' => 'Doctrine\Common\Persistence\Mapping\Driver\StaticPHPDriver',
 		'yml' => 'Doctrine\ORM\Mapping\Driver\YamlDriver',
 		'xml' => 'Doctrine\ORM\Mapping\Driver\XmlDriver',
@@ -146,7 +148,7 @@ class OrmExtension extends Nette\Config\CompilerExtension
 		/** @var Nette\DI\ServiceDefinition $metadataDriver */
 
 		$metadataDriver->addSetup('setDefaultDriver', array(
-			new Nette\DI\Statement($this->metadataDriverClasses['annotations'], array(array('%appDir%')))
+			new Nette\DI\Statement($this->metadataDriverClasses[self::ANNOTATION_DRIVER], array(array('%appDir%')))
 		));
 
 		Validators::assertField($config, 'metadata', 'array');
@@ -285,6 +287,10 @@ class OrmExtension extends Nette\Config\CompilerExtension
 
 		if (isset($this->metadataDriverClasses[$impl])) {
 			$driver->entity = $this->metadataDriverClasses[$impl];
+		}
+
+		if ($impl === self::ANNOTATION_DRIVER) {
+			$driver->arguments = array(Nette\Utils\Arrays::flatten($driver->arguments));
 		}
 
 		$builder->addDefinition($serviceName = $this->prefix($prefix . '.driver.' . $impl . 'Impl'))
