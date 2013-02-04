@@ -1,0 +1,53 @@
+Toto rozšíření doctrine pro nette definuje novou sekci **doctrine** v konfiguračním souboru neon //(o tuto část se stará Kdyby\Doctrine\DI\OrmExtension)//. Rozšíření připojíme pomocí definice v sekci **extensions**:
+
+/---code neon
+	extensions:
+		doctrine: Kdyby\Doctrine\DI\OrmExtension
+\---
+
+Cesty k entitám a jejich namespace uvádíme v konfiguračním souboru v sekci **doctrine** v části **metadata**:
+
+/---code neon
+	doctrine:
+		host: 127.0.0.1
+		user: root
+		password: pass
+		dbname: sandbox
+		metadata:
+			Foo: annotations("%appDir%/libs")
+			Bar: annotations("%appDir%/libs")
+\---
+
+Pomocí tohoto příkladu připojíme třídy označené korektní anotací entity v namespace //Foo// a namespace //Bar// ze složky //%appDir%/libs//.
+
+Příklad entity může být následující:
+
+/---code php
+<?php
+namespace Foo;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * @ORM\Entity
+ */
+class Entity extends Kdyby\Doctrine\Entities\NamedEntity
+{
+
+	/**
+	 * @ORM\Column(type="string")
+	 */
+	private $foo;
+
+}
+\---
+
+//Pozn.: Přidání USE je nezbytné pro mapování třídy jako entity pomocí anotací. V příkladu vidíte alias jako **ORM**, a následně všechny anotace pro doctrine je nutné označovat stejným namespacem, viz anotace **@ORM\Entity**//
+
+Rozšíření zároveň definuje několik objektů, které lze rozšířit a použít jako základ pro Vaše entity. Základem všech těchto entit je //Kdyby\Doctrine\Entities\BaseEntity// a dále jsou zde dostupné dvě nástavby //Kdyby\Doctrine\Entities\IdentifiedEntity//, která definuje identifikovatelnou entitu, čili přidává generovanou property **id**, a //Kdyby\Doctrine\Entities\NamedEntity//, která navíc přidává ještě property **name**.
+
+//Kdyby\Doctrine\Entities\BaseEntity// nám pro jednodušší práci s entity implementuje magickou metodu //__call//, díky které nemusíme definovat pro každou property settery a gettery. V příkladě výše máte definovanou property //foo//, a nyní již můžeme zavolat na entitě metody //setFoo// a //getFoo// či //isFoo//, případně můžeme i díky rozšíření //Nette/Object// rovnou definovat jako property - //$entity->foo = "bar"//. Podmínkou těchto metod je viditelnost **public** či **protected** - nelze takto přístupovat k **private** vlastnostem objektu. Na property entity je též možné volat **isset** pro kontrolu existence dané property.
+
+Zároveň je možné volat metody //add<name>//, //has<name>// a //remove<name>//, což umožňuje přistupovat ke kolekcím - přidávat entity do kolekce, kontrolovat existenci entity v kolekci a odstraňovat danou entity v kolekci. U kolekcí se očekává anglické pojmenování v množném čísle, tj. například property s názvem //$items//, a následně jsou zpřístupněny magické metody //addItem, hasItem, removeItem//. Dále například při pojmenování //$properties// bude očekávána jmenná konvence //addProperty, hasProperty, removeProperty// - objekt //BaseEntity// tedy zvládá i tento formát množných čísel s koncovkou -ies.
+
+//Kdyby\Doctrine\Entities\BaseEntity// zároveň implementuje rozhraní //Serializable//, což nám umožňuje serializaci entity.
