@@ -462,12 +462,17 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel, Doctrin
 		if ($pos = Strings::match($e->getMessage(), '~position\s*(\d+)~')) {
 			$targetLine = self::calculateAffectedLine($refl, $pos[1]);
 
-		} elseif ($notImported = Strings::match($e->getMessage(), '~^\[Semantical Error\] The annotation "([^"]*?)"~i')) {
+		} elseif ($notImported = Strings::match($e->getMessage(), '~^\[Semantical Error\]\s+The annotation "([^"]*?)"~i')) {
 			$parts = explode($notImported[1], self::cleanedPhpDoc($refl), 2);
 			$targetLine = self::calculateAffectedLine($refl, strlen($parts[0]));
 
+		} elseif ($notFound = Strings::match($e->getMessage(), '~^\[Semantical Error\]\s+Couldn\'t find\s+(.*?)\s+(.*?),\s+~')) {
+			// this is just a guess
+			$parts = explode($notFound[2], self::cleanedPhpDoc($refl), 2);
+			$targetLine = self::calculateAffectedLine($refl, strlen($parts[0]));
+
 		} else {
-			return NULL;
+			$targetLine = self::calculateAffectedLine($refl, 1);
 		}
 
 		$phpDocLines = count(Strings::split($refl->getDocComment(), '~[\n\r]+~'));
