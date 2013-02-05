@@ -122,7 +122,15 @@ class OrmExtension extends Nette\Config\CompilerExtension
 			$this->processEntityManager($name, $emConfig);
 		}
 
+		// syntax sugar for config
 		$builder->addDefinition($this->prefix('dao'))
+			->setClass('Kdyby\Doctrine\EntityDao')
+			->setFactory('@Kdyby\Doctrine\EntityManager::getDao', array('%entityName%'))
+			->setParameters(array('entityName'))
+			->setInject(FALSE);
+
+		// interface for models & presenters
+		$builder->addDefinition($this->prefix('daoFactory'))
 			->setClass('Kdyby\Doctrine\EntityDao')
 			->setFactory('@Kdyby\Doctrine\EntityManager::getDao', array('%entityName%'))
 			->setParameters(array('entityName'))
