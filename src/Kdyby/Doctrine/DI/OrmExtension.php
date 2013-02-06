@@ -135,7 +135,7 @@ class OrmExtension extends Nette\Config\CompilerExtension
 			->setFactory('@Kdyby\Doctrine\EntityManager::getDao', array('%entityName%'))
 			->setParameters(array('entityName'))
 			->setImplement('Kdyby\Doctrine\EntityDaoFactory')
-			->setInject(FALSE);
+			->setInject(FALSE)->setAutowired(TRUE);
 
 		$builder->addDefinition($this->prefix('schemaValidator'))
 			->setClass('Doctrine\ORM\Tools\SchemaValidator')
