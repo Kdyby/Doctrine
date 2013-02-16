@@ -20,7 +20,7 @@ use Nette;
 /**
  * @author Filip Procházka <filip@prochazka.su>
  */
-class LineString extends Kdyby\Doctrine\DbalType
+class LineString extends GeometryType
 {
 
 	/**

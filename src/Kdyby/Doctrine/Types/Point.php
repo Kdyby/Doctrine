@@ -20,7 +20,7 @@ use Nette;
 /**
  * @author Filip Procházka <filip@prochazka.su>
  */
-class Point extends Kdyby\Doctrine\DbalType
+class Point extends GeometryType
 {
 
 	/**

@@ -47,7 +47,17 @@ class InvalidArgumentException extends \InvalidArgumentException implements Exce
 /**
  * @author Filip Procházka <filip@prochazka.su>
  */
-class StaticClassException extends \LogicException
+class StaticClassException extends \LogicException implements Exception
+{
+
+}
+
+
+
+/**
+ * The exception that is thrown when a requested method or operation is not implemented.
+ */
+class NotImplementedException extends \LogicException implements Exception
 {
 
 }
@@ -57,7 +67,7 @@ class StaticClassException extends \LogicException
 /**
  * @author Filip Procházka <filip@prochazka.su>
  */
-class UnexpectedValueException extends \UnexpectedValueException
+class UnexpectedValueException extends \UnexpectedValueException implements Exception
 {
 
 	/**
@@ -111,7 +121,7 @@ class UnexpectedValueException extends \UnexpectedValueException
 /**
  * @author Filip Procházka <filip@prochazka.su>
  */
-class MemberAccessException extends \LogicException
+class MemberAccessException extends \LogicException implements Exception
 {
 
 	/**

@@ -20,7 +20,7 @@ use Nette;
 /**
  * @author Filip Procházka <filip@prochazka.su>
  */
-class GeometryCollection extends Kdyby\Doctrine\DbalType
+class GeometryCollection extends GeometryType
 {
 
 	/**
