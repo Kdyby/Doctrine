@@ -45,10 +45,15 @@ class RuntimeReflectionService extends Doctrine\Common\Persistence\Mapping\Runti
 	 */
 	public function getAccessibleProperty($class, $property)
 	{
-		$property = new Reflection\Property($class, $property);
-		$property->setAccessible(TRUE);
+		try {
+			$property = new Reflection\Property($class, $property);
+			$property->setAccessible(TRUE);
 
-		return $property;
+			return $property;
+
+		} catch (\ReflectionException $e) {
+			return NULL;
+		}
 	}
 
 }
