@@ -315,6 +315,11 @@ class OrmExtension extends Nette\Config\CompilerExtension
 			$driver->entity = $this->metadataDriverClasses[$impl];
 		}
 
+		if (substr($driver->entity, 0, 1) === '@') {
+			$metadataDriver->addSetup('addDriver', array($driver->entity, $namespace));
+			return $driver->entity;
+		}
+
 		if ($impl === self::ANNOTATION_DRIVER) {
 			$driver->arguments = array(Nette\Utils\Arrays::flatten($driver->arguments));
 		}
