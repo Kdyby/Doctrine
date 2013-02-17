@@ -144,6 +144,12 @@ class OrmExtension extends Nette\Config\CompilerExtension
 		$builder->addDefinition($this->prefix('schemaTool'))
 			->setClass('Doctrine\ORM\Tools\SchemaTool')
 			->setInject(FALSE);
+
+		$builder->addDefinition($this->prefix('schemaManager'))
+			->setClass('Doctrine\DBAL\Schema\AbstractSchemaManager')
+			->setFactory('@Kdyby\Doctrine\Connection::getSchemaManager')
+			->setInject(FALSE);
+
 	}
 
 
@@ -213,7 +219,7 @@ class OrmExtension extends Nette\Config\CompilerExtension
 		$builder->addDefinition($this->prefix($name . '.entityManager'))
 			->setClass('Kdyby\Doctrine\EntityManager')
 			->setFactory('Kdyby\Doctrine\EntityManager::create', array(
-				$connectionService = $this->processConnection($name, $defaults),
+				$connectionService = $this->processConnection($name, $defaults, $isDefault),
 				$this->prefix('@' . $name . '.ormConfiguration')
 			))
 			->setAutowired($isDefault)
@@ -222,7 +228,7 @@ class OrmExtension extends Nette\Config\CompilerExtension
 
 
 
-	protected function processConnection($name, array $defaults)
+	protected function processConnection($name, array $defaults, $isDefault = FALSE)
 	{
 		$builder = $this->getContainerBuilder();
 		$config = $this->resolveConfig($defaults, $this->connectionDefaults, $this->managerDefaults);
@@ -267,6 +273,7 @@ class OrmExtension extends Nette\Config\CompilerExtension
 				3 => $dbalTypes,
 				$schemaTypes
 			))
+			->setAutowired($isDefault)
 			->setInject(FALSE);
 		/** @var Nette\DI\ServiceDefinition $connection */
 
