@@ -175,7 +175,8 @@ class OrmExtension extends Nette\Config\CompilerExtension
 		));
 
 		Validators::assertField($config, 'metadata', 'array');
-		krsort($config['metadata'], SORT_NATURAL);
+		natsort($config['metadata']);
+		array_reverse($config['metadata'], TRUE);
 		foreach ($config['metadata'] as $namespace => $driver) {
 			if (!is_string($namespace) || !Nette\Utils\Strings::match($namespace, '#^' . self::PHP_NAMESPACE . '\z#')) {
 				throw new Nette\Utils\AssertionException("The metadata namespace expects to be identifier, $namespace given.");
