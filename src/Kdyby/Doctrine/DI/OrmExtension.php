@@ -25,6 +25,7 @@ class OrmExtension extends Nette\Config\CompilerExtension
 {
 
 	const ANNOTATION_DRIVER = 'annotations';
+	const PHP_NAMESPACE = '[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff\\\\]*';
 
 	/**
 	 * @var array
@@ -174,11 +175,12 @@ class OrmExtension extends Nette\Config\CompilerExtension
 		));
 
 		Validators::assertField($config, 'metadata', 'array');
+		krsort($config['metadata'], SORT_NATURAL);
 		foreach ($config['metadata'] as $namespace => $driver) {
-			if (!Nette\PhpGenerator\Helpers::isIdentifier($namespace)) {
+			if (!is_string($namespace) || !Nette\Utils\Strings::match($namespace, '#^' . self::PHP_NAMESPACE . '\z#')) {
 				throw new Nette\Utils\AssertionException("The metadata namespace expects to be identifier, $namespace given.");
 			}
-			$this->processMetadataDriver($metadataDriver, $namespace, $driver, $name);
+			$this->processMetadataDriver($metadataDriver, ltrim($namespace, '\\'), $driver, $name);
 		}
 
 		Validators::assertField($config, 'namespaceAlias', 'array');
