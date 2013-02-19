@@ -175,9 +175,7 @@ class OrmExtension extends Nette\Config\CompilerExtension
 		));
 
 		Validators::assertField($config, 'metadata', 'array');
-		natsort($config['metadata']);
-		array_reverse($config['metadata'], TRUE);
-		foreach ($config['metadata'] as $namespace => $driver) {
+		foreach (self::natSortKeys($config['metadata']) as $namespace => $driver) {
 			if (!is_string($namespace) || !Nette\Utils\Strings::match($namespace, '#^' . self::PHP_NAMESPACE . '\z#')) {
 				throw new Nette\Utils\AssertionException("The metadata namespace expects to be identifier, $namespace given.");
 			}
@@ -441,6 +439,20 @@ class OrmExtension extends Nette\Config\CompilerExtension
 		$configurator->onCompile[] = function ($config, Nette\Config\Compiler $compiler) {
 			$compiler->addExtension('doctrine', new OrmExtension());
 		};
+	}
+
+
+
+	/**
+	 * @param array $array
+	 */
+	private static function natSortKeys(array &$array)
+	{
+		$keys = array_keys($array);
+		natsort($keys);
+		$keys = array_flip(array_reverse($keys, TRUE));
+		$array = array_merge($keys, $array);
+		return $array;
 	}
 
 }
