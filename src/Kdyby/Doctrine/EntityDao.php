@@ -208,7 +208,7 @@ class EntityDao extends Doctrine\ORM\EntityRepository implements Persistence\Obj
 			$qb->select($alias)->from($this->getEntityName(), $alias);
 		}
 
-		return new QueryBuilder($this->getEntityManager());
+		return $qb;
 	}
 
 
