@@ -12,7 +12,6 @@ namespace Kdyby\Doctrine;
 
 use Doctrine;
 use Doctrine\Common\EventManager;
-use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\ORM\Configuration;
 use Doctrine\ORM\ORMException;
@@ -62,7 +61,7 @@ class EntityManager extends Doctrine\ORM\EntityManager
 	/**
 	 * Factory method to create EntityManager instances.
 	 *
-	 * @param Connection|array $conn
+	 * @param \Doctrine\DBAL\Connection|array $conn
 	 * @param \Doctrine\ORM\Configuration $config
 	 * @param \Doctrine\Common\EventManager $eventManager
 	 * @throws \Doctrine\ORM\ORMException
@@ -83,7 +82,7 @@ class EntityManager extends Doctrine\ORM\EntityManager
 				);
 				break;
 
-			case ($conn instanceof Connection):
+			case ($conn instanceof Doctrine\DBAL\Connection):
 				if ($eventManager !== NULL && $conn->getEventManager() !== $eventManager) {
 					throw ORMException::mismatchedEventManager();
 				}
