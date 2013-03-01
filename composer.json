@@ -22,12 +22,14 @@
 		"kdyby/console": "@dev"
 	},
 	"require-dev": {
-		"nette/tester": "@dev"
+		"nette/tester": "@dev",
+		"dg/dibi" : "~2.0"
 	},
 	"autoload": {
 		"psr-0": {
 			"Kdyby\\Doctrine\\": "src/",
-			"Kdyby\\Persistence\\": "src/"
+			"Kdyby\\Persistence\\": "src/",
+			"Kdyby\\DibiBridge\\": "src/"
 		},
 		"classmap": [
 			"src/Kdyby/Doctrine/exceptions.php"
