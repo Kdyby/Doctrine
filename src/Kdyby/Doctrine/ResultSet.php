@@ -114,6 +114,7 @@ class ResultSet extends Nette\Object implements \Countable, \IteratorAggregate
 	 */
 	public function applyPaginator(UIPaginator $paginator)
 	{
+		$paginator->setItemCount($this->getTotalCount());
 		$this->applyPaging($paginator->getOffset(), $paginator->getLength());
 
 		return $this;
