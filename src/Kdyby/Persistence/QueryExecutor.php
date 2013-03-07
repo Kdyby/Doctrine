@@ -10,6 +10,8 @@
 
 namespace Kdyby\Persistence;
 
+use Kdyby\Doctrine\ResultSet;
+
 
 
 /**
@@ -19,8 +21,8 @@ interface QueryExecutor
 {
 
 	/**
-	 * @param Query $queryObject
-	 * @return array
+	 * @param \Kdyby\Persistence\Query $queryObject
+	 * @return array|\Kdyby\Doctrine\ResultSet
 	 */
 	function fetch(Query $queryObject);
 

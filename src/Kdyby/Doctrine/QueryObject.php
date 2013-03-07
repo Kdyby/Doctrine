@@ -64,12 +64,15 @@ abstract class QueryObject extends Nette\Object implements Kdyby\Persistence\Que
 		$query = $this->doCreateQuery($repository);
 		if ($query instanceof Doctrine\ORM\QueryBuilder) {
 			$query = $query->getQuery();
+
+		} elseif ($query instanceof DqlSelection) {
+			$query = $query->createQuery();
 		}
 
 		if (!$query instanceof Doctrine\ORM\Query) {
 			throw new UnexpectedValueException(
 				"Method " . $this->getReflection()->getMethod('doCreateQuery') . " must return " .
-				"instanceof Doctrine\\ORM\\Query or instanceof Kdyby\\Doctrine\\QueryBuilder, " .
+				"instanceof Doctrine\\ORM\\Query or Kdyby\\Doctrine\\QueryBuilder or Kdyby\\Doctrine\\DqlSelection, " .
 				is_object($query) ? 'instance of ' . get_class($query) : gettype($query) . " given."
 			);
 		}
