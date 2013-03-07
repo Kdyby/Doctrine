@@ -133,7 +133,7 @@ class EntityDao extends Doctrine\ORM\EntityRepository implements Persistence\Obj
 			$criteria = array();
 		}
 
-		$query = $this->createQueryBuilder()
+		$query = $this->getEntityManager()->createSelection()
 			->select("e.$value", "e.$key")
 			->from($this->getEntityName(), 'e', 'e.' . $key)
 			->where($criteria)
@@ -167,7 +167,7 @@ class EntityDao extends Doctrine\ORM\EntityRepository implements Persistence\Obj
 			$criteria = array();
 		}
 
-		$query = $this->createQueryBuilder()
+		$query = $this->getEntityManager()->createSelection()
 			->select('e')
 			->from($this->getEntityName(), 'e', 'e.' . $key)
 			->where($criteria)
@@ -187,7 +187,7 @@ class EntityDao extends Doctrine\ORM\EntityRepository implements Persistence\Obj
 	 * Create a new QueryBuilder instance that is prepopulated for this entity name
 	 *
 	 * @param string|NULL $alias
-	 * @return \Kdyby\Doctrine\QueryBuilder
+	 * @return \Kdyby\Doctrine\DqlSelection
 	 */
 	public function select($alias = NULL)
 	{
@@ -195,8 +195,8 @@ class EntityDao extends Doctrine\ORM\EntityRepository implements Persistence\Obj
 			$alias = strtolower(substr($this->_entityName, strrpos($this->_entityName, '\\'), 1));
 		}
 
-		return $this->createQueryBuilder($alias)
-			->select($alias)->from($this->getEntityName(), $alias);
+		$selection = $this->getEntityManager()->createSelection();
+		return $selection->select($alias)->from($this->getEntityName(), $alias);
 	}
 
 
@@ -207,7 +207,7 @@ class EntityDao extends Doctrine\ORM\EntityRepository implements Persistence\Obj
 	 */
 	public function createQueryBuilder($alias = NULL)
 	{
-		$qb = new QueryBuilder($this->getEntityManager());
+		$qb = $this->getEntityManager()->createQueryBuilder();
 
 		if ($alias !== NULL) {
 			$qb->select($alias)->from($this->getEntityName(), $alias);
@@ -295,7 +295,7 @@ class EntityDao extends Doctrine\ORM\EntityRepository implements Persistence\Obj
 	 * @param \Kdyby\Persistence\Query|\Kdyby\Doctrine\QueryObject $queryObject
 	 *
 	 * @throws InvalidStateException
-	 * @throws \Exception
+	 * @throws QueryException
 	 * @return object
 	 */
 	public function fetchOne(Persistence\Query $queryObject)

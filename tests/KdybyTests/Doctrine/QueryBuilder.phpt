@@ -14,7 +14,7 @@ use Doctrine;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Query\Parameter;
 use Kdyby;
-use Kdyby\Doctrine\QueryBuilder;
+use Kdyby\Doctrine\DqlSelection;
 use KdybyTests;
 use Nette;
 use Tester;
@@ -681,7 +681,7 @@ class QueryBuilderTest extends KdybyTests\ORMTestCase
 	 */
 	public function testParametersAreCloned()
 	{
-		$originalQb = new QueryBuilder($this->em);
+		$originalQb = new DqlSelection($this->em);
 		$originalQb->setParameter('parameter1', 'value1');
 
 		$copy = clone $originalQb;

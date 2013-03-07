@@ -39,6 +39,16 @@ class EntityManager extends Doctrine\ORM\EntityManager
 
 
 	/**
+	 * @return \Kdyby\Doctrine\DqlSelection
+	 */
+	public function createSelection()
+	{
+		return new DqlSelection($this);
+	}
+
+
+
+	/**
 	 * @param string $entityName
 	 * @return EntityDao
 	 */
