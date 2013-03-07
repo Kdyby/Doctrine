@@ -115,11 +115,8 @@ class Condition extends Nette\Object
 	protected function where($cond, $params = array())
 	{
 		if (($alias = $this->rootAlias) !== NULL) {
-			$cond = Nette\Utils\Strings::replace($cond, '~(\s*?)([a-z0-9_\.]+[a-zA-Z0-9_\.]+)(\s*?)~', function ($m) use ($alias) {
-				if (stripos($m[2], '.') === FALSE) {
-					return $m[1] . $alias . '.' . $m[2] . $m[3];
-				}
-				return $m[0];
+			$cond = Nette\Utils\Strings::replace($cond, '~(?<=[^:\w`\'"\\[\\.\\\\]|^)[a-z_][a-z0-9_\\.]+(?=[^:\w`\'")\\]\\.\\\\]|\z)~i', function ($m) use ($alias) {
+				return (strpos($m[0], '.') !== FALSE || strtoupper($m[0]) === $m[0]) ? $m[0] : $alias . '.' . $m[0];
 			});
 		}
 
