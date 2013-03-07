@@ -1,9 +1,9 @@
 <?php
 
 /**
- * Test: Kdyby\Doctrine\QueryBuilder.
+ * Test: Kdyby\Doctrine\DqlSelection.
  *
- * @testCase Kdyby\Doctrine\QueryBuilderTest
+ * @testCase Kdyby\Doctrine\DqlSelectionTest
  * @author Filip Procházka <filip@prochazka.su>
  * @package Kdyby\Doctrine
  */
@@ -27,7 +27,7 @@ require_once __DIR__ . '/../bootstrap.php';
 /**
  * @author Filip Procházka <filip@prochazka.su>
  */
-class QueryBuilderTest extends KdybyTests\ORMTestCase
+class DqlSelectionTest extends KdybyTests\ORMTestCase
 {
 
 	/**
@@ -46,7 +46,7 @@ class QueryBuilderTest extends KdybyTests\ORMTestCase
 
 	public function testSimpleSelect()
 	{
-		$qb = $this->em->createQueryBuilder()
+		$qb = $this->em->createSelection()
 			->from('test:CmsUser', 'u')
 			->select('u.id', 'u.username');
 
@@ -57,7 +57,7 @@ class QueryBuilderTest extends KdybyTests\ORMTestCase
 
 	public function testSimpleDelete()
 	{
-		$qb = $this->em->createQueryBuilder()
+		$qb = $this->em->createSelection()
 			->delete('test:CmsUser', 'u');
 
 		Assert::match('DELETE test:CmsUser u', $qb->getDQL());
@@ -67,7 +67,7 @@ class QueryBuilderTest extends KdybyTests\ORMTestCase
 
 	public function testSimpleUpdate()
 	{
-		$qb = $this->em->createQueryBuilder()
+		$qb = $this->em->createSelection()
 			->update('test:CmsUser', 'u', array('username' => ':username'));
 
 		Assert::match('UPDATE test:CmsUser u SET u.username = :u_username', $qb->getDQL());
@@ -77,7 +77,7 @@ class QueryBuilderTest extends KdybyTests\ORMTestCase
 
 	public function testInnerJoin()
 	{
-		$qb = $this->em->createQueryBuilder()
+		$qb = $this->em->createSelection()
 			->select('u', 'a')
 			->from('test:CmsUser', 'u')
 			->join('u.articles', 'a');
@@ -89,7 +89,7 @@ class QueryBuilderTest extends KdybyTests\ORMTestCase
 
 	public function testComplexInnerJoin()
 	{
-		$qb = $this->em->createQueryBuilder()
+		$qb = $this->em->createSelection()
 			->select('u', 'a')
 			->from('test:CmsUser', 'u')
 			->join('u.articles', 'a')->on('u.id = a.author_id');
@@ -101,7 +101,7 @@ class QueryBuilderTest extends KdybyTests\ORMTestCase
 
 	public function testLeftJoin()
 	{
-		$qb = $this->em->createQueryBuilder()
+		$qb = $this->em->createSelection()
 			->select('u', 'a')
 			->from('test:CmsUser', 'u')
 			->leftJoin('u.articles', 'a');
@@ -113,7 +113,7 @@ class QueryBuilderTest extends KdybyTests\ORMTestCase
 
 	public function testLeftJoinWithIndexBy()
 	{
-		$qb = $this->em->createQueryBuilder()
+		$qb = $this->em->createSelection()
 			->select('u', 'a')
 			->from('test:CmsUser', 'u')
 			->leftJoin('u.articles', 'a', 'a.name');
@@ -125,7 +125,7 @@ class QueryBuilderTest extends KdybyTests\ORMTestCase
 
 	public function testMultipleFrom()
 	{
-		$qb = $this->em->createQueryBuilder()
+		$qb = $this->em->createSelection()
 			->select('u', 'g')
 			->from('test:CmsUser', 'u')
 			->from('test:CmsGroup', 'g');
@@ -137,7 +137,7 @@ class QueryBuilderTest extends KdybyTests\ORMTestCase
 
 	public function testMultipleFromWithJoin()
 	{
-		$qb = $this->em->createQueryBuilder()
+		$qb = $this->em->createSelection()
 			->select('u', 'g')
 			->from('test:CmsUser', 'u')
 			->from('test:CmsGroup', 'g')
@@ -151,7 +151,7 @@ class QueryBuilderTest extends KdybyTests\ORMTestCase
 
 	public function testMultipleFromWithMultipleJoin()
 	{
-		$qb = $this->em->createQueryBuilder()
+		$qb = $this->em->createSelection()
 			->select('u', 'g')
 			->from('test:CmsUser', 'u')
 			->from('test:CmsArticle', 'a')
@@ -166,7 +166,7 @@ class QueryBuilderTest extends KdybyTests\ORMTestCase
 
 	public function testWhere()
 	{
-		$qb = $this->em->createQueryBuilder();
+		$qb = $this->em->createSelection();
 		$qb->select('u')
 			->from('test:CmsUser', 'u')
 			->where('u.id = :uid');
@@ -178,7 +178,7 @@ class QueryBuilderTest extends KdybyTests\ORMTestCase
 
 	public function testComplexAndWhere()
 	{
-		$qb = $this->em->createQueryBuilder();
+		$qb = $this->em->createSelection();
 		$qb->select('u')
 			->from('test:CmsUser', 'u')
 			->where('u.id = :uid OR u.id = :uid2 OR u.id = :uid3')
@@ -191,7 +191,7 @@ class QueryBuilderTest extends KdybyTests\ORMTestCase
 
 	public function testAndWhere()
 	{
-		$qb = $this->em->createQueryBuilder();
+		$qb = $this->em->createSelection();
 		$qb->select('u')
 			->from('test:CmsUser', 'u')
 			->where('u.id = :uid')
@@ -204,7 +204,7 @@ class QueryBuilderTest extends KdybyTests\ORMTestCase
 
 	public function testOrWhere()
 	{
-		$qb = $this->em->createQueryBuilder();
+		$qb = $this->em->createSelection();
 		$qb->select('u')
 			->from('test:CmsUser', 'u')
 			->where('u.id = :uid')
@@ -217,7 +217,7 @@ class QueryBuilderTest extends KdybyTests\ORMTestCase
 
 	public function testComplexAndWhereOrWhereNesting()
 	{
-		$qb = $this->em->createQueryBuilder();
+		$qb = $this->em->createSelection();
 		$qb->select('u')
 			->from('test:CmsUser', 'u')
 			->where('u.id = :uid')
@@ -234,7 +234,7 @@ class QueryBuilderTest extends KdybyTests\ORMTestCase
 
 	public function testAndWhereIn()
 	{
-		$qb = $this->em->createQueryBuilder();
+		$qb = $this->em->createSelection();
 		$qb->select('u')
 			->from('test:CmsUser', 'u')
 			->where('u.id = :uid')
@@ -247,7 +247,7 @@ class QueryBuilderTest extends KdybyTests\ORMTestCase
 
 	public function testOrWhereIn()
 	{
-		$qb = $this->em->createQueryBuilder();
+		$qb = $this->em->createSelection();
 		$qb->select('u')
 			->from('test:CmsUser', 'u')
 			->where('u.id = :uid')
@@ -260,7 +260,7 @@ class QueryBuilderTest extends KdybyTests\ORMTestCase
 
 	public function testAndWhereNotIn()
 	{
-		$qb = $this->em->createQueryBuilder();
+		$qb = $this->em->createSelection();
 		$qb->select('u')
 			->from('test:CmsUser', 'u')
 			->where('u.id = :uid')
@@ -273,7 +273,7 @@ class QueryBuilderTest extends KdybyTests\ORMTestCase
 
 	public function testOrWhereNotIn()
 	{
-		$qb = $this->em->createQueryBuilder();
+		$qb = $this->em->createSelection();
 		$qb->select('u')
 			->from('test:CmsUser', 'u')
 			->where('u.id = :uid')
@@ -286,13 +286,13 @@ class QueryBuilderTest extends KdybyTests\ORMTestCase
 
 	public function testWhereInSubQuery()
 	{
-		$qb = $this->em->createQueryBuilder();
+		$qb = $this->em->createSelection();
 		$qb->select('u')
 			->from('test:CmsUser', 'u')
 			->where('u.id = :uid')
 			->orWhere('u.id = :uid2');
 
-		$qb2 = $this->em->createQueryBuilder();
+		$qb2 = $this->em->createSelection();
 		$qb2->select('u')
 			->from('test:CmsUser', 'u')
 			->where('u.id', $qb);
@@ -304,7 +304,7 @@ class QueryBuilderTest extends KdybyTests\ORMTestCase
 
 	public function testGroupBy()
 	{
-		$qb = $this->em->createQueryBuilder()
+		$qb = $this->em->createSelection()
 			->select('u')
 			->from('test:CmsUser', 'u')
 			->group('u.id, u.username');
@@ -316,7 +316,7 @@ class QueryBuilderTest extends KdybyTests\ORMTestCase
 
 	public function testHaving()
 	{
-		$qb = $this->em->createQueryBuilder();
+		$qb = $this->em->createSelection();
 		$qb->select('u')
 			->from('test:CmsUser', 'u')
 			->group('u.id')
@@ -329,7 +329,7 @@ class QueryBuilderTest extends KdybyTests\ORMTestCase
 
 	public function testAndHaving()
 	{
-		$qb = $this->em->createQueryBuilder();
+		$qb = $this->em->createSelection();
 		$qb->select('u')
 			->from('test:CmsUser', 'u')
 			->group('u.id')
@@ -343,7 +343,7 @@ class QueryBuilderTest extends KdybyTests\ORMTestCase
 
 	public function testOrHaving()
 	{
-		$qb = $this->em->createQueryBuilder();
+		$qb = $this->em->createSelection();
 		$qb->select('u')
 			->from('test:CmsUser', 'u')
 			->group('u.id')
@@ -358,7 +358,7 @@ class QueryBuilderTest extends KdybyTests\ORMTestCase
 
 	public function testOrderBy()
 	{
-		$qb = $this->em->createQueryBuilder();
+		$qb = $this->em->createSelection();
 		$qb->select('u')
 			->from('test:CmsUser', 'u')
 			->order('u.username ASC');
@@ -370,7 +370,7 @@ class QueryBuilderTest extends KdybyTests\ORMTestCase
 
 	public function testOrderByWithExpression()
 	{
-		$qb = $this->em->createQueryBuilder();
+		$qb = $this->em->createSelection();
 		$qb->select('u')
 			->from('test:CmsUser', 'u')
 			->order($qb->expr()->asc('u.username'));
@@ -382,7 +382,7 @@ class QueryBuilderTest extends KdybyTests\ORMTestCase
 
 	public function testAddOrderBy()
 	{
-		$qb = $this->em->createQueryBuilder()
+		$qb = $this->em->createSelection()
 			->select('u')
 			->from('test:CmsUser', 'u')
 			->order('u.username ASC', 'u.username DESC');
@@ -394,7 +394,7 @@ class QueryBuilderTest extends KdybyTests\ORMTestCase
 
 	public function testGetQuery()
 	{
-		$qb = $this->em->createQueryBuilder()
+		$qb = $this->em->createSelection()
 			->select('u')
 			->from('test:CmsUser', 'u');
 		$q = $qb->createQuery();
@@ -406,7 +406,7 @@ class QueryBuilderTest extends KdybyTests\ORMTestCase
 
 	public function testSetParameter()
 	{
-		$qb = $this->em->createQueryBuilder()
+		$qb = $this->em->createSelection()
 			->select('u')
 			->from('test:CmsUser', 'u')
 			->where('u.id = :id')
@@ -421,7 +421,7 @@ class QueryBuilderTest extends KdybyTests\ORMTestCase
 
 	public function testSetParameters()
 	{
-		$qb = $this->em->createQueryBuilder();
+		$qb = $this->em->createSelection();
 		$qb->select('u')
 			->from('test:CmsUser', 'u')
 			->where($qb->expr()->orx('u.username = :username', 'u.username = :username2'));
@@ -439,7 +439,7 @@ class QueryBuilderTest extends KdybyTests\ORMTestCase
 
 	public function testGetParameters()
 	{
-		$qb = $this->em->createQueryBuilder();
+		$qb = $this->em->createSelection();
 		$qb->select('u')
 			->from('test:CmsUser', 'u')
 			->where('u.id = :id');
@@ -456,7 +456,7 @@ class QueryBuilderTest extends KdybyTests\ORMTestCase
 
 	public function testGetParameter()
 	{
-		$qb = $this->em->createQueryBuilder();
+		$qb = $this->em->createSelection();
 		$qb->select('u')
 			->from('test:CmsUser', 'u')
 			->where('u.id = :id');
@@ -473,7 +473,7 @@ class QueryBuilderTest extends KdybyTests\ORMTestCase
 
 	public function testMultipleWhere()
 	{
-		$qb = $this->em->createQueryBuilder();
+		$qb = $this->em->createSelection();
 		$qb->select('u')
 			->from('test:CmsUser', 'u')
 			->where('u.id = :uid')
@@ -481,7 +481,7 @@ class QueryBuilderTest extends KdybyTests\ORMTestCase
 
 		Assert::match('SELECT u FROM test:CmsUser u WHERE u.id = :uid AND u.id = :uid2', $qb->getDQL());
 
-		$qb = $this->em->createQueryBuilder();
+		$qb = $this->em->createSelection();
 		$qb->select('u')
 			->from('test:CmsUser', 'u')
 			->where('u.id = ?', 23)
@@ -498,7 +498,7 @@ class QueryBuilderTest extends KdybyTests\ORMTestCase
 
 	public function testMultipleAndWhere()
 	{
-		$qb = $this->em->createQueryBuilder();
+		$qb = $this->em->createSelection();
 		$qb->select('u')
 			->from('test:CmsUser', 'u')
 			->where('u.id = :uid')
@@ -511,7 +511,7 @@ class QueryBuilderTest extends KdybyTests\ORMTestCase
 
 	public function testMultipleOrWhere()
 	{
-		$qb = $this->em->createQueryBuilder();
+		$qb = $this->em->createSelection();
 		$qb->select('u')
 			->from('test:CmsUser', 'u')
 			->orWhere('u.id = :uid')
@@ -524,7 +524,7 @@ class QueryBuilderTest extends KdybyTests\ORMTestCase
 
 	public function testComplexWhere()
 	{
-		$qb = $this->em->createQueryBuilder();
+		$qb = $this->em->createSelection();
 
 		$orExpr = $qb->expr()->orX();
 		$orExpr->add($qb->expr()->eq('u.id', ':uid3'));
@@ -541,14 +541,14 @@ class QueryBuilderTest extends KdybyTests\ORMTestCase
 
 	public function testWhereInWithStringLiterals()
 	{
-		$qb = $this->em->createQueryBuilder();
+		$qb = $this->em->createSelection();
 		$qb->select('u')
 			->from('test:CmsUser', 'u')
 			->where($qb->expr()->in('u.name', array('one', 'two', 'three')));
 
 		Assert::match("SELECT u FROM test:CmsUser u WHERE u.name IN('one', 'two', 'three')", $qb->getDQL());
 
-		$qb = $this->em->createQueryBuilder();
+		$qb = $this->em->createSelection();
 		$qb->select('u')
 			->from('test:CmsUser', 'u')
 			->where($qb->expr()->in('u.name', array("O'Reilly", "O'Neil", 'Smith')));
@@ -560,7 +560,7 @@ class QueryBuilderTest extends KdybyTests\ORMTestCase
 
 	public function testWhereInWithObjectLiterals()
 	{
-		$qb = $this->em->createQueryBuilder();
+		$qb = $this->em->createSelection();
 		$expr = $this->em->getExpressionBuilder();
 		$qb->select('u')
 			->from('test:CmsUser', 'u')
@@ -568,7 +568,7 @@ class QueryBuilderTest extends KdybyTests\ORMTestCase
 
 		Assert::match("SELECT u FROM test:CmsUser u WHERE u.name IN('one', 'two', 'three')", $qb->getDQL());
 
-		$qb = $this->em->createQueryBuilder();
+		$qb = $this->em->createSelection();
 		$qb->select('u')
 			->from('test:CmsUser', 'u')
 			->where($expr->in('u.name', array($expr->literal("O'Reilly"), $expr->literal("O'Neil"), $expr->literal('Smith'))));
@@ -585,7 +585,7 @@ class QueryBuilderTest extends KdybyTests\ORMTestCase
 		$orExpr->add($expr->eq('u.id', ':uid3'));
 		$orExpr->add($expr->not($expr->in('u.id', array(1))));
 
-		$qb = $this->em->createQueryBuilder();
+		$qb = $this->em->createSelection();
 		$qb->select('u')
 			->from('test:CmsUser', 'u')
 			->where($orExpr);
@@ -597,7 +597,7 @@ class QueryBuilderTest extends KdybyTests\ORMTestCase
 
 	public function testSomeAllAny()
 	{
-		$qb = $this->em->createQueryBuilder();
+		$qb = $this->em->createSelection();
 		$expr = $this->em->getExpressionBuilder();
 
 		$qb->select('u')
@@ -611,7 +611,7 @@ class QueryBuilderTest extends KdybyTests\ORMTestCase
 
 	public function testMultipleIsolatedQueryConstruction()
 	{
-		$qb = $this->em->createQueryBuilder();
+		$qb = $this->em->createSelection();
 		$expr = $this->em->getExpressionBuilder();
 
 		$qb->select('u')->from('test:CmsUser', 'u');
@@ -639,7 +639,7 @@ class QueryBuilderTest extends KdybyTests\ORMTestCase
 
 	public function testGetEntityManager()
 	{
-		$qb = $this->em->createQueryBuilder();
+		$qb = $this->em->createSelection();
 		Assert::same($this->em, $qb->getEntityManager());
 	}
 
@@ -647,7 +647,7 @@ class QueryBuilderTest extends KdybyTests\ORMTestCase
 
 	public function testSelectWithFuncExpression()
 	{
-		$qb = $this->em->createQueryBuilder();
+		$qb = $this->em->createSelection();
 		$expr = $qb->expr();
 		$qb->select($expr->count('e.id'));
 
@@ -661,7 +661,7 @@ class QueryBuilderTest extends KdybyTests\ORMTestCase
 	 */
 	public function testDeepClone()
 	{
-		$qb = $this->em->createQueryBuilder();
+		$qb = $this->em->createSelection();
 		$qb->select('u')
 			->from('test:CmsUser', 'u')
 			->where('u.username = :id')
@@ -696,7 +696,7 @@ class QueryBuilderTest extends KdybyTests\ORMTestCase
 
 	public function testGetRootAlias()
 	{
-		$qb = $this->em->createQueryBuilder()
+		$qb = $this->em->createSelection()
 			->select('u')
 			->from('test:CmsUser', 'u');
 
@@ -707,7 +707,7 @@ class QueryBuilderTest extends KdybyTests\ORMTestCase
 
 	public function testGetRootAliases()
 	{
-		$qb = $this->em->createQueryBuilder()
+		$qb = $this->em->createSelection()
 			->select('u')
 			->from('test:CmsUser', 'u');
 
@@ -718,7 +718,7 @@ class QueryBuilderTest extends KdybyTests\ORMTestCase
 
 	public function testGetRootEntities()
 	{
-		$qb = $this->em->createQueryBuilder()
+		$qb = $this->em->createSelection()
 			->select('u')
 			->from('test:CmsUser', 'u');
 
@@ -729,7 +729,7 @@ class QueryBuilderTest extends KdybyTests\ORMTestCase
 
 	public function testGetSeveralRootAliases()
 	{
-		$qb = $this->em->createQueryBuilder()
+		$qb = $this->em->createSelection()
 			->select('u')
 			->from('test:CmsUser', 'u')
 			->from('test:CmsUser', 'u2');
@@ -742,7 +742,7 @@ class QueryBuilderTest extends KdybyTests\ORMTestCase
 
 	public function testBCAddJoinWithoutRootAlias()
 	{
-		$qb = $this->em->createQueryBuilder()
+		$qb = $this->em->createSelection()
 			->select('u')
 			->from('test:CmsUser', 'u')
 			->join('u.groups', 'g');
@@ -758,7 +758,7 @@ class QueryBuilderTest extends KdybyTests\ORMTestCase
 	public function testEmptyStringLiteral()
 	{
 		$expr = $this->em->getExpressionBuilder();
-		$qb = $this->em->createQueryBuilder();
+		$qb = $this->em->createSelection();
 		$qb->select('u')
 			->from('test:CmsUser', 'u')
 			->where($expr->eq('u.username', $expr->literal("")));
@@ -774,7 +774,7 @@ class QueryBuilderTest extends KdybyTests\ORMTestCase
 	public function testEmptyNumericLiteral()
 	{
 		$expr = $this->em->getExpressionBuilder();
-		$qb = $this->em->createQueryBuilder();
+		$qb = $this->em->createSelection();
 		$qb->select('u')
 			->from('test:CmsUser', 'u')
 			->where($expr->eq('u.username', $expr->literal(0)));
@@ -789,7 +789,7 @@ class QueryBuilderTest extends KdybyTests\ORMTestCase
 	 */
 	public function testAddDistinct()
 	{
-		$qb = $this->em->createQueryBuilder()
+		$qb = $this->em->createSelection()
 			->select('DISTINCT u')
 			->from('test:CmsUser', 'u');
 
@@ -798,4 +798,4 @@ class QueryBuilderTest extends KdybyTests\ORMTestCase
 
 }
 
-\run(new QueryBuilderTest());
+\run(new DqlSelectionTest());

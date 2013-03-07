@@ -20,14 +20,6 @@ interface QueryExecutor
 
 	/**
 	 * @param Query $queryObject
-	 * @return integer
-	 */
-	function count(Query $queryObject);
-
-
-
-	/**
-	 * @param Query $queryObject
 	 * @return array
 	 */
 	function fetch(Query $queryObject);

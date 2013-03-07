@@ -259,24 +259,7 @@ class EntityDao extends Doctrine\ORM\EntityRepository implements Persistence\Obj
 
 	/**
 	 * @param \Kdyby\Persistence\Query|\Kdyby\Doctrine\QueryObject $queryObject
-	 * @throws \Exception
-	 * @return integer
-	 */
-	public function count(Persistence\Query $queryObject)
-	{
-		try {
-			return $queryObject->count($this);
-
-		} catch (\Exception $e) {
-			throw $this->handleQueryException($e, $queryObject);
-		}
-	}
-
-
-
-	/**
-	 * @param \Kdyby\Persistence\Query|\Kdyby\Doctrine\QueryObject $queryObject
-	 * @throws \Exception
+	 * @throws QueryException
 	 * @return array|\Kdyby\Doctrine\ResultSet
 	 */
 	public function fetch(Persistence\Query $queryObject)
