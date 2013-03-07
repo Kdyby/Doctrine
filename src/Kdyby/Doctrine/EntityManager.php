@@ -22,6 +22,8 @@ use Nette;
 
 /**
  * @author Filip Procházka <filip@prochazka.su>
+ *
+ * @method flush(array $entity = NULL)
  */
 class EntityManager extends Doctrine\ORM\EntityManager
 {

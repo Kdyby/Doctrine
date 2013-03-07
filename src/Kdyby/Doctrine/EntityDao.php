@@ -18,6 +18,7 @@ use Doctrine\ORM\NonUniqueResultException;
 use Kdyby;
 use Kdyby\Persistence;
 use Nette;
+use Nette\Utils\Arrays;
 
 
 
@@ -105,7 +106,11 @@ class EntityDao extends Doctrine\ORM\EntityRepository implements Persistence\Obj
 	protected function flush($flush = Persistence\ObjectDao::FLUSH)
 	{
 		if ($flush === Persistence\ObjectDao::FLUSH) {
-			$this->getEntityManager()->flush();
+			$em = $this->getEntityManager();
+			$im = $em->getUnitOfWork()->getIdentityMap();
+			if (!empty($im[$this->_entityName])) {
+				$em->flush(Arrays::flatten($im[$this->_entityName]));
+			}
 		}
 	}
 
