@@ -123,6 +123,7 @@ class EntityDao extends Doctrine\ORM\EntityRepository implements Persistence\Obj
 	 * @param string $value
 	 * @param string $key
 	 *
+	 * @throws \Exception|QueryException
 	 * @return array
 	 */
 	public function findPairs($criteria, $value = NULL, $key = 'id')

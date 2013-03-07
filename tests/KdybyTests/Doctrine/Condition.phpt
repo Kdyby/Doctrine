@@ -48,13 +48,45 @@ class ConditionTest extends Tester\TestCase
 	/**
 	 * @dataProvider dataBasic
 	 */
-	public function testSimpleAnd($cond, $params, $arguments)
+	public function testSimpleAnd($expectedCond, $expectedParams, $arguments)
 	{
 		$condition = new Condition();
 		call_user_func_array(array($condition, 'addAnd'), $arguments);
 
-		Assert::same($cond, (string) $condition);
-		Assert::same($params, $condition->params);
+		Assert::same($expectedCond, (string) $condition);
+		Assert::same($expectedParams, $condition->params);
+	}
+
+
+
+	/**
+	 * @return array
+	 */
+	public function dataBasic_withRootAlias()
+	{
+		return array(
+			array('e.id = ?', array(1), array("id", 1)),
+			array('e.id IS NULL', array(), array("id", NULL)),
+			array('(e.column < ? OR e.column > ?)', array(1, 2), array('e.column < ? OR column > ?', array(1, 2))),
+			array('(e.column < ? OR e.column > ?)', array(1, 2), array('column < ? OR column > ?', 1, 2)),
+			array('e.column IN (?)', array(array(1, 2)), array('column', array(1, 2))),
+			array('e.column = NULL', array(), array('column', array())),
+		);
+	}
+
+
+
+	/**
+	 * @dataProvider dataBasic_withRootAlias
+	 */
+	public function testSimpleAnd_withRootAlias($expectedCond, $expectedParams, $arguments)
+	{
+		$condition = new Condition();
+		$condition->rootAlias = 'e';
+		call_user_func_array(array($condition, 'addAnd'), $arguments);
+
+		Assert::same($expectedCond, (string) $condition);
+		Assert::same($expectedParams, $condition->params);
 	}
 
 

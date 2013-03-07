@@ -135,6 +135,7 @@ class DqlSelection extends Nette\Object implements \IteratorAggregate
 	{
 		$this->state = self::STATE_DIRTY;
 		$this->builder->from[$alias] = new Expr\From($entity, $alias, $indexBy);
+		$this->builder->refreshAliases($this->getRootAlias());
 
 		return $this;
 	}
@@ -187,6 +188,7 @@ class DqlSelection extends Nette\Object implements \IteratorAggregate
 			$joinType, $join, $alias, NULL, NULL, $indexBy
 		);
 		$expr->injectQuery($this, $this->builder);
+		$this->builder->refreshAliases($this->getRootAlias());
 
 		return $expr;
 	}

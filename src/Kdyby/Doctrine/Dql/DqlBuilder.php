@@ -181,4 +181,14 @@ class DqlBuilder extends Nette\Object
 	}
 
 
+
+	/**
+	 * @param string $rootAlias
+	 */
+	public function refreshAliases($rootAlias)
+	{
+		$this->where->rootAlias = $rootAlias;
+		$this->having->rootAlias = $rootAlias;
+	}
+
 }
