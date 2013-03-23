@@ -122,6 +122,24 @@ class OrmExtension extends Nette\Config\CompilerExtension
 		$this->loadConfig('annotation');
 		$this->loadConfig('console');
 
+		$builder->addDefinition($this->prefix('annotation.reader'))
+			->setClass('Doctrine\Common\Annotations\CachedReader')
+			->setArguments(array(
+				new Nette\DI\Statement('Doctrine\Common\Annotations\IndexedReader', array(
+					'@' . $this->prefix('annotation.reflectionReader'
+				))),
+				new Nette\DI\Statement(
+					'Kdyby\Doctrine\Cache',
+					array('@Nette\Caching\IStorage', $this->prefix('Annotations'))
+				),
+				$builder->parameters['doctrine.debug']
+			))->setInject(FALSE);
+
+		$reader = $builder->getDefinition($this->prefix("annotation.reader"));
+		if ($reader->class === "Doctrine\Common\Annotations\CachedReader" && !isset($reader->factory->arguments[2])) {
+			$reader->factory->arguments[] = $builder->parameters['doctrine.debug'];
+		}
+
 		if (isset($config['dbname']) || isset($config['driver']) || isset($config['connection'])) {
 			$config = array('default' => $config);
 		}
