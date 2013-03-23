@@ -113,13 +113,26 @@ class OrmExtension extends Nette\Config\CompilerExtension
 
 	public function loadConfiguration()
 	{
-		$config = $this->getConfig(array('debug' => TRUE));
 		$builder = $this->getContainerBuilder();
+		$config = $this->getConfig(array('debug' => $builder->parameters['debugMode']));
 
 		$builder->parameters[$this->prefix('debug')] = !empty($config['debug']);
 
-		$this->loadConfig('annotation');
 		$this->loadConfig('console');
+		$this->loadConfig('annotation');
+
+		$builder->addDefinition($this->prefix('annotation.reader'))
+			->setClass('Doctrine\Common\Annotations\Reader')
+			->setFactory('Doctrine\Common\Annotations\CachedReader', array(
+				new Nette\DI\Statement('Doctrine\Common\Annotations\IndexedReader', array($this->prefix('@annotation.reflectionReader'))),
+				new Nette\DI\Statement('Kdyby\Doctrine\Cache', array(
+					'@Nette\Caching\IStorage',
+					'Doctrine.Annotations',
+					$builder->parameters[$this->prefix('debug')]
+				)),
+				$builder->parameters[$this->prefix('debug')]
+			))
+			->setInject(FALSE);
 
 		if (isset($config['dbname']) || isset($config['driver']) || isset($config['connection'])) {
 			$config = array('default' => $config);
@@ -377,8 +390,8 @@ class OrmExtension extends Nette\Config\CompilerExtension
 			->setAutowired(FALSE)
 			->setInject(FALSE);
 
-		if ($impl === 'default' && $builder->parameters[$this->prefix('debug')]) {
-			$def->addSetup('setDebugging', array(TRUE));
+		if ($impl === 'default') {
+			$def->factory->arguments[2] = $builder->parameters[$this->prefix('debug')];
 		}
 
 		return '@'  . $serviceName;

@@ -28,13 +28,16 @@ use Nette\Utils\Strings;
 class Cache extends Doctrine\Common\Cache\CacheProvider
 {
 
-	/** @var string */
 	const CACHE_NS = 'Doctrine';
 
-	/** @var NCache */
+	/**
+	 * @var NCache
+	 */
 	private $cache;
 
-	/** @var string The namespace to prefix all cache ids with */
+	/**
+	 * @var string The namespace to prefix all cache ids with
+	 */
 	private $namespace;
 
 	/**
@@ -47,20 +50,12 @@ class Cache extends Doctrine\Common\Cache\CacheProvider
 	/**
 	 * @param \Nette\Caching\IStorage $storage
 	 * @param string $namespace
+	 * @param bool $debugMode
 	 */
-	public function __construct(Nette\Caching\IStorage $storage, $namespace = self::CACHE_NS)
+	public function __construct(Nette\Caching\IStorage $storage, $namespace = self::CACHE_NS, $debugMode = FALSE)
 	{
 		$this->cache = new NCache($storage, $namespace);
-	}
-
-
-
-	/**
-	 * @param bool $debug
-	 */
-	public function setDebugging($debug = TRUE)
-	{
-		$this->debug = $debug;
+		$this->debug = $debugMode;
 	}
 
 

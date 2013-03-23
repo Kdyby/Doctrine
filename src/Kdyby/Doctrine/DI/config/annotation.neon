@@ -8,10 +8,3 @@ services:
 			- addGlobalIgnoredName("persistent")
 		autowired: no
 		inject: no
-
-	reader:
-		class: Doctrine\Common\Annotations\CachedReader
-		arguments:
-			- Doctrine\Common\Annotations\IndexedReader(@doctrine.annotation.reflectionReader)
-			- Kdyby\Doctrine\Cache(@Nette\Caching\IStorage, 'Doctrine.Annotations')
-		inject: no
