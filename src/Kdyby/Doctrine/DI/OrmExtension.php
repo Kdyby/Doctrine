@@ -105,10 +105,9 @@ class OrmExtension extends Nette\Config\CompilerExtension
 	);
 
 	/**
-	 * @var bool
-	 * @internal
+	 * @var array
 	 */
-	private static $compilationPassed = FALSE;
+	private $proxyAutoLoaders = array();
 
 
 
@@ -220,6 +219,8 @@ class OrmExtension extends Nette\Config\CompilerExtension
 			->setAutowired(FALSE)
 			->setInject(FALSE);
 		/** @var Nette\DI\ServiceDefinition $configuration */
+
+		$this->proxyAutoLoaders[$config['proxyNamespace']] = $config['proxyDir'];
 
 		Validators::assertField($config, 'filters', 'array');
 		foreach ($config['filters'] as $name => $filterClass) {
@@ -403,6 +404,10 @@ class OrmExtension extends Nette\Config\CompilerExtension
 				$this->prefix('jitProxyWarmer'),
 				'Kdyby\Doctrine\EntityManager'
 			));
+		}
+
+		foreach ($this->proxyAutoLoaders as $namespace => $dir) {
+			$init->addBody('Kdyby\Doctrine\Proxy\ProxyAutoloader::create(?, ?)->register();', array($dir, $namespace));
 		}
 
 		/** @hack This moves the start of session after warmup of proxy classes, so they will be always available to the autoloader. */
