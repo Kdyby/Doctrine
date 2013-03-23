@@ -14,6 +14,7 @@ use Doctrine;
 use Kdyby;
 use Nette;
 use Nette\PhpGenerator as Code;
+use Nette\Utils\Strings;
 use Nette\Utils\Validators;
 
 
@@ -103,6 +104,12 @@ class OrmExtension extends Nette\Config\CompilerExtension
 		'xcache' => 'Doctrine\Common\Cache\XcacheCache',
 	);
 
+	/**
+	 * @var bool
+	 * @internal
+	 */
+	private static $compilationPassed = FALSE;
+
 
 
 	public function loadConfiguration()
@@ -151,6 +158,9 @@ class OrmExtension extends Nette\Config\CompilerExtension
 			->setFactory('@Kdyby\Doctrine\Connection::getSchemaManager')
 			->setInject(FALSE);
 
+		$builder->addDefinition($this->prefix('jitProxyWarmer'))
+			->setClass('Kdyby\Doctrine\Proxy\JitProxyWarmer')
+			->setInject(FALSE);
 	}
 
 
@@ -176,7 +186,7 @@ class OrmExtension extends Nette\Config\CompilerExtension
 
 		Validators::assertField($config, 'metadata', 'array');
 		foreach (self::natSortKeys($config['metadata']) as $namespace => $driver) {
-			if (!is_string($namespace) || !Nette\Utils\Strings::match($namespace, '#^' . self::PHP_NAMESPACE . '\z#')) {
+			if (!is_string($namespace) || !Strings::match($namespace, '#^' . self::PHP_NAMESPACE . '\z#')) {
 				throw new Nette\Utils\AssertionException("The metadata namespace expects to be identifier, $namespace given.");
 			}
 			$this->processMetadataDriver($metadataDriver, ltrim($namespace, '\\'), $driver, $name);
@@ -380,12 +390,34 @@ class OrmExtension extends Nette\Config\CompilerExtension
 	 */
 	public function afterCompile(Code\ClassType $class)
 	{
-		/** @var Code\Method $init */
 		$init = $class->methods['initialize'];
+		$builder = $this->getContainerBuilder();
 
 		// just look it up, mother fucker!
 		$init->addBody('Doctrine\Common\Annotations\AnnotationRegistry::registerLoader("class_exists");');
 		$init->addBody('Kdyby\Doctrine\Diagnostics\Panel::registerBluescreen();');
+
+		if ($builder->parameters['debugMode']) {
+			/** Prepend proxy warmup to other initialize calls */
+			$init->addBody('$this->getService(?)->warmUp($this->getByType(?));', array(
+				$this->prefix('jitProxyWarmer'),
+				'Kdyby\Doctrine\EntityManager'
+			));
+		}
+
+		/** @hack This moves the start of session after warmup of proxy classes, so they will be always available to the autoloader. */
+		$foundSessionStart = FALSE;
+		$lines = explode("\n", trim($init->body));
+		$init->body = NULL;
+		while ($line = array_shift($lines)) {
+			if (!$foundSessionStart && stripos($line, 'session->start(') !== FALSE) {
+				$lines[] = $line;
+				$foundSessionStart = TRUE;
+				continue;
+			}
+
+			$init->addBody($line);
+		}
 	}
 
 
