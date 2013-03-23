@@ -116,7 +116,7 @@ class OrmExtension extends Nette\Config\CompilerExtension
 		$config = $this->getConfig(array('debug' => TRUE));
 		$builder = $this->getContainerBuilder();
 
-		$builder->parameters['doctrine.debug'] = !empty($config['debug']);
+		$builder->parameters[$this->prefix('debug')] = !empty($config['debug']);
 
 		$this->loadConfig('annotation');
 		$this->loadConfig('console');
@@ -169,8 +169,8 @@ class OrmExtension extends Nette\Config\CompilerExtension
 		$builder = $this->getContainerBuilder();
 		$config = $this->resolveConfig($defaults, $this->managerDefaults, $this->connectionDefaults);
 
-		if ($isDefault = !isset($builder->parameters['doctrine.orm.defaultEntityManager'])) {
-			$builder->parameters['doctrine.orm.defaultEntityManager'] = $name;
+		if ($isDefault = !isset($builder->parameters[$this->prefix('orm.defaultEntityManager')])) {
+			$builder->parameters[$this->prefix('orm.defaultEntityManager')] = $name;
 		}
 
 		$metadataDriver = $builder->addDefinition($this->prefix($name . '.metadataDriver'))
@@ -377,7 +377,7 @@ class OrmExtension extends Nette\Config\CompilerExtension
 			->setAutowired(FALSE)
 			->setInject(FALSE);
 
-		if ($impl === 'default' && $builder->parameters['doctrine.debug']) {
+		if ($impl === 'default' && $builder->parameters[$this->prefix('debug')]) {
 			$def->addSetup('setDebugging', array(TRUE));
 		}
 
