@@ -80,7 +80,7 @@ class JitProxyWarmer extends Nette\Object
 		}, $regenerate);
 
 		// generate code
-		bd($em->getProxyFactory()->generateProxyClasses($regenerate));
+		$em->getProxyFactory()->generateProxyClasses($regenerate);
 	}
 
 }
