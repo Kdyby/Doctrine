@@ -117,10 +117,28 @@ class OrmExtension extends Nette\Config\CompilerExtension
 		$config = $this->getConfig(array('debug' => TRUE));
 		$builder = $this->getContainerBuilder();
 
-		$builder->parameters['doctrine.debug'] = !empty($config['debug']);
+		$builder->parameters[$this->prefix('debug')] = !empty($config['debug']);
 
 		$this->loadConfig('annotation');
 		$this->loadConfig('console');
+
+		$builder->addDefinition($this->prefix('annotation.reader'))
+			->setClass('Doctrine\Common\Annotations\CachedReader')
+			->setArguments(array(
+				new Nette\DI\Statement('Doctrine\Common\Annotations\IndexedReader', array(
+					'@' . $this->prefix('annotation.reflectionReader'
+				))),
+				new Nette\DI\Statement(
+					'Kdyby\Doctrine\Cache',
+					array('@Nette\Caching\IStorage', $this->prefix('Annotations'))
+				),
+				$builder->parameters[$this->prefix('debug')]
+			))->setInject(FALSE);
+
+		$reader = $builder->getDefinition($this->prefix("annotation.reader"));
+		if ($reader->class === "Doctrine\Common\Annotations\CachedReader" && !isset($reader->factory->arguments[2])) {
+			$reader->factory->arguments[] = $builder->parameters[$this->prefix('debug')];
+		}
 
 		if (isset($config['dbname']) || isset($config['driver']) || isset($config['connection'])) {
 			$config = array('default' => $config);
@@ -170,8 +188,8 @@ class OrmExtension extends Nette\Config\CompilerExtension
 		$builder = $this->getContainerBuilder();
 		$config = $this->resolveConfig($defaults, $this->managerDefaults, $this->connectionDefaults);
 
-		if ($isDefault = !isset($builder->parameters['doctrine.orm.defaultEntityManager'])) {
-			$builder->parameters['doctrine.orm.defaultEntityManager'] = $name;
+		if ($isDefault = !isset($builder->parameters[$this->prefix('orm.defaultEntityManager')])) {
+			$builder->parameters[$this->prefix('orm.defaultEntityManager')] = $name;
 		}
 
 		$metadataDriver = $builder->addDefinition($this->prefix($name . '.metadataDriver'))
@@ -367,7 +385,7 @@ class OrmExtension extends Nette\Config\CompilerExtension
 		}
 
 		if ($impl === 'default') {
-			$cache->arguments[1] = 'Doctrine.' . $suffix;
+			$cache->arguments[1] = $this->prefix($suffix);
 		}
 
 		$def = $builder->addDefinition($serviceName = $this->prefix('cache.' . $suffix))
@@ -376,7 +394,7 @@ class OrmExtension extends Nette\Config\CompilerExtension
 			->setAutowired(FALSE)
 			->setInject(FALSE);
 
-		if ($impl === 'default' && $builder->parameters['doctrine.debug']) {
+		if ($impl === 'default' && $builder->parameters[$this->prefix('debug')]) {
 			$def->addSetup('setDebugging', array(TRUE));
 		}
 
