@@ -7,4 +7,3 @@ services:
 			- addGlobalIgnoredName("see:")
 			- addGlobalIgnoredName("persistent")
 		autowired: no
-		inject: no
