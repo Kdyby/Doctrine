@@ -11,8 +11,8 @@
 namespace Kdyby\Doctrine;
 
 use Doctrine;
-use Doctrine\ORM\AbstractQuery;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\NonUniqueResultException;
 use Kdyby;
@@ -107,9 +107,16 @@ class EntityDao extends Doctrine\ORM\EntityRepository implements Persistence\Obj
 	{
 		if ($flush === Persistence\ObjectDao::FLUSH) {
 			$em = $this->getEntityManager();
-			$im = $em->getUnitOfWork()->getIdentityMap();
-			if (!empty($im[$this->_entityName])) {
-				$em->flush(Arrays::flatten($im[$this->_entityName]));
+			$UoW = $em->getUnitOfWork();
+			$im = $UoW->getIdentityMap();
+
+			$list = array_unique(array_merge(
+				$UoW->getScheduledEntityInsertions(),
+				!empty($im[$this->_entityName]) ? Arrays::flatten($im[$this->_entityName]) : array()
+			));
+
+			if (!empty($list)) {
+				$em->flush($list);
 			}
 		}
 	}

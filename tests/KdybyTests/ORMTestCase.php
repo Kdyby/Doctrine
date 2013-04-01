@@ -10,16 +10,17 @@
 
 namespace KdybyTests;
 
+
 use Doctrine\Common\Cache\ArrayCache;
 use Doctrine\Common\EventManager;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\ORM\Configuration;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Tools\SchemaTool;
 use Kdyby;
 use Nette;
 use Tester;
-
 
 require_once __DIR__ . '/Doctrine/mocks.php';
 
@@ -28,8 +29,33 @@ require_once __DIR__ . '/Doctrine/mocks.php';
 /**
  * @author Filip Procházka <filip@prochazka.su>
  */
-class ORMTestCase extends Tester\TestCase
+abstract class ORMTestCase extends Tester\TestCase
 {
+
+	/**
+	 * @return Kdyby\Doctrine\EntityManager
+	 */
+	protected function createMemoryManager()
+	{
+		require_once __DIR__ . '/Doctrine/models/cms.php';
+
+		$config = new Nette\Config\Configurator();
+		$container = $config->setTempDirectory(TEMP_DIR)
+			->addConfig(__DIR__ . '/nette-reset.neon')
+			->addConfig(__DIR__ . '/Doctrine/config/memory.neon')
+			->createContainer();
+		/** @var Nette\DI\Container $container */
+
+		$em = $container->getByType('Kdyby\Doctrine\EntityManager');
+		/** @var Kdyby\Doctrine\EntityManager $em */
+
+		$schemaTool = new SchemaTool($em);
+		$schemaTool->createSchema($em->getMetadataFactory()->getAllMetadata());
+
+		return $em;
+	}
+
+
 
 	/**
 	 * Creates an EntityManager for testing purposes.
@@ -38,7 +64,7 @@ class ORMTestCase extends Tester\TestCase
 	 * @param EventManager $eventManager
 	 * @return EntityManager
 	 */
-	protected function createTestEntityManager($conn = NULL, $eventManager = NULL)
+	protected function createTestEntityManager($conn = NULL, EventManager $eventManager = NULL)
 	{
 		$config = new Configuration();
 		$config->setMetadataCacheImpl(new ArrayCache);
@@ -55,6 +81,10 @@ class ORMTestCase extends Tester\TestCase
 				'user' => 'filip',
 				'password' => 'prochazka'
 			);
+		}
+
+		if (!$eventManager) {
+			$eventManager = new EventManager();
 		}
 
 		if (is_array($conn)) {
