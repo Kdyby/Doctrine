@@ -34,9 +34,7 @@ class ExtensionTest extends Tester\TestCase
 		$config = new Nette\Config\Configurator();
 		$config->setTempDirectory(TEMP_DIR);
 		$config->addParameters(array('container' => array('class' => 'SystemContainer_' . md5($configFile))));
-		Kdyby\Doctrine\DI\OrmExtension::register($config);
-		Kdyby\Events\DI\EventsExtension::register($config);
-		Kdyby\Console\DI\ConsoleExtension::register($config);
+		$config->addConfig(__DIR__ . '/../nette-reset.neon');
 		$config->addConfig(__DIR__ . '/config/' . $configFile . '.neon');
 
 		return $config->createContainer();
@@ -48,7 +46,7 @@ class ExtensionTest extends Tester\TestCase
 	{
 		require_once __DIR__ . '/models/cms.php';
 
-		$container = $this->createContainer('memory.defaults');
+		$container = $this->createContainer('memory');
 		$entityManager = $container->getByType('Kdyby\Doctrine\EntityManager');
 		Assert::true($entityManager instanceof Kdyby\Doctrine\EntityManager);
 		/** @var Kdyby\Doctrine\EntityManager $entityManager */

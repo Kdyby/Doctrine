@@ -1,0 +1,30 @@
+php:
+	date.timezone: Europe/Prague
+
+
+extensions:
+	events: Kdyby\Events\DI\EventsExtension
+	doctrine: Kdyby\Doctrine\DI\OrmExtension
+	console: Kdyby\Console\DI\ConsoleExtension
+
+
+doctrine:
+	metadataCache: array
+	queryCache: array
+	resultCache: array
+	hydrationCache: array
+	metadata:
+		KdybyTests\Doctrine: annotations(%appDir%/Doctrine/models)
+
+
+nette:
+	security:
+		frames: null
+
+	session:
+		autoStart: false
+
+
+services:
+	cacheStorage:
+		class: Nette\Caching\Storages\MemoryStorage
