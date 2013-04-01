@@ -110,14 +110,10 @@ class EntityDao extends Doctrine\ORM\EntityRepository implements Persistence\Obj
 			$UoW = $em->getUnitOfWork();
 			$im = $UoW->getIdentityMap();
 
-			$list = array_unique(array_merge(
+			$em->flush(array_merge(
 				$UoW->getScheduledEntityInsertions(),
 				!empty($im[$this->_entityName]) ? Arrays::flatten($im[$this->_entityName]) : array()
 			));
-
-			if (!empty($list)) {
-				$em->flush($list);
-			}
 		}
 	}
 
