@@ -17,6 +17,10 @@ doctrine:
 		KdybyTests\Doctrine: annotations(%appDir%/Doctrine/models)
 
 
+console:
+	url: http://www.kdyby.org/
+
+
 nette:
 	security:
 		frames: null
