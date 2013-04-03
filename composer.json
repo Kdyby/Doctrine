@@ -33,9 +33,6 @@
 		},
 		"classmap": [
 			"src/Kdyby/Doctrine/exceptions.php"
-		],
-		"files": [
-			"src/Nette/compatibility.php"
 		]
 	}
 }

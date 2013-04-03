@@ -13,7 +13,7 @@ namespace Kdyby\Doctrine\DI;
 use Doctrine;
 use Kdyby;
 use Nette;
-use Nette\Utils\PhpGenerator as Code;
+use Nette\PhpGenerator as Code;
 use Nette\Utils\Strings;
 use Nette\Utils\Validators;
 

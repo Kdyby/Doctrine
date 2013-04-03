@@ -10,7 +10,6 @@
 
 namespace KdybyTests;
 
-
 use Doctrine\Common\Cache\ArrayCache;
 use Doctrine\Common\EventManager;
 use Doctrine\DBAL\Connection;
@@ -20,6 +19,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Tools\SchemaTool;
 use Kdyby;
 use Nette;
+use Nette\PhpGenerator as Code;
 use Tester;
 
 require_once __DIR__ . '/Doctrine/mocks.php';
@@ -103,7 +103,7 @@ abstract class ORMTestCase extends Tester\TestCase
 	 */
 	protected function newInstance($className, $props = array())
 	{
-		return Nette\Utils\PhpGenerator\Helpers::createObject($className, $props);
+		return Code\Helpers::createObject($className, $props);
 	}
 
 }
