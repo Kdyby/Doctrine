@@ -103,7 +103,7 @@ abstract class ORMTestCase extends Tester\TestCase
 	 */
 	protected function newInstance($className, $props = array())
 	{
-		return Nette\PhpGenerator\Helpers::createObject($className, $props);
+		return Nette\Utils\PhpGenerator\Helpers::createObject($className, $props);
 	}
 
 }

@@ -13,7 +13,7 @@ namespace Kdyby\Doctrine\DI;
 use Doctrine;
 use Kdyby;
 use Nette;
-use Nette\PhpGenerator as Code;
+use Nette\Utils\PhpGenerator as Code;
 use Nette\Utils\Strings;
 use Nette\Utils\Validators;
 
@@ -399,9 +399,6 @@ class OrmExtension extends Nette\Config\CompilerExtension
 
 
 
-	/**
-	 * @param \Nette\PhpGenerator\ClassType $class
-	 */
 	public function afterCompile(Code\ClassType $class)
 	{
 		$init = $class->methods['initialize'];
