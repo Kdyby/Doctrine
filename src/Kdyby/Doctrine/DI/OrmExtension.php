@@ -402,7 +402,7 @@ class OrmExtension extends Nette\Config\CompilerExtension
 		$foundSessionStart = FALSE;
 		$lines = explode("\n", trim($init->body));
 		$init->body = NULL;
-		while ($line = array_shift($lines)) {
+		while (($line = array_shift($lines)) || $lines) {
 			if (!$foundSessionStart && stripos($line, 'session->start(') !== FALSE) {
 				$lines[] = $line;
 				$foundSessionStart = TRUE;
