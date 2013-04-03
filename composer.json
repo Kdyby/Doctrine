@@ -16,10 +16,10 @@
 		"issues": "https://github.com/kdyby/doctrine/issues"
 	},
 	"require": {
-		"nette/nette": "@dev",
+		"nette/nette": "~2.0",
 		"doctrine/orm": "2.3.*@stable",
-		"kdyby/events": "@dev",
-		"kdyby/console": "@dev"
+		"kdyby/events": "1.*",
+		"kdyby/console": "1.*"
 	},
 	"require-dev": {
 		"nette/tester": "@dev",
