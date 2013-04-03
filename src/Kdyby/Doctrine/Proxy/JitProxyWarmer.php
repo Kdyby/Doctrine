@@ -29,6 +29,11 @@ class JitProxyWarmer extends Nette\Object
 	{
 		$conf = $em->getConfiguration();
 
+		if (!is_dir($conf->getProxyDir())) {
+			umask(0);
+			@mkdir($conf->getProxyDir());
+		}
+
 		$keep = $regenerate = array();
 		$proxies = Nette\Utils\Finder::find(Proxy::MARKER . '*.php')->in($conf->getProxyDir());
 		foreach ($proxies as $proxyFile) {
