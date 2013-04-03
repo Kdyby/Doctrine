@@ -2,12 +2,6 @@ php:
 	date.timezone: Europe/Prague
 
 
-extensions:
-	events: Kdyby\Events\DI\EventsExtension
-	doctrine: Kdyby\Doctrine\DI\OrmExtension
-	console: Kdyby\Console\DI\ConsoleExtension
-
-
 doctrine:
 	metadataCache: array
 	queryCache: array

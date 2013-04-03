@@ -40,10 +40,15 @@ abstract class ORMTestCase extends Tester\TestCase
 		require_once __DIR__ . '/Doctrine/models/cms.php';
 
 		$config = new Nette\Config\Configurator();
-		$container = $config->setTempDirectory(TEMP_DIR)
-			->addConfig(__DIR__ . '/nette-reset.neon', FALSE)
-			->addConfig(__DIR__ . '/Doctrine/config/memory.neon', FALSE)
-			->createContainer();
+		$config->setTempDirectory(TEMP_DIR);
+		$config->addConfig(__DIR__ . '/nette-reset.neon', FALSE);
+		$config->addConfig(__DIR__ . '/Doctrine/config/memory.neon', FALSE);
+
+		Kdyby\Events\DI\EventsExtension::register($config);
+		Kdyby\Doctrine\DI\OrmExtension::register($config);
+		Kdyby\Console\DI\ConsoleExtension::register($config);
+
+		$container = $config->createContainer();
 		/** @var Nette\DI\Container $container */
 
 		$em = $container->getByType('Kdyby\Doctrine\EntityManager');
