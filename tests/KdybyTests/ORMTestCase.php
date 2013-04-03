@@ -19,7 +19,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Tools\SchemaTool;
 use Kdyby;
 use Nette;
-use Nette\PhpGenerator as Code;
+use Nette\Utils\PhpGenerator as Code;
 use Tester;
 
 require_once __DIR__ . '/Doctrine/mocks.php';

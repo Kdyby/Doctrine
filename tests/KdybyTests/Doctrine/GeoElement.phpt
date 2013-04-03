@@ -12,7 +12,7 @@ namespace KdybyTests\Doctrine;
 
 use Kdyby;
 use Nette;
-use Nette\PhpGenerator as Code;
+use Nette\Utils\PhpGenerator as Code;
 use Tester;
 use Tester\Assert;
 
