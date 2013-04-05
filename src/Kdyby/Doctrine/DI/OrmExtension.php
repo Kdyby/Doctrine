@@ -146,7 +146,7 @@ class OrmExtension extends Nette\Config\CompilerExtension
 		// syntax sugar for config
 		$builder->addDefinition($this->prefix('dao'))
 			->setClass('Kdyby\Doctrine\EntityDao')
-			->setFactory('@Kdyby\Doctrine\EntityManager::getDao', array('%entityName%'))
+			->setFactory('@Kdyby\Doctrine\EntityManager::getDao', array(new Code\PhpLiteral('$entityName')))
 			->setParameters(array('entityName'));
 
 		$builder->addDefinition($this->prefix('schemaValidator'))
@@ -180,7 +180,7 @@ class OrmExtension extends Nette\Config\CompilerExtension
 		/** @var Nette\DI\ServiceDefinition $metadataDriver */
 
 		$metadataDriver->addSetup('setDefaultDriver', array(
-			new Nette\DI\Statement($this->metadataDriverClasses[self::ANNOTATION_DRIVER], array(array('%appDir%')))
+			new Nette\DI\Statement($this->metadataDriverClasses[self::ANNOTATION_DRIVER], array(array($builder->expand('%appDir%'))))
 		));
 
 		Validators::assertField($config, 'metadata', 'array');
