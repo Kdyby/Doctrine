@@ -113,6 +113,8 @@ class OrmExtension extends Nette\Config\CompilerExtension
 
 	public function loadConfiguration()
 	{
+		$this->ensureRegisteredEventsExtension();
+
 		$builder = $this->getContainerBuilder();
 		$config = $this->getConfig(array('debug' => $builder->parameters['debugMode']));
 
@@ -410,6 +412,23 @@ class OrmExtension extends Nette\Config\CompilerExtension
 			}
 
 			$init->addBody($line);
+		}
+	}
+
+
+
+	protected function ensureRegisteredEventsExtension()
+	{
+		$eventsExt = NULL;
+		foreach ($this->compiler->getExtensions() as $extension) {
+			if ($extension instanceof Kdyby\Events\DI\EventsExtension) {
+				$eventsExt = $extension;
+				break;
+			}
+		}
+
+		if ($eventsExt === NULL) {
+			$this->compiler->addExtension('events', new Kdyby\Events\DI\EventsExtension());
 		}
 	}
 
