@@ -147,14 +147,14 @@ class OrmExtension extends Nette\Config\CompilerExtension
 		// syntax sugar for config
 		$builder->addDefinition($this->prefix('dao'))
 			->setClass('Kdyby\Doctrine\EntityDao')
-			->setFactory('@Kdyby\Doctrine\EntityManager::getDao', array('%entityName%'))
+			->setFactory('@Kdyby\Doctrine\EntityManager::getDao', array(new Code\PhpLiteral('$entityName')))
 			->setParameters(array('entityName'))
 			->setInject(FALSE);
 
 		// interface for models & presenters
 		$builder->addDefinition($this->prefix('daoFactory'))
 			->setClass('Kdyby\Doctrine\EntityDao')
-			->setFactory('@Kdyby\Doctrine\EntityManager::getDao', array('%entityName%'))
+			->setFactory('@Kdyby\Doctrine\EntityManager::getDao', array(new Code\PhpLiteral('$entityName')))
 			->setParameters(array('entityName'))
 			->setImplement('Kdyby\Doctrine\EntityDaoFactory')
 			->setInject(FALSE)->setAutowired(TRUE);
@@ -195,7 +195,7 @@ class OrmExtension extends Nette\Config\CompilerExtension
 		/** @var Nette\DI\ServiceDefinition $metadataDriver */
 
 		$metadataDriver->addSetup('setDefaultDriver', array(
-			new Nette\DI\Statement($this->metadataDriverClasses[self::ANNOTATION_DRIVER], array(array('%appDir%')))
+			new Nette\DI\Statement($this->metadataDriverClasses[self::ANNOTATION_DRIVER], array(array($builder->expand('%appDir%'))))
 		));
 
 		Validators::assertField($config, 'metadata', 'array');
