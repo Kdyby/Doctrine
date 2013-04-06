@@ -399,6 +399,23 @@ class OrmExtension extends Nette\Config\CompilerExtension
 
 
 
+	public function beforeCompile()
+	{
+		$eventsExt = NULL;
+		foreach ($this->compiler->getExtensions() as $extension) {
+			if ($extension instanceof Kdyby\Events\DI\EventsExtension) {
+				$eventsExt = $extension;
+				break;
+			}
+		}
+
+		if ($eventsExt === NULL) {
+			throw new Nette\Utils\AssertionException('Please register the required Kdyby\Events\DI\EventsExtension to Compiler.');
+		}
+	}
+
+
+
 	public function afterCompile(Code\ClassType $class)
 	{
 		$init = $class->methods['initialize'];
