@@ -197,11 +197,18 @@ class OrmExtension extends Nette\Config\CompilerExtension
 		));
 
 		Validators::assertField($config, 'metadata', 'array');
-		foreach (self::natSortKeys($config['metadata']) as $namespace => $driver) {
-			if (!is_string($namespace) || !Strings::match($namespace, '#^' . self::PHP_NAMESPACE . '\z#')) {
-				throw new Nette\Utils\AssertionException("The metadata namespace expects to be identifier, $namespace given.");
+		foreach ($this->compiler->getExtensions() as $extension) {
+			if (!$extension instanceof IEntityProvider) {
+				continue;
 			}
-			$this->processMetadataDriver($metadataDriver, ltrim($namespace, '\\'), $driver, $name);
+
+			$metadata = $extension->getEntityMappings();
+			Validators::assert($metadata, 'array:1..');
+			$config['metadata'] = array_merge($config['metadata'], $metadata);
+		}
+
+		foreach (self::natSortKeys($config['metadata']) as $namespace => $driver) {
+			$this->processMetadataDriver($metadataDriver, $namespace, $driver, $name);
 		}
 
 		Validators::assertField($config, 'namespaceAlias', 'array');
@@ -328,10 +335,26 @@ class OrmExtension extends Nette\Config\CompilerExtension
 	 * @param string $namespace
 	 * @param string|object $driver
 	 * @param string $prefix
+	 * @throws \Nette\Utils\AssertionException
 	 * @return string
 	 */
 	protected function processMetadataDriver(Nette\DI\ServiceDefinition $metadataDriver, $namespace, $driver, $prefix)
 	{
+		if (!is_string($namespace) || !Strings::match($namespace, '#^' . self::PHP_NAMESPACE . '\z#')) {
+			throw new Nette\Utils\AssertionException("The metadata namespace expects to be valid namespace, $namespace given.");
+		}
+		$namespace = ltrim($namespace, '\\');
+
+		if (is_string($driver) || is_array($driver)) {
+			$paths = is_array($driver) ? $driver : array($driver);
+			foreach ($paths as $path) {
+				if (!file_exists($path)) {
+					throw new Nette\Utils\AssertionException("The metadata path expects to be an existing directory, $path given.");
+				}
+			}
+			$driver = (object)array('value' => self::ANNOTATION_DRIVER, 'attributes' => $paths);
+		}
+
 		$impl = $driver instanceof \stdClass ? $driver->value : (string) $driver;
 		list($driver) = $this->filterArgs($driver);
 		/** @var Nette\DI\Statement $driver */
