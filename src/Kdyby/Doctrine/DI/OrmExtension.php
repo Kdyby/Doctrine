@@ -49,7 +49,6 @@ class OrmExtension extends Nette\Config\CompilerExtension
 		'filters' => array(),
 		'namespaceAlias' => array(),
 		'customHydrators' => array(),
-		'ignoredAnnotations' => array(),
 	);
 
 	/**
@@ -115,7 +114,7 @@ class OrmExtension extends Nette\Config\CompilerExtension
 	public function loadConfiguration()
 	{
 		$builder = $this->getContainerBuilder();
-		$config = $this->getConfig(array('debug' => $builder->parameters['debugMode']));
+		$config = $this->getConfig(array('debug' => $builder->parameters['debugMode'], 'ignoredAnnotations' => array()));
 
 		$builder->parameters[$this->prefix('debug')] = !empty($config['debug']);
 
@@ -127,6 +126,7 @@ class OrmExtension extends Nette\Config\CompilerExtension
 			$builder->getDefinition($this->prefix('annotation.reflectionReader'))
 				->addSetup('addGlobalIgnoredName', array($annotationName));
 		}
+		unset($config['ignoredAnnotations']);
 
 		$builder->addDefinition($this->prefix('annotation.reader'))
 			->setClass('Doctrine\Common\Annotations\Reader')
