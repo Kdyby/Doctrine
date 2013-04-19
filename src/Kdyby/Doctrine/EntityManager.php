@@ -24,9 +24,22 @@ use Nette;
  * @author Filip Procházka <filip@prochazka.su>
  *
  * @method flush(array $entity = NULL)
+ * @method onDaoCreate(EntityManager $em, EntityDao $dao)
  */
 class EntityManager extends Doctrine\ORM\EntityManager
 {
+
+	/**
+	 * @var array
+	 */
+	public $onDaoCreate = array();
+
+	/**
+	 * @var array|EntityDao[]
+	 */
+	private $repositories = array();
+
+
 
 	/**
 	 * @return \Kdyby\Doctrine\QueryBuilder
@@ -54,7 +67,22 @@ class EntityManager extends Doctrine\ORM\EntityManager
 	 */
 	public function getRepository($entityName)
 	{
-		return parent::getRepository($entityName);
+		$entityName = ltrim($entityName, '\\');
+
+		if (isset($this->repositories[$entityName])) {
+			return $this->repositories[$entityName];
+		}
+
+		$metadata = $this->getClassMetadata($entityName);
+		if (!$daoClassName = $metadata->customRepositoryClassName) {
+			$daoClassName = $this->getConfiguration()->getDefaultRepositoryClassName();
+		}
+
+		$dao = new $daoClassName($this, $metadata);
+		$this->repositories[$entityName] = $dao;
+		$this->onDaoCreate($this, $dao);
+
+		return $dao;
 	}
 
 
