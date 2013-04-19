@@ -227,8 +227,8 @@ class OrmExtension extends Nette\Config\CompilerExtension
 		$this->proxyAutoLoaders[$config['proxyNamespace']] = $config['proxyDir'];
 
 		Validators::assertField($config, 'filters', 'array');
-		foreach ($config['filters'] as $name => $filterClass) {
-			$configuration->addSetup('addFilter', array($name, $filterClass));
+		foreach ($config['filters'] as $filterName => $filterClass) {
+			$configuration->addSetup('addFilter', array($filterName, $filterClass));
 		}
 
 		// entity manager
