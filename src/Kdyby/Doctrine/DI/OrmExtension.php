@@ -49,6 +49,7 @@ class OrmExtension extends Nette\Config\CompilerExtension
 		'filters' => array(),
 		'namespaceAlias' => array(),
 		'customHydrators' => array(),
+		'ignoredAnnotations' => array(),
 	);
 
 	/**
@@ -120,6 +121,12 @@ class OrmExtension extends Nette\Config\CompilerExtension
 
 		$this->loadConfig('console');
 		$this->loadConfig('annotation');
+
+		Validators::assertField($config, 'ignoredAnnotations', 'array');
+		foreach ($config['ignoredAnnotations'] as $annotationName) {
+			$builder->getDefinition($this->prefix('annotation.reflectionReader'))
+				->addSetup('addGlobalIgnoredName', array($annotationName));
+		}
 
 		$builder->addDefinition($this->prefix('annotation.reader'))
 			->setClass('Doctrine\Common\Annotations\Reader')
