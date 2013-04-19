@@ -93,7 +93,7 @@ class EntityManager extends Doctrine\ORM\EntityManager
 	 */
 	public function getDao($entityName)
 	{
-		return parent::getRepository($entityName);
+		return $this->getRepository($entityName);
 	}
 
 
