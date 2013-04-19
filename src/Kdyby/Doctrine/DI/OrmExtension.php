@@ -126,7 +126,6 @@ class OrmExtension extends Nette\Config\CompilerExtension
 			$builder->getDefinition($this->prefix('annotation.reflectionReader'))
 				->addSetup('addGlobalIgnoredName', array($annotationName));
 		}
-		unset($config['ignoredAnnotations']);
 
 		$builder->addDefinition($this->prefix('annotation.reader'))
 			->setClass('Doctrine\Common\Annotations\Reader')
