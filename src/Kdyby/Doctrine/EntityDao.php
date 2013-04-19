@@ -206,6 +206,18 @@ class EntityDao extends Doctrine\ORM\EntityRepository implements Persistence\Obj
 
 
 	/**
+	 * @param string $sql
+	 * @param Doctrine\ORM\Query\ResultSetMapping $rsm
+	 * @return Doctrine\ORM\NativeQuery
+	 */
+	public function createNativeQuery($sql, Doctrine\ORM\Query\ResultSetMapping $rsm)
+	{
+		return $this->getEntityManager()->createNativeQuery($sql, $rsm);
+	}
+
+
+
+	/**
 	 * @param string $alias
 	 * @return \Kdyby\Doctrine\QueryBuilder
 	 */
