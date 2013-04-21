@@ -300,6 +300,22 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel, Doctrin
 						Nette\Diagnostics\BlueScreen::highlightFile($file, $errorLine),
 				);
 			}
+
+		} elseif ($e instanceof \PDOException) {
+			if (isset($e->queryString)) {
+				$sql = $e->queryString;
+
+			} elseif ($item = Nette\Diagnostics\Helpers::findTrace($e->getTrace(), 'PDO::query')) {
+				$sql = $item['args'][0];
+
+			} elseif ($item = Nette\Diagnostics\Helpers::findTrace($e->getTrace(), 'PDO::prepare')) {
+				$sql = $item['args'][0];
+			}
+
+			return isset($sql) ? array(
+				'tab' => 'SQL',
+				'panel' => Nette\Database\Helpers::dumpSql($sql),
+			) : NULL;
 		}
 	}
 
