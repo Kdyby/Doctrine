@@ -52,4 +52,11 @@ abstract class IdentifiedEntity extends BaseEntity
 		return $this->id;
 	}
 
+
+
+	public function __clone()
+	{
+		$this->id = NULL;
+	}
+
 }
