@@ -523,10 +523,10 @@ class DqlSelectionTest extends KdybyTests\ORMTestCase
 			->where('u.id = ?', 23)
 			->where('u.id', 87);
 
-		Assert::match('SELECT u FROM test:CmsUser u WHERE u.id = :5f727_0_0 AND u.id = :5f727_1_0', $qb->getDQL());
+		Assert::match('SELECT u FROM test:CmsUser u WHERE u.id = :h5f727_0_0 AND u.id = :h5f727_1_0', $qb->getDQL());
 		Assert::equal(array(
-			':5f727_0_0' => new Parameter('5f727_0_0', 23),
-			':5f727_1_0' => new Parameter('5f727_1_0', 87),
+			':h5f727_0_0' => new Parameter('h5f727_0_0', 23),
+			':h5f727_1_0' => new Parameter('h5f727_1_0', 87),
 		), $qb->getParameters()->toArray());
 	}
 
