@@ -48,7 +48,6 @@ class OrmExtension extends Nette\Config\CompilerExtension
 		'metadata' => array(),
 		'filters' => array(),
 		'namespaceAlias' => array(),
-		'customHydrators' => array(),
 	);
 
 	/**
@@ -222,7 +221,7 @@ class OrmExtension extends Nette\Config\CompilerExtension
 		}
 
 		Validators::assertField($config, 'namespaceAlias', 'array');
-		Validators::assertField($config, 'customHydrators', 'array');
+		Validators::assertField($config, 'hydrators', 'array');
 		Validators::assertField($config, 'dql', 'array');
 		Validators::assertField($config['dql'], 'string', 'array');
 		Validators::assertField($config['dql'], 'numeric', 'array');
@@ -240,7 +239,7 @@ class OrmExtension extends Nette\Config\CompilerExtension
 			->addSetup('setProxyNamespace', array($config['proxyNamespace']))
 			->addSetup('setAutoGenerateProxyClasses', array($config['autoGenerateProxyClasses']))
 			->addSetup('setEntityNamespaces', array($config['namespaceAlias']))
-			->addSetup('setCustomHydrationModes', array($config['customHydrators']))
+			->addSetup('setCustomHydrationModes', array($config['hydrators']))
 			->addSetup('setCustomStringFunctions', array($config['dql']['string']))
 			->addSetup('setCustomNumericFunctions', array($config['dql']['numeric']))
 			->addSetup('setCustomDatetimeFunctions', array($config['dql']['datetime']))
