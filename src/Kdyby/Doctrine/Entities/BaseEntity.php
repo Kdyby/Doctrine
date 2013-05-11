@@ -51,6 +51,13 @@ abstract class BaseEntity extends Nette\Object implements \Serializable
 
 
 
+	public static function getClassName()
+	{
+		return get_called_class();
+	}
+
+
+
 	/**
 	 * Allows the user to access through magic methods to protected and public properties.
 	 * There are get<name>() and set<name>($value) methods for every protected or public property,
