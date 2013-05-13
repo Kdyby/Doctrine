@@ -314,6 +314,18 @@ class DqlSelectionTest extends KdybyTests\ORMTestCase
 
 
 
+	public function testGroupByUnprefixed()
+	{
+		$qb = $this->em->createSelection()
+			->select('u')
+			->from('test:CmsUser', 'u')
+			->group('id, username');
+
+		Assert::match('SELECT u FROM test:CmsUser u GROUP BY u.id, u.username', $qb->getDQL());
+	}
+
+
+
 	public function testHaving()
 	{
 		$qb = $this->em->createSelection();

@@ -237,8 +237,7 @@ class DqlSelection extends Nette\Object implements \IteratorAggregate
 
 
 	/**
-	 * @param $columns
-	 * @internal param string $by
+	 * @param string $columns
 	 * @return \Kdyby\Doctrine\DqlSelection
 	 */
 	public function group($columns)
