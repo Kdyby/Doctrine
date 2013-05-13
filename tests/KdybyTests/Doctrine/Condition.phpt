@@ -97,30 +97,30 @@ class ConditionTest extends Tester\TestCase
 		$condition->addAnd('column', array(10, 20, 30));
 
 		$params = new ArrayCollection();
-		Assert::same("column IN (:9c25e_0_0, :9c25e_0_1, :9c25e_0_2)", $condition->build($params));
+		Assert::same("column IN (:h9c25e_0_0, :h9c25e_0_1, :h9c25e_0_2)", $condition->build($params));
 		Assert::equal(array(
-			':9c25e_0_0' => new Parameter('9c25e_0_0', 10),
-			':9c25e_0_1' => new Parameter('9c25e_0_1', 20),
-			':9c25e_0_2' => new Parameter('9c25e_0_2', 30),
+			':h9c25e_0_0' => new Parameter('h9c25e_0_0', 10),
+			':h9c25e_0_1' => new Parameter('h9c25e_0_1', 20),
+			':h9c25e_0_2' => new Parameter('h9c25e_0_2', 30),
 		), $params->toArray());
 
 		$condition = new Condition();
 		$condition->addAnd('column', array(10, 20));
 
 		$params = new ArrayCollection();
-		Assert::same("column IN (:9c25e_0_0, :9c25e_0_1)", $condition->build($params));
+		Assert::same("column IN (:h9c25e_0_0, :h9c25e_0_1)", $condition->build($params));
 		Assert::equal(array(
-			':9c25e_0_0' => new Parameter('9c25e_0_0', 10),
-			':9c25e_0_1' => new Parameter('9c25e_0_1', 20),
+			':h9c25e_0_0' => new Parameter('h9c25e_0_0', 10),
+			':h9c25e_0_1' => new Parameter('h9c25e_0_1', 20),
 		), $params->toArray());
 
 		$condition = new Condition();
 		$condition->addAnd('column', array(10));
 
 		$params = new ArrayCollection();
-		Assert::same("column IN (:9c25e_0_0)", $condition->build($params));
+		Assert::same("column IN (:h9c25e_0_0)", $condition->build($params));
 		Assert::equal(array(
-			':9c25e_0_0' => new Parameter('9c25e_0_0', 10),
+			':h9c25e_0_0' => new Parameter('h9c25e_0_0', 10),
 		), $params->toArray());
 	}
 
@@ -132,9 +132,9 @@ class ConditionTest extends Tester\TestCase
 		$condition->addAnd('column', 10);
 
 		$params = new ArrayCollection();
-		Assert::same("column = :126fc_0_0", $condition->build($params));
+		Assert::same("column = :h126fc_0_0", $condition->build($params));
 		Assert::equal(array(
-			':126fc_0_0' => new Parameter('126fc_0_0', 10),
+			':h126fc_0_0' => new Parameter('h126fc_0_0', 10),
 		), $params->toArray());
 	}
 
