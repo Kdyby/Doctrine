@@ -155,7 +155,7 @@ class DqlBuilder extends Nette\Object
 			$return .= ' HAVING ' . $this->having->build($this->parameters);
 		}
 		if ($this->orderBy) {
-			$return .= ' ORDER BY ' . implode(', ', $this->orderBy);
+			$return .= ' ORDER BY ' . Condition::prefixWithAlias(implode(', ', $this->orderBy), $this->where->rootAlias);
 		}
 
 		return $return;
