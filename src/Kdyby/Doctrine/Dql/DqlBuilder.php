@@ -149,13 +149,13 @@ class DqlBuilder extends Nette\Object
 			$return .= ' WHERE ' . $this->where->build($this->parameters);
 		}
 		if ($this->groupBy) {
-			$return .= ' GROUP BY ' . $this->groupBy;
+			$return .= ' GROUP BY ' . Condition::prefixWithAlias($this->groupBy, $this->where->rootAlias);
 		}
 		if (!$this->having->isEmpty()) {
 			$return .= ' HAVING ' . $this->having->build($this->parameters);
 		}
 		if ($this->orderBy) {
-			$return .= ' ORDER BY ' . implode(', ', $this->orderBy);
+			$return .= ' ORDER BY ' . Condition::prefixWithAlias(implode(', ', $this->orderBy), $this->where->rootAlias);
 		}
 
 		return $return;
