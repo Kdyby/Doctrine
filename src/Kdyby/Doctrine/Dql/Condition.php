@@ -167,7 +167,7 @@ class Condition extends Nette\Object
 	public function build(ArrayCollection $parameters)
 	{
 		$cond = explode('?', $serialised = $this->__toString());
-		$prefix = substr(md5($serialised), 0, 5);
+		$prefix = 'h' . substr(md5($serialised), 0, 5); // must start with letter otherwise doctrine lexer won't take it correctly
 
 		$result = array_shift($cond);
 		foreach ($this->params as $i => $value) {
