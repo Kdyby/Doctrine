@@ -114,10 +114,8 @@ class Condition extends Nette\Object
 	 */
 	protected function where($cond, $params = array())
 	{
-		if (($alias = $this->rootAlias) !== NULL) {
-			$cond = Nette\Utils\Strings::replace($cond, '~(?<=[^:\w`\'"\\[\\.\\\\]|^)[a-z_][a-z0-9_\\.]+(?=[^:\w`\'")\\]\\.\\\\]|\z)~i', function ($m) use ($alias) {
-				return (strpos($m[0], '.') !== FALSE || strtoupper($m[0]) === $m[0]) ? $m[0] : $alias . '.' . $m[0];
-			});
+		if ($this->rootAlias !== NULL) {
+			$cond = self::prefixWithAlias($cond, $this->rootAlias);
 		}
 
 		$args = func_get_args();
@@ -203,6 +201,24 @@ class Condition extends Nette\Object
 	public function __toString()
 	{
 		return implode($this->last === self::COND_AND ? ' AND ' : ' OR ', $this->conds);
+	}
+
+
+
+	/**
+	 * Try to prefix expression with alias, if not prefixed yet
+	 *
+	 * @param string $cond
+	 * @param string $alias
+	 * @return string
+	 */
+	public static function prefixWithAlias($cond, $alias)
+	{
+		$cond = Nette\Utils\Strings::replace($cond, '~(?<=[^:\w`\'"\\[\\.\\\\]|^)[a-z_][a-z0-9_\\.]+(?=[^:\w`\'")\\]\\.\\\\]|\z)~i', function ($m) use ($alias) {
+			return (strpos($m[0], '.') !== FALSE || strtoupper($m[0]) === $m[0]) ? $m[0] : $alias . '.' . $m[0];
+		});
+
+		return $cond;
 	}
 
 }
