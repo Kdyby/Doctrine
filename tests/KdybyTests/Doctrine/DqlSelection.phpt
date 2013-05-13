@@ -314,6 +314,18 @@ class DqlSelectionTest extends KdybyTests\ORMTestCase
 
 
 
+	public function testGroupByUnprefixed()
+	{
+		$qb = $this->em->createSelection()
+			->select('u')
+			->from('test:CmsUser', 'u')
+			->group('id, username');
+
+		Assert::match('SELECT u FROM test:CmsUser u GROUP BY u.id, u.username', $qb->getDQL());
+	}
+
+
+
 	public function testHaving()
 	{
 		$qb = $this->em->createSelection();
@@ -364,6 +376,30 @@ class DqlSelectionTest extends KdybyTests\ORMTestCase
 			->order('u.username ASC');
 
 		Assert::match('SELECT u FROM test:CmsUser u ORDER BY u.username ASC', $qb->getDQL());
+	}
+
+
+
+	public function testOrderByUnprefixed()
+	{
+		$qb = $this->em->createSelection();
+		$qb->select('u')
+			->from('test:CmsUser', 'u')
+			->order('username ASC');
+
+		Assert::match('SELECT u FROM test:CmsUser u ORDER BY u.username ASC', $qb->getDQL());
+	}
+
+
+
+	public function testOrderByUnprefixed2()
+	{
+		$qb = $this->em->createSelection();
+		$qb->select('u')
+			->from('test:CmsUser', 'u')
+			->order('username ASC, login, updated DESC');
+
+		Assert::match('SELECT u FROM test:CmsUser u ORDER BY u.username ASC, u.login, u.updated DESC', $qb->getDQL());
 	}
 
 
