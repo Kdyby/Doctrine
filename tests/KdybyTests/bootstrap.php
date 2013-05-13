@@ -8,7 +8,7 @@
  * For the full copyright and license information, please view the file license.md that was distributed with this source code.
  */
 
-if (!$loader = @include __DIR__ . '/../../vendor/autoload.php') {
+if ((!$loader = @include __DIR__ . '/../../vendor/autoload.php') && (!$loader = @include __DIR__ . '/../../../../autoload.php')) {
 	echo 'Install Nette Tester using `composer update --dev`';
 	exit(1);
 }
