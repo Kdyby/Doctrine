@@ -301,6 +301,14 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel, Doctrin
 				);
 			}
 
+		} elseif ($e instanceof \Doctrine\ORM\Query\QueryException) {
+			if (($prev = $e->getPrevious()) && preg_match('~^(SELECT|INSERT|UPDATE|DELETE)\s+.*~i', $prev->getMessage())) {
+				return array(
+					'tab' => 'DQL',
+					'panel' => Nette\Database\Helpers::dumpSql($prev->getMessage()),
+				);
+			}
+
 		} elseif ($e instanceof \PDOException) {
 			if (isset($e->queryString)) {
 				$sql = $e->queryString;
