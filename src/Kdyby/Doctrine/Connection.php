@@ -26,6 +26,34 @@ class Connection extends Doctrine\DBAL\Connection
 {
 
 	/**
+	 * Inserts a table row with specified data.
+	 *
+	 * @param string $tableName The name of the table to insert data into.
+	 * @param array $data An associative array containing column-value pairs.
+	 * @param array $types Types of the inserted data.
+	 * @return integer The number of affected rows.
+	 */
+	public function insert($tableName, array $data, array $types = array())
+	{
+		$this->connect();
+		$platform = $this->getDriver()->getDatabasePlatform();
+
+		// column names are specified as array keys
+		$cols = array();
+		$placeholders = array();
+
+		foreach ($data as $columnName => $value) {
+			$cols[] = $platform->quoteIdentifier($columnName);
+			$placeholders[] = '?';
+		}
+
+		$query = 'INSERT INTO ' . $platform->quoteIdentifier($tableName) . ' (' . implode(', ', $cols) . ')'
+			. ' VALUES (' . implode(', ', $placeholders) . ')';
+
+		return $this->executeUpdate($query, array_values($data), $types);
+	}
+
+	/**
 	 * @param string $query
 	 * @param array $params
 	 * @param array $types
