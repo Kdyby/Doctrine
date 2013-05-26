@@ -19,10 +19,17 @@ use Nette\Utils\Validators;
 
 
 
+if (!class_exists('Nette\DI\CompilerExtension')) {
+	class_alias('Nette\Config\CompilerExtension', 'Nette\DI\CompilerExtension');
+	class_alias('Nette\Config\Configurator', 'Nette\Configurator');
+	class_alias('Nette\Config\Compiler', 'Nette\DI\Compiler');
+	class_alias('Nette\Config\Helpers', 'Nette\DI\Config\Helpers');
+}
+
 /**
  * @author Filip Procházka <filip@prochazka.su>
  */
-class OrmExtension extends Nette\Config\CompilerExtension
+class OrmExtension extends Nette\DI\CompilerExtension
 {
 
 	const ANNOTATION_DRIVER = 'annotations';
@@ -492,7 +499,7 @@ class OrmExtension extends Nette\Config\CompilerExtension
 	 */
 	private function filterArgs($statement)
 	{
-		return Nette\Config\Compiler::filterArguments(array(is_string($statement) ? new Nette\DI\Statement($statement) : $statement));
+		return Nette\DI\Compiler::filterArguments(array(is_string($statement) ? new Nette\DI\Statement($statement) : $statement));
 	}
 
 
@@ -505,7 +512,7 @@ class OrmExtension extends Nette\Config\CompilerExtension
 	 */
 	private function resolveConfig(array $provided, array $defaults, array $diff = array())
 	{
-		return $this->getContainerBuilder()->expand(Nette\Config\Helpers::merge(
+		return $this->getContainerBuilder()->expand(Nette\DI\Config\Helpers::merge(
 			array_diff_key($provided, array_diff_key($diff, $defaults)),
 			$defaults
 		));
@@ -528,11 +535,11 @@ class OrmExtension extends Nette\Config\CompilerExtension
 
 
 	/**
-	 * @param \Nette\Config\Configurator $configurator
+	 * @param \Nette\Configurator $configurator
 	 */
-	public static function register(Nette\Config\Configurator $configurator)
+	public static function register(Nette\Configurator $configurator)
 	{
-		$configurator->onCompile[] = function ($config, Nette\Config\Compiler $compiler) {
+		$configurator->onCompile[] = function ($config, Nette\DI\Compiler $compiler) {
 			$compiler->addExtension('doctrine', new OrmExtension());
 		};
 	}
