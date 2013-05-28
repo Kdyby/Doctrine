@@ -301,6 +301,12 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel, Doctrin
 				);
 			}
 
+		} elseif ($e instanceof Kdyby\Doctrine\DBALException && $e->query) {
+			return array(
+				'tab' => 'SQL',
+				'panel' => Nette\Database\Helpers::dumpSql($e->query, $e->params),
+			);
+
 		} elseif ($e instanceof \Doctrine\ORM\Query\QueryException) {
 			if (($prev = $e->getPrevious()) && preg_match('~^(SELECT|INSERT|UPDATE|DELETE)\s+.*~i', $prev->getMessage())) {
 				return array(
@@ -310,8 +316,14 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel, Doctrin
 			}
 
 		} elseif ($e instanceof \PDOException) {
+			$params = array();
+
 			if (isset($e->queryString)) {
 				$sql = $e->queryString;
+
+			} elseif ($item = Nette\Diagnostics\Helpers::findTrace($e->getTrace(), 'Doctrine\DBAL\Connection::executeQuery')) {
+				$sql = $item['args'][0];
+				$params = $item['args'][1];
 
 			} elseif ($item = Nette\Diagnostics\Helpers::findTrace($e->getTrace(), 'PDO::query')) {
 				$sql = $item['args'][0];
@@ -322,7 +334,7 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel, Doctrin
 
 			return isset($sql) ? array(
 				'tab' => 'SQL',
-				'panel' => Nette\Database\Helpers::dumpSql($sql),
+				'panel' => Nette\Database\Helpers::dumpSql($sql, $params),
 			) : NULL;
 		}
 	}
