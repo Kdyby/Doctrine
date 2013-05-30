@@ -148,7 +148,7 @@ class Condition extends Nette\Object
 				$this->params[] = $params;
 
 			} else {
-				$cond .= " = NULL";
+				$cond .= " IS NULL"; // this seems wrong anyway
 			}
 		}
 

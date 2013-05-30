@@ -245,6 +245,18 @@ class DqlSelectionTest extends KdybyTests\ORMTestCase
 
 
 
+	public function testWhereInEmpty()
+	{
+		$qb = $this->em->createSelection();
+		$qb->select('u')
+			->from('test:CmsUser', 'u')
+			->where('u.id', array());
+
+		Assert::match('SELECT u FROM test:CmsUser u WHERE u.id IS NULL', $qb->getDQL());
+	}
+
+
+
 	public function testOrWhereIn()
 	{
 		$qb = $this->em->createSelection();
