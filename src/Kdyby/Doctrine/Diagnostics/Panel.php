@@ -11,6 +11,7 @@
 namespace Kdyby\Doctrine\Diagnostics;
 
 use Doctrine;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Persistence\Proxy;
 use Doctrine\Common\Annotations\AnnotationException;
 use Kdyby;
@@ -267,7 +268,7 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel, Doctrin
 		} elseif ($e instanceof Kdyby\Doctrine\QueryException && $e->query !== NULL) {
 			return array(
 				'tab' => 'DQL',
-				'panel' => $this->dumpQuery($e->query->getDQL(), $e->query->getParameters()->toArray()),
+				'panel' => $this->dumpQuery($e->query->getDQL(), $e->query->getParameters()),
 			);
 		}
 	}
@@ -343,7 +344,7 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel, Doctrin
 
 	/**
 	 * @param string $query
-	 * @param array $params
+	 * @param array|Doctrine\Common\Collections\ArrayCollection $params
 	 * @param string $source
 	 *
 	 * @return array
@@ -352,7 +353,19 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel, Doctrin
 	{
 		$h = 'htmlSpecialChars';
 
-		$parametrized = static::formatQuery($query, (array) $params);
+		if ($params instanceof ArrayCollection) {
+			$tmp = array();
+			foreach ($params as $key => $param) {
+				if ($param instanceof Doctrine\ORM\Query\Parameter) {
+					$tmp[$param->getName()] = $param->getValue();
+					continue;
+				}
+				$tmp[$key] = $param;
+			}
+			$params = $tmp;
+		}
+
+		$parametrized = static::formatQuery($query, $params);
 
 		// query
 		$s = '<p><b>Query</b></p><table><tr><td class="nette-Doctrine2Panel-sql">';
@@ -377,7 +390,7 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel, Doctrin
 	 * @throws \Kdyby\Doctrine\InvalidStateException
 	 * @return string
 	 */
-	public static function formatQuery($query, array $params)
+	public static function formatQuery($query, $params)
 	{
 		$params = array_map(array(get_called_class(), 'formatParameter'), $params);
 		if (Nette\Utils\Validators::isList($params)) {
