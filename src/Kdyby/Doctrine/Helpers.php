@@ -82,14 +82,12 @@ class Helpers extends Nette\Object
 	 * Import taken from Adminer, slightly modified
 	 * This implementation is aware of delimiters used for trigger definitions
 	 *
-	 * @author   Jakub Vrána, Jan Tvrdík, Michael Moravec
+	 * @author   Jakub Vrána, Jan Tvrdík, Michael Moravec, Filip Procházka
 	 * @license  Apache License
 	 */
-	public static function loadFromFile(Connection $connection, $file)
+	public static function executeBatch(Connection $connection, $query)
 	{
 		$db = $connection->getWrappedConnection();
-
-		$query = file_get_contents($file);
 
 		$delimiter = ';';
 		$offset = 0;
@@ -124,6 +122,13 @@ class Helpers extends Nette\Object
 				}
 			}
 		}
+	}
+
+
+
+	public static function loadFromFile(Connection $connection, $file)
+	{
+		self::executeBatch($connection, file_get_contents($file));
 	}
 
 }
