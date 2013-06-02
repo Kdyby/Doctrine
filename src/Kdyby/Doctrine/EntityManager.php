@@ -99,6 +99,22 @@ class EntityManager extends Doctrine\ORM\EntityManager
 
 
 	/**
+	 * @param string $className
+	 * @throws MissingClassException
+	 * @return Kdyby\Doctrine\Mapping\ClassMetadata
+	 */
+	public function getClassMetadata($className)
+	{
+		if (!class_exists($className)) {
+			throw new MissingClassException("Metadata of class $className was not found, because the class is missing or cannot be autoloaded.");
+		}
+
+		return parent::getClassMetadata($className);
+	}
+
+
+
+	/**
 	 * Factory method to create EntityManager instances.
 	 *
 	 * @param \Doctrine\DBAL\Connection|array $conn
