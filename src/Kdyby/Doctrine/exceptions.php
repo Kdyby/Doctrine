@@ -65,6 +65,16 @@ class NotImplementedException extends \LogicException implements Exception
 
 
 /**
+ * When class is not found
+ */
+class MissingClassException extends \LogicException implements Exception
+{
+
+}
+
+
+
+/**
  * @author Filip Procházka <filip@prochazka.su>
  */
 class UnexpectedValueException extends \UnexpectedValueException implements Exception
