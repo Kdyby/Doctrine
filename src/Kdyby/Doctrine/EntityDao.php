@@ -188,19 +188,20 @@ class EntityDao extends Doctrine\ORM\EntityRepository implements Persistence\Obj
 
 
 	/**
-	 * Create a new QueryBuilder instance that is prepopulated for this entity name
+	 * Create a new QueryBuilder instance that is pre-populated for this entity name
 	 *
 	 * @param string|NULL $alias
+	 * @param string|NULL $indexBy
 	 * @return \Kdyby\Doctrine\DqlSelection
 	 */
-	public function select($alias = NULL)
+	public function select($alias = NULL, $indexBy = NULL)
 	{
 		if ($alias === NULL) {
 			$alias = strtolower(substr($this->_entityName, strrpos($this->_entityName, '\\'), 1));
 		}
 
 		$selection = $this->getEntityManager()->createSelection();
-		return $selection->select($alias)->from($this->getEntityName(), $alias);
+		return $selection->select($alias)->from($this->getEntityName(), $alias, $indexBy ? "$alias.$indexBy" : NULL);
 	}
 
 

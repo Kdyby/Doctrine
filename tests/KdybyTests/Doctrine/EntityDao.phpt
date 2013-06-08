@@ -85,6 +85,26 @@ class EntityDaoTest extends ORMTestCase
 		Assert::same('admin', $user->status);
 	}
 
+
+
+	public function testSelect()
+	{
+		$users = $this->em->getDao('KdybyTests\Doctrine\CmsUser');
+		$qb = $users->select('u');
+
+		Assert::same('SELECT u FROM KdybyTests\Doctrine\CmsUser u', $qb->getDQL());
+	}
+
+
+
+	public function testSelectIndexed()
+	{
+		$users = $this->em->getDao('KdybyTests\Doctrine\CmsUser');
+		$qb = $users->select('u', 'id');
+
+		Assert::same('SELECT u FROM KdybyTests\Doctrine\CmsUser u INDEX BY u.id', $qb->getDQL());
+	}
+
 }
 
 \run(new EntityDaoTest());
