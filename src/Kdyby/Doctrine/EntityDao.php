@@ -42,6 +42,8 @@ class EntityDao extends Doctrine\ORM\EntityRepository implements Persistence\Obj
 				$this->add($item);
 			}
 
+			return $entity;
+
 		} elseif (!$entity instanceof $this->_entityName) {
 			throw new InvalidArgumentException("Entity is not instanceof " . $this->_entityName . ", instanceof '" . get_class($entity) . "' given.");
 		}
