@@ -11,6 +11,7 @@
 namespace Kdyby\Doctrine\Mapping;
 
 use Doctrine;
+use Doctrine\ORM\EntityManager;
 use Kdyby;
 
 
@@ -25,11 +26,29 @@ class ClassMetadataFactory extends Doctrine\ORM\Mapping\ClassMetadataFactory
 {
 
 	/**
+	 * @var EntityManager
+	 */
+	private $em;
+
+
+
+	/**
 	 * Enforce Nette\Reflection
 	 */
 	public function __construct()
 	{
 		$this->setReflectionService(new RuntimeReflectionService);
+	}
+
+
+
+	/**
+	 * @param EntityManager $em
+	 */
+	public function setEntityManager(EntityManager $em)
+	{
+		$this->em = $em;
+		parent::setEntityManager($em);
 	}
 
 
@@ -42,7 +61,7 @@ class ClassMetadataFactory extends Doctrine\ORM\Mapping\ClassMetadataFactory
 	 */
 	protected function newClassMetadataInstance($className)
 	{
-		return new ClassMetadata($className);
+		return new ClassMetadata($className, $this->em->getConfiguration()->getNamingStrategy());
 	}
 
 }
