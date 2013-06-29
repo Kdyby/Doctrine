@@ -6,6 +6,6 @@ php:
 
 before_script:
   - composer self-update
-  - composer install --no-interaction --prefer-dist --dev
+  - composer install --no-interaction --prefer-source --dev
 
 script: php tests/lint.php src/Kdyby/ tests/KdybyTests/ && VERBOSE=true ./tests/run-tests.sh -s tests/KdybyTests/
