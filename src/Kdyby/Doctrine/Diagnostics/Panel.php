@@ -610,6 +610,9 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel, Doctrin
 
 
 
+	/**
+	 * @return Bar
+	 */
 	private static function getDebuggerBar()
 	{
 		return method_exists('Nette\Diagnostics\Debugger', 'getBar') ? Debugger::getBar() : Debugger::$bar;
@@ -617,6 +620,9 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel, Doctrin
 
 
 
+	/**
+	 * @return BlueScreen
+	 */
 	private static function getDebuggerBlueScreen()
 	{
 		return method_exists('Nette\Diagnostics\Debugger', 'getBlueScreen') ? Debugger::getBlueScreen() : Debugger::$blueScreen;
