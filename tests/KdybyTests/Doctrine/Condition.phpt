@@ -39,7 +39,7 @@ class ConditionTest extends Tester\TestCase
 			array('(column < ? OR column > ?)', array(1, 2), array('column < ? OR column > ?', array(1, 2))),
 			array('(column < ? OR column > ?)', array(1, 2), array('column < ? OR column > ?', 1, 2)),
 			array('column IN (?)', array(array(1, 2)), array('column', array(1, 2))),
-			array('column = NULL', array(), array('column', array())),
+			array('column IS NULL', array(), array('column', array())),
 		);
 	}
 
@@ -70,7 +70,7 @@ class ConditionTest extends Tester\TestCase
 			array('(e.column < ? OR e.column > ?)', array(1, 2), array('e.column < ? OR column > ?', array(1, 2))),
 			array('(e.column < ? OR e.column > ?)', array(1, 2), array('column < ? OR column > ?', 1, 2)),
 			array('e.column IN (?)', array(array(1, 2)), array('column', array(1, 2))),
-			array('e.column = NULL', array(), array('column', array())),
+			array('e.column IS NULL', array(), array('column', array())),
 		);
 	}
 
