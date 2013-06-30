@@ -580,7 +580,7 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel, Doctrin
 		/** @var Panel $panel */
 
 		$panel->setConnection($connection);
-		$panel->registerBarPanel(Debugger::$bar);
+		$panel->registerBarPanel(Debugger::getBar());
 		Debugger::$blueScreen->addPanel(callback($panel, 'renderQueryException'));
 
 		return $panel;
@@ -605,7 +605,7 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel, Doctrin
 	 */
 	public static function registerBluescreen()
 	{
-		Debugger::$blueScreen->addPanel(callback(get_called_class() . '::renderException'));
+		Debugger::getBlueScreen()->addPanel(callback(get_called_class() . '::renderException'));
 	}
 
 }
