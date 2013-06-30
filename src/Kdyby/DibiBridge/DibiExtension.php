@@ -22,6 +22,7 @@ if (!class_exists('Nette\DI\CompilerExtension')) {
 }
 
 if (isset(Nette\Loaders\NetteLoader::getInstance()->renamed['Nette\Configurator']) || !class_exists('Nette\Configurator')) {
+	unset(Nette\Loaders\NetteLoader::getInstance()->renamed['Nette\Configurator']); // fuck you
 	class_alias('Nette\Config\Configurator', 'Nette\Configurator');
 }
 
