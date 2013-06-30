@@ -152,7 +152,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 
 		foreach ($config as $name => $emConfig) {
 			if (empty($emConfig)) {
-				throw new Kdyby\Doctrine\UnexpectedValueException("Please configure the Doctrine extensions using the section 'doctrine:' in your config file.");
+				throw new Kdyby\Doctrine\UnexpectedValueException("Please configure the Doctrine extensions using the section '$this->name:' in your config file.");
 			}
 
 			$this->processEntityManager($name, $emConfig);
