@@ -106,7 +106,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 	 * @var array
 	 */
 	public $cacheDriverClasses = array(
-		'default' => 'Kdyby\Doctrine\Cache',
+		'default' => 'Kdyby\DoctrineCache\Cache',
 		'apc' => 'Doctrine\Common\Cache\ApcCache',
 		'array' => 'Doctrine\Common\Cache\ArrayCache',
 		'memcache' => 'Doctrine\Common\Cache\MemcacheCache',
@@ -123,32 +123,20 @@ class OrmExtension extends Nette\DI\CompilerExtension
 
 	public function loadConfiguration()
 	{
+		$extensions = array_filter($this->compiler->getExtensions(), function ($item) {
+			return $item instanceof Kdyby\Annotations\DI\AnnotationsExtension;
+		});
+		if (empty($extensions)) {
+			trigger_error('You should register \'Kdyby\Annotations\DI\AnnotationsExtension\' before \'' . get_class($this) . '\'.', E_USER_NOTICE);
+			$this->compiler->addExtension('annotations', new Kdyby\Annotations\DI\AnnotationsExtension);
+		}
+	
 		$builder = $this->getContainerBuilder();
-		$config = $this->getConfig(array('debug' => $builder->parameters['debugMode'], 'ignoredAnnotations' => array()));
+		$config = $this->getConfig(array('debug' => $builder->parameters['debugMode']));
 
 		$builder->parameters[$this->prefix('debug')] = !empty($config['debug']);
 
 		$this->loadConfig('console');
-		$this->loadConfig('annotation');
-
-		Validators::assertField($config, 'ignoredAnnotations', 'array');
-		foreach ($config['ignoredAnnotations'] as $annotationName) {
-			$builder->getDefinition($this->prefix('annotation.reflectionReader'))
-				->addSetup('addGlobalIgnoredName', array($annotationName));
-		}
-
-		$builder->addDefinition($this->prefix('annotation.reader'))
-			->setClass('Doctrine\Common\Annotations\Reader')
-			->setFactory('Doctrine\Common\Annotations\CachedReader', array(
-				new Nette\DI\Statement('Doctrine\Common\Annotations\IndexedReader', array($this->prefix('@annotation.reflectionReader'))),
-				new Nette\DI\Statement('Kdyby\Doctrine\Cache', array(
-					'@Nette\Caching\IStorage',
-					'Doctrine.Annotations',
-					$builder->parameters[$this->prefix('debug')]
-				)),
-				$builder->parameters[$this->prefix('debug')]
-			))
-			->setInject(FALSE);
 
 		if (isset($config['dbname']) || isset($config['driver']) || isset($config['connection'])) {
 			$config = array('default' => $config);
@@ -437,7 +425,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			$def->factory->arguments[2] = $builder->parameters[$this->prefix('debug')];
 		}
 
-		return '@'  . $serviceName;
+		return '@' . $serviceName;
 	}
 
 
@@ -464,8 +452,6 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		$init = $class->methods['initialize'];
 		$builder = $this->getContainerBuilder();
 
-		// just look it up, mother fucker!
-		$init->addBody('Doctrine\Common\Annotations\AnnotationRegistry::registerLoader("class_exists");');
 		$init->addBody('Kdyby\Doctrine\Diagnostics\Panel::registerBluescreen();');
 
 		if ($builder->parameters['debugMode']) {

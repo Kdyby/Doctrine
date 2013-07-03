@@ -19,7 +19,8 @@
 		"nette/nette": "@dev",
 		"doctrine/orm": "2.3.*@stable",
 		"kdyby/events": "@dev",
-		"kdyby/console": "@dev"
+		"kdyby/console": "@dev",
+		"kdyby/annotations": "@dev"
 	},
 	"require-dev": {
 		"nette/tester": "@dev",
