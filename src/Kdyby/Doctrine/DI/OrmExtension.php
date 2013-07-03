@@ -417,7 +417,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			$def->factory->arguments[2] = $builder->parameters[$this->prefix('debug')];
 		}
 
-		return '@'  . $serviceName;
+		return '@' . $serviceName;
 	}
 
 
