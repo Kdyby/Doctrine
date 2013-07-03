@@ -45,8 +45,9 @@ abstract class ORMTestCase extends Tester\TestCase
 		$config->addConfig(__DIR__ . '/Doctrine/config/memory.neon', FALSE);
 
 		Kdyby\Events\DI\EventsExtension::register($config);
-		Kdyby\Doctrine\DI\OrmExtension::register($config);
 		Kdyby\Console\DI\ConsoleExtension::register($config);
+		Kdyby\Annotations\DI\AnnotationsExtension::register($config);
+		Kdyby\Doctrine\DI\OrmExtension::register($config);
 
 		$container = $config->createContainer();
 		/** @var Nette\DI\Container $container */
