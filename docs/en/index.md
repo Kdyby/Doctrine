@@ -7,7 +7,7 @@ This extension is here to provide integration of [Doctrine 2 ORM](http://www.doc
 Installation
 -----------
 
-The best way to install Kdyby/Doctrine is using  [Composer](http://getcomposer.org/):
+The best way to install Kdyby/Doctrine is using [Composer](http://getcomposer.org/):
 
 ```sh
 $ composer require kdyby/doctrine:@dev
@@ -17,24 +17,26 @@ With dev Nette, you can enable the extension using your neon config.
 
 ```yml
 extensions:
-	# add theese three lines
+	# add theese four lines
 	console: Kdyby\Console\DI\ConsoleExtension
 	events: Kdyby\Events\DI\EventsExtension
+	annotations: Kdyby\Annotations\DI\AnnotationsExtension
 	doctrine: Kdyby\Doctrine\DI\OrmExtension
 ```
 
 If you're using stable Nette, you have to register them in `app/bootstrap.php`
 
 ```php
-// add theese three lines
+// add theese four lines
 Kdyby\Console\DI\ConsoleExtension::register($configurator);
 Kdyby\Events\DI\EventsExtension::register($configurator);
+Kdyby\Annotations\DI\AnnotationsExtension::register($configurator);
 Kdyby\Doctrine\DI\OrmExtension::register($configurator);
 
 return $configurator->createContainer();
 ```
 
-Please see documentation, on how to configure [Kdyby/Events](https://github.com/Kdyby/Events/blob/master/docs/en/index.md) and [Kdyby/Console](https://github.com/Kdyby/Console/blob/master/docs/en/index.md).
+Please see documentation, on how to configure [Kdyby/Events](https://github.com/Kdyby/Events/blob/master/docs/en/index.md), [Kdyby/Console](https://github.com/Kdyby/Console/blob/master/docs/en/index.md) and [Kdyby/Annotations](https://github.com/Kdyby/Annotations/blob/master/docs/en/index.md).
 
 
 Minimal configuration

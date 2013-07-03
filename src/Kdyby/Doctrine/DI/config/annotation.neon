@@ -1,9 +1,0 @@
-services:
-	reflectionReader:
-		class: Doctrine\Common\Annotations\AnnotationReader
-		setup:
-			- addGlobalIgnoredName("serializationVersion")
-			- addGlobalIgnoredName("todo:")
-			- addGlobalIgnoredName("see:")
-			- addGlobalIgnoredName("persistent")
-		autowired: no

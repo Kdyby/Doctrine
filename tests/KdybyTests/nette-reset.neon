@@ -5,6 +5,7 @@ php:
 extensions:
 	events: Kdyby\Events\DI\EventsExtension
 	doctrine: Kdyby\Doctrine\DI\OrmExtension
+	annotations: Kdyby\Annotations\DI\AnnotationsExtension
 	console: Kdyby\Console\DI\ConsoleExtension
 
 
