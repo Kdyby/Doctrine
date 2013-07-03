@@ -123,6 +123,14 @@ class OrmExtension extends Nette\DI\CompilerExtension
 
 	public function loadConfiguration()
 	{
+		$extensions = array_filter($this->compiler->getExtensions(), function ($item) {
+			return $item instanceof Kdyby\Annotations\DI\AnnotationsExtension;
+		});
+		if (empty($extensions)) {
+			trigger_error('You should register \'Kdyby\Annotations\DI\AnnotationsExtension\' before \'' . get_class($this) . '\'.', E_USER_NOTICE);
+			$this->compiler->addExtension('annotations', new Kdyby\Annotations\DI\AnnotationsExtension);
+		}
+	
 		$builder = $this->getContainerBuilder();
 		$config = $this->getConfig(array('debug' => $builder->parameters['debugMode']));
 
