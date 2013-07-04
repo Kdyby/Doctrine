@@ -494,8 +494,10 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			$init->addBody($line);
 		}
 
-		$blueScreen = 'Nette\Diagnostics\Debugger::' . (method_exists('Nette\Diagnostics\Debugger', 'getBlueScreen') ? 'getBlueScreen()' : '$blueScreen');
-		$init->addBody($blueScreen . '->collapsePaths[] = ?;', array(dirname(Nette\Reflection\ClassType::from('Kdyby\Doctrine\Exception')->getFileName())));
+		if (property_exists('Nette\Diagnostics\Debugger', 'collapsePaths')) {
+			$blueScreen = 'Nette\Diagnostics\Debugger::' . (method_exists('Nette\Diagnostics\Debugger', 'getBlueScreen') ? 'getBlueScreen()' : '$blueScreen');
+			$init->addBody($blueScreen . '->collapsePaths[] = ?;', array(dirname(Nette\Reflection\ClassType::from('Kdyby\Doctrine\Exception')->getFileName())));
+		}
 	}
 
 
