@@ -77,6 +77,22 @@ class EntityDao extends Doctrine\ORM\EntityRepository implements Persistence\Obj
 
 
 	/**
+	 * @param object $entity
+	 * @throws InvalidArgumentException
+	 * @return bool|object
+	 */
+	public function safePersist($entity)
+	{
+		if (!$entity instanceof $this->_entityName) {
+			throw new InvalidArgumentException('Entity is not instanceof ' . $this->_entityName . ', ' . get_class($entity) . ' given.');
+		}
+
+		return $this->getEntityManager()->safePersist($entity);
+	}
+
+
+
+	/**
 	 * @param object|array|\Doctrine\Common\Collections\Collection $entity
 	 * @param bool $flush
 	 * @throws InvalidArgumentException

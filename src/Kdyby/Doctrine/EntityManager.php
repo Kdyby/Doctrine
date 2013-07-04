@@ -16,6 +16,7 @@ use Doctrine\DBAL\DriverManager;
 use Doctrine\ORM\Configuration;
 use Doctrine\ORM\ORMException;
 use Kdyby;
+use Kdyby\Doctrine\Tools\NonLockingUniqueInserter;
 use Nette;
 
 
@@ -40,6 +41,11 @@ class EntityManager extends Doctrine\ORM\EntityManager
 	 */
 	private $repositories = array();
 
+	/**
+	 * @var NonLockingUniqueInserter
+	 */
+	private $nonLockingUniqueInserter;
+
 
 
 	/**
@@ -58,6 +64,23 @@ class EntityManager extends Doctrine\ORM\EntityManager
 	public function createSelection()
 	{
 		return new DqlSelection($this);
+	}
+
+
+
+	/**
+	 * @param $entity
+	 * @throws \Doctrine\DBAL\DBALException
+	 * @throws \Exception
+	 * @return bool|object
+	 */
+	public function safePersist($entity)
+	{
+		if ($this->nonLockingUniqueInserter === NULL) {
+			$this->nonLockingUniqueInserter = new NonLockingUniqueInserter($this);
+		}
+
+		return $this->nonLockingUniqueInserter->persist($entity);
 	}
 
 
