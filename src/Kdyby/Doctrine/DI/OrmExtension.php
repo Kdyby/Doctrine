@@ -123,6 +123,8 @@ class OrmExtension extends Nette\DI\CompilerExtension
 
 	public function loadConfiguration()
 	{
+		$this->proxyAutoLoaders = array();
+
 		$builder = $this->getContainerBuilder();
 		$config = $this->getConfig(array('debug' => $builder->parameters['debugMode'], 'ignoredAnnotations' => array()));
 
@@ -498,6 +500,9 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			$blueScreen = 'Nette\Diagnostics\Debugger::' . (method_exists('Nette\Diagnostics\Debugger', 'getBlueScreen') ? 'getBlueScreen()' : '$blueScreen');
 			$init->addBody($blueScreen . '->collapsePaths[] = ?;', array(dirname(Nette\Reflection\ClassType::from('Kdyby\Doctrine\Exception')->getFileName())));
 			$init->addBody($blueScreen . '->collapsePaths[] = ?;', array(dirname(Nette\Reflection\ClassType::from('Doctrine\ORM\Version')->getFileName())));
+			foreach ($this->proxyAutoLoaders as $dir) {
+				$init->addBody($blueScreen . '->collapsePaths[] = ?;', array($dir));
+			}
 		}
 	}
 
