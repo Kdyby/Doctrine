@@ -23,6 +23,7 @@ use Nette;
 /**
  * @author Filip Procházka <filip@prochazka.su>
  *
+ * @method \Kdyby\Doctrine\Connection getConnection()
  * @method flush(array $entity = NULL)
  * @method onDaoCreate(EntityManager $em, EntityDao $dao)
  */
