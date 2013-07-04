@@ -27,7 +27,7 @@ class Connection extends Doctrine\DBAL\Connection
 	const MYSQL_ERR_UNIQUE = 1062;
 	const MYSQL_ERR_NOT_NULL = 1048;
 
-	const SQLITE_ERR_UNIQUE = 2048; // todo: verify, source: http://www.sqlite.org/c3ref/c_abort_rollback.html
+	const SQLITE_ERR_UNIQUE = 19;
 
 	const POSTGRE_ERR_UNIQUE = 23505; // todo: verify, source: http://www.postgresql.org/docs/8.2/static/errcodes-appendix.html
 
