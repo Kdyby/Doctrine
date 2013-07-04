@@ -24,6 +24,14 @@ use PDO;
  */
 class Connection extends Doctrine\DBAL\Connection
 {
+	const MYSQL_ERR_UNIQUE = 1062;
+	const MYSQL_ERR_NOT_NULL = 1048;
+
+	const SQLITE_ERR_UNIQUE = 2048; // todo: verify, source: http://www.sqlite.org/c3ref/c_abort_rollback.html
+
+	const POSTGRE_ERR_UNIQUE = 23505; // todo: verify, source: http://www.postgresql.org/docs/8.2/static/errcodes-appendix.html
+
+
 
 	/**
 	 * Inserts a table row with specified data.
@@ -207,7 +215,7 @@ class Connection extends Doctrine\DBAL\Connection
 		}
 
 		if ($this->getDriver() instanceof Doctrine\DBAL\Driver\PDOMySql\Driver) {
-			if ($info[0] == 23000 && $info[1] == 1062) { // unique fail
+			if ($info[0] == 23000 && $info[1] == self::MYSQL_ERR_UNIQUE) { // unique fail
 				$columns = array();
 
 				try {
@@ -223,7 +231,7 @@ class Connection extends Doctrine\DBAL\Connection
 
 				return new DuplicateEntryException($e, $columns, $query, $params, $this);
 
-			} elseif ($info[0] == 23000 && $info[1] == 1048) { // notnull fail
+			} elseif ($info[0] == 23000 && $info[1] == self::MYSQL_ERR_NOT_NULL) { // notnull fail
 				$column = NULL;
 				if (preg_match('~Column \'([^\']+)\'~', $info[2], $m)) {
 					$column = $m[1];
