@@ -45,7 +45,7 @@ class EntityDao extends Doctrine\ORM\EntityRepository implements Persistence\Obj
 			return $entity;
 
 		} elseif (!$entity instanceof $this->_entityName) {
-			throw new InvalidArgumentException("Entity is not instanceof " . $this->_entityName . ", instanceof '" . get_class($entity) . "' given.");
+			throw new InvalidArgumentException('Entity is not instanceof ' . $this->_entityName . ', instanceof ' . get_class($entity) . ' given.');
 		}
 
 		$this->getEntityManager()->persist($entity);
@@ -93,7 +93,7 @@ class EntityDao extends Doctrine\ORM\EntityRepository implements Persistence\Obj
 			return;
 
 		} elseif (!$entity instanceof $this->_entityName) {
-			throw new InvalidArgumentException("Entity is not instanceof " . $this->_entityName . ', ' . get_class($entity) . ' given.');
+			throw new InvalidArgumentException('Entity is not instanceof ' . $this->_entityName . ', ' . get_class($entity) . ' given.');
 		}
 
 		$this->getEntityManager()->remove($entity);
