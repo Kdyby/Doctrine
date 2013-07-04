@@ -87,6 +87,11 @@ class NonLockingUniqueInserter extends Nette\Object
 
 			return $persisted;
 
+		} catch (Kdyby\Doctrine\DuplicateEntryException $e) {
+			$this->db->rollback();
+
+			return FALSE;
+
 		} catch (DBALException $e) {
 			$this->db->rollback();
 
