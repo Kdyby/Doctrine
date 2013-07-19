@@ -25,8 +25,6 @@ use Kdyby\Doctrine\UnexpectedValueException;
  * @author Filip Procházka <filip@prochazka.su>
  *
  * @ORM\MappedSuperclass()
- *
- * @property-read int $id
  */
 abstract class BaseEntity extends Nette\Object implements \Serializable
 {
