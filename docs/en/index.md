@@ -4,7 +4,7 @@ Quickstart
 This extension is here to provide integration of [Doctrine 2 ORM](http://www.doctrine-project.org/projects/orm.html) into Nette Framework.
 
 
-Instalation
+Installation
 -----------
 
 The best way to install Kdyby/Doctrine is using  [Composer](http://getcomposer.org/):
