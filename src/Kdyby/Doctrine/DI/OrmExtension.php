@@ -476,8 +476,10 @@ class OrmExtension extends Nette\DI\CompilerExtension
 
 		if (property_exists('Nette\Diagnostics\BlueScreen', 'collapsePaths')) {
 			$blueScreen = 'Nette\Diagnostics\Debugger::' . (method_exists('Nette\Diagnostics\Debugger', 'getBlueScreen') ? 'getBlueScreen()' : '$blueScreen');
+			$commonDirname = dirname(Nette\Reflection\ClassType::from('Doctrine\Common\Version')->getFileName());
+
 			$init->addBody($blueScreen . '->collapsePaths[] = ?;', array(dirname(Nette\Reflection\ClassType::from('Kdyby\Doctrine\Exception')->getFileName())));
-			$init->addBody($blueScreen . '->collapsePaths[] = ?;', array(dirname(Nette\Reflection\ClassType::from('Doctrine\ORM\Version')->getFileName())));
+			$init->addBody($blueScreen . '->collapsePaths[] = ?;', array(dirname(dirname(dirname(dirname($commonDirname)))))); // this should be vendor/doctrine
 			foreach ($this->proxyAutoLoaders as $dir) {
 				$init->addBody($blueScreen . '->collapsePaths[] = ?;', array($dir));
 			}
