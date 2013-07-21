@@ -219,7 +219,7 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel, Doctrin
 		list($sql, $params, $time, , $source) = $query;
 
 		$parametrized = static::formatQuery($sql, (array) $params);
-		$s = Nette\Database\Helpers::dumpSql($parametrized);
+		$s = self::highlightQuery($parametrized);
 		if ($source) {
 			$s .= Nette\Diagnostics\Helpers::editorLink($source[0], $source[1])
 				->setText('.../' . basename(dirname($source[0])) . '/' . basename($source[0]));
@@ -305,14 +305,14 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel, Doctrin
 		} elseif ($e instanceof Kdyby\Doctrine\DBALException && $e->query) {
 			return array(
 				'tab' => 'SQL',
-				'panel' => Nette\Database\Helpers::dumpSql($e->query, $e->params),
+				'panel' => self::highlightQuery($e->query, $e->params),
 			);
 
 		} elseif ($e instanceof \Doctrine\ORM\Query\QueryException) {
 			if (($prev = $e->getPrevious()) && preg_match('~^(SELECT|INSERT|UPDATE|DELETE)\s+.*~i', $prev->getMessage())) {
 				return array(
 					'tab' => 'DQL',
-					'panel' => Nette\Database\Helpers::dumpSql($prev->getMessage()),
+					'panel' => self::highlightQuery($prev->getMessage()),
 				);
 			}
 
@@ -335,7 +335,7 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel, Doctrin
 
 			return isset($sql) ? array(
 				'tab' => 'SQL',
-				'panel' => Nette\Database\Helpers::dumpSql($sql, $params),
+				'panel' => self::highlightQuery($sql, $params),
 			) : NULL;
 		}
 	}
@@ -369,7 +369,7 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel, Doctrin
 
 		// query
 		$s = '<p><b>Query</b></p><table><tr><td class="nette-Doctrine2Panel-sql">';
-		$s .= Nette\Database\Helpers::dumpSql($parametrized);
+		$s .= self::highlightQuery($parametrized);
 		$s .= '</td></tr></table>';
 
 		$e = NULL;
@@ -380,6 +380,17 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel, Doctrin
 
 		// styles and dump
 		return $this->renderStyles() . '<div class="nette-inner nette-Doctrine2Panel">' . $e . $s . '</div>';
+	}
+
+
+
+	public static function highlightQuery($query, $params = array())
+	{
+		$params = array_map(function ($param) {
+			return is_array($param) ?  implode(', ', $param) : $param;
+		}, $params);
+
+		return Nette\Database\Helpers::dumpSql($query, $params);
 	}
 
 
