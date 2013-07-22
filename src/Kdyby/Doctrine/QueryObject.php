@@ -116,7 +116,7 @@ abstract class QueryObject extends Nette\Object implements Kdyby\Persistence\Que
 			->setMaxResults(NULL);
 
 		return $hydrationMode !== AbstractQuery::HYDRATE_OBJECT
-			? $query->execute($hydrationMode)
+			? $query->execute(NULL, $hydrationMode)
 			: $this->lastResult;
 	}
 
