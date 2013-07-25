@@ -31,13 +31,13 @@ class EntityDao extends Doctrine\ORM\EntityRepository implements Persistence\Obj
 	/**
 	 * Persists given entities, but does not flush.
 	 *
-	 * @param object|array|\Doctrine\Common\Collections\Collection $entity
+	 * @param object|array|\Traversable $entity
 	 * @throws InvalidArgumentException
 	 * @return object|array
 	 */
 	public function add($entity)
 	{
-		if (is_array($entity) || $entity instanceof \Traversable || $entity instanceof Collection) {
+		if (is_array($entity) || $entity instanceof \Traversable) {
 			foreach ($entity as $item) {
 				$this->add($item);
 			}
