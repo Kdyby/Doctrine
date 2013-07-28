@@ -93,13 +93,13 @@ class EntityDao extends Doctrine\ORM\EntityRepository implements Persistence\Obj
 
 
 	/**
-	 * @param object|array|\Doctrine\Common\Collections\Collection $entity
+	 * @param object|array|\Traversable $entity
 	 * @param bool $flush
 	 * @throws InvalidArgumentException
 	 */
 	public function delete($entity, $flush = Persistence\ObjectDao::FLUSH)
 	{
-		if (is_array($entity) || $entity instanceof \Traversable || $entity instanceof Collection) {
+		if (is_array($entity) || $entity instanceof \Traversable) {
 			foreach ($entity as $item) {
 				$this->delete($item, Persistence\ObjectDao::NO_FLUSH);
 			}
