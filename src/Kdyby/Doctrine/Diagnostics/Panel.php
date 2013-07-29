@@ -101,7 +101,7 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel, Doctrin
 						continue;
 					}
 
-				} elseif (stripos($row['file'], '/' . Proxy::MARKER) !== FALSE) {
+				} elseif (stripos($row['file'], DIRECTORY_SEPARATOR . Proxy::MARKER) !== FALSE) {
 					continue;
 				}
 
@@ -117,18 +117,18 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel, Doctrin
 
 	/**
 	 * @param string $file
-	 *
 	 * @return boolean
 	 */
 	protected function filterTracePaths($file)
 	{
+		$replaced = str_replace(DIRECTORY_SEPARATOR, '/', $file);
 		return is_file($file)
 			&& strpos($file, NETTE_DIR) === FALSE
-			&& strpos($file, '/Doctrine/ORM/') === FALSE
-			&& strpos($file, '/Doctrine/DBAL/') === FALSE
-			&& strpos($file, "/Kdyby/Doctrine/") === FALSE
-			&& stripos($file, "/phpunit") === FALSE
-			&& stripos($file, "/nette/tester") === FALSE;
+			&& strpos($replaced, '/Doctrine/ORM/') === FALSE
+			&& strpos($replaced, '/Doctrine/DBAL/') === FALSE
+			&& strpos($replaced, "/Kdyby/Doctrine/") === FALSE
+			&& stripos($replaced, "/phpunit") === FALSE
+			&& stripos($replaced, "/nette/tester") === FALSE;
 	}
 
 
