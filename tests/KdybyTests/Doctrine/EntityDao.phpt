@@ -105,6 +105,16 @@ class EntityDaoTest extends ORMTestCase
 		Assert::same('SELECT u FROM KdybyTests\Doctrine\CmsUser u INDEX BY u.id', $qb->getDQL());
 	}
 
+
+
+	public function testSelectWithoutParameters()
+	{
+		$users = $this->em->getDao('KdybyTests\Doctrine\CmsUser');
+		$qb = $users->select();
+
+		Assert::same('SELECT c FROM KdybyTests\Doctrine\CmsUser c', $qb->getDQL());
+	}
+
 }
 
 \run(new EntityDaoTest());
