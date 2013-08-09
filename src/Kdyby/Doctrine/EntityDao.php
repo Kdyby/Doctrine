@@ -215,7 +215,8 @@ class EntityDao extends Doctrine\ORM\EntityRepository implements Persistence\Obj
 	public function select($alias = NULL, $indexBy = NULL)
 	{
 		if ($alias === NULL) {
-			$alias = strtolower(substr($this->_entityName, strrpos($this->_entityName, '\\'), 1));
+			$pos = strrpos($this->_entityName, '\\');
+			$alias = strtolower(substr($this->_entityName, $pos === FALSE ? 0 : $pos + 1, 1));
 		}
 
 		$selection = $this->getEntityManager()->createSelection();
