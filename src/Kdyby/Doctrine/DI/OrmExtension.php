@@ -202,10 +202,6 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			->setInject(FALSE);
 		/** @var Nette\DI\ServiceDefinition $metadataDriver */
 
-		$metadataDriver->addSetup('setDefaultDriver', array(
-			new Nette\DI\Statement($this->metadataDriverClasses[self::ANNOTATION_DRIVER], array(array($builder->expand('%appDir%'))))
-		));
-
 		Validators::assertField($config, 'metadata', 'array');
 		foreach ($this->compiler->getExtensions() as $extension) {
 			if (!$extension instanceof IEntityProvider) {
@@ -219,6 +215,14 @@ class OrmExtension extends Nette\DI\CompilerExtension
 
 		foreach (self::natSortKeys($config['metadata']) as $namespace => $driver) {
 			$this->processMetadataDriver($metadataDriver, $namespace, $driver, $name);
+		}
+
+		$this->processMetadataDriver($metadataDriver, 'Kdyby\\Doctrine', __DIR__ . '/../Entities', $name);
+
+		if (empty($config['metadata'])) {
+			$metadataDriver->addSetup('setDefaultDriver', array(
+				new Nette\DI\Statement($this->metadataDriverClasses[self::ANNOTATION_DRIVER], array(array($builder->expand('%appDir%'))))
+			));
 		}
 
 		Validators::assertField($config, 'namespaceAlias', 'array');
