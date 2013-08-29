@@ -33,9 +33,10 @@ interface Queryable
 	 * Create a new QueryBuilder instance that is prepopulated for this entity name
 	 *
 	 * @param string|NULL $alias
+	 * @param string $indexBy The index for the from.
 	 * @return \Kdyby\Doctrine\QueryBuilder
 	 */
-	function createQueryBuilder($alias = NULL);
+	function createQueryBuilder($alias = NULL, $indexBy = NULL);
 
 
 	/**

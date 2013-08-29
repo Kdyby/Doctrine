@@ -239,14 +239,15 @@ class EntityDao extends Doctrine\ORM\EntityRepository implements Persistence\Obj
 
 	/**
 	 * @param string $alias
+	 * @param string $indexBy The index for the from.
 	 * @return \Kdyby\Doctrine\QueryBuilder
 	 */
-	public function createQueryBuilder($alias = NULL)
+	public function createQueryBuilder($alias = NULL, $indexBy = NULL)
 	{
 		$qb = $this->getEntityManager()->createQueryBuilder();
 
 		if ($alias !== NULL) {
-			$qb->select($alias)->from($this->getEntityName(), $alias);
+			$qb->select($alias)->from($this->getEntityName(), $alias, $indexBy);
 		}
 
 		return $qb;
