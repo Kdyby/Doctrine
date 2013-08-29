@@ -45,4 +45,12 @@ interface Queryable
 	 */
 	function createQuery($dql = NULL);
 
+
+	/**
+	 * @param string $sql
+	 * @param Doctrine\ORM\Query\ResultSetMapping $rsm
+	 * @return Doctrine\ORM\NativeQuery
+	 */
+	function createNativeQuery($sql, Doctrine\ORM\Query\ResultSetMapping $rsm);
+
 }
