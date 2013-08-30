@@ -107,7 +107,13 @@ class Helpers extends Nette\Object
 				if (!$found || $found == $delimiter) { // end of a query
 					$q = substr($query, 0, $match[0][1]);
 
-					$db->query($q);
+					try {
+						$db->query($q);
+
+					} catch (\Exception $e) {
+						throw new BatchImportException("Error in batch.\n\n" . Nette\Utils\Strings::truncate(trim($q), 1000), 0, $e);
+					}
+
 
 					$query = substr($query, $offset);
 					$offset = 0;

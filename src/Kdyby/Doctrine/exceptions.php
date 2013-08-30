@@ -383,3 +383,13 @@ class QueryException extends \RuntimeException implements Exception
 	}
 
 }
+
+
+
+/**
+ * @author Filip Procházka <filip@prochazka.su>
+ */
+class BatchImportException extends \RuntimeException implements Exception
+{
+
+}
