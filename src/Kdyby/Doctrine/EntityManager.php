@@ -13,7 +13,6 @@ namespace Kdyby\Doctrine;
 use Doctrine;
 use Doctrine\Common\EventManager;
 use Doctrine\DBAL\DriverManager;
-use Doctrine\ORM\Configuration;
 use Doctrine\ORM\ORMException;
 use Kdyby;
 use Kdyby\Doctrine\Tools\NonLockingUniqueInserter;
@@ -129,6 +128,10 @@ class EntityManager extends Doctrine\ORM\EntityManager
 	 */
 	public function getClassMetadata($className)
 	{
+		if ($this->getConfiguration() instanceof Kdyby\Doctrine\Configuration) {
+			$className = $this->getConfiguration()->getTargetEntityClassName($className);
+		}
+
 		if (!class_exists($className)) {
 			throw new MissingClassException("Metadata of class $className was not found, because the class is missing or cannot be autoloaded.");
 		}
@@ -149,7 +152,7 @@ class EntityManager extends Doctrine\ORM\EntityManager
 	 * @throws \Doctrine\ORM\ORMException
 	 * @return EntityManager
 	 */
-	public static function create($conn, Configuration $config, EventManager $eventManager = NULL)
+	public static function create($conn, Doctrine\ORM\Configuration $config, EventManager $eventManager = NULL)
 	{
 		if (!$config->getMetadataDriverImpl()) {
 			throw ORMException::missingMappingDriverImpl();
