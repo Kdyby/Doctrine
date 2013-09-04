@@ -204,13 +204,11 @@ class OrmExtension extends Nette\DI\CompilerExtension
 
 		Validators::assertField($config, 'metadata', 'array');
 		foreach ($this->compiler->getExtensions() as $extension) {
-			if (!$extension instanceof IEntityProvider) {
-				continue;
+			if ($extension instanceof IEntityProvider) {
+				$metadata = $extension->getEntityMappings();
+				Validators::assert($metadata, 'array:1..');
+				$config['metadata'] = array_merge($config['metadata'], $metadata);
 			}
-
-			$metadata = $extension->getEntityMappings();
-			Validators::assert($metadata, 'array:1..');
-			$config['metadata'] = array_merge($config['metadata'], $metadata);
 		}
 
 		foreach (self::natSortKeys($config['metadata']) as $namespace => $driver) {
