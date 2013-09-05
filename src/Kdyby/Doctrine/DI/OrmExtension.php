@@ -59,6 +59,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		'metadata' => array(),
 		'filters' => array(),
 		'namespaceAlias' => array(),
+		'targetEntityMappings' => array(),
 	);
 
 	/**
@@ -119,6 +120,10 @@ class OrmExtension extends Nette\DI\CompilerExtension
 	 */
 	private $proxyAutoLoaders = array();
 
+	/**
+	 * @var array
+	 */
+	private $targetEntityMappings = array();
 
 
 	public function loadConfiguration()
@@ -183,6 +188,17 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		$builder->addDefinition($this->prefix('jitProxyWarmer'))
 			->setClass('Kdyby\Doctrine\Proxy\JitProxyWarmer')
 			->setInject(FALSE);
+
+		if ($this->targetEntityMappings) {
+			$listener = $builder->addDefinition($this->prefix('resolveTargetEntityListener'))
+				->setClass('Kdyby\Doctrine\Tools\ResolveTargetEntityListener')
+				->addTag(Kdyby\Events\DI\EventsExtension::SUBSCRIBER_TAG)
+				->setInject(FALSE);
+
+			foreach ($this->targetEntityMappings as $originalEntity => $mapping) {
+				$listener->addSetup('addResolveTargetEntity', array($originalEntity, $mapping['targetEntity'], $mapping));
+			}
+		}
 	}
 
 
@@ -203,14 +219,20 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		/** @var Nette\DI\ServiceDefinition $metadataDriver */
 
 		Validators::assertField($config, 'metadata', 'array');
+		Validators::assertField($config, 'targetEntityMappings', 'array');
+		$config['targetEntityMappings'] = $this->normalizeTargetEntityMappings($config['targetEntityMappings']);
 		foreach ($this->compiler->getExtensions() as $extension) {
-			if (!$extension instanceof IEntityProvider) {
-				continue;
+			if ($extension instanceof IEntityProvider) {
+				$metadata = $extension->getEntityMappings();
+				Validators::assert($metadata, 'array:1..');
+				$config['metadata'] = array_merge($config['metadata'], $metadata);
 			}
 
-			$metadata = $extension->getEntityMappings();
-			Validators::assert($metadata, 'array:1..');
-			$config['metadata'] = array_merge($config['metadata'], $metadata);
+			if ($extension instanceof ITargetEntityProvider) {
+				$targetEntities = $extension->getTargetEntityMappings();
+				Validators::assert($targetEntities, 'array:1..');
+				$config['targetEntityMappings'] = Nette\Utils\Arrays::mergeTree($config['targetEntityMappings'], $this->normalizeTargetEntityMappings($targetEntities));
+			}
 		}
 
 		foreach (self::natSortKeys($config['metadata']) as $namespace => $driver) {
@@ -232,7 +254,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		Validators::assertField($config['dql'], 'numeric', 'array');
 		Validators::assertField($config['dql'], 'datetime', 'array');
 		$configuration = $builder->addDefinition($this->prefix($name . '.ormConfiguration'))
-			->setClass('Doctrine\ORM\Configuration')
+			->setClass('Kdyby\Doctrine\Configuration')
 			->addSetup('setMetadataCacheImpl', array($this->processCache($config['metadataCache'], $name . '.metadata')))
 			->addSetup('setQueryCacheImpl', array($this->processCache($config['queryCache'], $name . '.query')))
 			->addSetup('setResultCacheImpl', array($this->processCache($config['resultCache'], $name . '.ormResult')))
@@ -259,6 +281,13 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		Validators::assertField($config, 'filters', 'array');
 		foreach ($config['filters'] as $filterName => $filterClass) {
 			$configuration->addSetup('addFilter', array($filterName, $filterClass));
+		}
+
+		if ($config['targetEntityMappings']) {
+			$configuration->addSetup('setTargetEntityMap', array(array_map(function ($mapping) {
+				return $mapping['targetEntity'];
+			}, $config['targetEntityMappings'])));
+			$this->targetEntityMappings = Nette\Utils\Arrays::mergeTree($this->targetEntityMappings, $config['targetEntityMappings']);
 		}
 
 		// entity manager
@@ -537,6 +566,33 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			$this->loadFromFile(__DIR__ . '/config/' . $name . '.neon'),
 			$this->prefix($name)
 		);
+	}
+
+
+	/**
+	 * @param array $targetEntityMappings
+	 * @return array
+	 */
+	private function normalizeTargetEntityMappings(array $targetEntityMappings)
+	{
+		$normalized = array();
+		foreach ($targetEntityMappings as $originalEntity => $targetEntity) {
+			$originalEntity = ltrim($originalEntity, '\\');
+			Validators::assert($targetEntity, 'array|string');
+			if (is_array($targetEntity)) {
+				Validators::assertField($targetEntity, 'targetEntity', 'string');
+				$mapping = array_merge($targetEntity, array(
+					'targetEntity' => ltrim($targetEntity['targetEntity'], '\\')
+				));
+
+			} else {
+				$mapping = array(
+					'targetEntity' => ltrim($targetEntity, '\\'),
+				);
+			}
+			$normalized[$originalEntity] = $mapping;
+		}
+		return $normalized;
 	}
 
 
