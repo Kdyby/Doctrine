@@ -11,7 +11,6 @@
 namespace Kdyby\Doctrine;
 
 use Doctrine;
-use Doctrine\DBAL\Configuration;
 use Doctrine\Common\EventManager;
 use Kdyby;
 use Nette;
@@ -167,7 +166,7 @@ class Connection extends Doctrine\DBAL\Connection
 	 * @param array $schemaTypes
 	 * @return Connection
 	 */
-	public static function create(array $params, Configuration $config, EventManager $eventManager, array $dbalTypes = array(), array $schemaTypes = array())
+	public static function create(array $params, Doctrine\DBAL\Configuration $config, EventManager $eventManager, array $dbalTypes = array(), array $schemaTypes = array())
 	{
 		foreach ($dbalTypes as $name => $className) {
 			if (DbalType::hasType($name)) {
