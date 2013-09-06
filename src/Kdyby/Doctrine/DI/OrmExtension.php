@@ -38,6 +38,8 @@ class OrmExtension extends Nette\DI\CompilerExtension
 
 	const ANNOTATION_DRIVER = 'annotations';
 	const PHP_NAMESPACE = '[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff\\\\]*';
+	const TAG_CONNECTION = 'kdyby.doctrine.connection';
+	const TAG_ENTITY_MANAGER = 'kdyby.doctrine.entityManager';
 
 	/**
 	 * @var array
@@ -281,6 +283,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 				$connectionService = $this->processConnection($name, $defaults, $isDefault),
 				$this->prefix('@' . $name . '.ormConfiguration')
 			))
+			->addTag(self::TAG_ENTITY_MANAGER)
 			->setAutowired($isDefault);
 	}
 
@@ -329,6 +332,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 				3 => $dbalTypes,
 				$schemaTypes
 			))
+			->addTag(self::TAG_CONNECTION)
 			->setAutowired($isDefault);
 		/** @var Nette\DI\ServiceDefinition $connection */
 
