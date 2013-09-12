@@ -437,6 +437,10 @@ class EntityDao extends Doctrine\ORM\EntityRepository implements Persistence\Obj
 	 */
 	public function __call($name, $args)
 	{
+		if (strpos($name, 'findBy') === 0 || strpos($name, 'findOneBy') === 0) {
+			return parent::__call($name, $args);
+		}
+
 		return Nette\ObjectMixin::call($this, $name, $args);
 	}
 
