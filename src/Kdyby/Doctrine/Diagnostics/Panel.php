@@ -390,6 +390,12 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel, Doctrin
 			return is_array($param) ?  implode(', ', $param) : $param;
 		}, $params);
 
+		array_walk_recursive($params, function (&$param) {
+			if ($param instanceof \DateTime) {
+				$param = $param->format('Y-m-d H:i:s');
+			}
+		});
+
 		return Nette\Database\Helpers::dumpSql($query, $params);
 	}
 
