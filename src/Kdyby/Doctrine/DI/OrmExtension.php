@@ -235,6 +235,17 @@ class OrmExtension extends Nette\DI\CompilerExtension
 				Validators::assert($targetEntities, 'array:1..');
 				$config['targetEntityMappings'] = Nette\Utils\Arrays::mergeTree($config['targetEntityMappings'], $this->normalizeTargetEntityMappings($targetEntities));
 			}
+
+			if ($extension instanceof IDatabaseTypeProvider) {
+				$providedTypes = $extension->getDatabaseTypes();
+				Validators::assert($providedTypes, 'array');
+
+				if (!isset($config['types'])) {
+					$defaults['types'] = array();
+				}
+
+				$defaults['types'] = array_merge($defaults['types'], $providedTypes);
+			}
 		}
 
 		foreach (self::natSortKeys($config['metadata']) as $namespace => $driver) {
