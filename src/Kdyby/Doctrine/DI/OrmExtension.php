@@ -54,6 +54,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		'autoGenerateProxyClasses' => '%debugMode%',
 		'namingStrategy' => 'Doctrine\ORM\Mapping\DefaultNamingStrategy',
 		'quoteStrategy' => 'Doctrine\ORM\Mapping\DefaultQuoteStrategy',
+		'entityListenerResolver' => 'Kdyby\Doctrine\Mapping\EntityListenerResolver',
 		'proxyDir' => '%tempDir%/proxies',
 		'proxyNamespace' => 'Kdyby\GeneratedProxy',
 		'dql' => array('string' => array(), 'numeric' => array(), 'datetime' => array()),
@@ -285,6 +286,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			->addSetup('setCustomDatetimeFunctions', array($config['dql']['datetime']))
 			->addSetup('setNamingStrategy', $this->filterArgs($config['namingStrategy']))
 			->addSetup('setQuoteStrategy', $this->filterArgs($config['quoteStrategy']))
+			->addSetup('setEntityListenerResolver', $this->filterArgs($config['entityListenerResolver']))
 			->setAutowired(FALSE)
 			->setInject(FALSE);
 		/** @var Nette\DI\ServiceDefinition $configuration */
