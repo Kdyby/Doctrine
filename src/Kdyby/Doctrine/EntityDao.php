@@ -280,7 +280,7 @@ class EntityDao extends Doctrine\ORM\EntityRepository implements Persistence\Obj
 		$connection->beginTransaction();
 
 		try {
-			$return = callback($callback)->invoke($this);
+			$return = callback($callback)->invoke($this, $this->getEntityManager());
 			$this->flush();
 			$connection->commit();
 
