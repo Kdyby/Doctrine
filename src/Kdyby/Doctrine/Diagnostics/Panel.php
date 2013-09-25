@@ -419,17 +419,25 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel, Doctrin
 			return implode('', Kdyby\Doctrine\Helpers::zipper($parts, $params));
 		}
 
-		$replace = array();
-		foreach ($params as $key => $val) {
-			if (is_numeric($key)) {
-				$replace['?' . $key] = $val;
+		return Strings::replace($query, '~(\\:[a-z][a-z0-9]*|\\?[0-9]*)~i', function ($m) use (&$params) {
+			if (substr($m[0], 0, 1) === '?') {
+				if (strlen($m[0]) > 1) {
+					if (isset($params[$k = substr($m[0], 1)])) {
+						return $params[$k];
+					}
+
+				} else {
+					return array_shift($params);
+				}
 
 			} else {
-				$replace[':' . $key] = $val;
+				if (isset($params[$k = substr($m[0], 1)])) {
+					return $params[$k];
+				}
 			}
-		}
 
-		return strtr($query, $replace);
+			return $m[0];
+		});
 	}
 
 
