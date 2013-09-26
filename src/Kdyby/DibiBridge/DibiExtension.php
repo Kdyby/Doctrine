@@ -26,7 +26,7 @@ if (isset(Nette\Loaders\NetteLoader::getInstance()->renamed['Nette\Configurator'
 	class_alias('Nette\Config\Configurator', 'Nette\Configurator');
 }
 
-if (class_exists('DibiNette21Extension')) {
+if (class_exists('DibiNette21Extension') && !class_exists('DibiNetteExtension')) {
 	class_alias('DibiNette21Extension', 'DibiNetteExtension');
 }
 
