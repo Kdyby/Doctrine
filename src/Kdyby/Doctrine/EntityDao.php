@@ -32,25 +32,25 @@ class EntityDao extends Doctrine\ORM\EntityRepository implements Persistence\Obj
 	 * Persists given entities, but does not flush.
 	 *
 	 * @param object|array|\Traversable $entity
+	 * @param object|array|\Traversable $relations
 	 * @throws InvalidArgumentException
-	 * @return object|array
+	 * @return array
 	 */
-	public function add($entity)
+	public function add($entity, $relations = NULL)
 	{
-		if (is_array($entity) || $entity instanceof \Traversable) {
-			foreach ($entity as $item) {
-				$this->add($item);
-			}
-
-			return $entity;
-
-		} elseif (!$entity instanceof $this->_entityName) {
-			throw new InvalidArgumentException('Entity is not instanceof ' . $this->_entityName . ', instanceof ' . get_class($entity) . ' given.');
+		foreach ($relations = self::iterableArgs($relations) as $item) {
+			$this->getEntityManager()->persist($item);
 		}
 
-		$this->getEntityManager()->persist($entity);
+		foreach ($entity = self::iterableArgs($entity) as $item) {
+			if (!$item instanceof $this->_entityName) {
+				throw new InvalidArgumentException('Entity is not instanceof ' . $this->_entityName . ', instanceof ' . get_class($item) . ' given.');
+			}
 
-		return $entity;
+			$this->getEntityManager()->persist($item);
+		}
+
+		return array_merge($entity, $relations);
 	}
 
 
@@ -58,13 +58,15 @@ class EntityDao extends Doctrine\ORM\EntityRepository implements Persistence\Obj
 	/**
 	 * Persists given entities and flushes all to the storage.
 	 *
-	 * @param object|array|\Doctrine\Common\Collections\Collection $entity
+	 * @param object|array|\Traversable $entity
+	 * @param object|array|\Traversable $relations
+	 * @throws InvalidArgumentException
 	 * @return object|array
 	 */
-	public function save($entity = NULL)
+	public function save($entity = NULL, $relations = NULL)
 	{
 		if ($entity !== NULL) {
-			$result = $this->add($entity);
+			$result = $this->add($entity, $relations);
 			$this->flush();
 
 			return $result;
@@ -406,6 +408,21 @@ class EntityDao extends Doctrine\ORM\EntityRepository implements Persistence\Obj
 		$targetClass = $meta->getAssociationTargetClass($relation);
 
 		return $this->getEntityManager()->getDao($targetClass);
+	}
+
+
+
+	/**
+	 * @param array|string|\Traversable $args
+	 * @return array
+	 */
+	private static function iterableArgs($args)
+	{
+		if (empty($args)) {
+			return array();
+		}
+
+		return !is_array($args) && !$args instanceof \Traversable ? array($args) : $args;
 	}
 
 
