@@ -70,7 +70,7 @@ class EntityDao extends Doctrine\ORM\EntityRepository implements Persistence\Obj
 			$result = $this->add($entity, $relations);
 			$this->getEntityManager()->flush(array_merge($result, $this->getLoadedEntities()));
 
-			return $result;
+			return (empty($relations) && !is_array($entity) && !$entity instanceof Collection) ? $entity : $result;
 		}
 
 		$this->flush();
