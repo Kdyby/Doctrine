@@ -56,18 +56,19 @@ class EntityDao extends Doctrine\ORM\EntityRepository implements Persistence\Obj
 
 
 	/**
-	 * Persists given entities and flushes all to the storage.
+	 * Persists given entities and flushes them, and only them, to the storage.
+	 * If no entities are passed, all the entities of current type are persisted.
 	 *
 	 * @param object|array|\Traversable $entity
 	 * @param object|array|\Traversable $relations
 	 * @throws InvalidArgumentException
-	 * @return object|array
+	 * @return array
 	 */
 	public function save($entity = NULL, $relations = NULL)
 	{
 		if ($entity !== NULL) {
 			$result = $this->add($entity, $relations);
-			$this->flush();
+			$this->getEntityManager()->flush(array_merge($result, $this->getLoadedEntities()));
 
 			return $result;
 		}
@@ -130,15 +131,26 @@ class EntityDao extends Doctrine\ORM\EntityRepository implements Persistence\Obj
 	protected function flush($flush = Persistence\ObjectDao::FLUSH)
 	{
 		if ($flush === Persistence\ObjectDao::FLUSH) {
-			$em = $this->getEntityManager();
-			$UoW = $em->getUnitOfWork();
-			$im = $UoW->getIdentityMap();
-
-			$em->flush(array_merge(
-				$UoW->getScheduledEntityInsertions(),
-				!empty($im[$this->_entityName]) ? Arrays::flatten($im[$this->_entityName]) : array()
-			));
+			$this->getEntityManager()->flush($this->getLoadedEntities());
 		}
+	}
+
+
+
+	/**
+	 * @return object[]
+	 */
+	private function getLoadedEntities()
+	{
+		$em = $this->getEntityManager();
+		$UoW = $em->getUnitOfWork();
+		$im = $UoW->getIdentityMap();
+
+		return array_merge(
+			$UoW->getScheduledEntityDeletions(),
+			$UoW->getScheduledEntityInsertions(),
+			!empty($im[$this->_entityName]) ? Arrays::flatten($im[$this->_entityName]) : array()
+		);
 	}
 
 
