@@ -96,25 +96,29 @@ class EntityDao extends Doctrine\ORM\EntityRepository implements Persistence\Obj
 
 	/**
 	 * @param object|array|\Traversable $entity
+	 * @param object|array|\Traversable|bool $relations
 	 * @param bool $flush
 	 * @throws InvalidArgumentException
 	 */
-	public function delete($entity, $flush = Persistence\ObjectDao::FLUSH)
+	public function delete($entity, $relations = NULL, $flush = Persistence\ObjectDao::FLUSH)
 	{
-		if (is_array($entity) || $entity instanceof \Traversable) {
-			foreach ($entity as $item) {
-				$this->delete($item, Persistence\ObjectDao::NO_FLUSH);
-			}
-
-			$this->flush($flush);
-
-			return;
-
-		} elseif (!$entity instanceof $this->_entityName) {
-			throw new InvalidArgumentException('Entity is not instanceof ' . $this->_entityName . ', ' . get_class($entity) . ' given.');
+		if (is_bool($relations)) {
+			$flush = $relations;
+			$relations = NULL;
 		}
 
-		$this->getEntityManager()->remove($entity);
+		foreach (self::iterableArgs($relations) as $item) {
+			$this->getEntityManager()->remove($item);
+		}
+
+		foreach (self::iterableArgs($entity) as $item) {
+			if (!$item instanceof $this->_entityName) {
+				throw new InvalidArgumentException('Entity is not instanceof ' . $this->_entityName . ', ' . get_class($item) . ' given.');
+			}
+
+			$this->getEntityManager()->remove($item);
+		}
+
 		$this->flush($flush);
 	}
 
