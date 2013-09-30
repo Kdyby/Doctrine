@@ -80,16 +80,6 @@ class EntityDao extends Doctrine\ORM\EntityRepository implements Persistence\Obj
 
 
 	/**
-	 * Flushes whole entity manager.
-	 */
-	public function saveAllTypes()
-	{
-		$this->getEntityManager()->flush();
-	}
-
-
-
-	/**
 	 * @param object $entity
 	 * @throws InvalidArgumentException
 	 * @return bool|object
