@@ -47,6 +47,16 @@ class InvalidArgumentException extends \InvalidArgumentException implements Exce
 /**
  * @author Filip Procházka <filip@prochazka.su>
  */
+class NotSupportedException extends \LogicException implements Exception
+{
+
+}
+
+
+
+/**
+ * @author Filip Procházka <filip@prochazka.su>
+ */
 class StaticClassException extends \LogicException implements Exception
 {
 
