@@ -146,8 +146,6 @@ class OrmExtension extends Nette\DI\CompilerExtension
 
 		$builder->parameters[$this->prefix('debug')] = !empty($config['debug']);
 
-		$this->loadConfig('console');
-
 		if (isset($config['dbname']) || isset($config['driver']) || isset($config['connection'])) {
 			$config = array('default' => $config);
 		}
@@ -202,6 +200,35 @@ class OrmExtension extends Nette\DI\CompilerExtension
 				$listener->addSetup('addResolveTargetEntity', array($originalEntity, $mapping['targetEntity'], $mapping));
 			}
 		}
+
+		$this->loadConsole();
+	}
+
+
+
+	protected function loadConsole()
+	{
+		$builder = $this->getContainerBuilder();
+
+		foreach ($this->loadFromFile(__DIR__ . '/console.neon') as $i => $command) {
+			$cli = $builder->addDefinition($this->prefix('cli.' . $i))
+				->addTag(Kdyby\Console\DI\ConsoleExtension::COMMAND_TAG);
+
+			if (is_string($command)) {
+				$cli->setClass($command);
+
+			} else {
+				throw new Kdyby\Doctrine\NotSupportedException;
+			}
+		}
+
+		$builder->addDefinition($this->prefix('helper.entityManager'))
+			->setClass('Doctrine\ORM\Tools\Console\Helper\EntityManagerHelper')
+			->addTag(Kdyby\Console\DI\ConsoleExtension::HELPER_TAG, 'em');
+
+		$builder->addDefinition($this->prefix('helper.connection'))
+			->setClass('Doctrine\DBAL\Tools\Console\Helper\ConnectionHelper')
+			->addTag(Kdyby\Console\DI\ConsoleExtension::HELPER_TAG, 'db');
 	}
 
 

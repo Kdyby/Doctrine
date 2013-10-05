@@ -1,0 +1,10 @@
+- Doctrine\DBAL\Tools\Console\Command\ImportCommand
+- Doctrine\ORM\Tools\Console\Command\ClearCache\MetadataCommand
+- Doctrine\ORM\Tools\Console\Command\ClearCache\ResultCommand
+- Doctrine\ORM\Tools\Console\Command\ClearCache\QueryCommand
+- Kdyby\Doctrine\Console\SchemaCreateCommand
+- Kdyby\Doctrine\Console\SchemaUpdateCommand
+- Kdyby\Doctrine\Console\SchemaDropCommand
+- Kdyby\Doctrine\Console\GenerateProxiesCommand
+- Kdyby\Doctrine\Console\ValidateSchemaCommand
+- Kdyby\Doctrine\Console\InfoCommand
