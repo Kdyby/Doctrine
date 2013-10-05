@@ -158,7 +158,11 @@ class ResultSet extends Nette\Object implements \Countable, \IteratorAggregate
 	public function getIterator()
 	{
 		try {
-			return $this->getPaginatedQuery()->getIterator();
+			if ($this->query->getMaxResults() > 0 || $this->query->getFirstResult() > 0) {
+				return $this->getPaginatedQuery()->getIterator();
+			}
+
+			return new \ArrayIterator($this->query->getResult());
 
 		} catch (ORMException $e) {
 			throw new QueryException($e, $this->query, $e->getMessage());
