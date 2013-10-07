@@ -277,9 +277,10 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel, Doctrin
 
 	/**
 	 * @param \Exception $e
+	 * @param \Nette\DI\Container $dic
 	 * @return array
 	 */
-	public static function renderException($e)
+	public static function renderException($e, Nette\DI\Container $dic)
 	{
 		if ($e instanceof AnnotationException) {
 			if ($dump = self::highlightAnnotationLine($e)) {
@@ -302,13 +303,39 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel, Doctrin
 				);
 			}
 
+		} elseif ($e instanceof Doctrine\DBAL\Schema\SchemaException && $dic && ($em = $dic->getByType('Kdyby\Doctrine\EntityManager'))) {
+			/** @var Kdyby\Doctrine\EntityManager $em */
+
+			if ($invalidTable = Strings::match($e->getMessage(), '~table \'(.*?)\'~i')) {
+				foreach ($em->getMetadataFactory()->getAllMetadata() as $class) {
+					/** @var Kdyby\Doctrine\Mapping\ClassMetadata $class */
+					if ($class->getTableName() === $invalidTable[1]) {
+						$refl = $class->getReflectionClass();
+						break;
+					}
+				}
+
+				if (!isset($refl)) {
+					return NULL;
+				}
+
+				$file = $refl->getFileName();
+				$errorLine = $refl->getStartLine();
+
+				return array(
+					'tab' => 'Invalid schema',
+					'panel' => '<p><b>File:</b> ' . Nette\Diagnostics\Helpers::editorLink($file, $errorLine) . '</p>' .
+						Nette\Diagnostics\BlueScreen::highlightFile($file, $errorLine),
+				);
+			}
+
 		} elseif ($e instanceof Kdyby\Doctrine\DBALException && $e->query) {
 			return array(
 				'tab' => 'SQL',
 				'panel' => self::highlightQuery($e->query, $e->params),
 			);
 
-		} elseif ($e instanceof \Doctrine\ORM\Query\QueryException) {
+		} elseif ($e instanceof Doctrine\ORM\Query\QueryException) {
 			if (($prev = $e->getPrevious()) && preg_match('~^(SELECT|INSERT|UPDATE|DELETE)\s+.*~i', $prev->getMessage())) {
 				return array(
 					'tab' => 'DQL',
@@ -338,6 +365,8 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel, Doctrin
 				'panel' => self::highlightQuery($sql, $params),
 			) : NULL;
 		}
+
+		return NULL;
 	}
 
 
@@ -610,9 +639,11 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel, Doctrin
 	/**
 	 * Registers generic exception renderer
 	 */
-	public static function registerBluescreen()
+	public static function registerBluescreen(Nette\DI\Container $dic)
 	{
-		static::getDebuggerBlueScreen()->addPanel(callback(get_called_class() . '::renderException'));
+		static::getDebuggerBlueScreen()->addPanel(function ($e) use ($dic) {
+			return Panel::renderException($e, $dic);
+		});
 	}
 
 

@@ -509,7 +509,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		$init = $class->methods['initialize'];
 		$builder = $this->getContainerBuilder();
 
-		$init->addBody('Kdyby\Doctrine\Diagnostics\Panel::registerBluescreen();');
+		$init->addBody('Kdyby\Doctrine\Diagnostics\Panel::registerBluescreen($this);');
 
 		if ($builder->parameters['debugMode']) {
 			/** Prepend proxy warmup to other initialize calls */
