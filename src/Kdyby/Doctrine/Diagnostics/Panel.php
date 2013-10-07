@@ -303,7 +303,7 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel, Doctrin
 				);
 			}
 
-		} elseif ($e instanceof Doctrine\DBAL\Schema\SchemaException && $dic && ($em = $dic->getByType('Kdyby\Doctrine\EntityManager'))) {
+		} elseif ($e instanceof Doctrine\DBAL\Schema\SchemaException && $dic && ($em = $dic->getByType('Kdyby\Doctrine\EntityManager', FALSE))) {
 			/** @var Kdyby\Doctrine\EntityManager $em */
 
 			if ($invalidTable = Strings::match($e->getMessage(), '~table \'(.*?)\'~i')) {
