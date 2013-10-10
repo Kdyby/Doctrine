@@ -83,6 +83,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		'unix_socket' => NULL,
 		'logging' => '%debugMode%',
 		'platformService' => NULL,
+		'defaultTableOptions' => array(),
 		'resultCache' => 'default',
 		'types' => array(
 			'enum' => 'Kdyby\Doctrine\Types\Enum',
