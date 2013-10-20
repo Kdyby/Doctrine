@@ -152,12 +152,15 @@ class ResultSet extends Nette\Object implements \Countable, \IteratorAggregate
 
 
 	/**
-	 * @throws \Kdyby\Doctrine\QueryException
+	 * @param int $hydrationMode
+	 * @throws QueryException
 	 * @return \ArrayIterator
 	 */
-	public function getIterator()
+	public function getIterator($hydrationMode = ORM\AbstractQuery::HYDRATE_OBJECT)
 	{
 		try {
+			$this->query->setHydrationMode($hydrationMode);
+
 			if ($this->query->getMaxResults() > 0 || $this->query->getFirstResult() > 0) {
 				return $this->getPaginatedQuery()->getIterator();
 			}
