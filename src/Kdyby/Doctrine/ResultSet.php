@@ -41,6 +41,11 @@ class ResultSet extends Nette\Object implements \Countable, \IteratorAggregate
 	 */
 	private $paginatedQuery;
 
+	/**
+	 * @var bool
+	 */
+	private $fetchJoinCollection = TRUE;
+
 
 
 	/**
@@ -50,6 +55,18 @@ class ResultSet extends Nette\Object implements \Countable, \IteratorAggregate
 	public function __construct(ORM\AbstractQuery $query)
 	{
 		$this->query = $query;
+	}
+
+
+
+	/**
+	 * @param bool $fetchJoinCollection
+	 * @return ResultSet
+	 */
+	public function setFetchJoinCollection($fetchJoinCollection)
+	{
+		$this->fetchJoinCollection = (bool) $fetchJoinCollection;
+		return $this;
 	}
 
 
@@ -190,7 +207,7 @@ class ResultSet extends Nette\Object implements \Countable, \IteratorAggregate
 	private function getPaginatedQuery()
 	{
 		if ($this->paginatedQuery === NULL) {
-			$this->paginatedQuery = new ResultPaginator($this->query);
+			$this->paginatedQuery = new ResultPaginator($this->query, $this->fetchJoinCollection);
 		}
 
 		return $this->paginatedQuery;
