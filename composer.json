@@ -20,7 +20,8 @@
 		"doctrine/orm": "~2.4",
 		"kdyby/events": "~1.0",
 		"kdyby/console": "~1.0",
-		"kdyby/annotations": "~1.0"
+		"kdyby/annotations": "~1.0",
+		"kdyby/doctrine-cache": "~1.1"
 	},
 	"require-dev": {
 		"nette/tester": "@dev",

@@ -114,7 +114,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		'default' => 'Kdyby\DoctrineCache\Cache',
 		'apc' => 'Doctrine\Common\Cache\ApcCache',
 		'array' => 'Doctrine\Common\Cache\ArrayCache',
-		'memcache' => 'Doctrine\Common\Cache\MemcacheCache',
+		'memcache' => 'Kdyby\DoctrineCache\MemcacheCache',
 		'redis' => 'Doctrine\Common\Cache\RedisCache',
 		'xcache' => 'Doctrine\Common\Cache\XcacheCache',
 	);
@@ -443,7 +443,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		$serviceName = $this->prefix($prefix . '.driver.' . str_replace('\\', '_', $namespace) . '.' . $impl . 'Impl');
 
 		$this->getContainerBuilder()->addDefinition($serviceName)
-			->setClass($driver->entity)
+			->setClass('Doctrine\Common\Persistence\Mapping\Driver\MappingDriver')
 			->setFactory($driver->entity, $driver->arguments)
 			->setAutowired(FALSE);
 
@@ -475,7 +475,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		}
 
 		$def = $builder->addDefinition($serviceName = $this->prefix('cache.' . $suffix))
-			->setClass($cache->entity)
+			->setClass('Doctrine\Common\Cache\Cache')
 			->setFactory($cache->entity, $cache->arguments)
 			->setAutowired(FALSE);
 
