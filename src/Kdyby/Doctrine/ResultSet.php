@@ -118,10 +118,6 @@ class ResultSet extends Nette\Object implements \Countable, \IteratorAggregate
 	 */
 	public function applyPaging($offset, $limit)
 	{
-		if ($this->paginatedQuery !== NULL) {
-			throw new InvalidStateException("Cannot modify result set, that was already fetched from storage.");
-		}
-
 		$this->query->setFirstResult($offset);
 		$this->query->setMaxResults($limit);
 
