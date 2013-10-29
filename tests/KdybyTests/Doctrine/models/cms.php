@@ -58,6 +58,13 @@ class CmsAddress
 
 
 
+	public function __construct($city = NULL)
+	{
+		$this->city = $city;
+	}
+
+
+
 	public function setUser(CmsUser $user)
 	{
 		if ($this->user !== $user) {
@@ -97,6 +104,7 @@ class CmsArticle
 	/**
 	 * @ORM\ManyToOne(targetEntity="CmsUser", inversedBy="articles")
 	 * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
+	 * @var \KdybyTests\Doctrine\CmsUser
 	 */
 	public $user;
 
@@ -112,9 +120,10 @@ class CmsArticle
 
 
 
-	public function __construct()
+	public function __construct($topic = NULL)
 	{
 		$this->comments = new ArrayCollection;
+		$this->topic = $topic;
 	}
 
 
@@ -256,8 +265,9 @@ class CmsGroup
 
 
 
-	public function __construct()
+	public function __construct($name = NULL)
 	{
+		$this->name = $name;
 		$this->users = new ArrayCollection;
 	}
 
@@ -350,8 +360,9 @@ class CmsUser
 
 
 
-	public function __construct()
+	public function __construct($name = NULL)
 	{
+		$this->name = $this->username = $name;
 		$this->phoneNumbers = new ArrayCollection;
 		$this->articles = new ArrayCollection;
 		$this->groups = new ArrayCollection;

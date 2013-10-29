@@ -13,6 +13,7 @@ namespace KdybyTests\Doctrine;
 use Doctrine;
 use Doctrine\Common\EventManager;
 use Kdyby\Doctrine\EntityManager;
+use Nette\Application\UI\Presenter;
 
 
 
@@ -514,4 +515,16 @@ class StatementMock implements \IteratorAggregate, Doctrine\DBAL\Driver\Statemen
     public function fetchAll($fetchStyle = NULL){}
     public function fetchColumn($columnIndex = 0){}
     public function getIterator(){}
+}
+
+
+
+class PresenterMock extends Presenter
+{
+
+	protected function startup()
+	{
+		$this->terminate();
+	}
+
 }

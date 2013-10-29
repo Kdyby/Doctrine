@@ -191,6 +191,10 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			->setClass('Kdyby\Doctrine\Proxy\JitProxyWarmer')
 			->setInject(FALSE);
 
+		$builder->addDefinition($this->prefix('entityFormMapper'))
+			->setClass('Kdyby\Doctrine\Forms\EntityFormMapper')
+			->setInject(FALSE);
+
 		if ($this->targetEntityMappings) {
 			$listener = $builder->addDefinition($this->prefix('resolveTargetEntityListener'))
 				->setClass('Kdyby\Doctrine\Tools\ResolveTargetEntityListener')

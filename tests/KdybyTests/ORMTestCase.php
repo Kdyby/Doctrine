@@ -33,13 +33,20 @@ abstract class ORMTestCase extends Tester\TestCase
 {
 
 	/**
+	 * @var \Nette\DI\Container|\SystemContainer
+	 */
+	protected $serviceLocator;
+
+
+
+	/**
 	 * @return Kdyby\Doctrine\EntityManager
 	 */
 	protected function createMemoryManager()
 	{
 		require_once __DIR__ . '/Doctrine/models/cms.php';
 
-		$config = new Nette\Config\Configurator();
+		$config = new Nette\Configurator();
 		$container = $config->setTempDirectory(TEMP_DIR)
 			->addConfig(__DIR__ . '/nette-reset.neon')
 			->addConfig(__DIR__ . '/Doctrine/config/memory.neon')
@@ -51,6 +58,8 @@ abstract class ORMTestCase extends Tester\TestCase
 
 		$schemaTool = new SchemaTool($em);
 		$schemaTool->createSchema($em->getMetadataFactory()->getAllMetadata());
+
+		$this->serviceLocator = $container;
 
 		return $em;
 	}

@@ -85,11 +85,15 @@ class EntityManager extends Doctrine\ORM\EntityManager
 
 
 	/**
-	 * @param string $entityName
+	 * @param string|object $entityName
 	 * @return EntityDao
 	 */
 	public function getRepository($entityName)
 	{
+		if (is_object($entityName)) {
+			$entityName = Doctrine\Common\Util\ClassUtils::getRealClass(get_class($entityName));
+		}
+
 		$entityName = ltrim($entityName, '\\');
 
 		if (isset($this->repositories[$entityName])) {
