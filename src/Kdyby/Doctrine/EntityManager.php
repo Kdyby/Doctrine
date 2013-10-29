@@ -97,6 +97,10 @@ class EntityManager extends Doctrine\ORM\EntityManager
 		}
 
 		$metadata = $this->getClassMetadata($entityName);
+		if ($metadata->name !== $entityName) {
+			return $this->repositories[$entityName] = $this->getRepository($metadata->name);
+		}
+
 		if (!$daoClassName = $metadata->customRepositoryClassName) {
 			$daoClassName = $this->getConfiguration()->getDefaultRepositoryClassName();
 		}
