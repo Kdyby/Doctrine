@@ -50,7 +50,7 @@ class EntityFormMapperTest extends ORMTestCase
 
 	public function testBasic_text()
 	{
-		$form = new EntityForm();
+		$form = self::buildEntityForm();
 		$form->injectEntityMapper($this->mapper);
 
 		$name = $form->addText('name');
@@ -68,7 +68,7 @@ class EntityFormMapperTest extends ORMTestCase
 
 	public function testRelation_toOne()
 	{
-		$form = new EntityForm();
+		$form = self::buildEntityForm();
 		$form->injectEntityMapper($this->mapper);
 
 		$name = $form->addText('name');
@@ -91,7 +91,7 @@ class EntityFormMapperTest extends ORMTestCase
 
 	public function testRelation_toOne_completeRelation()
 	{
-		$form = new EntityForm();
+		$form = self::buildEntityForm();
 		$form->injectEntityMapper($this->mapper);
 
 		$name = $form->addText('name');
@@ -116,7 +116,7 @@ class EntityFormMapperTest extends ORMTestCase
 
 	public function testRelation_toOne_itemsLoad()
 	{
-		$form = new EntityForm();
+		$form = self::buildEntityForm();
 		$form->injectEntityMapper($this->mapper);
 		$em = $this->mapper->getEntityManager();
 		$usersDao = $em->getDao(__NAMESPACE__ . '\\CmsUser');
@@ -145,7 +145,7 @@ class EntityFormMapperTest extends ORMTestCase
 
 	public function testRelation_toMany()
 	{
-		$form = new EntityForm();
+		$form = self::buildEntityForm();
 		$form->injectEntityMapper($this->mapper);
 
 		$name = $form->addText('name');
@@ -179,7 +179,7 @@ class EntityFormMapperTest extends ORMTestCase
 
 	public function testRename()
 	{
-		$form = new EntityForm();
+		$form = self::buildEntityForm();
 		$form->injectEntityMapper($this->mapper);
 
 		$name = $form->addCheckbox('surname')
@@ -219,11 +219,32 @@ class EntityFormMapperTest extends ORMTestCase
 		return $presenter;
 	}
 
-}
 
-class EntityForm extends UI\Form
-{
-	use Kdyby\Doctrine\Forms\EntityForm;
+
+	/**
+	 * @return UI\Form|Kdyby\Doctrine\Forms\EntityForm
+	 */
+	private static function buildEntityForm()
+	{
+		$class = __NAMESPACE__ . '\\EntityForm';
+		if (class_exists($class, FALSE)) {
+			return new $class();
+		}
+
+		if (PHP_VERSION_ID >= 50400) {
+			eval('namespace ' . __NAMESPACE__ . ' { class EntityForm extends \Nette\Application\UI\Form { use \Kdyby\Doctrine\Forms\EntityForm; } }');
+
+		} else {
+			$trait = file_get_contents(__DIR__ . '/../../../src/Kdyby/Doctrine/Forms/EntityForm.php');
+			$trait = str_replace('namespace Kdyby\Doctrine\Forms;', 'namespace ' . __NAMESPACE__ . ';', $trait);
+			$trait = str_replace("use Kdyby;", "use Kdyby;\n" . 'use Kdyby\Doctrine\Forms\EntityFormMapper;', $trait);
+			$trait = str_replace("trait EntityForm", 'class EntityForm extends UI\Form', $trait);
+			eval(substr($trait, 5));
+		}
+
+		return new $class();
+	}
+
 }
 
 \run(new EntityFormMapperTest());
