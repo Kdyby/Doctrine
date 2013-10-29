@@ -94,6 +94,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			'multiPolygon' => 'Kdyby\Doctrine\Types\MultiPolygon',
 			'geometryCollection' => 'Kdyby\Doctrine\Types\GeometryCollection',
 		),
+		'allowRepeatOnDeadlock' => FALSE,
 	);
 
 	/**
@@ -296,7 +297,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		Validators::assertField($config['dql'], 'numeric', 'array');
 		Validators::assertField($config['dql'], 'datetime', 'array');
 		$configuration = $builder->addDefinition($this->prefix($name . '.ormConfiguration'))
-			->setClass('Kdyby\Doctrine\Configuration')
+			->setClass('Kdyby\Doctrine\OrmConfiguration')
 			->addSetup('setMetadataCacheImpl', array($this->processCache($config['metadataCache'], $name . '.metadata')))
 			->addSetup('setQueryCacheImpl', array($this->processCache($config['queryCache'], $name . '.query')))
 			->addSetup('setResultCacheImpl', array($this->processCache($config['resultCache'], $name . '.ormResult')))
@@ -358,9 +359,10 @@ class OrmExtension extends Nette\DI\CompilerExtension
 
 		// config
 		$builder->addDefinition($this->prefix($name . '.dbalConfiguration'))
-			->setClass('Doctrine\DBAL\Configuration')
+			->setClass('Kdyby\Doctrine\DbalConfiguration')
 			->addSetup('setResultCacheImpl', array($this->processCache($config['resultCache'], $name . '.dbalResult')))
 			->addSetup('setSQLLogger', array(new Nette\DI\Statement('Doctrine\DBAL\Logging\LoggerChain')))
+			->addSetup('setAllowRepeatOnDeadlock', array($config['allowRepeatOnDeadlock']))
 			->setAutowired(FALSE)
 			->setInject(FALSE);
 

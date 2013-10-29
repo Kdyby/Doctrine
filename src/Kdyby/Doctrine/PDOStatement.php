@@ -28,14 +28,19 @@ class PDOStatement extends Statement
 	 */
 	public function execute($params = NULL)
 	{
-		try {
-			return parent::execute($params);
+		/** @var Connection $conn */
+		$conn = $this->conn;
+		$tries = 3;
 
-		} catch (\Exception $e) {
-			$conn = $this->conn;
-			/** @var Connection $conn */
-			throw $conn->resolveException($e, $this->sql, (is_array($params) ? $params : array()) + $this->params);
-		}
+		do {
+			try {
+				return parent::execute($params);
+
+			} catch (\Exception $e) { }
+
+		} while ($conn->mitigateDeadlock($e) && --$tries);
+
+		throw $conn->resolveException($e, $this->sql, (is_array($params) ? $params : array()) + $this->params);
 	}
 
 }

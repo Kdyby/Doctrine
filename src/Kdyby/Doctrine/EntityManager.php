@@ -24,6 +24,7 @@ use Nette;
  * @author Filip Procházka <filip@prochazka.su>
  *
  * @method \Kdyby\Doctrine\Connection getConnection()
+ * @method \Kdyby\Doctrine\OrmConfiguration getConfiguration()
  * @method flush(array $entity = NULL)
  * @method onDaoCreate(EntityManager $em, EntityDao $dao)
  */
@@ -128,7 +129,7 @@ class EntityManager extends Doctrine\ORM\EntityManager
 	 */
 	public function getClassMetadata($className)
 	{
-		if ($this->getConfiguration() instanceof Kdyby\Doctrine\Configuration) {
+		if ($this->getConfiguration() instanceof Kdyby\Doctrine\OrmConfiguration) {
 			$className = $this->getConfiguration()->getTargetEntityClassName($className);
 		}
 

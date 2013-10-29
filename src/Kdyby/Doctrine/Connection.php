@@ -20,6 +20,8 @@ use PDO;
 
 /**
  * @author Filip Procházka <filip@prochazka.su>
+ *
+ * @method \Kdyby\Doctrine\DbalConfiguration getConfiguration()
  */
 class Connection extends Doctrine\DBAL\Connection
 {
@@ -70,12 +72,18 @@ class Connection extends Doctrine\DBAL\Connection
 	 */
 	public function executeQuery($query, array $params = array(), $types = array(), Doctrine\DBAL\Cache\QueryCacheProfile $qcp = NULL)
 	{
-		try {
-			return parent::executeQuery($query, $params, $types, $qcp);
+		$tries = 3;
 
-		} catch (\Exception $e) {
-			throw $this->resolveException($e, $query, $params);
-		}
+		do {
+			try {
+				return parent::executeQuery($query, $params, $types);
+
+			} catch (\Exception $e) {
+			}
+
+		} while ($this->mitigateDeadlock($e) && --$tries);
+
+		throw $this->resolveException($e, $query, $params);
 	}
 
 
@@ -89,12 +97,18 @@ class Connection extends Doctrine\DBAL\Connection
 	 */
 	public function executeUpdate($query, array $params = array(), array $types = array())
 	{
-		try {
-			return parent::executeUpdate($query, $params, $types);
+		$tries = 3;
 
-		} catch (\Exception $e) {
-			throw $this->resolveException($e, $query, $params);
-		}
+		do {
+			try {
+				return parent::executeUpdate($query, $params, $types);
+
+			} catch (\Exception $e) {
+			}
+
+		} while ($this->mitigateDeadlock($e) && --$tries);
+
+		throw $this->resolveException($e, $query, $params);
 	}
 
 
@@ -106,12 +120,18 @@ class Connection extends Doctrine\DBAL\Connection
 	 */
 	public function exec($statement)
 	{
-		try {
-			return parent::exec($statement);
+		$tries = 3;
 
-		} catch (\Exception $e) {
-			throw $this->resolveException($e, $statement);
-		}
+		do {
+			try {
+				return parent::exec($statement);
+
+			} catch (\Exception $e) {
+			}
+
+		} while ($this->mitigateDeadlock($e) && --$tries);
+
+		throw $this->resolveException($e, $statement);
 	}
 
 
@@ -123,12 +143,18 @@ class Connection extends Doctrine\DBAL\Connection
 	public function query()
 	{
 		$args = func_get_args();
-		try {
-			return call_user_func_array('parent::query', $args);
+		$tries = 3;
 
-		} catch (\Exception $e) {
-			throw $this->resolveException($e, func_get_arg(0));
-		}
+		do {
+			try {
+				return call_user_func_array('parent::query', $args);
+
+			} catch (\Exception $e) {
+			}
+
+		} while ($this->mitigateDeadlock($e) && --$tries);
+
+		throw $this->resolveException($e, func_get_arg(0));
 	}
 
 
@@ -190,6 +216,22 @@ class Connection extends Doctrine\DBAL\Connection
 		}
 
 		return $connection;
+	}
+
+
+
+	/**
+	 * @internal
+	 * @param \Exception $e
+	 */
+	public function mitigateDeadlock(\Exception $e)
+	{
+		if (!preg_match('~Serialization failure.*?Deadlock~i', $e->getMessage())
+			&& !preg_match('~General error.*?Lock wait timeout exceeded~i', $e->getMessage())) {
+			return FALSE;
+		}
+
+		return $this->getConfiguration()->getAllowRepeatOnDeadlock();
 	}
 
 

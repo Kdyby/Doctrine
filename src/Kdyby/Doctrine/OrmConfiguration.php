@@ -20,7 +20,7 @@ use Nette;
 /**
  * @author Michal Gebauer <mishak@mishak.net>
  */
-class Configuration extends BaseConfiguration
+class OrmConfiguration extends BaseConfiguration
 {
 
 	public function setTargetEntityMap($targetEntityMap)
