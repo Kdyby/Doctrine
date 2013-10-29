@@ -68,6 +68,19 @@ $lintFile = function ($path) use (&$echo, &$context) {
 		$echo("\n");
 	}
 
+	$h = fopen($path, 'r');
+	$firstLine = fgets($h);
+	@fclose($h);
+
+	if (preg_match('~<?php\\s*\\/\\/\s*lint\s*([^\d\s]+)\s*([^\s]+)\s*~i', $firstLine, $m)) {
+		if (version_compare(PHP_VERSION, $m[2], $m[1]) != 1) {
+			$echo('S');
+			$context['skipped']++;
+			$context['filesCount']++;
+			return;
+		}
+	}
+
 	exec("php -l " . escapeshellarg($path) . " 2>&1 1> /dev/null", $output, $code);
 	if ($code) {
 		$context['errors'][] = implode($output);
@@ -89,7 +102,7 @@ $check = function ($path) use (&$check, &$lintFile, &$context) {
 
 
 $context = $parseOptions();
-$context['filesCount'] = 0;
+$context['skipped'] = $context['filesCount'] = 0;
 $context['errors'] = array();
 foreach ($context['files'] as $file) $check($file);
 if ($context['errors']) {
@@ -98,6 +111,8 @@ if ($context['errors']) {
 
 $echo(
 	"\n\n", ($context['errors'] ? 'FAILED' : 'OK'),
-	' (', $context['filesCount'], " files checked, ", count($context['errors']), " errors)\n"
+	' (', $context['filesCount'], " files checked, ",
+	($context['skipped'] > 0 ?  $context['skipped'] . ' skipped, ' : ''),
+	count($context['errors']), " errors)\n"
 );
 exit($context['errors'] ? 1 : 0);
