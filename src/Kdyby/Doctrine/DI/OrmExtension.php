@@ -297,9 +297,9 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			->addSetup('setCustomStringFunctions', array($config['dql']['string']))
 			->addSetup('setCustomNumericFunctions', array($config['dql']['numeric']))
 			->addSetup('setCustomDatetimeFunctions', array($config['dql']['datetime']))
-			->addSetup('setNamingStrategy', $this->filterArgs($config['namingStrategy']))
-			->addSetup('setQuoteStrategy', $this->filterArgs($config['quoteStrategy']))
-			->addSetup('setEntityListenerResolver', $this->filterArgs($config['entityListenerResolver']))
+			->addSetup('setNamingStrategy', self::filterArgs($config['namingStrategy']))
+			->addSetup('setQuoteStrategy', self::filterArgs($config['quoteStrategy']))
+			->addSetup('setEntityListenerResolver', self::filterArgs($config['entityListenerResolver']))
 			->setAutowired(FALSE);
 		/** @var Nette\DI\ServiceDefinition $configuration */
 
@@ -424,7 +424,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		}
 
 		$impl = $driver instanceof \stdClass ? $driver->value : (string) $driver;
-		list($driver) = $this->filterArgs($driver);
+		list($driver) = self::filterArgs($driver);
 		/** @var Nette\DI\Statement $driver */
 
 		if (isset($this->metadataDriverClasses[$impl])) {
@@ -463,7 +463,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		$builder = $this->getContainerBuilder();
 
 		$impl = $cache instanceof \stdClass ? $cache->value : (string) $cache;
-		list($cache) = $this->filterArgs($cache);
+		list($cache) = self::filterArgs($cache);
 		/** @var Nette\DI\Statement $cache */
 
 		if (isset($this->cacheDriverClasses[$impl])) {
@@ -556,7 +556,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 	 * @param string|\stdClass $statement
 	 * @return Nette\DI\Statement[]
 	 */
-	private function filterArgs($statement)
+	private static function filterArgs($statement)
 	{
 		return Nette\DI\Compiler::filterArguments(array(is_string($statement) ? new Nette\DI\Statement($statement) : $statement));
 	}
