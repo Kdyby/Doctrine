@@ -39,14 +39,20 @@ abstract class ORMTestCase extends Tester\TestCase
 		$rootDir = __DIR__ . '/../../';
 
 		$config = new Nette\Config\Configurator();
-		$container = $config->setTempDirectory(TEMP_DIR)
+		$config->setTempDirectory(TEMP_DIR)
 			->addConfig(__DIR__ . '/../nette-reset.neon', $config::NONE)
 			->addConfig(__DIR__ . '/config/memory.neon', $config::NONE)
 			->addParameters(array(
 				'appDir' => $rootDir,
 				'wwwDir' => $rootDir,
-			))
-			->createContainer();
+			));
+
+		Kdyby\Annotations\DI\AnnotationsExtension::register($config);
+		Kdyby\Console\DI\ConsoleExtension::register($config);
+		Kdyby\Events\DI\EventsExtension::register($config);
+		Kdyby\Doctrine\DI\OrmExtension::register($config);
+
+		$container = $config->createContainer();
 		/** @var Nette\DI\Container $container */
 
 		$em = $container->getByType('Kdyby\Doctrine\EntityManager');
