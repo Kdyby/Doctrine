@@ -22,8 +22,6 @@ use Nette;
 use Nette\PhpGenerator as Code;
 use Tester;
 
-require_once __DIR__ . '/Doctrine/mocks.php';
-
 
 
 /**
@@ -100,7 +98,7 @@ abstract class ORMTestCase extends Tester\TestCase
 			$conn = DriverManager::getConnection($conn, $config, $eventManager);
 		}
 
-		return Doctrine\EntityManagerMock::create($conn, $config, $eventManager);
+		return DoctrineMocks\EntityManagerMock::create($conn, $config, $eventManager);
 	}
 
 
