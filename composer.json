@@ -21,8 +21,7 @@
 		"kdyby/events": "~2.0",
 		"kdyby/console": "~2.0",
 		"kdyby/annotations": "~2.0",
-		"kdyby/doctrine-cache": "~2.1",
-		"symfony/property-access": "~2.3"
+		"kdyby/doctrine-cache": "~2.1"
 	},
 	"require-dev": {
 		"nette/tester": "@dev",
