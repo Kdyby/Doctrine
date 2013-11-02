@@ -40,8 +40,8 @@ abstract class ORMTestCase extends Tester\TestCase
 
 		$config = new Nette\Config\Configurator();
 		$container = $config->setTempDirectory(TEMP_DIR)
-			->addConfig(__DIR__ . '/../nette-reset.neon')
-			->addConfig(__DIR__ . '/config/memory.neon')
+			->addConfig(__DIR__ . '/../nette-reset.neon', $config::NONE)
+			->addConfig(__DIR__ . '/config/memory.neon', $config::NONE)
 			->addParameters(array(
 				'appDir' => $rootDir,
 				'wwwDir' => $rootDir,
