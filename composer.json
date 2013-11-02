@@ -36,6 +36,5 @@
 		"classmap": [
 			"src/Kdyby/Doctrine/exceptions.php"
 		]
-	},
-	"minimum-stability": "RC"
+	}
 }
