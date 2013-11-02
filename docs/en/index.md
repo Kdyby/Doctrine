@@ -30,10 +30,6 @@ But if you're using development version of Nette, you have to specify the develo
 ```js
 "require": {
 	"nette/nette": "@dev",
-	"kdyby/annotations": "@dev",
-	"kdyby/doctrine-cache": "@dev",
-	"kdyby/events": "@dev",
-	"kdyby/console": "@dev",
 	"kdyby/doctrine": "@dev"
 }
 ```
