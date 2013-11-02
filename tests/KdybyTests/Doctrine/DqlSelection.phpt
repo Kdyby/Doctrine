@@ -21,13 +21,14 @@ use Tester;
 use Tester\Assert;
 
 require_once __DIR__ . '/../bootstrap.php';
+require_once __DIR__ . '/models/cms.php';
 
 
 
 /**
  * @author Filip Procházka <filip@prochazka.su>
  */
-class DqlSelectionTest extends KdybyTests\ORMTestCase
+class DqlSelectionTest extends KdybyTests\Doctrine\ORMTestCase
 {
 
 	/**
