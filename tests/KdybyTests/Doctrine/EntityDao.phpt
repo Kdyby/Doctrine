@@ -11,12 +11,13 @@
 namespace KdybyTests\Doctrine;
 
 use Kdyby;
-use KdybyTests\ORMTestCase;
+use KdybyTests\Doctrine\ORMTestCase;
 use Nette;
 use Tester;
 use Tester\Assert;
 
 require_once __DIR__ . '/../bootstrap.php';
+require_once __DIR__ . '/models/cms.php';
 
 
 

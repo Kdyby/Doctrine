@@ -17,13 +17,14 @@ use Tester;
 use Tester\Assert;
 
 require_once __DIR__ . '/../bootstrap.php';
+require_once __DIR__ . '/models/cms.php';
 
 
 
 /**
  * @author Filip Procházka <filip@prochazka.su>
  */
-class NonLockingUniqueInserterTest extends KdybyTests\ORMTestCase
+class NonLockingUniqueInserterTest extends KdybyTests\Doctrine\ORMTestCase
 {
 
 	public function testFunctional()

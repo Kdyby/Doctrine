@@ -7,8 +7,6 @@ doctrine:
 	queryCache: array
 	resultCache: array
 	hydrationCache: array
-	metadata:
-		KdybyTests\Doctrine: annotations(%appDir%/Doctrine/models)
 
 
 console:
