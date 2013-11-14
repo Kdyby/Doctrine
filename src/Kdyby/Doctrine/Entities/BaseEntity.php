@@ -15,6 +15,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Nette;
 use Kdyby;
+use Kdyby\Doctrine\Collections\ReadOnlyCollectionWrapper;
 use Kdyby\Doctrine\MemberAccessException;
 use Kdyby\Doctrine\UnexpectedValueException;
 
@@ -87,6 +88,10 @@ abstract class BaseEntity extends Nette\Object implements \Serializable
 
 			} elseif ($op === 'get' && isset($properties[$prop])) {
 				if ($this->$prop instanceof Collection) {
+					if (isset($args[0]) && $args[0] === TRUE) {
+						return new ReadOnlyCollectionWrapper($this->$prop);
+					}
+
 					return $this->$prop->toArray();
 
 				} else {
