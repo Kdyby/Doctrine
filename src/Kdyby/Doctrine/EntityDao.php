@@ -429,7 +429,7 @@ class EntityDao extends Doctrine\ORM\EntityRepository implements Persistence\Obj
 
 	/**
 	 * @param array|string|\Traversable $args
-	 * @return array
+	 * @return array|\Traversable
 	 */
 	private static function iterableArgs($args)
 	{
