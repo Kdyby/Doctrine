@@ -11,7 +11,6 @@
 namespace Kdyby\Doctrine;
 
 use Doctrine;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\NonUniqueResultException;
@@ -70,7 +69,7 @@ class EntityDao extends Doctrine\ORM\EntityRepository implements Persistence\Obj
 			$result = $this->add($entity, $relations);
 			$this->getEntityManager()->flush(array_merge($result, $this->getLoadedEntities()));
 
-			return (empty($relations) && !is_array($entity) && !$entity instanceof Collection) ? $entity : $result;
+			return (empty($relations) && !is_array($entity) && !$entity instanceof \Traversable) ? $entity : $result;
 		}
 
 		$this->flush();
@@ -430,7 +429,7 @@ class EntityDao extends Doctrine\ORM\EntityRepository implements Persistence\Obj
 
 	/**
 	 * @param array|string|\Traversable $args
-	 * @return array
+	 * @return array|\Traversable
 	 */
 	private static function iterableArgs($args)
 	{
