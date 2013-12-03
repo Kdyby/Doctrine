@@ -11,6 +11,7 @@
 namespace Kdyby\Doctrine\Console;
 
 use Doctrine;
+use Doctrine\ORM\Tools\SchemaTool;
 use Kdyby;
 use Nette;
 use Symfony\Component\Console\Input\InputInterface;
@@ -39,10 +40,23 @@ class SchemaCreateCommand extends Doctrine\ORM\Tools\Console\Command\SchemaTool\
 
 
 
+	/**
+	 * {@inheritdoc}
+	 */
 	protected function initialize(InputInterface $input, OutputInterface $output)
 	{
 		parent::initialize($input, $output);
 		$this->cacheStorage->clean(array(Nette\Caching\Cache::ALL => TRUE));
+	}
+
+
+
+	/**
+	 * {@inheritdoc}
+	 */
+	protected function executeSchemaCommand(InputInterface $input, OutputInterface $output, SchemaTool $schemaTool, array $metadatas)
+	{
+		return parent::executeSchemaCommand($input, new ColoredSqlOutput($output), $schemaTool, $metadatas);
 	}
 
 }
