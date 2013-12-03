@@ -39,12 +39,21 @@ class ColoredSqlOutput extends Nette\Object implements OutputInterface
 
 	protected function formatSqls($message)
 	{
-		$message = Nette\Utils\Strings::replace($message, "~((?:CREATE|ALTER|DROP) TABLE|(?:DROP|CREATE) INDEX)[^;]+;~i", function (array $match) {
+		$message = Nette\Utils\Strings::replace($message, "~((?:CREATE|ALTER|DROP)\s+TABLE|(?:DROP|CREATE)\s+INDEX)[^;]+;~i", function (array $match) {
 			$output = Nette\Utils\Strings::replace($match[0], '~(?<=\b)([^\s]*[a-z]+[^\s]*)(?=\b)~', function ($id) {
 				return '<info>' . $id[0] . '</info>';
 			});
+			$output = Nette\Utils\Strings::replace($output, '~(?<=\b)(CREATE|ALTER|DROP|TABLE|INDEX|ADD|CHANGE|PRIMARY\s+KEY|UNIQUE|CONSTRAINT|FOREIGN\s+KEY|REFERENCES|COMMENT|ENGINE)(?=\b)~', function ($id) {
+				return '<fg=cyan>' . $id[0] . '</fg=cyan>';
+			});
 
 			return $output;
+		});
+		$message = Nette\Utils\Strings::replace($message, '~(?<=\b)(INSERT|UPDATE|SELECT|DELETE|INTO|VALUES|ON\s+DUPLICATE\s+KEY\s+UPDATE|SET|FROM|JOIN|LEFT|RIGHT|INNER|OUTER|NATURAL|CROSS|FULL|ON|WHERE|GROUP\s+BY|HAVING|ORDER\s+BY|LIMIT|OFFSET|UNION)(?=\b)~', function ($id) {
+			return '<comment>' . $id[0] . '</comment>';
+		});
+		$message = Nette\Utils\Strings::replace($message, '~(?<=\b)(AS|ASC|DESC|USING|DEFAULT|DISTINCT|AND|OR|IN|BETWEEN|IS|LIKE|NOT|NULL|ALL|ANY|SOME|EXISTS|SET\s+NULL|AUTO_INCREMENT|CASCADE|RESTRICT|INT|SMALLINT|TINYINT|NUMERIC|VARCHAR|DATETIME|TIMESTAMP|TEXT)(?=\b)~', function ($id) {
+			return '<fg=magenta>' . $id[0] . '</fg=magenta>';
 		});
 
 		return $message;
