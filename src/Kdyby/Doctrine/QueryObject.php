@@ -55,19 +55,42 @@ abstract class QueryObject extends Nette\Object implements Kdyby\Persistence\Que
 
 	/**
 	 * @param \Kdyby\Persistence\Queryable $repository
-	 *
-	 * @throws UnexpectedValueException
-	 * @return \Doctrine\ORM\Query
+	 * @return \Doctrine\ORM\Query|\Doctrine\ORM\QueryBuilder|NULL
 	 */
-	private function getQuery(Queryable $repository)
+	protected function doCreateCountQuery(Kdyby\Persistence\Queryable $repository)
 	{
-		$query = $this->doCreateQuery($repository);
+		return NULL;
+	}
+
+
+
+	/**
+	 * @param \Doctrine\ORM\Query|\Doctrine\ORM\QueryBuilder|NULL
+	 * @return \Doctrine\ORM\Query|NULL
+	 */
+	private static function sanitizeQuery($query = NULL)
+	{
 		if ($query instanceof Doctrine\ORM\QueryBuilder) {
 			$query = $query->getQuery();
 
 		} elseif ($query instanceof DqlSelection) {
 			$query = $query->createQuery();
 		}
+
+		return $query;
+	}
+
+
+
+	/**
+	 * @param \Kdyby\Persistence\Queryable $repository
+	 *
+	 * @throws UnexpectedValueException
+	 * @return \Doctrine\ORM\Query
+	 */
+	private function getFetchQuery(Queryable $repository)
+	{
+		$query = static::sanitizeQuery($this->doCreateQuery($repository));
 
 		if (!$query instanceof Doctrine\ORM\Query) {
 			throw new UnexpectedValueException(
@@ -77,12 +100,51 @@ abstract class QueryObject extends Nette\Object implements Kdyby\Persistence\Que
 			);
 		}
 
+		return $query;
+	}
+
+
+
+	/**
+	 * @param \Kdyby\Persistence\Queryable $repository
+	 *
+	 * @throws UnexpectedValueException
+	 * @return \Doctrine\ORM\Query|NULL
+	 */
+	private function getCountQuery(Queryable $repository)
+	{
+		$query = static::sanitizeQuery($this->doCreateCountQuery($repository));
+
+		if (!$query instanceof Doctrine\ORM\Query || $query !== NULL) {
+			throw new UnexpectedValueException(
+				"Method " . $this->getReflection()->getMethod('doCreateCountQuery') . " must return " .
+				"instanceof Doctrine\\ORM\\Query or Kdyby\\Doctrine\\QueryBuilder or Kdyby\\Doctrine\\DqlSelection, " .
+				is_object($query) ? 'instance of ' . get_class($query) : gettype($query) . " given."
+			);
+		}
+
+		return $query;
+	}
+
+
+
+	/**
+	 * @param \Kdyby\Persistence\Queryable $repository
+	 *
+	 * @throws UnexpectedValueException
+	 * @return \Doctrine\ORM\Query
+	 */
+	private function getQuery(Queryable $repository)
+	{
+		$query = $this->getFetchQuery($repository);
+
 		if ($this->lastQuery && $this->lastQuery->getDQL() === $query->getDQL()) {
 			$query = $this->lastQuery;
 		}
 
 		if ($this->lastQuery !== $query) {
-			$this->lastResult = new ResultSet($query);
+			$countQuery = $this->getCountQuery($repository);
+			$this->lastResult = new ResultSet($query, $countQuery);
 		}
 
 		return $this->lastQuery = $query;

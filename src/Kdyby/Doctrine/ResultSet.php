@@ -37,6 +37,11 @@ class ResultSet extends Nette\Object implements \Countable, \IteratorAggregate
 	private $query;
 
 	/**
+	 * @var \Doctrine\ORM\Query|NULL
+	 */
+	private $countQuery;
+
+	/**
 	 * @var \Doctrine\ORM\Tools\Pagination\Paginator
 	 */
 	private $paginatedQuery;
@@ -52,9 +57,10 @@ class ResultSet extends Nette\Object implements \Countable, \IteratorAggregate
 	 * @param \Doctrine\ORM\AbstractQuery $query
 	 * @throws InvalidArgumentException
 	 */
-	public function __construct(ORM\AbstractQuery $query)
+	public function __construct(ORM\AbstractQuery $query, ORM\AbstractQuery $countQuery = NULL)
 	{
 		$this->query = $query;
+		$this->countQuery = $countQuery;
 	}
 
 
@@ -161,10 +167,16 @@ class ResultSet extends Nette\Object implements \Countable, \IteratorAggregate
 	{
 		if ($this->totalCount === NULL) {
 			try {
-				$this->totalCount = $this->getPaginatedQuery()->count();
+				$this->totalCount = $this->countQuery !== NULL
+					? $this->countQuery->getSingleScalarResult()
+					: $this->getPaginatedQuery()->count();
 
 			} catch (ORMException $e) {
 				throw new QueryException($e, $this->query, $e->getMessage());
+			}  catch (NoResultException $e) {
+				throw new QueryException($e, $this->countQuery, $e->getMessage());
+			} catch (NonUniqueResultException $e) { // this should never happen!
+				throw new QueryException($e, $this->countQuery, $e->getMessage());
 			}
 		}
 
