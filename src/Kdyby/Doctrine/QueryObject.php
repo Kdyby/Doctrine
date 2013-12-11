@@ -19,6 +19,32 @@ use Nette;
 
 
 /**
+ * Purpose of this class is to be inherited and have implemented doCreateQuery() method,
+ * which constructs DQL from your constraints and filters.
+ *
+ * QueryObject inheritors are great when you're printing a data to the user,
+ * they may be used in service layer but that's not really suggested.
+ *
+ * Don't be afraid to use them in presenters
+ *
+ * <code>
+ * $this->template->articles = $this->articlesDao->fetch(new ArticlesQuery());
+ * </code>
+ *
+ * or in more complex ways
+ *
+ * <code>
+ * $productsQuery = new ProductsQuery();
+ * $productsQuery
+ * 	->setColor('green')
+ * 	->setMaxDeliveryPrice(100)
+ * 	->setMaxDeliveryMinutes(75);
+ *
+ * $productsQuery->size = 'big';
+ *
+ * $this->template->products = $this->articlesDao->fetch($productsQuery);
+ * </code>
+ *
  * @author Filip Procházka <filip@prochazka.su>
  */
 abstract class QueryObject extends Nette\Object implements Kdyby\Persistence\Query
