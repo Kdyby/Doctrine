@@ -36,7 +36,7 @@ use Nette\Utils\Paginator as UIPaginator;
  * 	return new VisualPaginator;
  * }
  * </code>.
- * 
+ *
  * It automatically counts the query, passes the count of results to paginator
  * and then reads the offset from paginator and applies it to the query so you get the correct results.
  *
