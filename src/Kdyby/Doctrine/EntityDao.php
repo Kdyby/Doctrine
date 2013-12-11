@@ -22,6 +22,20 @@ use Nette\Utils\Arrays;
 
 
 /**
+ * This class is an extension to EntityRepository and should help you with prototyping.
+ * The first and only rule with DAO is not to ever inherit them, ever.
+ *
+ * The only valid reason to inherit EntityDao is to add more common methods to all DAO's in application,
+ * when you're creating your own framework (but do we really need to go any deeper than this?).
+ *
+ * WARNING: use save() method only for prototyping or only when you really know
+ * internals of Doctrine and you're 100% sure you know what you're doing.
+ * The save() method only saves entities of the current type that your DAO works with,
+ * it will NOT persist or update any relations. The only exceptions is cascade persist,
+ * but that again is a Doctrine internals.
+ *
+ * Unless you really wanna save only one entity, just use EntityManager::flush().
+ *
  * @author Filip Procházka <filip@prochazka.su>
  */
 class EntityDao extends Doctrine\ORM\EntityRepository implements Persistence\ObjectDao, Persistence\QueryExecutor, Persistence\Queryable //, Persistence\ObjectFactory

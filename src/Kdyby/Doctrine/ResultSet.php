@@ -21,6 +21,25 @@ use Nette\Utils\Paginator as UIPaginator;
 
 
 /**
+ * ResultSet accepts a Query that it can then paginate and count the results for you
+ *
+ * <code>
+ * public function renderDefault()
+ * {
+ * 	$articles = $this->articlesDao->fetch(new ArticlesQuery());
+ * 	$articles->applyPaginator($this['vp']->paginator);
+ * 	$this->template->articles = $articles;
+ * }
+ *
+ * protected function createComponentVp()
+ * {
+ * 	return new VisualPaginator;
+ * }
+ * </code>.
+ * 
+ * It automatically counts the query, passes the count of results to paginator
+ * and then reads the offset from paginator and applies it to the query so you get the correct results.
+ *
  * @author Filip Procházka <filip@prochazka.su>
  */
 class ResultSet extends Nette\Object implements \Countable, \IteratorAggregate
