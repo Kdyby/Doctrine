@@ -42,7 +42,7 @@ use Nette;
  *
  * $productsQuery->size = 'big';
  *
- * $this->template->products = $this->articlesDao->fetch($productsQuery);
+ * $this->template->products = $this->productsDao->fetch($productsQuery);
  * </code>
  *
  * @author Filip Procházka <filip@prochazka.su>
