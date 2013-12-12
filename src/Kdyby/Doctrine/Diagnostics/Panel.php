@@ -121,9 +121,14 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel, Doctrin
 	 */
 	protected function filterTracePaths($file)
 	{
+		static $netteDir;
+		if ($netteDir === NULL) {
+			$netteDir = dirname(dirname(Nette\Reflection\ClassType::from('Nette\Framework')->getFileName()));
+			$netteDir = str_replace(DIRECTORY_SEPARATOR, '/', $netteDir);
+		}
 		$replaced = str_replace(DIRECTORY_SEPARATOR, '/', $file);
 		return is_file($file)
-			&& strpos($file, NETTE_DIR) === FALSE
+			&& strpos($file, $netteDir) === FALSE
 			&& strpos($replaced, '/Doctrine/ORM/') === FALSE
 			&& strpos($replaced, '/Doctrine/DBAL/') === FALSE
 			&& strpos($replaced, "/Kdyby/Doctrine/") === FALSE
