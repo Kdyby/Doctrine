@@ -18,7 +18,7 @@ use Nette;
 /**
  * @author Filip Procházka <filip@prochazka.su>
  */
-class ProxyAutoloader extends Nette\Loaders\AutoLoader
+class ProxyAutoloader extends Nette\Object
 {
 
 	/**
@@ -30,6 +30,11 @@ class ProxyAutoloader extends Nette\Loaders\AutoLoader
 	 * @var string
 	 */
 	private $namespace;
+
+	/**
+	 * @var array list of registered loaders
+	 */
+	static private $loaders = array();
 
 
 
@@ -53,6 +58,36 @@ class ProxyAutoloader extends Nette\Loaders\AutoLoader
 	public static function create($proxyDir, $proxyNamespace)
 	{
 		return new static($proxyDir, $proxyNamespace);
+	}
+
+
+
+	/**
+	 * Register autoloader.
+	 * @param bool $prepend prepend autoloader?
+	 * @throws \Nette\NotSupportedException
+	 * @return void
+	 */
+	public function register($prepend = FALSE)
+	{
+		if (!function_exists('spl_autoload_register')) {
+			throw new Nette\NotSupportedException('spl_autoload does not exist in this PHP installation.');
+		}
+
+		spl_autoload_register(array($this, 'tryLoad'), TRUE, (bool) $prepend);
+		self::$loaders[spl_object_hash($this)] = $this;
+	}
+
+
+
+	/**
+	 * Unregister autoloader.
+	 * @return bool
+	 */
+	public function unregister()
+	{
+		unset(self::$loaders[spl_object_hash($this)]);
+		return spl_autoload_unregister(array($this, 'tryLoad'));
 	}
 
 
