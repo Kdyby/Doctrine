@@ -19,7 +19,7 @@ use Nette\Utils\Strings;
 /**
  * @author Filip Procházka <filip@prochazka.su>
  */
-class Element extends Nette\FreezableObject
+class Element extends Nette\Object
 {
 
 	const POINT = 'POINT';
@@ -43,6 +43,11 @@ class Element extends Nette\FreezableObject
 	 * @var string
 	 */
 	private $separator = ',';
+
+	/**
+	 * @var bool
+	 */
+	private $frozen = FALSE;
 
 
 
@@ -69,11 +74,16 @@ class Element extends Nette\FreezableObject
 	/**
 	 * @param float $lon
 	 * @param float $lat
+	 * @throws \Kdyby\Doctrine\InvalidStateException
 	 * @return Element
 	 */
 	public function addCoordinate($lon, $lat)
 	{
-		$this->updating();
+		if ($this->frozen) {
+			$class = get_class($this);
+			throw new Kdyby\Doctrine\InvalidStateException("Cannot modify a frozen object $class.");
+		}
+
 		$this->coordinates[] = new Coordinates($lon, $lat);
 		return $this;
 	}
@@ -137,23 +147,17 @@ class Element extends Nette\FreezableObject
 			$el->addCoordinate($lon, $lat);
 		}
 
-		$el->freeze();
-		return $el;
+		return $el->freeze();
 	}
 
 
 
 	/**
-	 * Makes the object unmodifiable.
 	 * @return Element
 	 */
 	public function freeze()
 	{
-		foreach ($this->coordinates as $coords) {
-			$coords->freeze();
-		}
-
-		parent::freeze();
+		$this->frozen = TRUE;
 		return $this;
 	}
 
@@ -164,7 +168,7 @@ class Element extends Nette\FreezableObject
 	 */
 	public function __clone()
 	{
-		parent::__clone();
+		$this->frozen = FALSE;
 
 		$list = array();
 		foreach ($this->coordinates as $coords) {
