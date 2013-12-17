@@ -71,6 +71,7 @@ class GeoElementTest extends Tester\TestCase
 		foreach ($coordsList as $coords) {
 			$el->addCoordinate($coords[0], $coords[1]);
 		}
+
 		return $el->freeze();
 	}
 

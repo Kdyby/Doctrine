@@ -18,7 +18,7 @@ use Nette;
 /**
  * @author Filip Procházka <filip@prochazka.su>
  */
-class Coordinates extends Nette\FreezableObject
+class Coordinates extends Nette\Object
 {
 
 	/**
@@ -76,16 +76,6 @@ class Coordinates extends Nette\FreezableObject
 
 
 	/**
-	 * @return int
-	 */
-	public function getPrecision()
-	{
-		return $this->precision;
-	}
-
-
-
-	/**
 	 * @return string
 	 */
 	public function getSeparator()
@@ -101,10 +91,18 @@ class Coordinates extends Nette\FreezableObject
 	 */
 	public function setSeparator($separator)
 	{
-		$this->updating();
 		$this->separator = $separator;
-
 		return $this;
+	}
+
+
+
+	/**
+	 * @return int
+	 */
+	public function getPrecision()
+	{
+		return $this->precision;
 	}
 
 
@@ -115,7 +113,6 @@ class Coordinates extends Nette\FreezableObject
 	 */
 	public function setPrecision($precision)
 	{
-		$this->updating();
 		$this->precision = $precision;
 		return $this;
 	}
