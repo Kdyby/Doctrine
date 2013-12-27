@@ -42,14 +42,6 @@ abstract class IdentifiedEntity extends BaseEntity
 	 */
 	final public function getId()
 	{
-		/** @deprecated remove me with orm stable 2.4 */
-		if ($this instanceof Proxy && !$this->__isInitialized__ && !$this->id) {
-			$identifier = $this->getReflection()->getProperty('_identifier');
-			$identifier->setAccessible(TRUE);
-			$id = $identifier->getValue($this);
-			$this->id = reset($id);
-		}
-
 		return $this->id;
 	}
 
