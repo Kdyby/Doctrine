@@ -16,7 +16,7 @@
 		"issues": "https://github.com/kdyby/doctrine/issues"
 	},
 	"require": {
-		"nette/nette": "~2.0",
+		"nette/nette": "2.0.*",
 		"doctrine/orm": "~2.4",
 		"kdyby/events": "~1.0",
 		"kdyby/console": "~1.0",
