@@ -111,9 +111,8 @@ class Helpers extends Nette\Object
 						$db->query($q);
 
 					} catch (\Exception $e) {
-						throw new BatchImportException("Error in batch.\n\n" . Nette\Utils\Strings::truncate(trim($q), 1000), 0, $e);
+						throw new BatchImportException($e->getMessage() . "\n\n" . Nette\Utils\Strings::truncate(trim($q), 1200), 0, $e);
 					}
-
 
 					$query = substr($query, $offset);
 					$offset = 0;
