@@ -254,7 +254,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 				$providedTypes = $extension->getDatabaseTypes();
 				Validators::assert($providedTypes, 'array');
 
-				if (!isset($config['types'])) {
+				if (!isset($defaults['types'])) {
 					$defaults['types'] = array();
 				}
 
