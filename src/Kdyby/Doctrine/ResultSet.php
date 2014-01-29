@@ -65,6 +65,11 @@ class ResultSet extends Nette\Object implements \Countable, \IteratorAggregate
 	 */
 	private $fetchJoinCollection = TRUE;
 
+	/**
+	 * @var bool|null
+	 */
+	private $useOutputWalkers;
+
 
 
 	/**
@@ -90,6 +95,24 @@ class ResultSet extends Nette\Object implements \Countable, \IteratorAggregate
 		}
 
 		$this->fetchJoinCollection = (bool) $fetchJoinCollection;
+		return $this;
+	}
+
+
+
+	/**
+	 * @param bool|null $useOutputWalkers
+	 * @throws InvalidStateException
+	 * @return ResultSet
+	 */
+	public function setUseOutputWalkers($useOutputWalkers)
+	{
+		if ($this->paginatedQuery !== NULL) {
+			throw new InvalidStateException("Cannot modify result set, that was already fetched from storage.");
+		}
+
+		$this->useOutputWalkers = $useOutputWalkers;
+
 		return $this;
 	}
 
@@ -232,6 +255,7 @@ class ResultSet extends Nette\Object implements \Countable, \IteratorAggregate
 	{
 		if ($this->paginatedQuery === NULL) {
 			$this->paginatedQuery = new ResultPaginator($this->query, $this->fetchJoinCollection);
+			$this->paginatedQuery->setUseOutputWalkers($this->useOutputWalkers);
 		}
 
 		return $this->paginatedQuery;
