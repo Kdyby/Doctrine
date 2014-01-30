@@ -380,13 +380,15 @@ class EntityDao extends Doctrine\ORM\EntityRepository implements Persistence\Obj
 
 	/**
 	 * @param \Exception $e
-	 * @param \Kdyby\Doctrine\QueryObject $queryObject
+	 * @param \Kdyby\Persistence\Query $queryObject
 	 *
 	 * @throws \Exception
 	 */
-	private function handleQueryException(\Exception $e, QueryObject $queryObject)
+	private function handleQueryException(\Exception $e, Persistence\Query $queryObject)
 	{
-		return new QueryException($e, $queryObject->getLastQuery(), '[' . get_class($queryObject) . '] ' . $e->getMessage());
+		$lastQuery = $queryObject instanceof QueryObject ? $queryObject->getLastQuery() : NULL;
+
+		return new QueryException($e, $lastQuery, '[' . get_class($queryObject) . '] ' . $e->getMessage());
 	}
 
 
