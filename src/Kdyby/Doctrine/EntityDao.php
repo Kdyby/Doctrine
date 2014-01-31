@@ -281,7 +281,7 @@ class EntityDao extends Doctrine\ORM\EntityRepository implements Persistence\Obj
 
 		$query = $this->buildCriteriaDql($criteria)
 			->select("e.$value", "e.$key")
-			->from($this->getEntityName(), 'e', 'e.' . $key)
+			->resetDQLPart('from')->from($this->getEntityName(), 'e', 'e.' . $key)
 			->getQuery();
 
 		try {
@@ -314,7 +314,7 @@ class EntityDao extends Doctrine\ORM\EntityRepository implements Persistence\Obj
 
 		$query = $this->buildCriteriaDql($criteria)
 			->select('e')
-			->from($this->getEntityName(), 'e', 'e.' . $key)
+			->resetDQLPart('from')->from($this->getEntityName(), 'e', 'e.' . $key)
 			->getQuery();
 
 		try {
