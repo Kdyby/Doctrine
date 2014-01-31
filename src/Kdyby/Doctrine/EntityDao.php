@@ -168,6 +168,99 @@ class EntityDao extends Doctrine\ORM\EntityRepository implements Persistence\Obj
 
 
 
+	public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+	{
+		if ($this->criteriaRequiresDql($criteria) === FALSE) {
+			return parent::findBy($criteria, $orderBy, $limit, $offset);
+		}
+
+		return $this->buildCriteriaDql($criteria, $orderBy)
+			->setMaxResults($limit)
+			->setFirstResult($offset)
+			->getQuery()->getResult();
+	}
+
+
+
+	public function findOneBy(array $criteria, array $orderBy = null)
+	{
+		if ($this->criteriaRequiresDql($criteria) === FALSE) {
+			return parent::findOneBy($criteria, $orderBy);
+		}
+
+		try {
+			return $this->buildCriteriaDql($criteria, $orderBy)
+				->setMaxResults(1)
+				->getQuery()->getSingleResult();
+
+		} catch (NoResultException $e) {
+			return NULL;
+		}
+	}
+
+
+
+	/**
+	 * @param array $criteria
+	 * @return bool
+	 */
+	private function criteriaRequiresDql(array $criteria)
+	{
+		foreach ($criteria as $key => $val) {
+			if (preg_match('~\\?\\s\\.~', $key)) {
+				return TRUE;
+			}
+		}
+
+		return FALSE;
+	}
+
+
+
+	/**
+	 * @internal
+	 * @param array $criteria
+	 * @param array $orderBy
+	 * @return QueryBuilder
+	 */
+	public function buildCriteriaDql(array $criteria, array $orderBy = NULL)
+	{
+		$qb = $this->createQueryBuilder('e');
+		$joins = array();
+
+		foreach ($criteria as $key => $val) {
+			$alias = 'e';
+			while (preg_match('~([^\\.]+)\\.(.+)~', $key, $m)) {
+				$key = $m[2];
+				$property = $m[1];
+				if (!isset($joins[$alias][$property])) {
+					$aliasLength = 1;
+					do {
+						$joinAs = substr($property, 0, $aliasLength++);
+					} while (isset($joins[$joinAs]));
+					$joins[$joinAs] = array();
+
+					$qb->innerJoin("$alias.$property", $joinAs);
+					$joins[$alias][$property] = $joinAs;
+					$alias = $joinAs;
+				}
+			}
+
+			if (preg_match('~\\?\\s~', $key, $m)) {
+				throw new NotImplementedException(); // TODO: => ?, <= ?, LIKE ?, ...
+
+			} else {
+				$paramName = 'param_' . (count($qb->getParameters()) + 1);
+				$qb->andWhere("$alias.$key = :$paramName");
+				$qb->setParameter($paramName, $val);
+			}
+		}
+
+		return $qb;
+	}
+
+
+
 	/**
 	 * Fetches all records like $key => $value pairs
 	 *
@@ -186,11 +279,10 @@ class EntityDao extends Doctrine\ORM\EntityRepository implements Persistence\Obj
 			$criteria = array();
 		}
 
-		$query = $this->getEntityManager()->createSelection()
+		$query = $this->buildCriteriaDql($criteria)
 			->select("e.$value", "e.$key")
 			->from($this->getEntityName(), 'e', 'e.' . $key)
-			->where($criteria)
-			->createQuery();
+			->getQuery();
 
 		try {
 			return array_map(function ($row) {
@@ -220,11 +312,10 @@ class EntityDao extends Doctrine\ORM\EntityRepository implements Persistence\Obj
 			$criteria = array();
 		}
 
-		$query = $this->getEntityManager()->createSelection()
+		$query = $this->buildCriteriaDql($criteria)
 			->select('e')
 			->from($this->getEntityName(), 'e', 'e.' . $key)
-			->where($criteria)
-			->createQuery();
+			->getQuery();
 
 		try {
 			return $query->getResult();

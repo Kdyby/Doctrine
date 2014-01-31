@@ -10,6 +10,7 @@
 
 namespace KdybyTests\Doctrine;
 
+use Doctrine\ORM\Query\Parameter;
 use Kdyby;
 use KdybyTests\Doctrine\ORMTestCase;
 use Nette;
@@ -114,6 +115,48 @@ class EntityDaoTest extends ORMTestCase
 		$qb = $users->select();
 
 		Assert::same('SELECT c FROM KdybyTests\Doctrine\CmsUser c', $qb->getDQL());
+	}
+
+
+
+	public function dataBuildCriteriaDql()
+	{
+		return array(
+			array(
+				'SELECT e FROM KdybyTests\Doctrine\CmsUser e WHERE e.name = :param_1',
+				array('param_1' => 'Filip'),
+				array('name' => 'Filip')
+			),
+			array(
+				'SELECT e FROM KdybyTests\Doctrine\CmsUser e INNER JOIN e.groups g WHERE g.name = :param_1',
+				array('param_1' => 'Devel'),
+				array('groups.name' => 'Devel')
+			),
+		);
+	}
+
+
+
+	/**
+	 * @dataProvider dataBuildCriteriaDql
+	 */
+	public function testBuildCriteriaDql($expectedDql, $expectedParams, array $criteria)
+	{
+		$users = $this->em->getDao('KdybyTests\Doctrine\CmsUser');
+
+		$qb = $users->buildCriteriaDql($criteria);
+		Assert::same($expectedDql, $qb->getDQL());
+
+		$actualParameters = array();
+		foreach ($qb->getParameters() as $key => $value) {
+			if ($value instanceof Parameter) {
+				$actualParameters[$value->getName()] = $value->getValue();
+				continue;
+			}
+			$actualParameters[$key] = $value;
+		}
+		Assert::same($expectedParams, $actualParameters);
+
 	}
 
 }
