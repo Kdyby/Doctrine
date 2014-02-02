@@ -207,7 +207,7 @@ class EntityDao extends Doctrine\ORM\EntityRepository implements Persistence\Obj
 	private function criteriaRequiresDql(array $criteria)
 	{
 		foreach ($criteria as $key => $val) {
-			if (preg_match('~\\?\\s\\.~', $key)) {
+			if (preg_match('~[\\?\\s\\.]~', $key)) {
 				return TRUE;
 			}
 		}
