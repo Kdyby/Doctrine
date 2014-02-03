@@ -189,7 +189,7 @@ class EntityDao extends Doctrine\ORM\EntityRepository implements Persistence\Obj
 		}
 
 		try {
-			return $this->buildCriteriaDql($criteria, $orderBy)
+			return $this->buildCriteriaDql($criteria, (array) $orderBy)
 				->setMaxResults(1)
 				->getQuery()->getSingleResult();
 
@@ -223,7 +223,7 @@ class EntityDao extends Doctrine\ORM\EntityRepository implements Persistence\Obj
 	 * @param array $orderBy
 	 * @return QueryBuilder
 	 */
-	public function buildCriteriaDql(array $criteria, array $orderBy = NULL)
+	public function buildCriteriaDql(array $criteria, array $orderBy = array())
 	{
 		$qb = $this->createQueryBuilder('e');
 		$joins = array();
@@ -254,6 +254,10 @@ class EntityDao extends Doctrine\ORM\EntityRepository implements Persistence\Obj
 				$qb->andWhere("$alias.$key = :$paramName");
 				$qb->setParameter($paramName, $val);
 			}
+		}
+
+		foreach ($orderBy as $sort => $order) {
+			$qb->orderBy($sort, $order);
 		}
 
 		return $qb;
