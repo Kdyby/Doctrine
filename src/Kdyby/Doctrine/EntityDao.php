@@ -174,7 +174,7 @@ class EntityDao extends Doctrine\ORM\EntityRepository implements Persistence\Obj
 			return parent::findBy($criteria, $orderBy, $limit, $offset);
 		}
 
-		return $this->buildCriteriaDql($criteria, $orderBy)
+		return $this->buildCriteriaDql($criteria, (array) $orderBy)
 			->setMaxResults($limit)
 			->setFirstResult($offset)
 			->getQuery()->getResult();
