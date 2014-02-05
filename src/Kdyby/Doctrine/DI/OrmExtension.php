@@ -187,10 +187,6 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			->setFactory('@Kdyby\Doctrine\Connection::getSchemaManager')
 			->setInject(FALSE);
 
-		$builder->addDefinition($this->prefix('jitProxyWarmer'))
-			->setClass('Kdyby\Doctrine\Proxy\JitProxyWarmer')
-			->setInject(FALSE);
-
 		if ($this->targetEntityMappings) {
 			$listener = $builder->addDefinition($this->prefix('resolveTargetEntityListener'))
 				->setClass('Kdyby\Doctrine\Tools\ResolveTargetEntityListener')
@@ -530,17 +526,8 @@ class OrmExtension extends Nette\DI\CompilerExtension
 	public function afterCompile(Code\ClassType $class)
 	{
 		$init = $class->methods['initialize'];
-		$builder = $this->getContainerBuilder();
 
 		$init->addBody('Kdyby\Doctrine\Diagnostics\Panel::registerBluescreen($this);');
-
-		if ($builder->parameters['debugMode']) {
-			/** Prepend proxy warmup to other initialize calls */
-			$init->addBody('$this->getService(?)->warmUp($this->getByType(?));', array(
-				$this->prefix('jitProxyWarmer'),
-				'Kdyby\Doctrine\EntityManager'
-			));
-		}
 
 		foreach ($this->proxyAutoLoaders as $namespace => $dir) {
 			$init->addBody('Kdyby\Doctrine\Proxy\ProxyAutoloader::create(?, ?)->register();', array($dir, $namespace));
