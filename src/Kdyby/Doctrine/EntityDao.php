@@ -200,6 +200,16 @@ class EntityDao extends Doctrine\ORM\EntityRepository implements Persistence\Obj
 
 
 
+	public function countBy(array $criteria = array())
+	{
+		return $this->buildCriteriaDql($criteria)
+			->select('COUNT(e)')
+			->setMaxResults(1)
+			->getQuery()->getSingleScalarResult();
+	}
+
+
+
 	/**
 	 * @param array $criteria
 	 * @return bool
