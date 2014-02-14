@@ -261,8 +261,15 @@ class EntityDao extends Doctrine\ORM\EntityRepository implements Persistence\Obj
 
 			} else {
 				$paramName = 'param_' . (count($qb->getParameters()) + 1);
-				$qb->andWhere("$alias.$key = :$paramName");
-				$qb->setParameter($paramName, $val);
+
+				if (is_array($val)) {
+					$qb->andWhere("$alias.$key IN (:$paramName)");
+					$qb->setParameter($paramName, $val, is_integer(reset($val)) ? Connection::PARAM_INT_ARRAY : Connection::PARAM_STR_ARRAY);
+
+				} else {
+					$qb->andWhere("$alias.$key = :$paramName");
+					$qb->setParameter($paramName, $val);
+				}
 			}
 		}
 
