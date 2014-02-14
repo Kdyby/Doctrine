@@ -43,6 +43,7 @@ class InfoCommand extends Doctrine\ORM\Tools\Console\Command\InfoCommand
 	{
 		parent::initialize($input, $output);
 		$this->cacheStorage->clean(array(Nette\Caching\Cache::ALL => TRUE));
+		Nette\Diagnostics\Debugger::$productionMode = FALSE;
 	}
 
 }

@@ -43,6 +43,7 @@ class GenerateProxiesCommand extends Doctrine\ORM\Tools\Console\Command\Generate
 	{
 		parent::initialize($input, $output);
 		$this->cacheStorage->clean(array(Nette\Caching\Cache::ALL => TRUE));
+		Nette\Diagnostics\Debugger::$productionMode = FALSE;
 	}
 
 }

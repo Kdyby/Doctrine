@@ -47,6 +47,7 @@ class SchemaDropCommand extends Doctrine\ORM\Tools\Console\Command\SchemaTool\Dr
 	{
 		parent::initialize($input, $output);
 		$this->cacheStorage->clean(array(Nette\Caching\Cache::ALL => TRUE));
+		Nette\Diagnostics\Debugger::$productionMode = FALSE;
 	}
 
 

@@ -43,6 +43,7 @@ class ValidateSchemaCommand extends Doctrine\ORM\Tools\Console\Command\ValidateS
 	{
 		parent::initialize($input, $output);
 		$this->cacheStorage->clean(array(Nette\Caching\Cache::ALL => TRUE));
+		Nette\Diagnostics\Debugger::$productionMode = FALSE;
 	}
 
 }
