@@ -14,6 +14,7 @@ use Doctrine;
 use Doctrine\Common\EventManager;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\ORM\ORMException;
+use Doctrine\ORM\ORMInvalidArgumentException;
 use Kdyby;
 use Kdyby\Doctrine\Tools\NonLockingUniqueInserter;
 use Nette;
@@ -63,6 +64,51 @@ class EntityManager extends Doctrine\ORM\EntityManager
 	public function createSelection()
 	{
 		return new DqlSelection($this);
+	}
+
+
+
+	/**
+	 * @param string|array $entityName
+	 * @return EntityManager
+	 */
+	public function clear($entityName = null)
+	{
+		foreach (is_array($entityName) ? $entityName : (func_get_args() + array(0 => NULL)) as $item) {
+			parent::clear($item);
+		}
+
+		return $this;
+	}
+
+
+
+	/**
+	 * @param object|array $entity
+	 * @return EntityManager
+	 */
+	public function remove($entity)
+	{
+		foreach (is_array($entity) ? $entity : func_get_args() as $item) {
+			parent::remove($item);
+		}
+
+		return $this;
+	}
+
+
+
+	/**
+	 * @param object|array $entity
+	 * @return EntityManager
+	 */
+	public function persist($entity)
+	{
+		foreach (is_array($entity) ? $entity : func_get_args() as $item) {
+			parent::persist($item);
+		}
+
+		return $this;
 	}
 
 
