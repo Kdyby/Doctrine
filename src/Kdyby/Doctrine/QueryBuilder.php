@@ -60,6 +60,7 @@ class QueryBuilder extends Doctrine\ORM\QueryBuilder implements \IteratorAggrega
 				if (preg_match('~(?P<key>[^\\s]+)\\s+(?P<operator>.+)\\s*~', $key, $m)) {
 					$key = $m['key'];
 					$operator = strtr(strtolower($m['operator']), array(
+						'neq' => '!=',
 						'eq' => '=',
 						'lt' => '<',
 						'lte' => '<=',

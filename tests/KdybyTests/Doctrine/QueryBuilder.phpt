@@ -61,6 +61,18 @@ class QueryBuilderTest extends KdybyTests\Doctrine\ORMTestCase
 			->whereCriteria(array('name eq' => 'Filip'));
 
 		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsUser e WHERE e.name = :param_1', array('param_1' => 'Filip'), $qb->getQuery());
+
+		$qb = $this->em->createQueryBuilder()
+			->select('e')->from(__NAMESPACE__ . '\\CmsUser', 'e')
+			->whereCriteria(array('name !=' => 'Filip'));
+
+		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsUser e WHERE e.name != :param_1', array('param_1' => 'Filip'), $qb->getQuery());
+
+		$qb = $this->em->createQueryBuilder()
+			->select('e')->from(__NAMESPACE__ . '\\CmsUser', 'e')
+			->whereCriteria(array('name neq' => 'Filip'));
+
+		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsUser e WHERE e.name != :param_1', array('param_1' => 'Filip'), $qb->getQuery());
 	}
 
 
