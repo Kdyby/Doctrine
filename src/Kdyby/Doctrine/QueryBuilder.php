@@ -45,30 +45,35 @@ class QueryBuilder extends Doctrine\ORM\QueryBuilder implements \IteratorAggrega
 		foreach ($criteria as $key => $val) {
 			$alias = $this->autoJoin($key);
 
+			$operator = '=';
+			if (preg_match('~(?P<key>[^\\s]+)\\s+(?P<operator>.+)\\s*~', $key, $m)) {
+				$key = $m['key'];
+				$operator = strtr(strtolower($m['operator']), array(
+					'neq' => '!=',
+					'eq' => '=',
+					'lt' => '<',
+					'lte' => '<=',
+					'gt' => '>',
+					'gte' => '>=',
+				));
+			}
+
+			$not = substr($operator, 0, 1) === '!';
+			if (substr($operator, 0, 3) == 'not') {
+				$operator = substr($operator, 4);
+				$not = TRUE;
+			}
+
 			$paramName = 'param_' . (count($this->getParameters()) + 1);
 
 			if (is_array($val)) {
-				$this->andWhere("$alias.$key IN (:$paramName)");
+				$this->andWhere("$alias.$key " . ($not ? 'NOT ' :'') . "IN (:$paramName)");
 				$this->setParameter($paramName, $val, is_integer(reset($val)) ? Connection::PARAM_INT_ARRAY : Connection::PARAM_STR_ARRAY);
 
 			} elseif ($val === NULL) {
-				$this->andWhere("$alias.$key IS NULL");
+				$this->andWhere("$alias.$key IS " . ($not ? 'NOT ' : '') . "NULL");
 
 			} else {
-				$operator = '=';
-
-				if (preg_match('~(?P<key>[^\\s]+)\\s+(?P<operator>.+)\\s*~', $key, $m)) {
-					$key = $m['key'];
-					$operator = strtr(strtolower($m['operator']), array(
-						'neq' => '!=',
-						'eq' => '=',
-						'lt' => '<',
-						'lte' => '<=',
-						'gt' => '>',
-						'gte' => '>=',
-					));
-				}
-
 				$this->andWhere(sprintf('%s.%s %s :%s', $alias, $key, strtoupper($operator), $paramName));
 				$this->setParameter($paramName, $val);
 			}
