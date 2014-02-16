@@ -174,10 +174,17 @@ class EntityDao extends Doctrine\ORM\EntityRepository implements Persistence\Obj
 			return parent::findBy($criteria, $orderBy, $limit, $offset);
 		}
 
-		return $this->buildCriteriaDql($criteria, (array) $orderBy)
+		$qb = $this->createQueryBuilder('e')
+			->whereCriteria($criteria);
+
+		foreach ((array) $orderBy as $sort => $order) {
+			$qb->addOrderBy($sort, $order);
+		}
+
+		return $qb->getQuery()
 			->setMaxResults($limit)
 			->setFirstResult($offset)
-			->getQuery()->getResult();
+			->getResult();
 	}
 
 
@@ -188,9 +195,15 @@ class EntityDao extends Doctrine\ORM\EntityRepository implements Persistence\Obj
 			return parent::findOneBy($criteria, $orderBy);
 		}
 
+		$qb = $this->createQueryBuilder('e')
+			->whereCriteria($criteria);
+
+		foreach ((array) $orderBy as $sort => $order) {
+			$qb->addOrderBy($sort, $order);
+		}
+
 		try {
-			return $this->buildCriteriaDql($criteria, (array) $orderBy)
-				->setMaxResults(1)
+			return $qb->setMaxResults(1)
 				->getQuery()->getSingleResult();
 
 		} catch (NoResultException $e) {
@@ -202,7 +215,8 @@ class EntityDao extends Doctrine\ORM\EntityRepository implements Persistence\Obj
 
 	public function countBy(array $criteria = array())
 	{
-		return $this->buildCriteriaDql($criteria)
+		return $query = $this->createQueryBuilder('e')
+			->whereCriteria($criteria)
 			->select('COUNT(e)')
 			->setMaxResults(1)
 			->getQuery()->getSingleScalarResult();
@@ -228,85 +242,44 @@ class EntityDao extends Doctrine\ORM\EntityRepository implements Persistence\Obj
 
 
 	/**
-	 * @internal
-	 * @param array $criteria
-	 * @param array $orderBy
-	 * @return QueryBuilder
-	 */
-	public function buildCriteriaDql(array $criteria, array $orderBy = array())
-	{
-		$qb = $this->createQueryBuilder('e');
-		$joins = array();
-
-		foreach ($criteria as $key => $val) {
-			$alias = 'e';
-			while (preg_match('~([^\\.]+)\\.(.+)~', $key, $m)) {
-				$key = $m[2];
-				$property = $m[1];
-				if (!isset($joins[$alias][$property])) {
-					$aliasLength = 1;
-					do {
-						$joinAs = substr($property, 0, $aliasLength++);
-					} while (isset($joins[$joinAs]));
-					$joins[$joinAs] = array();
-
-					$qb->innerJoin("$alias.$property", $joinAs);
-					$joins[$alias][$property] = $joinAs;
-					$alias = $joinAs;
-				}
-			}
-
-			if (preg_match('~\\?\\s~', $key, $m)) {
-				throw new NotImplementedException(); // TODO: => ?, <= ?, LIKE ?, ...
-
-			} else {
-				$paramName = 'param_' . (count($qb->getParameters()) + 1);
-
-				if (is_array($val)) {
-					$qb->andWhere("$alias.$key IN (:$paramName)");
-					$qb->setParameter($paramName, $val, is_integer(reset($val)) ? Connection::PARAM_INT_ARRAY : Connection::PARAM_STR_ARRAY);
-
-				} elseif ($val === NULL) {
-					$qb->andWhere("$alias.$key IS NULL");
-
-				} else {
-					$qb->andWhere("$alias.$key = :$paramName");
-					$qb->setParameter($paramName, $val);
-				}
-			}
-		}
-
-		foreach ($orderBy as $sort => $order) {
-			$qb->orderBy($sort, $order);
-		}
-
-		return $qb;
-	}
-
-
-
-	/**
 	 * Fetches all records like $key => $value pairs
 	 *
-	 * @param array $criteria
-	 * @param string $value
-	 * @param string $key
+	 * @param array $criteria parameter can be skipped
+	 * @param string $value mandatory
+	 * @param array $orderBy parameter can be skipped
+	 * @param string $key optional
 	 *
-	 * @throws \Exception|QueryException
+	 * @throws QueryException
 	 * @return array
 	 */
-	public function findPairs($criteria, $value = NULL, $key = 'id')
+	public function findPairs($criteria, $value = NULL, $orderBy = array(), $key = NULL)
 	{
 		if (!is_array($criteria)) {
-			$key = $value ? : 'id';
+			$key = $orderBy;
+			$orderBy = $value;
 			$value = $criteria;
 			$criteria = array();
 		}
 
-		$query = $this->buildCriteriaDql($criteria)
+		if (!is_array($orderBy)) {
+			$key = $orderBy;
+			$orderBy = array();
+		}
+
+		if (empty($key)) {
+			$key = $this->getClassMetadata()->getSingleIdentifierFieldName();
+		}
+
+		$qb = $this->createQueryBuilder('e')
+			->whereCriteria($criteria)
 			->select("e.$value", "e.$key")
-			->resetDQLPart('from')->from($this->getEntityName(), 'e', 'e.' . $key)
-			->getQuery();
+			->resetDQLPart('from')->from($this->getEntityName(), 'e', 'e.' . $key);
+
+		foreach ((array) $orderBy as $sort => $order) {
+			$qb->addOrderBy($sort, $order);
+		}
+
+		$query = $qb->getQuery();
 
 		try {
 			return array_map(function ($row) {
@@ -336,8 +309,8 @@ class EntityDao extends Doctrine\ORM\EntityRepository implements Persistence\Obj
 			$criteria = array();
 		}
 
-		$query = $this->buildCriteriaDql($criteria)
-			->select('e')
+		$query = $this->createQueryBuilder('e')
+			->whereCriteria($criteria)
 			->resetDQLPart('from')->from($this->getEntityName(), 'e', 'e.' . $key)
 			->getQuery();
 

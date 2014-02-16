@@ -360,12 +360,13 @@ class CmsUser
 
 
 
-	public function __construct($name = NULL)
+	public function __construct($name = NULL, $status = NULL)
 	{
 		$this->name = $this->username = $name;
 		$this->phoneNumbers = new ArrayCollection;
 		$this->articles = new ArrayCollection;
 		$this->groups = new ArrayCollection;
+		$this->status = $status;
 	}
 
 

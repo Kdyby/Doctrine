@@ -119,44 +119,26 @@ class EntityDaoTest extends ORMTestCase
 
 
 
-	public function dataBuildCriteriaDql()
+	public function testFindPairs()
 	{
-		return array(
-			array(
-				'SELECT e FROM KdybyTests\Doctrine\CmsUser e WHERE e.name = :param_1',
-				array('param_1' => 'Filip'),
-				array('name' => 'Filip')
-			),
-			array(
-				'SELECT e FROM KdybyTests\Doctrine\CmsUser e INNER JOIN e.groups g WHERE g.name = :param_1',
-				array('param_1' => 'Devel'),
-				array('groups.name' => 'Devel')
-			),
-		);
-	}
+		$dao = $this->em->getDao('KdybyTests\Doctrine\CmsUser');
+		$dao->save(array(
+			new CmsUser('c', 'new'),
+			new CmsUser('a', 'old'),
+			new CmsUser('b', 'new'),
+		));
 
+		$this->em->clear();
 
+		Assert::same(array(
+			1 => 'c',
+			3 => 'b',
+		), $dao->findPairs(array('status' => 'new'), 'name'));
 
-	/**
-	 * @dataProvider dataBuildCriteriaDql
-	 */
-	public function testBuildCriteriaDql($expectedDql, $expectedParams, array $criteria)
-	{
-		$users = $this->em->getDao('KdybyTests\Doctrine\CmsUser');
-
-		$qb = $users->buildCriteriaDql($criteria);
-		Assert::same($expectedDql, $qb->getDQL());
-
-		$actualParameters = array();
-		foreach ($qb->getParameters() as $key => $value) {
-			if ($value instanceof Parameter) {
-				$actualParameters[$value->getName()] = $value->getValue();
-				continue;
-			}
-			$actualParameters[$key] = $value;
-		}
-		Assert::same($expectedParams, $actualParameters);
-
+		Assert::same(array(
+			3 => 'b',
+			1 => 'c',
+		), $dao->findPairs(array('status' => 'new'), 'name', array('name' => 'ASC')));
 	}
 
 }
