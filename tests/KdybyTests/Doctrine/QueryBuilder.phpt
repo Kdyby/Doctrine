@@ -49,6 +49,86 @@ class QueryBuilderTest extends KdybyTests\Doctrine\ORMTestCase
 			->whereCriteria(array('name' => 'Filip'));
 
 		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsUser e WHERE e.name = :param_1', array('param_1' => 'Filip'), $qb->getQuery());
+
+		$qb = $this->em->createQueryBuilder()
+			->select('e')->from(__NAMESPACE__ . '\\CmsUser', 'e')
+			->whereCriteria(array('name =' => 'Filip'));
+
+		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsUser e WHERE e.name = :param_1', array('param_1' => 'Filip'), $qb->getQuery());
+
+		$qb = $this->em->createQueryBuilder()
+			->select('e')->from(__NAMESPACE__ . '\\CmsUser', 'e')
+			->whereCriteria(array('name eq' => 'Filip'));
+
+		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsUser e WHERE e.name = :param_1', array('param_1' => 'Filip'), $qb->getQuery());
+	}
+
+
+
+	public function testWhere_LowerThan()
+	{
+		$qb = $this->em->createQueryBuilder()
+			->select('e')->from(__NAMESPACE__ . '\\CmsUser', 'e')
+			->whereCriteria(array('name <' => 10));
+
+		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsUser e WHERE e.name < :param_1', array('param_1' => 10), $qb->getQuery());
+
+		$qb = $this->em->createQueryBuilder()
+			->select('e')->from(__NAMESPACE__ . '\\CmsUser', 'e')
+			->whereCriteria(array('name lt' => 10));
+
+		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsUser e WHERE e.name < :param_1', array('param_1' => 10), $qb->getQuery());
+	}
+
+
+
+	public function testWhere_LowerOrEqual()
+	{
+		$qb = $this->em->createQueryBuilder()
+			->select('e')->from(__NAMESPACE__ . '\\CmsUser', 'e')
+			->whereCriteria(array('name <=' => 10));
+
+		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsUser e WHERE e.name <= :param_1', array('param_1' => 10), $qb->getQuery());
+
+		$qb = $this->em->createQueryBuilder()
+			->select('e')->from(__NAMESPACE__ . '\\CmsUser', 'e')
+			->whereCriteria(array('name lte' => 10));
+
+		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsUser e WHERE e.name <= :param_1', array('param_1' => 10), $qb->getQuery());
+	}
+
+
+
+	public function testWhere_GreaterThan()
+	{
+		$qb = $this->em->createQueryBuilder()
+			->select('e')->from(__NAMESPACE__ . '\\CmsUser', 'e')
+			->whereCriteria(array('name >' => 10));
+
+		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsUser e WHERE e.name > :param_1', array('param_1' => 10), $qb->getQuery());
+
+		$qb = $this->em->createQueryBuilder()
+			->select('e')->from(__NAMESPACE__ . '\\CmsUser', 'e')
+			->whereCriteria(array('name gt' => 10));
+
+		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsUser e WHERE e.name > :param_1', array('param_1' => 10), $qb->getQuery());
+	}
+
+
+
+	public function testWhere_GreaterOrEqual()
+	{
+		$qb = $this->em->createQueryBuilder()
+			->select('e')->from(__NAMESPACE__ . '\\CmsUser', 'e')
+			->whereCriteria(array('name >=' => 10));
+
+		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsUser e WHERE e.name >= :param_1', array('param_1' => 10), $qb->getQuery());
+
+		$qb = $this->em->createQueryBuilder()
+			->select('e')->from(__NAMESPACE__ . '\\CmsUser', 'e')
+			->whereCriteria(array('name gte' => 10));
+
+		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsUser e WHERE e.name >= :param_1', array('param_1' => 10), $qb->getQuery());
 	}
 
 
