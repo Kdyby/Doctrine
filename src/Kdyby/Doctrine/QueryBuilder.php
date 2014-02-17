@@ -106,7 +106,7 @@ class QueryBuilder extends Doctrine\ORM\QueryBuilder implements \IteratorAggrega
 			$sort = $alias . '.' . $sort;
 		}
 
-		return parent::addOrderBy($sort, $order);
+		return $this->addOrderBy($sort, $order);
 	}
 
 
