@@ -175,11 +175,8 @@ class EntityDao extends Doctrine\ORM\EntityRepository implements Persistence\Obj
 		}
 
 		$qb = $this->createQueryBuilder('e')
-			->whereCriteria($criteria);
-
-		foreach ((array) $orderBy as $sort => $order) {
-			$qb->addOrderBy($sort, $order);
-		}
+			->whereCriteria($criteria)
+			->autoJoinOrderBy((array) $orderBy);
 
 		return $qb->getQuery()
 			->setMaxResults($limit)
@@ -196,11 +193,8 @@ class EntityDao extends Doctrine\ORM\EntityRepository implements Persistence\Obj
 		}
 
 		$qb = $this->createQueryBuilder('e')
-			->whereCriteria($criteria);
-
-		foreach ((array) $orderBy as $sort => $order) {
-			$qb->addOrderBy($sort, $order);
-		}
+			->whereCriteria($criteria)
+			->autoJoinOrderBy((array) $orderBy);
 
 		try {
 			return $qb->setMaxResults(1)
@@ -270,16 +264,12 @@ class EntityDao extends Doctrine\ORM\EntityRepository implements Persistence\Obj
 			$key = $this->getClassMetadata()->getSingleIdentifierFieldName();
 		}
 
-		$qb = $this->createQueryBuilder('e')
+		$query = $this->createQueryBuilder('e')
 			->whereCriteria($criteria)
 			->select("e.$value", "e.$key")
-			->resetDQLPart('from')->from($this->getEntityName(), 'e', 'e.' . $key);
-
-		foreach ((array) $orderBy as $sort => $order) {
-			$qb->addOrderBy($sort, $order);
-		}
-
-		$query = $qb->getQuery();
+			->resetDQLPart('from')->from($this->getEntityName(), 'e', 'e.' . $key)
+			->autoJoinOrderBy((array) $orderBy)
+			->getQuery();
 
 		try {
 			return array_map(function ($row) {

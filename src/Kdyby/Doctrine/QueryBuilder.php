@@ -25,6 +25,7 @@ use Nette;
  * @method QueryBuilder join($join, $alias, $conditionType = null, $condition = null, $indexBy = null)
  * @method QueryBuilder innerJoin($join, $alias, $conditionType = null, $condition = null, $indexBy = null)
  * @method QueryBuilder leftJoin($join, $alias, $conditionType = null, $condition = null, $indexBy = null)
+ * @method QueryBuilder resetDQLPart($parts = null)
  */
 class QueryBuilder extends Doctrine\ORM\QueryBuilder implements \IteratorAggregate
 {
@@ -84,26 +85,28 @@ class QueryBuilder extends Doctrine\ORM\QueryBuilder implements \IteratorAggrega
 
 
 
-	public function addOrderBy($sort, $order = null)
+	/**
+	 * @internal
+	 * @param string $sort
+	 * @param string $order
+	 * @return Doctrine\ORM\QueryBuilder
+	 */
+	public function autoJoinOrderBy($sort, $order = null)
 	{
+		if (is_array($sort)) {
+			foreach (func_get_arg(0) as $sort => $order) {
+				$this->autoJoinOrderBy($sort, $order);
+			}
+
+			return $this;
+		}
+
 		if (is_string($sort)) {
 			$alias = $this->autoJoin($sort);
 			$sort = $alias . '.' . $sort;
 		}
 
 		return parent::addOrderBy($sort, $order);
-	}
-
-
-
-	public function orderBy($sort, $order = null)
-	{
-		if (is_string($sort)) {
-			$alias = $this->autoJoin($sort);
-			$sort = $alias . '.' . $sort;
-		}
-
-		return parent::orderBy($sort, $order);
 	}
 
 
