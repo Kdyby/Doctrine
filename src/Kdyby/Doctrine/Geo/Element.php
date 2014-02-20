@@ -143,7 +143,7 @@ class Element extends Nette\Object
 		/** @var Element $el */
 
 		foreach (explode($separator, $m['coords']) as $coords) {
-			list($lon, $lat) = explode($coordsSeparator, trim(Strings::replace($coords, '~\s+~', ' ')));
+			list($lat, $lon) = explode($coordsSeparator, trim(Strings::replace($coords, '~\s+~', ' ')));
 			$el->addCoordinate($lon, $lat);
 		}
 
