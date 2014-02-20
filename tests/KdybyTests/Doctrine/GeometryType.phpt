@@ -83,7 +83,7 @@ class GeometryTypeTest extends Tester\TestCase
 		$point->addCoordinate(1, 2);
 
 		$sql = $this->polygon->convertToDatabaseValue($point, new MySqlPlatform());
-		Assert::same('POINT((1.0000000000000 2.0000000000000))', $sql);
+		Assert::same('POINT((2.0000000000000 1.0000000000000))', $sql);
 	}
 
 }

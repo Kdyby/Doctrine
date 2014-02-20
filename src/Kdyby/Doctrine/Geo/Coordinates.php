@@ -124,9 +124,9 @@ class Coordinates extends Nette\Object
 	 */
 	public function __toString()
 	{
-		return number_format($this->lon, $this->precision, '.', '') .
+		return number_format($this->lat, $this->precision, '.', '') .
 			$this->separator .
-			number_format($this->lat, $this->precision, '.', '');
+			number_format($this->lon, $this->precision, '.', '');
 	}
 
 }

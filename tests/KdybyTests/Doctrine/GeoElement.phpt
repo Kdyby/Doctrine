@@ -69,7 +69,7 @@ class GeoElementTest extends Tester\TestCase
 	{
 		$el = new Kdyby\Doctrine\Geo\Element($name);
 		foreach ($coordsList as $coords) {
-			$el->addCoordinate($coords[0], $coords[1]);
+			$el->addCoordinate($coords[1], $coords[0]);
 		}
 
 		return $el->freeze();
