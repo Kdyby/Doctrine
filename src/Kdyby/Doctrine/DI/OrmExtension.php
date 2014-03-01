@@ -252,7 +252,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			if ($extension instanceof IEntityProvider) {
 				$metadata = $extension->getEntityMappings();
 				Validators::assert($metadata, 'array:1..');
-				$config['metadata'] = array_merge($config['metadata'], $metadata);
+				$config['metadata'] = array_merge_recursive($config['metadata'], $metadata);
 			}
 
 			if ($extension instanceof ITargetEntityProvider) {
