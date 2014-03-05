@@ -47,11 +47,6 @@ class EntityManager extends Doctrine\ORM\EntityManager
 	 */
 	private $nonLockingUniqueInserter;
 
-	/**
-	 * @var Kdyby\Doctrine\Mapping\ClassMetadata[]
-	 */
-	private $metadataCache = array();
-
 
 
 	/**
@@ -177,30 +172,6 @@ class EntityManager extends Doctrine\ORM\EntityManager
 	public function getDao($entityName)
 	{
 		return $this->getRepository($entityName);
-	}
-
-
-
-	/**
-	 * @param string $className
-	 * @throws MissingClassException
-	 * @return Kdyby\Doctrine\Mapping\ClassMetadata
-	 */
-	public function getClassMetadata($className)
-	{
-		if (isset($this->metadataCache[$className])) {
-			return $this->metadataCache[$className];
-		}
-
-		if ($this->getConfiguration() instanceof Kdyby\Doctrine\Configuration) {
-			$className = $this->getConfiguration()->getTargetEntityClassName($className);
-		}
-
-		if (!class_exists($className)) {
-			throw new MissingClassException("Metadata of class $className was not found, because the class is missing or cannot be autoloaded.");
-		}
-
-		return $this->metadataCache[func_get_arg(0)] = parent::getClassMetadata($className);
 	}
 
 

@@ -30,6 +30,11 @@ class ClassMetadataFactory extends Doctrine\ORM\Mapping\ClassMetadataFactory
 	 */
 	private $em;
 
+	/**
+	 * @var Kdyby\Doctrine\Configuration
+	 */
+	private $config;
+
 
 
 	/**
@@ -48,7 +53,23 @@ class ClassMetadataFactory extends Doctrine\ORM\Mapping\ClassMetadataFactory
 	public function setEntityManager(EntityManager $em)
 	{
 		$this->em = $em;
+		$this->config = $em->getConfiguration();
 		parent::setEntityManager($em);
+	}
+
+
+
+	protected function loadMetadata($name)
+	{
+		if ($this->config instanceof Kdyby\Doctrine\Configuration) {
+			$name = $this->config->getTargetEntityClassName($name);
+		}
+
+		if (!class_exists($name)) {
+			throw new Kdyby\Doctrine\MissingClassException("Metadata of class $name was not found, because the class is missing or cannot be autoloaded.");
+		}
+
+		return parent::loadMetadata($name);
 	}
 
 
