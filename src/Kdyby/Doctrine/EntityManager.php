@@ -25,6 +25,7 @@ use Nette;
  * @author Filip Procházka <filip@prochazka.su>
  *
  * @method \Kdyby\Doctrine\Connection getConnection()
+ * @method \Kdyby\Doctrine\Configuration getConfiguration()
  * @method flush(array $entity = NULL)
  * @method onDaoCreate(EntityManager $em, EntityDao $dao)
  */
@@ -199,7 +200,7 @@ class EntityManager extends Doctrine\ORM\EntityManager
 			throw new MissingClassException("Metadata of class $className was not found, because the class is missing or cannot be autoloaded.");
 		}
 
-		return $this->metadataCache[$className] = parent::getClassMetadata($className);
+		return $this->metadataCache[func_get_arg(0)] = parent::getClassMetadata($className);
 	}
 
 
