@@ -46,6 +46,11 @@ class EntityManager extends Doctrine\ORM\EntityManager
 	 */
 	private $nonLockingUniqueInserter;
 
+	/**
+	 * @var Kdyby\Doctrine\Mapping\ClassMetadata[]
+	 */
+	private $metadataCache = array();
+
 
 
 	/**
@@ -182,6 +187,10 @@ class EntityManager extends Doctrine\ORM\EntityManager
 	 */
 	public function getClassMetadata($className)
 	{
+		if (isset($this->metadataCache[$className])) {
+			return $this->metadataCache[$className];
+		}
+
 		if ($this->getConfiguration() instanceof Kdyby\Doctrine\Configuration) {
 			$className = $this->getConfiguration()->getTargetEntityClassName($className);
 		}
@@ -190,7 +199,7 @@ class EntityManager extends Doctrine\ORM\EntityManager
 			throw new MissingClassException("Metadata of class $className was not found, because the class is missing or cannot be autoloaded.");
 		}
 
-		return parent::getClassMetadata($className);
+		return $this->metadataCache[$className] = parent::getClassMetadata($className);
 	}
 
 
