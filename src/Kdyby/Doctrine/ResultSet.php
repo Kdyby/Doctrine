@@ -14,6 +14,7 @@ use Doctrine\ORM;
 use Doctrine\ORM\ORMException;
 use Doctrine\ORM\Tools\Pagination\Paginator as ResultPaginator;
 use Kdyby;
+use Kdyby\Persistence\Queryable;
 use Nette;
 use Nette\Utils\Strings;
 use Nette\Utils\Paginator as UIPaginator;
@@ -56,6 +57,16 @@ class ResultSet extends Nette\Object implements \Countable, \IteratorAggregate
 	private $query;
 
 	/**
+	 * @var QueryObject
+	 */
+	private $queryObject;
+
+	/**
+	 * @var \Kdyby\Persistence\Queryable
+	 */
+	private $repository;
+
+	/**
 	 * @var \Doctrine\ORM\Tools\Pagination\Paginator
 	 */
 	private $paginatedQuery;
@@ -74,11 +85,14 @@ class ResultSet extends Nette\Object implements \Countable, \IteratorAggregate
 
 	/**
 	 * @param \Doctrine\ORM\AbstractQuery $query
-	 * @throws InvalidArgumentException
+	 * @param QueryObject $queryObject
+	 * @param \Kdyby\Persistence\Queryable $repository
 	 */
-	public function __construct(ORM\AbstractQuery $query)
+	public function __construct(ORM\AbstractQuery $query, QueryObject $queryObject = NULL, Queryable $repository = NULL)
 	{
 		$this->query = $query;
+		$this->queryObject = $queryObject;
+		$this->repository = $repository;
 	}
 
 
@@ -114,6 +128,26 @@ class ResultSet extends Nette\Object implements \Countable, \IteratorAggregate
 		$this->useOutputWalkers = $useOutputWalkers;
 
 		return $this;
+	}
+
+
+
+	/**
+	 * @return bool|null
+	 */
+	public function getUseOutputWalkers()
+	{
+		return $this->useOutputWalkers;
+	}
+
+
+
+	/**
+	 * @return boolean
+	 */
+	public function getFetchJoinCollection()
+	{
+		return $this->fetchJoinCollection;
 	}
 
 
@@ -203,7 +237,12 @@ class ResultSet extends Nette\Object implements \Countable, \IteratorAggregate
 	{
 		if ($this->totalCount === NULL) {
 			try {
-				$this->totalCount = $this->getPaginatedQuery()->count();
+				if ($this->queryObject !== NULL && $this->repository !== NULL) {
+					$this->totalCount = $this->queryObject->count($this->repository, $this);
+
+				} else {
+					$this->totalCount = $this->getPaginatedQuery()->count();
+				}
 
 			} catch (ORMException $e) {
 				throw new QueryException($e, $this->query, $e->getMessage());

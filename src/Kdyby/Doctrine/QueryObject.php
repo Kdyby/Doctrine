@@ -12,6 +12,7 @@ namespace Kdyby\Doctrine;
 
 use Doctrine;
 use Doctrine\ORM\AbstractQuery;
+use Doctrine\ORM\Tools\Pagination\Paginator as ResultPaginator;
 use Kdyby;
 use Kdyby\Persistence\Queryable;
 use Nette;
@@ -87,28 +88,14 @@ abstract class QueryObject extends Nette\Object implements Kdyby\Persistence\Que
 	 */
 	private function getQuery(Queryable $repository)
 	{
-		$query = $this->doCreateQuery($repository);
-		if ($query instanceof Doctrine\ORM\QueryBuilder) {
-			$query = $query->getQuery();
-
-		} elseif ($query instanceof DqlSelection) {
-			$query = $query->createQuery();
-		}
-
-		if (!$query instanceof Doctrine\ORM\Query) {
-			throw new UnexpectedValueException(
-				"Method " . $this->getReflection()->getMethod('doCreateQuery') . " must return " .
-				"instanceof Doctrine\\ORM\\Query or Kdyby\\Doctrine\\QueryBuilder or Kdyby\\Doctrine\\DqlSelection, " .
-				is_object($query) ? 'instance of ' . get_class($query) : gettype($query) . " given."
-			);
-		}
+		$query = $this->toQuery($this->doCreateQuery($repository));
 
 		if ($this->lastQuery && $this->lastQuery->getDQL() === $query->getDQL()) {
 			$query = $this->lastQuery;
 		}
 
 		if ($this->lastQuery !== $query) {
-			$this->lastResult = new ResultSet($query);
+			$this->lastResult = new ResultSet($query, $this, $repository);
 		}
 
 		return $this->lastQuery = $query;
@@ -117,14 +104,35 @@ abstract class QueryObject extends Nette\Object implements Kdyby\Persistence\Que
 
 
 	/**
+	 * @param Queryable $repository
+	 * @return \Doctrine\ORM\Query|\Doctrine\ORM\QueryBuilder
+	 */
+	protected function doCreateCountQuery(Queryable $repository)
+	{
+
+	}
+
+
+
+	/**
 	 * @param \Kdyby\Persistence\Queryable $repository
-	 *
+	 * @param ResultSet|NULL $resultSet
 	 * @return integer
 	 */
-	public function count(Queryable $repository)
+	public function count(Queryable $repository, ResultSet $resultSet = NULL)
 	{
-		return $this->fetch($repository)
-			->getTotalCount();
+		if ($query = $this->doCreateCountQuery($repository)) {
+			return $this->toQuery($query)->getSingleScalarResult();
+		}
+
+		$query = $this->getQuery($repository)
+			->setFirstResult(NULL)
+			->setMaxResults(NULL);
+
+		$paginatedQuery = new ResultPaginator($query, $resultSet ? $resultSet->getFetchJoinCollection() : TRUE);
+		$paginatedQuery->setUseOutputWalkers($resultSet ? $resultSet->getUseOutputWalkers() : NULL);
+
+		return $paginatedQuery->count();
 	}
 
 
@@ -170,6 +178,27 @@ abstract class QueryObject extends Nette\Object implements Kdyby\Persistence\Que
 	public function getLastQuery()
 	{
 		return $this->lastQuery;
+	}
+
+
+	private function toQuery($query)
+	{
+		if ($query instanceof Doctrine\ORM\QueryBuilder) {
+			$query = $query->getQuery();
+
+		} elseif ($query instanceof DqlSelection) {
+			$query = $query->createQuery();
+		}
+
+		if (!$query instanceof Doctrine\ORM\Query) {
+			throw new UnexpectedValueException(
+				"Method " . $this->getReflection()->getMethod('doCreateQuery') . " must return " .
+				"instanceof Doctrine\\ORM\\Query or Kdyby\\Doctrine\\QueryBuilder or Kdyby\\Doctrine\\DqlSelection, " .
+				is_object($query) ? 'instance of ' . get_class($query) : gettype($query) . " given."
+			);
+		}
+
+		return $query;
 	}
 
 }
