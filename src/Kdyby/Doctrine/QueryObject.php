@@ -13,6 +13,7 @@ namespace Kdyby\Doctrine;
 use Doctrine;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\Tools\Pagination\Paginator as ResultPaginator;
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use Kdyby;
 use Kdyby\Persistence\Queryable;
 use Nette;
@@ -116,13 +117,18 @@ abstract class QueryObject extends Nette\Object implements Kdyby\Persistence\Que
 
 	/**
 	 * @param \Kdyby\Persistence\Queryable $repository
-	 * @param ResultSet|NULL $resultSet
+	 * @param ResultSet $resultSet
+	 * @param \Doctrine\ORM\Tools\Pagination\Paginator $paginatedQuery
 	 * @return integer
 	 */
-	public function count(Queryable $repository, ResultSet $resultSet = NULL)
+	public function count(Queryable $repository, ResultSet $resultSet = NULL, ResultPaginator $paginatedQuery = NULL)
 	{
 		if ($query = $this->doCreateCountQuery($repository)) {
 			return $this->toQuery($query)->getSingleScalarResult();
+		}
+
+		if ($paginatedQuery !== NULL) {
+			return $paginatedQuery->count();
 		}
 
 		$query = $this->getQuery($repository)

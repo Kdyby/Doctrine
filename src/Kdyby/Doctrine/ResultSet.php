@@ -238,7 +238,7 @@ class ResultSet extends Nette\Object implements \Countable, \IteratorAggregate
 		if ($this->totalCount === NULL) {
 			try {
 				if ($this->queryObject !== NULL && $this->repository !== NULL) {
-					$this->totalCount = $this->queryObject->count($this->repository, $this);
+					$this->totalCount = $this->queryObject->count($this->repository, $this, $this->getPaginatedQuery());
 
 				} else {
 					$this->totalCount = $this->getPaginatedQuery()->count();
