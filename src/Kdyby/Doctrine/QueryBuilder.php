@@ -25,6 +25,11 @@ use Nette;
  * @method QueryBuilder join($join, $alias, $conditionType = null, $condition = null, $indexBy = null)
  * @method QueryBuilder innerJoin($join, $alias, $conditionType = null, $condition = null, $indexBy = null)
  * @method QueryBuilder leftJoin($join, $alias, $conditionType = null, $condition = null, $indexBy = null)
+ * @method QueryBuilder where($where)
+ * @method QueryBuilder andWhere($where)
+ * @method QueryBuilder orWhere($where)
+ * @method QueryBuilder setMaxResults($maxResults)
+ * @method QueryBuilder setFirstResult($maxResults)
  * @method QueryBuilder resetDQLPart($parts = null)
  */
 class QueryBuilder extends Doctrine\ORM\QueryBuilder implements \IteratorAggregate
