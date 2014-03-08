@@ -11,6 +11,7 @@
 namespace Kdyby\Doctrine\DI;
 
 use Doctrine;
+use Doctrine\Common\Proxy\AbstractProxyFactory;
 use Kdyby;
 use Nette;
 use Nette\PhpGenerator as Code;
@@ -302,7 +303,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			->addSetup('setDefaultRepositoryClassName', array($config['defaultRepositoryClassName']))
 			->addSetup('setProxyDir', array($config['proxyDir']))
 			->addSetup('setProxyNamespace', array($config['proxyNamespace']))
-			->addSetup('setAutoGenerateProxyClasses', array($config['autoGenerateProxyClasses']))
+			->addSetup('setAutoGenerateProxyClasses', array($config['autoGenerateProxyClasses'] ? AbstractProxyFactory::AUTOGENERATE_ALWAYS : AbstractProxyFactory::AUTOGENERATE_FILE_NOT_EXISTS))
 			->addSetup('setEntityNamespaces', array($config['namespaceAlias']))
 			->addSetup('setCustomHydrationModes', array($config['hydrators']))
 			->addSetup('setCustomStringFunctions', array($config['dql']['string']))
