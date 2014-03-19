@@ -18,9 +18,17 @@ use Nette;
 
 /**
  * @author Filip Procházka <filip@prochazka.su>
+ * @author Josef Kříž <pepakriz@gmail.com>
  */
 class AnnotationDriver extends Doctrine\ORM\Mapping\Driver\AnnotationDriver
 {
+
+	/**
+	 * @var array
+	 */
+	protected $fileExtensions;
+
+
 
 	/**
 	 * Initializes a new AnnotationDriver that uses the given AnnotationReader for reading phpdoc annotations.
@@ -31,6 +39,55 @@ class AnnotationDriver extends Doctrine\ORM\Mapping\Driver\AnnotationDriver
 	public function __construct(array $paths, Doctrine\Common\Annotations\Reader $reader)
 	{
 		parent::__construct($reader, $paths);
+	}
+
+
+
+	/**
+	 * @param array $fileExtensions
+	 */
+	public function setFileExtensions($fileExtensions)
+	{
+		$this->fileExtensions = $fileExtensions;
+	}
+
+
+
+	/**
+	 * @return array
+	 */
+	public function getFileExtensions()
+	{
+		return $this->fileExtensions;
+	}
+
+
+
+	public function getAllClassNames()
+	{
+		if ($this->classNames !== NULL) {
+			return $this->classNames;
+		}
+
+		$classes = array();
+		$paths = $this->paths;
+		$fileExtensions = $this->fileExtension;
+
+		foreach ((array)$paths as $path) {
+			$exts = isset($this->fileExtensions[$path]) ? $this->fileExtensions[$path] : $this->fileExtension;
+
+			foreach ((array)$exts as $ext) {
+				$this->paths = array($path);
+				$this->classNames = NULL;
+				$this->fileExtension = $ext;
+
+				$classes = array_unique(array_merge($classes, parent::getAllClassNames()));
+			}
+		}
+
+		$this->paths = $paths;
+		$this->fileExtension = $fileExtensions;
+		return $this->classNames = $classes;
 	}
 
 }
