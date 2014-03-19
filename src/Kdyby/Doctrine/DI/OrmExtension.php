@@ -433,6 +433,10 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		if (is_string($driver) || is_array($driver)) {
 			$paths = is_array($driver) ? $driver : array($driver);
 			foreach ($paths as $path) {
+				if (($pos = strrpos($path, '*')) !== FALSE) {
+					$path = substr($path, 0, $pos);
+				}
+
 				if (!file_exists($path)) {
 					throw new Nette\Utils\AssertionException("The metadata path expects to be an existing directory, $path given.");
 				}
