@@ -430,9 +430,15 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		}
 		$namespace = ltrim($namespace, '\\');
 
+		$fileExtensions = array();
 		if (is_string($driver) || is_array($driver)) {
 			$paths = is_array($driver) ? $driver : array($driver);
-			foreach ($paths as $path) {
+			foreach ($paths as &$path) {
+				if (($pos = strrpos($path, '*')) !== FALSE) {
+					$ext = substr($path, $pos + 1);
+					$path = substr($path, 0, $pos);
+					$fileExtensions[$path][] = $ext;
+				}
 				if (!file_exists($path)) {
 					throw new Nette\Utils\AssertionException("The metadata path expects to be an existing directory, $path given.");
 				}
@@ -459,11 +465,15 @@ class OrmExtension extends Nette\DI\CompilerExtension
 
 		$serviceName = $this->prefix($prefix . '.driver.' . str_replace('\\', '_', $namespace) . '.' . $impl . 'Impl');
 
-		$this->getContainerBuilder()->addDefinition($serviceName)
+		$mappingDriver = $this->getContainerBuilder()->addDefinition($serviceName)
 			->setClass('Doctrine\Common\Persistence\Mapping\Driver\MappingDriver')
 			->setFactory($driver->entity, $driver->arguments)
 			->setAutowired(FALSE)
 			->setInject(FALSE);
+
+		if (count($fileExtensions)) {
+			$mappingDriver->addSetup('setFileExtensions', array($fileExtensions));
+		}
 
 		$metadataDriver->addSetup('addDriver', array('@' . $serviceName, $namespace));
 		return '@' . $serviceName;
