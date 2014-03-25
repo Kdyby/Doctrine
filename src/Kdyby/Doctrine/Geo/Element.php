@@ -101,13 +101,15 @@ class Element extends Nette\Object
 
 
 	/**
+	 * @param string $lat
+	 * @param string $lon
 	 * @return array
 	 */
-	public function toArray()
+	public function toArray($lat = 'lat', $lon = 'lon')
 	{
 		$list = array();
 		foreach ($this->coordinates as $coords) {
-			$list[] = array('lat' => $coords->getLatitude(), 'lon' => $coords->getLongitude());
+			$list[] = array($lat => $coords->getLatitude(), $lon => $coords->getLongitude());
 		}
 		return $list;
 	}
