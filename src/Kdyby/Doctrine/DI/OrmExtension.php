@@ -13,6 +13,7 @@ namespace Kdyby\Doctrine\DI;
 use Doctrine;
 use Doctrine\Common\Proxy\AbstractProxyFactory;
 use Kdyby;
+use Kdyby\DoctrineCache\DI\Helpers as CacheHelpers;
 use Nette;
 use Nette\PhpGenerator as Code;
 use Nette\Utils\Strings;
@@ -106,18 +107,6 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		'yml' => 'Doctrine\ORM\Mapping\Driver\YamlDriver',
 		'xml' => 'Doctrine\ORM\Mapping\Driver\XmlDriver',
 		'db' => 'Doctrine\ORM\Mapping\Driver\DatabaseDriver',
-	);
-
-	/**
-	 * @var array
-	 */
-	public $cacheDriverClasses = array(
-		'default' => 'Kdyby\DoctrineCache\Cache',
-		'apc' => 'Doctrine\Common\Cache\ApcCache',
-		'array' => 'Doctrine\Common\Cache\ArrayCache',
-		'memcache' => 'Kdyby\DoctrineCache\MemcacheCache',
-		'redis' => 'Doctrine\Common\Cache\RedisCache',
-		'xcache' => 'Doctrine\Common\Cache\XcacheCache',
 	);
 
 	/**
@@ -309,9 +298,9 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			->addSetup('setCustomStringFunctions', array($config['dql']['string']))
 			->addSetup('setCustomNumericFunctions', array($config['dql']['numeric']))
 			->addSetup('setCustomDatetimeFunctions', array($config['dql']['datetime']))
-			->addSetup('setNamingStrategy', self::filterArgs($config['namingStrategy']))
-			->addSetup('setQuoteStrategy', self::filterArgs($config['quoteStrategy']))
-			->addSetup('setEntityListenerResolver', self::filterArgs($config['entityListenerResolver']))
+			->addSetup('setNamingStrategy', CacheHelpers::filterArgs($config['namingStrategy']))
+			->addSetup('setQuoteStrategy', CacheHelpers::filterArgs($config['quoteStrategy']))
+			->addSetup('setEntityListenerResolver', CacheHelpers::filterArgs($config['entityListenerResolver']))
 			->setAutowired(FALSE)
 			->setInject(FALSE);
 		/** @var Nette\DI\ServiceDefinition $configuration */
@@ -445,7 +434,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		}
 
 		$impl = $driver instanceof \stdClass ? $driver->value : (string) $driver;
-		list($driver) = self::filterArgs($driver);
+		list($driver) = CacheHelpers::filterArgs($driver);
 		/** @var Nette\DI\Statement $driver */
 
 		if (isset($this->metadataDriverClasses[$impl])) {
@@ -482,31 +471,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 	 */
 	protected function processCache($cache, $suffix)
 	{
-		$builder = $this->getContainerBuilder();
-
-		$impl = $cache instanceof \stdClass ? $cache->value : (string) $cache;
-		list($cache) = self::filterArgs($cache);
-		/** @var Nette\DI\Statement $cache */
-
-		if (isset($this->cacheDriverClasses[$impl])) {
-			$cache->entity = $this->cacheDriverClasses[$impl];
-		}
-
-		if ($impl === 'default') {
-			$cache->arguments[1] = 'Doctrine.' . $suffix;
-		}
-
-		$def = $builder->addDefinition($serviceName = $this->prefix('cache.' . $suffix))
-			->setClass('Doctrine\Common\Cache\Cache')
-			->setFactory($cache->entity, $cache->arguments)
-			->setAutowired(FALSE)
-			->setInject(FALSE);
-
-		if ($impl === 'default') {
-			$def->factory->arguments[2] = $builder->parameters[$this->prefix('debug')];
-		}
-
-		return '@' . $serviceName;
+		return CacheHelpers::processCache($this, $cache, $suffix, $this->getContainerBuilder()->parameters[$this->prefix('debug')]);
 	}
 
 
@@ -567,17 +532,6 @@ class OrmExtension extends Nette\DI\CompilerExtension
 
 
 	/**
-	 * @param string|\stdClass $statement
-	 * @return Nette\DI\Statement[]
-	 */
-	private static function filterArgs($statement)
-	{
-		return Nette\DI\Compiler::filterArguments(array(is_string($statement) ? new Nette\DI\Statement($statement) : $statement));
-	}
-
-
-
-	/**
 	 * @param $provided
 	 * @param $defaults
 	 * @param $diff
@@ -589,20 +543,6 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			array_diff_key($provided, array_diff_key($diff, $defaults)),
 			$defaults
 		));
-	}
-
-
-
-	/**
-	 * @param string $name
-	 */
-	private function loadConfig($name)
-	{
-		$this->compiler->parseServices(
-			$this->getContainerBuilder(),
-			$this->loadFromFile(__DIR__ . '/config/' . $name . '.neon'),
-			$this->prefix($name)
-		);
 	}
 
 
