@@ -574,12 +574,12 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel, Doctrin
 			$targetLine = self::calculateAffectedLine($refl, $pos[1]);
 
 		} elseif ($notImported = Strings::match($e->getMessage(), '~^\[Semantical Error\]\s+The annotation "([^"]*?)"~i')) {
-			$parts = explode($notImported[1], self::cleanedPhpDoc($refl), 2);
+			$parts = explode(self::findRenamed($refl, $notImported[1]), self::cleanedPhpDoc($refl), 2);
 			$targetLine = self::calculateAffectedLine($refl, strlen($parts[0]));
 
 		} elseif ($notFound = Strings::match($e->getMessage(), '~^\[Semantical Error\]\s+Couldn\'t find\s+(.*?)\s+(.*?),\s+~')) {
 			// this is just a guess
-			$parts = explode($notFound[2], self::cleanedPhpDoc($refl), 2);
+			$parts = explode(self::findRenamed($refl, $notFound[2]), self::cleanedPhpDoc($refl), 2);
 			$targetLine = self::calculateAffectedLine($refl, strlen($parts[0]));
 
 		} else {
@@ -608,6 +608,42 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel, Doctrin
 		$parsedLines = count(Strings::split($parsedDoc, '~[\n\r]+~'));
 
 		return $parsedLines + max($beforeCleanLines - 1, 0);
+	}
+
+
+
+	/**
+	 * @param \Reflector|Nette\Reflection\ClassType|Nette\Reflection\Method $refl
+	 * @param $annotation
+	 */
+	private static function findRenamed(\Reflector $refl, $annotation)
+	{
+		$parser = new Doctrine\Common\Annotations\PhpParser();
+		$imports = $parser->parseClass($refl instanceof Nette\Reflection\ClassType ? $refl : $refl->getDeclaringClass());
+		bd($imports);
+		bd($annotation);
+
+		$annotationClass = ltrim($annotation, '@');
+
+		// $parts = explode('\\', strtolower($annotation), 2);
+		foreach ($imports as $alias => $import) {
+			if (!Strings::startsWith($annotationClass, $import)) {
+				continue;
+			}
+
+			$aliased = str_replace(Strings::lower($import), $alias, Strings::lower($annotationClass));
+			$searchFor = preg_quote(Strings::lower($aliased));
+
+			if (!$m = Strings::match($refl->getDocComment(), "~(?P<usage>@?$searchFor)~i")) {
+				continue;
+			}
+
+			return $m['usage'];
+		}
+
+
+
+		return $annotation;
 	}
 
 
