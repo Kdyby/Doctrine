@@ -620,12 +620,8 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel, Doctrin
 	{
 		$parser = new Doctrine\Common\Annotations\PhpParser();
 		$imports = $parser->parseClass($refl instanceof Nette\Reflection\ClassType ? $refl : $refl->getDeclaringClass());
-		bd($imports);
-		bd($annotation);
 
 		$annotationClass = ltrim($annotation, '@');
-
-		// $parts = explode('\\', strtolower($annotation), 2);
 		foreach ($imports as $alias => $import) {
 			if (!Strings::startsWith($annotationClass, $import)) {
 				continue;
@@ -640,8 +636,6 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel, Doctrin
 
 			return $m['usage'];
 		}
-
-
 
 		return $annotation;
 	}
