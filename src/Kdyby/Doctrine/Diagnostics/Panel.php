@@ -619,7 +619,7 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel, Doctrin
 	private static function findRenamed(\Reflector $refl, $annotation)
 	{
 		$parser = new Doctrine\Common\Annotations\PhpParser();
-		$imports = $parser->parseClass($refl instanceof Nette\Reflection\ClassType ? $refl : $refl->getDeclaringClass());
+		$imports = $parser->parseClass($refl instanceof \ReflectionClass ? $refl : $refl->getDeclaringClass());
 
 		$annotationClass = ltrim($annotation, '@');
 		foreach ($imports as $alias => $import) {
