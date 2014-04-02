@@ -127,6 +127,11 @@ abstract class QueryObject extends Nette\Object implements Kdyby\Persistence\Que
 			return $this->toQuery($query)->getSingleScalarResult();
 		}
 
+		if ($this->lastQuery && $this->lastQuery instanceof NativeQueryWrapper) {
+			$class = get_called_class();
+			throw new NotSupportedException("You must implement your own count query in $class::doCreateCountQuery(), ResultPaginator from Doctrine doesn't support NativeQueries.");
+		}
+
 		if ($paginatedQuery !== NULL) {
 			return $paginatedQuery->count();
 		}
@@ -187,6 +192,7 @@ abstract class QueryObject extends Nette\Object implements Kdyby\Persistence\Que
 	}
 
 
+
 	private function toQuery($query)
 	{
 		if ($query instanceof Doctrine\ORM\QueryBuilder) {
@@ -194,9 +200,12 @@ abstract class QueryObject extends Nette\Object implements Kdyby\Persistence\Que
 
 		} elseif ($query instanceof DqlSelection) {
 			$query = $query->createQuery();
+
+		} elseif ($query instanceof Doctrine\ORM\NativeQuery) {
+			$query = new NativeQueryWrapper($query);
 		}
 
-		if (!$query instanceof Doctrine\ORM\Query) {
+		if (!$query instanceof Doctrine\ORM\AbstractQuery) {
 			throw new UnexpectedValueException(
 				"Method " . $this->getReflection()->getMethod('doCreateQuery') . " must return " .
 				"instanceof Doctrine\\ORM\\Query or Kdyby\\Doctrine\\QueryBuilder or Kdyby\\Doctrine\\DqlSelection, " .

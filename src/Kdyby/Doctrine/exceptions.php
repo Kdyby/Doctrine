@@ -383,10 +383,10 @@ class QueryException extends \RuntimeException implements Exception
 
 	/**
 	 * @param \Exception $previous
-	 * @param \Doctrine\ORM\Query $query
+	 * @param \Doctrine\ORM\AbstractQuery $query
 	 * @param string $message
 	 */
-	public function __construct(\Exception $previous, Doctrine\ORM\Query $query = NULL, $message = "")
+	public function __construct(\Exception $previous, Doctrine\ORM\AbstractQuery $query = NULL, $message = "")
 	{
 		parent::__construct($message ?: $previous->getMessage(), 0, $previous);
 		$this->query = $query;

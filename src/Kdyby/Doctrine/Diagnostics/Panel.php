@@ -271,10 +271,18 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel, Doctrin
 			);
 
 		} elseif ($e instanceof Kdyby\Doctrine\QueryException && $e->query !== NULL) {
-			return array(
-				'tab' => 'DQL',
-				'panel' => $this->dumpQuery($e->query->getDQL(), $e->query->getParameters()),
-			);
+			if ($e->query instanceof Doctrine\ORM\Query) {
+				return array(
+					'tab' => 'DQL',
+					'panel' => $this->dumpQuery($e->query->getDQL(), $e->query->getParameters()),
+				);
+
+			} elseif ($e->query instanceof Kdyby\Doctrine\NativeQueryWrapper) {
+				return array(
+					'tab' => 'Native SQL',
+					'panel' => $this->dumpQuery($e->query->getSQL(), $e->query->getParameters()),
+				);
+			}
 		}
 	}
 
@@ -444,6 +452,11 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel, Doctrin
 	public static function formatQuery($query, $params)
 	{
 		$params = array_map(array(get_called_class(), 'formatParameter'), $params);
+
+		try {
+			list($query, $params, $types) = \Doctrine\DBAL\SQLParserUtils::expandListParameters($query, $params, []);
+		} catch (Doctrine\DBAL\SQLParserUtilsException $e) { }
+
 		if (Nette\Utils\Validators::isList($params)) {
 			$parts = explode('?', $query);
 			if (count($params) > $parts) {
