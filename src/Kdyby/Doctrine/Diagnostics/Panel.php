@@ -454,7 +454,7 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel, Doctrin
 		$params = array_map(array(get_called_class(), 'formatParameter'), $params);
 
 		try {
-			list($query, $params, $types) = \Doctrine\DBAL\SQLParserUtils::expandListParameters($query, $params, []);
+			list($query, $params, $types) = \Doctrine\DBAL\SQLParserUtils::expandListParameters($query, $params, array());
 		} catch (Doctrine\DBAL\SQLParserUtilsException $e) { }
 
 		if (Nette\Utils\Validators::isList($params)) {
