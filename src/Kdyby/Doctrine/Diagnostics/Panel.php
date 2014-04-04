@@ -16,11 +16,17 @@ use Doctrine\Common\Persistence\Proxy;
 use Doctrine\Common\Annotations\AnnotationException;
 use Kdyby;
 use Nette;
-use Nette\Diagnostics\Bar;
-use Nette\Diagnostics\BlueScreen;
-use Nette\Diagnostics\Debugger;
 use Nette\Utils\Strings;
+use Tracy\Bar;
+use Tracy\BlueScreen;
+use Tracy\Debugger;
 
+
+if (!class_exists('Tracy\Bar')) {
+	class_alias('Nette\Diagnostics\Bar', 'Tracy\Bar');
+	class_alias('Nette\Diagnostics\BlueScreen', 'Tracy\BlueScreen');
+	class_alias('Nette\Diagnostics\Debugger', 'Tracy\Debugger');
+}
 
 
 /**
