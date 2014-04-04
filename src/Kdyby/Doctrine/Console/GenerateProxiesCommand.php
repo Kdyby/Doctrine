@@ -15,7 +15,12 @@ use Kdyby;
 use Nette;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Tracy\Debugger;
 
+
+if (!class_exists('Tracy\Debugger')) {
+	class_alias('Nette\Diagnostics\Debugger', 'Tracy\Debugger');
+}
 
 
 /**
@@ -43,7 +48,7 @@ class GenerateProxiesCommand extends Doctrine\ORM\Tools\Console\Command\Generate
 	{
 		parent::initialize($input, $output);
 		$this->cacheStorage->clean(array(Nette\Caching\Cache::ALL => TRUE));
-		Nette\Diagnostics\Debugger::$productionMode = FALSE;
+		Debugger::$productionMode = FALSE;
 	}
 
 }
