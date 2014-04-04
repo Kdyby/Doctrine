@@ -24,9 +24,9 @@ use Tracy\Helpers;
 
 
 if (!class_exists('Tracy\Bar')) {
-	class_alias('Nette\Diagnostics\Bar̈́', 'Tracy\Bar̈́');
-	class_alias('Nette\Diagnostics\BlueScreen̈́', 'Tracy\BlueScreen̈́');
-	class_alias('Nette\Diagnostics\Debugger̈́', 'Tracy\Debugger̈́');
+	class_alias('Nette\Diagnostics\Bar', 'Tracy\Bar');
+	class_alias('Nette\Diagnostics\BlueScreen', 'Tracy\BlueScreen');
+	class_alias('Nette\Diagnostics\Debugger', 'Tracy\Debugger');
 	class_alias('Nette\Diagnostics\Helpers', 'Tracy\Helpers');
 }
 
