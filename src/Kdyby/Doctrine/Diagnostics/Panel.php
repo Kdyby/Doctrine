@@ -16,11 +16,19 @@ use Doctrine\Common\Persistence\Proxy;
 use Doctrine\Common\Annotations\AnnotationException;
 use Kdyby;
 use Nette;
-use Nette\Diagnostics\Bar;
-use Nette\Diagnostics\BlueScreen;
-use Nette\Diagnostics\Debugger;
 use Nette\Utils\Strings;
+use Tracy\Bar;
+use Tracy\BlueScreen;
+use Tracy\Debugger;
+use Tracy\Helpers;
 
+
+if (!class_exists('Tracy\Bar')) {
+	class_alias('Nette\Diagnostics\Bar', 'Tracy\Bar');
+	class_alias('Nette\Diagnostics\BlueScreen', 'Tracy\BlueScreen');
+	class_alias('Nette\Diagnostics\Debugger', 'Tracy\Debugger');
+	class_alias('Nette\Diagnostics\Helpers', 'Tracy\Helpers');
+}
 
 
 /**
@@ -30,7 +38,7 @@ use Nette\Utils\Strings;
  * @author Patrik Votoček
  * @author Filip Procházka <filip@prochazka.su>
  */
-class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel, Doctrine\DBAL\Logging\SQLLogger
+class Panel extends Nette\Object implements Tracy\IBarPanel, Doctrine\DBAL\Logging\SQLLogger
 {
 
 	/**
@@ -163,7 +171,7 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel, Doctrin
 
 
 
-	/***************** Nette\Diagnostics\IBarPanel ********************/
+	/***************** Tracy\IBarPanel ********************/
 
 
 
@@ -226,7 +234,7 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel, Doctrin
 		$parametrized = static::formatQuery($sql, (array) $params);
 		$s = self::highlightQuery($parametrized);
 		if ($source) {
-			$s .= Nette\Diagnostics\Helpers::editorLink($source[0], $source[1])
+			$s .= Tracy\Helpers::editorLink($source[0], $source[1])
 				->setText('.../' . basename(dirname($source[0])) . '/' . basename($source[0]));
 		}
 
@@ -311,8 +319,8 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel, Doctrin
 
 				return array(
 					'tab' => 'Invalid entity',
-					'panel' => '<p><b>File:</b> ' . Nette\Diagnostics\Helpers::editorLink($file, $errorLine) . '</p>' .
-						Nette\Diagnostics\BlueScreen::highlightFile($file, $errorLine),
+					'panel' => '<p><b>File:</b> ' . Tracy\Helpers::editorLink($file, $errorLine) . '</p>' .
+						Tracy\BlueScreen::highlightFile($file, $errorLine),
 				);
 			}
 
@@ -337,8 +345,8 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel, Doctrin
 
 				return array(
 					'tab' => 'Invalid schema',
-					'panel' => '<p><b>File:</b> ' . Nette\Diagnostics\Helpers::editorLink($file, $errorLine) . '</p>' .
-						Nette\Diagnostics\BlueScreen::highlightFile($file, $errorLine),
+					'panel' => '<p><b>File:</b> ' . Tracy\Helpers::editorLink($file, $errorLine) . '</p>' .
+						Tracy\BlueScreen::highlightFile($file, $errorLine),
 				);
 			}
 
@@ -362,14 +370,14 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel, Doctrin
 			if (isset($e->queryString)) {
 				$sql = $e->queryString;
 
-			} elseif ($item = Nette\Diagnostics\Helpers::findTrace($e->getTrace(), 'Doctrine\DBAL\Connection::executeQuery')) {
+			} elseif ($item = Tracy\Helpers::findTrace($e->getTrace(), 'Doctrine\DBAL\Connection::executeQuery')) {
 				$sql = $item['args'][0];
 				$params = $item['args'][1];
 
-			} elseif ($item = Nette\Diagnostics\Helpers::findTrace($e->getTrace(), 'PDO::query')) {
+			} elseif ($item = Tracy\Helpers::findTrace($e->getTrace(), 'PDO::query')) {
 				$sql = $item['args'][0];
 
-			} elseif ($item = Nette\Diagnostics\Helpers::findTrace($e->getTrace(), 'PDO::prepare')) {
+			} elseif ($item = Tracy\Helpers::findTrace($e->getTrace(), 'PDO::prepare')) {
 				$sql = $item['args'][0];
 			}
 
@@ -417,7 +425,7 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel, Doctrin
 		$e = NULL;
 		if ($source && is_array($source)) {
 			list($file, $line) = $source;
-			$e = '<p><b>File:</b> ' . Nette\Diagnostics\Helpers::editorLink($file, $line) . '</p>';
+			$e = '<p><b>File:</b> ' . Tracy\Helpers::editorLink($file, $line) . '</p>';
 		}
 
 		// styles and dump
@@ -563,9 +571,9 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel, Doctrin
 			return FALSE;
 		}
 
-		$dump = Nette\Diagnostics\BlueScreen::highlightFile($file, $errorLine);
+		$dump = Tracy\BlueScreen::highlightFile($file, $errorLine);
 
-		return '<p><b>File:</b> ' . Nette\Diagnostics\Helpers::editorLink($file, $errorLine) . '</p>' . $dump;
+		return '<p><b>File:</b> ' . Tracy\Helpers::editorLink($file, $errorLine) . '</p>' . $dump;
 	}
 
 
@@ -675,7 +683,7 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel, Doctrin
 	/**
 	 * Registers panel to debugger
 	 *
-	 * @param \Nette\Diagnostics\Bar $bar
+	 * @param \Tracy\Bar $bar
 	 */
 	public function registerBarPanel(Bar $bar)
 	{
@@ -719,7 +727,7 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel, Doctrin
 	 */
 	private static function getDebuggerBar()
 	{
-		return method_exists('Nette\Diagnostics\Debugger', 'getBar') ? Debugger::getBar() : Debugger::$bar;
+		return method_exists('Tracy\Debugger', 'getBar') ? Debugger::getBar() : Debugger::$bar;
 	}
 
 
@@ -729,7 +737,7 @@ class Panel extends Nette\Object implements Nette\Diagnostics\IBarPanel, Doctrin
 	 */
 	private static function getDebuggerBlueScreen()
 	{
-		return method_exists('Nette\Diagnostics\Debugger', 'getBlueScreen') ? Debugger::getBlueScreen() : Debugger::$blueScreen;
+		return method_exists('Tracy\Debugger', 'getBlueScreen') ? Debugger::getBlueScreen() : Debugger::$blueScreen;
 	}
 
 }
