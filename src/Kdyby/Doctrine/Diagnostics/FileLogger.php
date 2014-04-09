@@ -51,7 +51,8 @@ class FileLogger extends Nette\Object implements SQLLogger
 
 	public function startQuery($sql, array $params = null, array $types = null)
 	{
-		$formatted = Panel::formatQuery($sql, $params);
+		$highlighted = Panel::highlightQuery(Panel::formatQuery($sql, $params));
+		$formatted = html_entity_decode(strip_tags($highlighted));
 		$formatted = preg_replace('#^[\t ]+#m', '', Nette\Utils\Strings::normalize($formatted));
 
 		$message =
