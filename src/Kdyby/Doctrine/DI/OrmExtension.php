@@ -347,7 +347,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		}
 
 		// config
-		$builder->addDefinition($this->prefix($name . '.dbalConfiguration'))
+		$configuration = $builder->addDefinition($this->prefix($name . '.dbalConfiguration'))
 			->setClass('Doctrine\DBAL\Configuration')
 			->addSetup('setResultCacheImpl', array($this->processCache($config['resultCache'], $name . '.dbalResult')))
 			->addSetup('setSQLLogger', array(new Nette\DI\Statement('Doctrine\DBAL\Logging\LoggerChain')))
@@ -387,7 +387,11 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			->setInject(FALSE);
 		/** @var Nette\DI\ServiceDefinition $connection */
 
-		if ($config['logging']) {
+		if (!is_bool($config['logging'])) {
+			$fileLogger = new Nette\DI\Statement('Kdyby\Doctrine\Diagnostics\FileLogger', array($builder->expand($config['logging'])));
+			$configuration->addSetup('$service->getSQLLogger()->addLogger(?)', array($fileLogger));
+
+		} elseif ($config['logging']) {
 			$connection->addSetup('Kdyby\Doctrine\Diagnostics\Panel::register', array('@self'));
 		}
 

@@ -505,7 +505,7 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 	 * @param $param
 	 * @return mixed
 	 */
-	private static function formatParameter($param)
+	protected static function formatParameter($param)
 	{
 		if (is_numeric($param)) {
 			return $param;
