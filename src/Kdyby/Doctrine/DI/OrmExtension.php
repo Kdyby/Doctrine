@@ -18,7 +18,7 @@ use Nette;
 use Nette\PhpGenerator as Code;
 use Nette\Utils\Strings;
 use Nette\Utils\Validators;
-
+use Tracy\Debugger;
 
 
 if (!class_exists('Nette\DI\CompilerExtension')) {
@@ -30,6 +30,10 @@ if (!class_exists('Nette\DI\CompilerExtension')) {
 if (isset(Nette\Loaders\NetteLoader::getInstance()->renamed['Nette\Configurator']) || !class_exists('Nette\Configurator')) {
 	unset(Nette\Loaders\NetteLoader::getInstance()->renamed['Nette\Configurator']); // fuck you
 	class_alias('Nette\Config\Configurator', 'Nette\Configurator');
+}
+
+if (!class_exists('Tracy\Debugger')) {
+	class_alias('Nette\Diagnostics\Debugger', 'Tracy\Debugger');
 }
 
 /**
@@ -517,8 +521,9 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			$init->addBody($line);
 		}
 
-		if (property_exists('Nette\Diagnostics\BlueScreen', 'collapsePaths')) {
-			$blueScreen = 'Nette\Diagnostics\Debugger::' . (method_exists('Nette\Diagnostics\Debugger', 'getBlueScreen') ? 'getBlueScreen()' : '$blueScreen');
+		if (property_exists('Tracy\BlueScreen', 'collapsePaths')) {
+			$blueScreen = (class_exists('Tracy\Debugger') ? 'Tracy\Debugger::' : 'Nette\Diagnostics\Debugger::')
+				. (method_exists('Tracy\Debugger', 'getBlueScreen') ? 'getBlueScreen()' : '$blueScreen');
 			$commonDirname = dirname(Nette\Reflection\ClassType::from('Doctrine\Common\Version')->getFileName());
 
 			$init->addBody($blueScreen . '->collapsePaths[] = ?;', array(dirname(Nette\Reflection\ClassType::from('Kdyby\Doctrine\Exception')->getFileName())));
