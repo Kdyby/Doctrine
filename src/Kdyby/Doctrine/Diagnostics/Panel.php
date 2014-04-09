@@ -17,6 +17,7 @@ use Doctrine\Common\Annotations\AnnotationException;
 use Kdyby;
 use Nette;
 use Nette\Utils\Strings;
+use Symfony\Component\Console\Output\OutputInterface;
 use Tracy\Bar;
 use Tracy\BlueScreen;
 use Tracy\Debugger;
@@ -195,11 +196,37 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 
 
 	/**
+	 * @param OutputInterface $output
 	 * @return string
 	 */
-	public function getPanel()
+	public function getPanel(OutputInterface $output = NULL)
 	{
 		if (empty($this->queries)) {
+			return "";
+		}
+
+		if (PHP_SAPI === 'cli' && $output !== NULL) {
+			$output->writeln(''); // empty line
+			$output->writeln(' ----------------------------------'); // empty line
+			$output->writeln(' <info>Executed SQL Queries:</info>'); // empty line
+			$output->writeln(''); // empty line
+
+			foreach ($this->queries as $query) {
+				list($sql, $params, $time, , $source) = $query;
+
+				$html = self::highlightQuery(static::formatQuery($sql, (array) $params));
+				$html = html_entity_decode(strip_tags(Strings::normalize($html), '<em><strong>'));
+				$html = preg_replace('#^[\t ]+#m', '', $html);
+				$html = preg_replace_callback('~<(?P<tag>[^>\\s]+)\\s*style="color\\:(?P<color>[^"]+)">(?P<content>[^<]*)<\\/\\1>~', function ($m) {
+					$tag = 'fg=' . $m['color'];
+					return "<$tag>" . $m['content'] . "</$tag>";
+				}, $html);
+
+				$output->writeln(Strings::indent($html, 1, ' '));
+				$output->writeln(' <comment>-- in ' . sprintf('%0.3f ms', $time * 1000) . '</comment> ');
+				$output->writeln('');
+			}
+
 			return "";
 		}
 
