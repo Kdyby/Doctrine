@@ -210,7 +210,7 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 
 		return $this->renderStyles() .
 			'<h1>Queries: ' . count($this->queries) . ($this->totalTime ? ', time: ' . sprintf('%0.3f', $this->totalTime * 1000) . ' ms' : '') . '</h1>' .
-			'<div class="nette-inner nette-Doctrine2Panel">' .
+			'<div class="nette-inner tracy-inner nette-Doctrine2Panel">' .
 			'<table><tr><th>ms</th><th>SQL Statement</th></tr>' . $s . '</table></div>';
 	}
 
@@ -434,7 +434,7 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 		}
 
 		// styles and dump
-		return $this->renderStyles() . '<div class="nette-inner nette-Doctrine2Panel">' . $e . $s . '</div>';
+		return $this->renderStyles() . '<div class="nette-inner tracy-inner nette-Doctrine2Panel">' . $e . $s . '</div>';
 	}
 
 
