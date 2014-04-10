@@ -234,12 +234,13 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 	 */
 	protected function processQuery(array $query)
 	{
+		$h = 'htmlspecialchars';
 		list($sql, $params, $time, , $source) = $query;
 
 		$parametrized = static::formatQuery($sql, (array) $params);
 		$s = self::highlightQuery($parametrized);
 		if ($source) {
-			$s .= Helpers::editorLink($source[0], $source[1]);
+			$s .= self::editorLink($source[0], $source[1], $h('.../' . basename(dirname($source[0]))) . '/<b>' . $h(basename($source[0])) . '</b>');
 		}
 
 		return '<tr><td>' . sprintf('%0.3f', $time * 1000) . '</td>' .
@@ -323,7 +324,7 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 
 				return array(
 					'tab' => 'Invalid entity',
-					'panel' => '<p><b>File:</b> ' . Helpers::editorLink($file, $errorLine) . '</p>' .
+					'panel' => '<p><b>File:</b> ' . self::editorLink($file, $errorLine) . '</p>' .
 						BlueScreen::highlightFile($file, $errorLine),
 				);
 			}
@@ -349,7 +350,7 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 
 				return array(
 					'tab' => 'Invalid schema',
-					'panel' => '<p><b>File:</b> ' . Helpers::editorLink($file, $errorLine) . '</p>' .
+					'panel' => '<p><b>File:</b> ' . self::editorLink($file, $errorLine) . '</p>' .
 						BlueScreen::highlightFile($file, $errorLine),
 				);
 			}
@@ -429,7 +430,7 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 		$e = NULL;
 		if ($source && is_array($source)) {
 			list($file, $line) = $source;
-			$e = '<p><b>File:</b> ' . Helpers::editorLink($file, $line) . '</p>';
+			$e = '<p><b>File:</b> ' . self::editorLink($file, $line) . '</p>';
 		}
 
 		// styles and dump
@@ -577,7 +578,7 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 
 		$dump = BlueScreen::highlightFile($file, $errorLine);
 
-		return '<p><b>File:</b> ' . Helpers::editorLink($file, $errorLine) . '</p>' . $dump;
+		return '<p><b>File:</b> ' . self::editorLink($file, $errorLine) . '</p>' . $dump;
 	}
 
 
@@ -676,6 +677,26 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 	private static function cleanedPhpDoc(\Reflector $refl, &$atPos = NULL)
 	{
 		return trim(substr($doc = $refl->getDocComment(), $atPos = strpos($doc, '@') - 1), '* /');
+	}
+
+
+
+	/**
+	 * Returns link to editor.
+	 * @author David Grudl
+	 * @return Nette\Utils\Html
+	 */
+	private static function editorLink($file, $line, $text = NULL)
+	{
+		if (Debugger::$editor && is_file($file) && $text !== NULL) {
+			return Nette\Utils\Html::el('a')
+				->href(strtr(Debugger::$editor, array('%file' => rawurlencode($file), '%line' => $line)))
+				->title("$file:$line")
+				->setHtml($text);
+
+		} else {
+			return Helpers::editorLink($file, $line);
+		}
 	}
 
 
