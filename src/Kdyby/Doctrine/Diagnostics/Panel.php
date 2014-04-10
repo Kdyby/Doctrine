@@ -24,6 +24,7 @@ use Tracy\Helpers;
 use Tracy\IBarPanel;
 
 
+
 if (!class_exists('Tracy\Debugger')) {
 	class_alias('Nette\Diagnostics\Debugger', 'Tracy\Debugger');
 }
@@ -34,7 +35,6 @@ if (!class_exists('Tracy\Bar')) {
 	class_alias('Nette\Diagnostics\Helpers', 'Tracy\Helpers');
 	class_alias('Nette\Diagnostics\IBarPanel', 'Tracy\IBarPanel');
 }
-
 
 /**
  * Debug panel for Doctrine
