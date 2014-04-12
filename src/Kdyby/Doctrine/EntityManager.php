@@ -70,7 +70,8 @@ class EntityManager extends Doctrine\ORM\EntityManager
 
 
 	/**
-	 * @param string|array $entityName
+	 * {@inheritdoc}
+	 * @param string|array $entity
 	 * @return EntityManager
 	 */
 	public function clear($entityName = null)
@@ -85,6 +86,7 @@ class EntityManager extends Doctrine\ORM\EntityManager
 
 
 	/**
+	 * {@inheritdoc}
 	 * @param object|array $entity
 	 * @return EntityManager
 	 */
@@ -100,6 +102,7 @@ class EntityManager extends Doctrine\ORM\EntityManager
 
 
 	/**
+	 * {@inheritdoc}
 	 * @param object|array $entity
 	 * @return EntityManager
 	 */
