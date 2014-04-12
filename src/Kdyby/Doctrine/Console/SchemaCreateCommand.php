@@ -31,16 +31,16 @@ class SchemaCreateCommand extends Doctrine\ORM\Tools\Console\Command\SchemaTool\
 {
 
 	/**
-	 * @var \Nette\Caching\IStorage
+	 * @var \Kdyby\Doctrine\Tools\CacheCleaner
+	 * @inject
 	 */
-	private $cacheStorage;
+	public $cacheCleaner;
 
 
 
-	public function __construct(Nette\Caching\IStorage $cacheStorage)
+	public function __construct()
 	{
 		parent::__construct();
-		$this->cacheStorage = $cacheStorage;
 	}
 
 
@@ -51,7 +51,7 @@ class SchemaCreateCommand extends Doctrine\ORM\Tools\Console\Command\SchemaTool\
 	protected function initialize(InputInterface $input, OutputInterface $output)
 	{
 		parent::initialize($input, $output);
-		$this->cacheStorage->clean(array(Nette\Caching\Cache::ALL => TRUE));
+		$this->cacheCleaner->invalidate();
 		Debugger::$productionMode = FALSE;
 	}
 

@@ -181,6 +181,10 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			->setFactory('@Kdyby\Doctrine\Connection::getSchemaManager')
 			->setInject(FALSE);
 
+		$builder->addDefinition($this->prefix('cacheCleaner'))
+			->setClass('Kdyby\Doctrine\Tools\CacheCleaner')
+			->setInject(FALSE);
+
 		if ($this->targetEntityMappings) {
 			$listener = $builder->addDefinition($this->prefix('resolveTargetEntityListener'))
 				->setClass('Kdyby\Doctrine\Tools\ResolveTargetEntityListener')
@@ -203,7 +207,8 @@ class OrmExtension extends Nette\DI\CompilerExtension
 
 		foreach ($this->loadFromFile(__DIR__ . '/console.neon') as $i => $command) {
 			$cli = $builder->addDefinition($this->prefix('cli.' . $i))
-				->addTag(Kdyby\Console\DI\ConsoleExtension::COMMAND_TAG);
+				->addTag(Kdyby\Console\DI\ConsoleExtension::COMMAND_TAG)
+				->setInject(FALSE); // lazy injects
 
 			if (is_string($command)) {
 				$cli->setClass($command);
