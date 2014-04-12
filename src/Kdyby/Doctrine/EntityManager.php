@@ -10,11 +10,11 @@
 
 namespace Kdyby\Doctrine;
 
-use Doctrine;
 use Doctrine\Common\EventManager;
 use Doctrine\DBAL\DriverManager;
+use Doctrine;
 use Doctrine\ORM\ORMException;
-use Doctrine\ORM\ORMInvalidArgumentException;
+use Doctrine\ORM\Query;
 use Kdyby;
 use Kdyby\Doctrine\Tools\NonLockingUniqueInserter;
 use Nette;
@@ -172,6 +172,27 @@ class EntityManager extends Doctrine\ORM\EntityManager
 	public function getDao($entityName)
 	{
 		return $this->getRepository($entityName);
+	}
+
+
+
+	/**
+	 * @param int $hydrationMode
+	 * @return Doctrine\ORM\Internal\Hydration\AbstractHydrator|Hydration\ObjectHydrator|Hydration\SimpleObjectHydrator
+	 * @throws \Doctrine\ORM\ORMException
+	 */
+	public function newHydrator($hydrationMode)
+	{
+		switch ($hydrationMode) {
+			case Query::HYDRATE_OBJECT:
+				return new Hydration\ObjectHydrator($this);
+
+			case Query::HYDRATE_SIMPLEOBJECT:
+				return new Hydration\SimpleObjectHydrator($this);
+
+			default:
+				return parent::newHydrator($hydrationMode);
+		}
 	}
 
 
