@@ -26,7 +26,6 @@ use Nette;
  *
  * @method \Kdyby\Doctrine\Connection getConnection()
  * @method \Kdyby\Doctrine\Configuration getConfiguration()
- * @method flush(array $entity = NULL)
  * @method onDaoCreate(EntityManager $em, EntityDao $dao)
  */
 class EntityManager extends Doctrine\ORM\EntityManager
@@ -112,6 +111,19 @@ class EntityManager extends Doctrine\ORM\EntityManager
 			parent::persist($item);
 		}
 
+		return $this;
+	}
+
+
+
+	/**
+	 * {@inheritdoc}
+	 * @param object|array $entity
+	 * @return EntityManager
+	 */
+	public function flush($entity = null)
+	{
+		parent::flush($entity);
 		return $this;
 	}
 
