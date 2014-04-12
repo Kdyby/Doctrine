@@ -290,6 +290,11 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		Validators::assertField($config['dql'], 'string', 'array');
 		Validators::assertField($config['dql'], 'numeric', 'array');
 		Validators::assertField($config['dql'], 'datetime', 'array');
+
+		$autoGenerateProxyClasses = is_bool($config['autoGenerateProxyClasses'])
+			? ($config['autoGenerateProxyClasses'] ? AbstractProxyFactory::AUTOGENERATE_ALWAYS : AbstractProxyFactory::AUTOGENERATE_FILE_NOT_EXISTS)
+			: $config['autoGenerateProxyClasses'];
+
 		$configuration = $builder->addDefinition($this->prefix($name . '.ormConfiguration'))
 			->setClass('Kdyby\Doctrine\Configuration')
 			->addSetup('setMetadataCacheImpl', array($this->processCache($config['metadataCache'], $name . '.metadata')))
@@ -301,7 +306,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			->addSetup('setDefaultRepositoryClassName', array($config['defaultRepositoryClassName']))
 			->addSetup('setProxyDir', array($config['proxyDir']))
 			->addSetup('setProxyNamespace', array($config['proxyNamespace']))
-			->addSetup('setAutoGenerateProxyClasses', array($config['autoGenerateProxyClasses'] ? AbstractProxyFactory::AUTOGENERATE_ALWAYS : AbstractProxyFactory::AUTOGENERATE_FILE_NOT_EXISTS))
+			->addSetup('setAutoGenerateProxyClasses', array($autoGenerateProxyClasses))
 			->addSetup('setEntityNamespaces', array($config['namespaceAlias']))
 			->addSetup('setCustomHydrationModes', array($config['hydrators']))
 			->addSetup('setCustomStringFunctions', array($config['dql']['string']))
