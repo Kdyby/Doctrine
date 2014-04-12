@@ -22,7 +22,7 @@
 		"kdyby/events": "~2.0@dev",
 		"kdyby/console": "~2.0@dev",
 		"kdyby/annotations": "~2.0.2@dev",
-		"kdyby/doctrine-cache": "~2.1.1@dev"
+		"kdyby/doctrine-cache": "~2.2@dev"
 	},
 	"require-dev": {
 		"nette/tester": "@dev",
