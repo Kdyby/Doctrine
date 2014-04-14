@@ -109,6 +109,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		self::ANNOTATION_DRIVER => 'Kdyby\Doctrine\Mapping\AnnotationDriver',
 		'static' => 'Doctrine\Common\Persistence\Mapping\Driver\StaticPHPDriver',
 		'yml' => 'Doctrine\ORM\Mapping\Driver\YamlDriver',
+		'yaml' => 'Doctrine\ORM\Mapping\Driver\YamlDriver',
 		'xml' => 'Doctrine\ORM\Mapping\Driver\XmlDriver',
 		'db' => 'Doctrine\ORM\Mapping\Driver\DatabaseDriver',
 	);
@@ -449,6 +450,10 @@ class OrmExtension extends Nette\DI\CompilerExtension
 				}
 			}
 			$driver = (object)array('value' => self::ANNOTATION_DRIVER, 'attributes' => $paths);
+		}
+
+		if ($driver instanceof \stdClass && !is_array($driver->attributes)) {
+			$driver->attributes = array($driver->attributes);
 		}
 
 		$impl = $driver instanceof \stdClass ? $driver->value : (string) $driver;
