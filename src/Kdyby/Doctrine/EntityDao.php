@@ -170,7 +170,7 @@ class EntityDao extends Doctrine\ORM\EntityRepository implements Persistence\Obj
 
 	public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
 	{
-		if ($this->criteriaRequiresDql($criteria) === FALSE) {
+		if ($this->criteriaRequiresDql($criteria) === FALSE && $this->criteriaRequiresDql((array) $orderBy) === FALSE) {
 			return parent::findBy($criteria, $orderBy, $limit, $offset);
 		}
 
@@ -188,7 +188,7 @@ class EntityDao extends Doctrine\ORM\EntityRepository implements Persistence\Obj
 
 	public function findOneBy(array $criteria, array $orderBy = null)
 	{
-		if ($this->criteriaRequiresDql($criteria) === FALSE) {
+		if ($this->criteriaRequiresDql($criteria) === FALSE && $this->criteriaRequiresDql((array) $orderBy) === FALSE) {
 			return parent::findOneBy($criteria, $orderBy);
 		}
 
