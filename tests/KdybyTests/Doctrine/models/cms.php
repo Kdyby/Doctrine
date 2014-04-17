@@ -196,6 +196,7 @@ class CmsEmail
 
 	/**
 	 * @ORM\OneToOne(targetEntity="CmsUser", mappedBy="email")
+	 * @ORM\JoinColumn(nullable=false)
 	 */
 	public $user;
 
