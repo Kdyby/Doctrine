@@ -263,10 +263,11 @@ class DBALException extends \RuntimeException implements Exception
 	 * @param string $query
 	 * @param array $params
 	 * @param \Doctrine\DBAL\Connection $connection
+	 * @param string $message
 	 */
-	public function __construct(\Exception $previous, $query = NULL, $params = array(), Doctrine\DBAL\Connection $connection = NULL)
+	public function __construct(\Exception $previous, $query = NULL, $params = array(), Doctrine\DBAL\Connection $connection = NULL, $message = NULL)
 	{
-		parent::__construct($previous->getMessage(), $previous->getCode(), $previous);
+		parent::__construct($message ?: $previous->getMessage(), $previous->getCode(), $previous);
 		$this->query = $query;
 		$this->params = $params;
 		$this->connection = $connection;

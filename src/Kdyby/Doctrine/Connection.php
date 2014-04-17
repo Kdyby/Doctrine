@@ -240,7 +240,12 @@ class Connection extends Doctrine\DBAL\Connection
 			}
 		}
 
-		return new DBALException($e, $query, $params, $this);
+		$raw = $e;
+		do {
+			$raw = $raw->getPrevious();
+		} while ($raw && !$raw instanceof \PDOException);
+
+		return new DBALException($e, $query, $params, $this, $raw ? $raw->getMessage() : $e->getMessage());
 	}
 
 
