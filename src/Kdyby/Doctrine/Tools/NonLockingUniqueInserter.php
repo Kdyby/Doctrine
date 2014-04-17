@@ -11,7 +11,6 @@
 namespace Kdyby\Doctrine\Tools;
 
 use Doctrine\DBAL\DBALException;
-use Doctrine\DBAL\Platforms\AbstractPlatform as Platform;
 use Doctrine\DBAL\Platforms\MySqlPlatform;
 use Doctrine\DBAL\Platforms\PostgreSqlPlatform;
 use Doctrine\DBAL\Platforms\SqlitePlatform;
@@ -116,12 +115,14 @@ class NonLockingUniqueInserter extends Nette\Object
 
 		// fields that have to be inserted
 		$fields = $this->getUniqueAndRequiredFields($meta);
+		// associations that have to be inserted
+		$associations = $this->getUniqueAndRequiredAssociations($meta, $entity);
 
 		// read values to insert
 		$values = $this->getInsertValues($meta, $entity, $fields);
 
 		// prepare statement && execute
-		$this->prepareInsert($meta, $values)->execute();
+		$this->prepareInsert($meta, $values, $associations)->execute();
 
 		// assign ID to entity
 		if ($idGen = $meta->idGenerator) {
@@ -142,12 +143,15 @@ class NonLockingUniqueInserter extends Nette\Object
 
 
 
-	private function prepareInsert(ClassMetadata $meta, array $values)
+	private function prepareInsert(ClassMetadata $meta, array $values, array $associations)
 	{
 		// construct sql
 		$columns = array();
 		foreach (array_keys($values) as $column) {
 			$columns[] = $this->quotes->getColumnName($column, $meta, $this->platform);
+		}
+		foreach ($associations as $association) {
+			$columns[] = $association['quotedColumn'];
 		}
 
 		$insertSql = 'INSERT INTO ' . $this->quotes->getTableName($meta, $this->platform)
@@ -159,11 +163,17 @@ class NonLockingUniqueInserter extends Nette\Object
 
 		// fetch column types
 		$types = $this->getColumnsTypes($meta, array_keys($values));
+		foreach ($associations as $associationName => $association) {
+			$types[$associationName] = $association['type'];
+		}
 
 		// bind values
 		$paramIndex = 1;
 		foreach ($values as $field => $value) {
 			$statement->bindValue($paramIndex++, $value, $types[$field]);
+		}
+		foreach ($associations as $associationName => $association) {
+			$statement->bindValue($paramIndex++, $association['value'], $types[$associationName]);
 		}
 
 		return $statement;
@@ -211,6 +221,62 @@ class NonLockingUniqueInserter extends Nette\Object
 		}
 
 		return $fields;
+	}
+
+
+
+	private function getUniqueAndRequiredAssociations(ClassMetadata $meta, $entity)
+	{
+		$associations = array();
+		$uow = $this->em->getUnitOfWork();
+		foreach ($meta->getAssociationNames() as $associationName) {
+			$mapping = $meta->getAssociationMapping($associationName);
+			if (!empty($mapping['id'])) { // not an id
+				continue;
+			}
+			if (!$mapping['isOwningSide'] || !($mapping['type'] & ClassMetadata::TO_ONE)) {
+				continue;
+			}
+
+			foreach ($mapping['joinColumns'] as $joinColumn) {
+				if (!empty($joinColumn['nullable'])) { // is nullable
+					continue;
+				}
+				if (empty($joinColumn['unique'])) { // is not unique
+					continue;
+				}
+
+				$sourceColumn = $joinColumn['name'];
+				$targetColumn = $joinColumn['referencedColumnName'];
+				$quotedColumn = $this->quotes->getJoinColumnName($joinColumn, $meta, $this->platform);
+				$targetClass = $this->em->getClassMetadata($mapping['targetEntity']);
+				$type = $targetClass->getTypeOfColumn($targetColumn);
+				$newVal = $meta->getFieldValue($entity, $associationName);
+				if ($newVal !== NULL) {
+					$newValId = $uow->getEntityIdentifier($newVal);
+				}
+
+				switch (TRUE) {
+					case $newVal === NULL:
+						$value = NULL;
+						break;
+
+					case $targetClass->containsForeignIdentifier:
+						$value = $newValId[$targetClass->getFieldForColumn($targetColumn)];
+						break;
+
+					default:
+						$value = $newValId[$targetClass->fieldNames[$targetColumn]];
+						break;
+				}
+
+				$associations[$sourceColumn]['value'] = $value;
+				$associations[$sourceColumn]['quotedColumn'] = $quotedColumn;
+				$associations[$sourceColumn]['type'] = $type;
+			}
+		}
+
+		return $associations;
 	}
 
 
