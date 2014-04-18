@@ -14,6 +14,7 @@ use Doctrine;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Persistence\Proxy;
 use Doctrine\Common\Annotations\AnnotationException;
+use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\Type;
 use Kdyby;
 use Nette;
@@ -466,11 +467,14 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 	 * @throws \Kdyby\Doctrine\InvalidStateException
 	 * @return string
 	 */
-	public static function formatQuery($query, $params, array $types = array())
+	public static function formatQuery($query, $params, array $types = array(), AbstractPlatform $platform = NULL)
 	{
+		if ($types && !$platform) {
+			$platform = new Doctrine\DBAL\Platforms\MySqlPlatform();
+		}
 		$formattedParams = array();
 		foreach ($params as $key => $param) {
-			$formattedParams[] = static::formatParameter($param, isset($types[$key]) ? $types[$key] : NULL);
+			$formattedParams[] = static::formatParameter($param, isset($types[$key]) ? $types[$key] : NULL, $platform);
 		}
 		$params = $formattedParams;
 
@@ -513,53 +517,16 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 	/**
 	 * @param mixed $param
 	 * @param string|int|NULL $type
+	 * @param AbstractPlatform|NULL $platform
 	 * @return mixed
 	 */
-	protected static function formatParameter($param, $type = NULL)
+	protected static function formatParameter($param, $type = NULL, AbstractPlatform $platform = NULL)
 	{
-		if (is_numeric($param) && in_array($type, array(\PDO::PARAM_INT, Type::INTEGER, Type::SMALLINT, Type::FLOAT, Type::DECIMAL))) {
-			return $param;
-
-		} elseif (is_string($param) && in_array($type, array(\PDO::PARAM_STR, Type::STRING, Type::TEXT, Type::BIGINT, Type::BLOB, Type::GUID))) {
-			return "'" . addslashes($param) . "'";
-
-		} elseif (is_null($param) && in_array($type, array(\PDO::PARAM_NULL))) {
-			return "NULL";
-
-		} elseif (is_bool($param) && in_array($type, array(\PDO::PARAM_BOOL, Type::BOOLEAN))) {
-			return $param ? 'TRUE' : 'FALSE';
-
-		} elseif (is_array($param) && in_array($type, array(Doctrine\DBAL\Connection::PARAM_INT_ARRAY, Doctrine\DBAL\Connection::PARAM_STR_ARRAY, Type::TARRAY,
-				Type::SIMPLE_ARRAY, Type::JSON_ARRAY))
-		) {
-			if ($type == Type::JSON_ARRAY) {
-				return Nette\Utils\Json::encode($param);
-			} elseif ($type == Type::TARRAY) {
-				return serialize($type);
-			} elseif ($type == Type::SIMPLE_ARRAY) {
-				return implode(', ', $param);
-			}
-			$type = $type == Doctrine\DBAL\Connection::PARAM_INT_ARRAY ? Type::INTEGER : Type::STRING;
-			$formatted = array();
-			foreach ($param as $value) {
-				$formatted[] = static::formatParameter($value, $type);
-			}
-			return implode(', ', $formatted);
-
-		} elseif ($param instanceof \Datetime && in_array($type, array(Type::DATETIME, Type::DATE, Type::TIME, Type::DATETIMETZ))) {
-			$format = $type == Type::DATE ? 'Y-m-d' : ($type == Type::TIME ? 'H:i:s' : ($type == Type::DATETIMETZ ? 'Y-m-d H:i:s P' : 'Y-m-d H:i:s'));
-			/** @var \Datetime $param */
-			return "'" . $param->format($format) . "'";
-
-		} elseif ($param instanceof Kdyby\Doctrine\Geo\Element) {
-			return '"' . $param->__toString() . '"';
-
-		} elseif (is_object($param) && in_array($type, array(Type::OBJECT))) {
-			return get_class($param) . (method_exists($param, 'getId') ? '(' . $param->getId() . ')' : '');
-
-		} else {
-			return @"'$param'";
+		if ($type !== NULL && $platform) {
+			$param = TypeParameterFormatter::format($param, $type, $platform);
 		}
+
+		return SimpleParameterFormatter::format($param);
 	}
 
 
