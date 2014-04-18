@@ -239,7 +239,7 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 		$h = 'htmlspecialchars';
 		list($sql, $params, $time, $types, $source) = $query;
 
-		$parametrized = static::formatQuery($sql, (array) $params, (array) $types);
+		$parametrized = static::formatQuery($sql, (array) $params, (array) $types, $this->connection ? $this->connection->getDatabasePlatform() : NULL);
 		$s = self::highlightQuery($parametrized);
 		if ($source) {
 			$s .= self::editorLink($source[0], $source[1], $h('.../' . basename(dirname($source[0]))) . '/<b>' . $h(basename($source[0])) . '</b>');
@@ -424,7 +424,7 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 			$types = $tmpTypes;
 		}
 
-		$parametrized = static::formatQuery($query, $params, $types);
+		$parametrized = static::formatQuery($query, $params, $types, $this->connection ? $this->connection->getDatabasePlatform() : NULL);
 
 		// query
 		$s = '<p><b>Query</b></p><table><tr><td class="nette-Doctrine2Panel-sql">';
@@ -464,7 +464,9 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 	 * @param string $query
 	 * @param array $params
 	 * @param array $types
-	 * @throws \Kdyby\Doctrine\InvalidStateException
+	 * @param \Doctrine\DBAL\Platforms\AbstractPlatform $platform
+	 * @throws \Doctrine\DBAL\DBALException
+	 * @throws \Nette\Utils\RegexpException
 	 * @return string
 	 */
 	public static function formatQuery($query, $params, array $types = array(), AbstractPlatform $platform = NULL)
@@ -472,11 +474,11 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 		if ($types && !$platform) {
 			$platform = new Doctrine\DBAL\Platforms\MySqlPlatform();
 		}
+
 		$formattedParams = array();
 		foreach ($params as $key => $param) {
-			$type = isset($types[$key]) ? $types[$key] : NULL;
-			if ($type !== NULL && $platform) {
-				$param = TypeParameterFormatter::format($param, $type, $platform);
+			if (isset($types[$key]) && array_key_exists($types[$key], Type::getTypesMap())) {
+				$param = Type::getType($types[$key])->convertToDatabaseValue($param, $platform);
 			}
 
 			$formattedParams[] = SimpleParameterFormatter::format($param);
