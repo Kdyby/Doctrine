@@ -185,7 +185,7 @@ class CmsEmail
 
 	/**
 	 * @ORM\Column(type="integer")
-	 * @ORM\Id @ORM\GeneratedValue
+	 * @ORM\Id
 	 */
 	public $id;
 
@@ -196,6 +196,7 @@ class CmsEmail
 
 	/**
 	 * @ORM\OneToOne(targetEntity="CmsUser", mappedBy="email")
+	 * @ORM\JoinColumn(nullable=false)
 	 */
 	public $user;
 
