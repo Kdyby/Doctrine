@@ -50,6 +50,11 @@ class NonLockingUniqueInserter extends Nette\Object
 	 */
 	private $quotes;
 
+	/**
+	 * @var \Doctrine\ORM\UnitOfWork
+	 */
+	private $uow;
+
 
 
 	/**
@@ -61,6 +66,7 @@ class NonLockingUniqueInserter extends Nette\Object
 		$this->db = $em->getConnection();
 		$this->platform = $this->db->getDatabasePlatform();
 		$this->quotes = $em->getConfiguration()->getQuoteStrategy();
+		$this->uow = $this->em->getUnitOfWork();
 	}
 
 
@@ -253,7 +259,7 @@ class NonLockingUniqueInserter extends Nette\Object
 				$type = $targetClass->getTypeOfColumn($targetColumn);
 				$newVal = $meta->getFieldValue($entity, $associationName);
 				if ($newVal !== NULL) {
-					$newValId = $uow->getEntityIdentifier($newVal);
+					$newValId = $this->uow->getEntityIdentifier($newVal);
 				}
 
 				switch (TRUE) {
