@@ -474,7 +474,12 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 		}
 		$formattedParams = array();
 		foreach ($params as $key => $param) {
-			$formattedParams[] = static::formatParameter($param, isset($types[$key]) ? $types[$key] : NULL, $platform);
+			$type = isset($types[$key]) ? $types[$key] : NULL;
+			if ($type !== NULL && $platform) {
+				$param = TypeParameterFormatter::format($param, $type, $platform);
+			}
+
+			$formattedParams[] = SimpleParameterFormatter::format($param);
 		}
 		$params = $formattedParams;
 
@@ -510,23 +515,6 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 
 			return $m[0];
 		});
-	}
-
-
-
-	/**
-	 * @param mixed $param
-	 * @param string|int|NULL $type
-	 * @param AbstractPlatform|NULL $platform
-	 * @return mixed
-	 */
-	protected static function formatParameter($param, $type = NULL, AbstractPlatform $platform = NULL)
-	{
-		if ($type !== NULL && $platform) {
-			$param = TypeParameterFormatter::format($param, $type, $platform);
-		}
-
-		return SimpleParameterFormatter::format($param);
 	}
 
 
