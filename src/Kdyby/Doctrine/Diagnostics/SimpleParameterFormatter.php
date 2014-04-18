@@ -25,7 +25,8 @@ class SimpleParameterFormatter extends Nette\Object
 	 * @param mixed $param
 	 * @return mixed
 	 */
-	public static function format($param) {
+	public static function format($param)
+	{
 		if (is_numeric($param)) {
 			return $param;
 
