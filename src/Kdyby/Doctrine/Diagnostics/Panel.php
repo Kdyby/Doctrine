@@ -14,6 +14,7 @@ use Doctrine;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Persistence\Proxy;
 use Doctrine\Common\Annotations\AnnotationException;
+use Doctrine\DBAL\Types\Type;
 use Kdyby;
 use Nette;
 use Nette\Utils\Strings;
@@ -123,7 +124,7 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 			}
 		}
 
-		$this->queries[] = array($sql, $params, NULL, NULL, $source);
+		$this->queries[] = array($sql, $params, NULL, $types, $source);
 	}
 
 
@@ -235,9 +236,9 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 	protected function processQuery(array $query)
 	{
 		$h = 'htmlspecialchars';
-		list($sql, $params, $time, , $source) = $query;
+		list($sql, $params, $time, $types, $source) = $query;
 
-		$parametrized = static::formatQuery($sql, (array) $params);
+		$parametrized = static::formatQuery($sql, (array) $params, (array) $types);
 		$s = self::highlightQuery($parametrized);
 		if ($source) {
 			$s .= self::editorLink($source[0], $source[1], $h('.../' . basename(dirname($source[0]))) . '/<b>' . $h(basename($source[0])) . '</b>');
@@ -271,7 +272,7 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 				list($sql, $params, , , $source) = $this->failed[spl_object_hash($e)];
 
 			} else {
-				list($sql, $params, , , $source) = end($this->queries) + range(1, 5);
+				list($sql, $params, , $types, $source) = end($this->queries) + range(1, 5);
 			}
 
 			if (!$sql) {
@@ -280,7 +281,7 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 
 			return array(
 				'tab' => 'SQL',
-				'panel' => $this->dumpQuery($sql, $params, $source),
+				'panel' => $this->dumpQuery($sql, $params, $types, $source),
 			);
 
 		} elseif ($e instanceof Kdyby\Doctrine\QueryException && $e->query !== NULL) {
@@ -400,27 +401,29 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 	/**
 	 * @param string $query
 	 * @param array|Doctrine\Common\Collections\ArrayCollection $params
+	 * @param array $types
 	 * @param string $source
 	 *
 	 * @return array
 	 */
-	protected function dumpQuery($query, $params, $source = NULL)
+	protected function dumpQuery($query, $params, array $types = array(), $source = NULL)
 	{
-		$h = 'htmlSpecialChars';
-
 		if ($params instanceof ArrayCollection) {
 			$tmp = array();
+			$tmpTypes = array();
 			foreach ($params as $key => $param) {
 				if ($param instanceof Doctrine\ORM\Query\Parameter) {
+					$tmpTypes[$param->getName()] = $param->getType();
 					$tmp[$param->getName()] = $param->getValue();
 					continue;
 				}
 				$tmp[$key] = $param;
 			}
 			$params = $tmp;
+			$types = $tmpTypes;
 		}
 
-		$parametrized = static::formatQuery($query, $params);
+		$parametrized = static::formatQuery($query, $params, $types);
 
 		// query
 		$s = '<p><b>Query</b></p><table><tr><td class="nette-Doctrine2Panel-sql">';
@@ -459,12 +462,17 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 	/**
 	 * @param string $query
 	 * @param array $params
+	 * @param array $types
 	 * @throws \Kdyby\Doctrine\InvalidStateException
 	 * @return string
 	 */
-	public static function formatQuery($query, $params)
+	public static function formatQuery($query, $params, array $types = array())
 	{
-		$params = array_map(array(get_called_class(), 'formatParameter'), $params);
+		$formattedParams = array();
+		foreach ($params as $key => $param) {
+			$formattedParams[] = static::formatParameter($param, isset($types[$key]) ? $types[$key] : NULL);
+		}
+		$params = $formattedParams;
 
 		try {
 			list($query, $params, $types) = \Doctrine\DBAL\SQLParserUtils::expandListParameters($query, $params, array());
@@ -503,34 +511,50 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 
 
 	/**
-	 * @param $param
+	 * @param mixed $param
+	 * @param string|int|NULL $type
 	 * @return mixed
 	 */
-	protected static function formatParameter($param)
+	protected static function formatParameter($param, $type = NULL)
 	{
-		if (is_numeric($param)) {
+		if (is_numeric($param) && in_array($type, array(\PDO::PARAM_INT, Type::INTEGER, Type::SMALLINT, Type::FLOAT, Type::DECIMAL))) {
 			return $param;
 
-		} elseif (is_string($param)) {
+		} elseif (is_string($param) && in_array($type, array(\PDO::PARAM_STR, Type::STRING, Type::TEXT, Type::BIGINT, Type::BLOB, Type::GUID))) {
 			return "'" . addslashes($param) . "'";
 
-		} elseif (is_null($param)) {
+		} elseif (is_null($param) && in_array($type, array(\PDO::PARAM_NULL))) {
 			return "NULL";
 
-		} elseif (is_bool($param)) {
+		} elseif (is_bool($param) && in_array($type, array(\PDO::PARAM_BOOL, Type::BOOLEAN))) {
 			return $param ? 'TRUE' : 'FALSE';
 
-		} elseif (is_array($param)) {
-			return implode(', ', array_map(array(get_called_class(), 'formatParameter'), $param));
+		} elseif (is_array($param) && in_array($type, array(Doctrine\DBAL\Connection::PARAM_INT_ARRAY, Doctrine\DBAL\Connection::PARAM_STR_ARRAY, Type::TARRAY,
+				Type::SIMPLE_ARRAY, Type::JSON_ARRAY))
+		) {
+			if ($type == Type::JSON_ARRAY) {
+				return Nette\Utils\Json::encode($param);
+			} elseif ($type == Type::TARRAY) {
+				return serialize($type);
+			} elseif ($type == Type::SIMPLE_ARRAY) {
+				return implode(', ', $param);
+			}
+			$type = $type == Doctrine\DBAL\Connection::PARAM_INT_ARRAY ? Type::INTEGER : Type::STRING;
+			$formatted = array();
+			foreach ($param as $value) {
+				$formatted[] = static::formatParameter($value, $type);
+			}
+			return implode(', ', $formatted);
 
-		} elseif ($param instanceof \Datetime) {
+		} elseif ($param instanceof \Datetime && in_array($type, array(Type::DATETIME, Type::DATE, Type::TIME, Type::DATETIMETZ))) {
+			$format = $type == Type::DATE ? 'Y-m-d' : ($type == Type::TIME ? 'H:i:s' : ($type == Type::DATETIMETZ ? 'Y-m-d H:i:s P' : 'Y-m-d H:i:s'));
 			/** @var \Datetime $param */
-			return "'" . $param->format('Y-m-d H:i:s') . "'";
+			return "'" . $param->format($format) . "'";
 
 		} elseif ($param instanceof Kdyby\Doctrine\Geo\Element) {
 			return '"' . $param->__toString() . '"';
 
-		} elseif (is_object($param)) {
+		} elseif (is_object($param) && in_array($type, array(Type::OBJECT))) {
 			return get_class($param) . (method_exists($param, 'getId') ? '(' . $param->getId() . ')' : '');
 
 		} else {
