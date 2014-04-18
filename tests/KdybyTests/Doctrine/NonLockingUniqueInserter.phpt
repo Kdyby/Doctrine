@@ -78,18 +78,21 @@ class NonLockingUniqueInserterTest extends KdybyTests\Doctrine\ORMTestCase
 		$em->flush();
 
 		$user->email = new CmsEmail();
+		$user->email->id = 1;
 		$user->email->user = $user;
 		$user->email->email = "filip@prochazka.su";
 
-		/** @var CmsUser $user */
-		$user = $em->safePersist($user->email);
+		/** @var CmsEmail $email */
+		$email = $em->safePersist($user->email);
+		Assert::true($email instanceof CmsEmail);
+		$id = $email->id;
 
 		$em->clear();
 
 		/** @var CmsEmail $email */
-		$email = $em->getDao(__NAMESPACE__ . '\CmsEmail')->find($user->id);
-		Assert::notSame(NULL, $email->user);
-		Assert::same($user->id, $email->user->id);
+		$email = $em->getDao(__NAMESPACE__ . '\CmsEmail')->find($id);
+		Assert::true($email instanceof CmsEmail);
+		Assert::true($email->user instanceof CmsUser);
 	}
 
 }

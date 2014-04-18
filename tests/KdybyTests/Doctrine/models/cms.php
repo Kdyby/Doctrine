@@ -185,7 +185,7 @@ class CmsEmail
 
 	/**
 	 * @ORM\Column(type="integer")
-	 * @ORM\Id @ORM\GeneratedValue
+	 * @ORM\Id
 	 */
 	public $id;
 
