@@ -14,6 +14,8 @@ use Doctrine;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Persistence\Proxy;
 use Doctrine\Common\Annotations\AnnotationException;
+use Doctrine\DBAL\Platforms\AbstractPlatform;
+use Doctrine\DBAL\Types\Type;
 use Kdyby;
 use Nette;
 use Nette\Utils\Strings;
@@ -123,7 +125,7 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 			}
 		}
 
-		$this->queries[] = array($sql, $params, NULL, NULL, $source);
+		$this->queries[] = array($sql, $params, NULL, $types, $source);
 	}
 
 
@@ -235,9 +237,9 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 	protected function processQuery(array $query)
 	{
 		$h = 'htmlspecialchars';
-		list($sql, $params, $time, , $source) = $query;
+		list($sql, $params, $time, $types, $source) = $query;
 
-		$parametrized = static::formatQuery($sql, (array) $params);
+		$parametrized = static::formatQuery($sql, (array) $params, (array) $types);
 		$s = self::highlightQuery($parametrized);
 		if ($source) {
 			$s .= self::editorLink($source[0], $source[1], $h('.../' . basename(dirname($source[0]))) . '/<b>' . $h(basename($source[0])) . '</b>');
@@ -271,7 +273,7 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 				list($sql, $params, , , $source) = $this->failed[spl_object_hash($e)];
 
 			} else {
-				list($sql, $params, , , $source) = end($this->queries) + range(1, 5);
+				list($sql, $params, , $types, $source) = end($this->queries) + range(1, 5);
 			}
 
 			if (!$sql) {
@@ -280,7 +282,7 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 
 			return array(
 				'tab' => 'SQL',
-				'panel' => $this->dumpQuery($sql, $params, $source),
+				'panel' => $this->dumpQuery($sql, $params, $types, $source),
 			);
 
 		} elseif ($e instanceof Kdyby\Doctrine\QueryException && $e->query !== NULL) {
@@ -400,27 +402,29 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 	/**
 	 * @param string $query
 	 * @param array|Doctrine\Common\Collections\ArrayCollection $params
+	 * @param array $types
 	 * @param string $source
 	 *
 	 * @return array
 	 */
-	protected function dumpQuery($query, $params, $source = NULL)
+	protected function dumpQuery($query, $params, array $types = array(), $source = NULL)
 	{
-		$h = 'htmlSpecialChars';
-
 		if ($params instanceof ArrayCollection) {
 			$tmp = array();
+			$tmpTypes = array();
 			foreach ($params as $key => $param) {
 				if ($param instanceof Doctrine\ORM\Query\Parameter) {
+					$tmpTypes[$param->getName()] = $param->getType();
 					$tmp[$param->getName()] = $param->getValue();
 					continue;
 				}
 				$tmp[$key] = $param;
 			}
 			$params = $tmp;
+			$types = $tmpTypes;
 		}
 
-		$parametrized = static::formatQuery($query, $params);
+		$parametrized = static::formatQuery($query, $params, $types);
 
 		// query
 		$s = '<p><b>Query</b></p><table><tr><td class="nette-Doctrine2Panel-sql">';
@@ -459,12 +463,25 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 	/**
 	 * @param string $query
 	 * @param array $params
+	 * @param array $types
 	 * @throws \Kdyby\Doctrine\InvalidStateException
 	 * @return string
 	 */
-	public static function formatQuery($query, $params)
+	public static function formatQuery($query, $params, array $types = array(), AbstractPlatform $platform = NULL)
 	{
-		$params = array_map(array(get_called_class(), 'formatParameter'), $params);
+		if ($types && !$platform) {
+			$platform = new Doctrine\DBAL\Platforms\MySqlPlatform();
+		}
+		$formattedParams = array();
+		foreach ($params as $key => $param) {
+			$type = isset($types[$key]) ? $types[$key] : NULL;
+			if ($type !== NULL && $platform) {
+				$param = TypeParameterFormatter::format($param, $type, $platform);
+			}
+
+			$formattedParams[] = SimpleParameterFormatter::format($param);
+		}
+		$params = $formattedParams;
 
 		try {
 			list($query, $params, $types) = \Doctrine\DBAL\SQLParserUtils::expandListParameters($query, $params, array());
@@ -498,44 +515,6 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 
 			return $m[0];
 		});
-	}
-
-
-
-	/**
-	 * @param $param
-	 * @return mixed
-	 */
-	protected static function formatParameter($param)
-	{
-		if (is_numeric($param)) {
-			return $param;
-
-		} elseif (is_string($param)) {
-			return "'" . addslashes($param) . "'";
-
-		} elseif (is_null($param)) {
-			return "NULL";
-
-		} elseif (is_bool($param)) {
-			return $param ? 'TRUE' : 'FALSE';
-
-		} elseif (is_array($param)) {
-			return implode(', ', array_map(array(get_called_class(), 'formatParameter'), $param));
-
-		} elseif ($param instanceof \Datetime) {
-			/** @var \Datetime $param */
-			return "'" . $param->format('Y-m-d H:i:s') . "'";
-
-		} elseif ($param instanceof Kdyby\Doctrine\Geo\Element) {
-			return '"' . $param->__toString() . '"';
-
-		} elseif (is_object($param)) {
-			return get_class($param) . (method_exists($param, 'getId') ? '(' . $param->getId() . ')' : '');
-
-		} else {
-			return @"'$param'";
-		}
 	}
 
 
