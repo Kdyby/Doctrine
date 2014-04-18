@@ -81,6 +81,11 @@ class ResultSet extends Nette\Object implements \Countable, \IteratorAggregate
 	 */
 	private $useOutputWalkers;
 
+	/**
+	 * @var \Iterator
+	 */
+	private $iterator;
+
 
 
 	/**
@@ -109,6 +114,8 @@ class ResultSet extends Nette\Object implements \Countable, \IteratorAggregate
 		}
 
 		$this->fetchJoinCollection = (bool) $fetchJoinCollection;
+		$this->iterator = NULL;
+
 		return $this;
 	}
 
@@ -126,6 +133,7 @@ class ResultSet extends Nette\Object implements \Countable, \IteratorAggregate
 		}
 
 		$this->useOutputWalkers = $useOutputWalkers;
+		$this->iterator = NULL;
 
 		return $this;
 	}
@@ -179,6 +187,7 @@ class ResultSet extends Nette\Object implements \Countable, \IteratorAggregate
 			$dql .= implode(', ', $sorting);
 			$this->query->setDQL($dql);
 		}
+		$this->iterator = NULL;
 
 		return $this;
 	}
@@ -194,8 +203,11 @@ class ResultSet extends Nette\Object implements \Countable, \IteratorAggregate
 	 */
 	public function applyPaging($offset, $limit)
 	{
-		$this->query->setFirstResult($offset);
-		$this->query->setMaxResults($limit);
+		if ($this->query->getFirstResult() != $offset || $this->query->getMaxResults() != $limit) {
+			$this->query->setFirstResult($offset);
+			$this->query->setMaxResults($limit);
+			$this->iterator = NULL;
+		}
 
 		return $this;
 	}
@@ -261,14 +273,20 @@ class ResultSet extends Nette\Object implements \Countable, \IteratorAggregate
 	 */
 	public function getIterator($hydrationMode = ORM\AbstractQuery::HYDRATE_OBJECT)
 	{
+		if ($this->iterator !== NULL) {
+			return $this->iterator;
+		}
+
 		try {
 			$this->query->setHydrationMode($hydrationMode);
 
 			if ($this->query->getMaxResults() > 0 || $this->query->getFirstResult() > 0) {
-				return $this->getPaginatedQuery()->getIterator();
+				$this->iterator = $this->getPaginatedQuery()->getIterator();
+			} else {
+				$this->iterator = new \ArrayIterator($this->query->getResult(NULL));
 			}
 
-			return new \ArrayIterator($this->query->getResult(NULL));
+			return $this->iterator;
 
 		} catch (ORMException $e) {
 			throw new QueryException($e, $this->query, $e->getMessage());
@@ -282,7 +300,7 @@ class ResultSet extends Nette\Object implements \Countable, \IteratorAggregate
 	 */
 	public function count()
 	{
-		return $this->getTotalCount();
+		return $this->getIterator()->count();
 	}
 
 
