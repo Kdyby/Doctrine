@@ -96,7 +96,12 @@ class ObjectHydrator extends \Doctrine\ORM\Internal\Hydration\ObjectHydrator
 			$id = array();
 			foreach ($class->identifier as $idProperty) {
 				if (!isset($this->lastRowData[$dqlAlias][$idProperty])) {
-					continue 2;
+					if (!isset($class->associationMappings[$idProperty])) {
+						continue 2;
+
+					} elseif (!isset($this->lastRowData[$dqlAlias][$idProperty = $class->getSingleAssociationJoinColumnName($idProperty)])) {
+						continue 2;
+					}
 				}
 
 				$id[$idProperty] = $this->lastRowData[$dqlAlias][$idProperty];
