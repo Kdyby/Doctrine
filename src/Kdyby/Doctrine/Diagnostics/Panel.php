@@ -239,8 +239,7 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 		$h = 'htmlspecialchars';
 		list($sql, $params, $time, $types, $source) = $query;
 
-		$parametrized = static::formatQuery($sql, (array) $params, (array) $types, $this->connection ? $this->connection->getDatabasePlatform() : NULL);
-		$s = self::highlightQuery($parametrized);
+		$s = self::highlightQuery(static::formatQuery($sql, (array) $params, (array) $types, $this->connection ? $this->connection->getDatabasePlatform() : NULL));
 		if ($source) {
 			$s .= self::editorLink($source[0], $source[1], $h('.../' . basename(dirname($source[0]))) . '/<b>' . $h(basename($source[0])) . '</b>');
 		}
@@ -262,6 +261,8 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 	public function renderQueryException($e)
 	{
 		if ($e instanceof \PDOException && count($this->queries)) {
+			$types = $params = array();
+
 			if ($this->connection !== NULL) {
 				if (!$e instanceof Kdyby\Doctrine\DBALException || $e->connection !== $this->connection) {
 					return NULL;
@@ -360,14 +361,14 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 		} elseif ($e instanceof Kdyby\Doctrine\DBALException && $e->query) {
 			return array(
 				'tab' => 'SQL',
-				'panel' => self::highlightQuery($e->query, $e->params),
+				'panel' => self::highlightQuery(static::formatQuery($e->query, $e->params, array())),
 			);
 
 		} elseif ($e instanceof Doctrine\ORM\Query\QueryException) {
 			if (($prev = $e->getPrevious()) && preg_match('~^(SELECT|INSERT|UPDATE|DELETE)\s+.*~i', $prev->getMessage())) {
 				return array(
 					'tab' => 'DQL',
-					'panel' => self::highlightQuery($prev->getMessage()),
+					'panel' => self::highlightQuery(static::formatQuery($prev->getMessage(), array(), array())),
 				);
 			}
 
@@ -390,7 +391,7 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 
 			return isset($sql) ? array(
 				'tab' => 'SQL',
-				'panel' => self::highlightQuery($sql, $params),
+				'panel' => self::highlightQuery(static::formatQuery($sql, $params, array())),
 			) : NULL;
 		}
 
@@ -424,11 +425,9 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 			$types = $tmpTypes;
 		}
 
-		$parametrized = static::formatQuery($query, $params, $types, $this->connection ? $this->connection->getDatabasePlatform() : NULL);
-
 		// query
 		$s = '<p><b>Query</b></p><table><tr><td class="nette-Doctrine2Panel-sql">';
-		$s .= self::highlightQuery($parametrized);
+		$s .= self::highlightQuery(static::formatQuery($query, $params, $types, $this->connection ? $this->connection->getDatabasePlatform() : NULL));
 		$s .= '</td></tr></table>';
 
 		$e = NULL;
@@ -471,8 +470,24 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 	 */
 	public static function formatQuery($query, $params, array $types = array(), AbstractPlatform $platform = NULL)
 	{
-		if ($types && !$platform) {
+		if (!$platform) {
 			$platform = new Doctrine\DBAL\Platforms\MySqlPlatform();
+		}
+
+		if (!$types) {
+			foreach ($params as $key => $param) {
+				if (is_array($param)) {
+					$types[$key] = Doctrine\DBAL\Connection::PARAM_STR_ARRAY;
+
+				} else {
+					$types[$key] = 'string';
+				}
+			}
+		}
+
+		try {
+			list($query, $params, $types) = \Doctrine\DBAL\SQLParserUtils::expandListParameters($query, $params, $types);
+		} catch (Doctrine\DBAL\SQLParserUtilsException $e) {
 		}
 
 		$formattedParams = array();
@@ -484,10 +499,6 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 			$formattedParams[] = SimpleParameterFormatter::format($param);
 		}
 		$params = $formattedParams;
-
-		try {
-			list($query, $params, $types) = \Doctrine\DBAL\SQLParserUtils::expandListParameters($query, $params, array());
-		} catch (Doctrine\DBAL\SQLParserUtilsException $e) { }
 
 		if (Nette\Utils\Validators::isList($params)) {
 			$parts = explode('?', $query);
@@ -665,6 +676,9 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 	/**
 	 * Returns link to editor.
 	 * @author David Grudl
+	 * @param string $file
+	 * @param string $line
+	 * @param string $text
 	 * @return Nette\Utils\Html
 	 */
 	private static function editorLink($file, $line, $text = NULL)
