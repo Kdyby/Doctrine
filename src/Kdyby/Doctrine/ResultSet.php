@@ -162,29 +162,50 @@ class ResultSet extends Nette\Object implements \Countable, \IteratorAggregate
 
 	/**
 	 * @param string|array $columns
-	 *
+	 * @param bool $replace
 	 * @throws InvalidStateException
 	 * @return ResultSet
 	 */
-	public function applySorting($columns)
+	public function applySorting($columns, $replace = FALSE)
 	{
 		if ($this->paginatedQuery !== NULL) {
 			throw new InvalidStateException("Cannot modify result set, that was already fetched from storage.");
 		}
 
 		$sorting = array();
-		foreach (is_array($columns) ? $columns : func_get_args() as $column) {
-			$lColumn = Strings::lower($column);
-			if (!Strings::endsWith($lColumn, ' desc') && !Strings::endsWith($lColumn, ' asc')) {
+		foreach (is_array($columns) ? $columns : func_get_args() as $name => $column) {
+			if (is_bool($column)) {
+				continue; // skip the $replace
+			}
+
+			if (!is_numeric($name)) {
+				$column = $name . ' ' . $column;
+			}
+
+			if (!preg_match('~\s+(DESC|ASC)\s*\z~i', $column = trim($column))) {
 				$column .= ' ASC';
 			}
 			$sorting[] = $column;
 		}
 
+		$replace = is_array($columns) ? $replace : func_get_arg(func_num_args() - 1);
+		if (!is_bool($replace)) {
+			$replace = FALSE;
+		}
+
 		if ($sorting) {
-			$dql = $this->query->getDQL();
-			$dql .= !$this->query->contains('ORDER BY') ? ' ORDER BY ' : ', ';
-			$dql .= implode(', ', $sorting);
+			$dql = Strings::normalize($this->query->getDQL());
+
+			if (!preg_match('~^(.+)\\s+(ORDER BY\\s+((?!FROM|WHERE|ORDER\\s+BY|GROUP\\sBY|JOIN).)*)\\z~si', $dql, $m)) {
+				$dql .= ' ORDER BY ' . implode(', ', $sorting);
+
+			} elseif ($replace) {
+				$dql = $m[1] . ' ORDER BY ' . implode(', ', $sorting);
+
+			} else {
+				$dql .= ', ' . implode(', ', $sorting);
+			}
+
 			$this->query->setDQL($dql);
 		}
 		$this->iterator = NULL;
