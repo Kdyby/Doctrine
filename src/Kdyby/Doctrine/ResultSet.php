@@ -161,12 +161,34 @@ class ResultSet extends Nette\Object implements \Countable, \IteratorAggregate
 
 
 	/**
-	 * @param string|array $columns
-	 * @param bool $replace
+	 * Removes ORDER BY clause that is not inside subquery.
+	 *
 	 * @throws InvalidStateException
 	 * @return ResultSet
 	 */
-	public function applySorting($columns, $replace = FALSE)
+	public function clearSorting()
+	{
+		if ($this->paginatedQuery !== NULL) {
+			throw new InvalidStateException("Cannot modify result set, that was already fetched from storage.");
+		}
+
+		$dql = Strings::normalize($this->query->getDQL());
+		if (preg_match('~^(.+)\\s+(ORDER BY\\s+((?!FROM|WHERE|ORDER\\s+BY|GROUP\\sBY|JOIN).)*)\\z~si', $dql, $m)) {
+			$dql = $m[1];
+		}
+		$this->query->setDQL(trim($dql));
+
+		return $this;
+	}
+
+
+
+	/**
+	 * @param string|array $columns
+	 * @throws InvalidStateException
+	 * @return ResultSet
+	 */
+	public function applySorting($columns)
 	{
 		if ($this->paginatedQuery !== NULL) {
 			throw new InvalidStateException("Cannot modify result set, that was already fetched from storage.");
@@ -174,10 +196,6 @@ class ResultSet extends Nette\Object implements \Countable, \IteratorAggregate
 
 		$sorting = array();
 		foreach (is_array($columns) ? $columns : func_get_args() as $name => $column) {
-			if (is_bool($column)) {
-				continue; // skip the $replace
-			}
-
 			if (!is_numeric($name)) {
 				$column = $name . ' ' . $column;
 			}
@@ -188,25 +206,17 @@ class ResultSet extends Nette\Object implements \Countable, \IteratorAggregate
 			$sorting[] = $column;
 		}
 
-		$replace = is_array($columns) ? $replace : func_get_arg(func_num_args() - 1);
-		if (!is_bool($replace)) {
-			$replace = FALSE;
-		}
-
 		if ($sorting) {
 			$dql = Strings::normalize($this->query->getDQL());
 
 			if (!preg_match('~^(.+)\\s+(ORDER BY\\s+((?!FROM|WHERE|ORDER\\s+BY|GROUP\\sBY|JOIN).)*)\\z~si', $dql, $m)) {
-				$dql .= ' ORDER BY ' . implode(', ', $sorting);
-
-			} elseif ($replace) {
-				$dql = $m[1] . ' ORDER BY ' . implode(', ', $sorting);
+				$dql .= ' ORDER BY ';
 
 			} else {
-				$dql .= ', ' . implode(', ', $sorting);
+				$dql .= ', ';
 			}
 
-			$this->query->setDQL($dql);
+			$this->query->setDQL($dql . implode(', ', $sorting));
 		}
 		$this->iterator = NULL;
 

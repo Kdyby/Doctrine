@@ -80,6 +80,28 @@ class ResultSetTest extends KdybyTests\Doctrine\ORMTestCase
 
 
 
+	public function testClearSorting()
+	{
+		$basicSelect = "SELECT u\n FROM " . __NAMESPACE__ . '\CmsUser u';
+
+		$query = new Doctrine\ORM\Query($this->createMemoryManager());
+		$resultSet = new ResultSet($query);
+
+		$query->setDQL($basicSelect);
+		$resultSet->clearSorting();
+		Assert::same($basicSelect, $query->getDQL());
+
+		$query->setDQL($basicSelect . ' ORDER BY u.name ASC');
+		$resultSet->clearSorting();
+		Assert::same($basicSelect, $query->getDQL());
+
+		$query->setDQL($basicSelect . ' ORDER BY u.name ASC, u.status DESC');
+		$resultSet->clearSorting();
+		Assert::same($basicSelect, $query->getDQL());
+	}
+
+
+
 	public function testApplySorting()
 	{
 		$query = new Doctrine\ORM\Query($this->createMemoryManager());
@@ -96,11 +118,28 @@ class ResultSetTest extends KdybyTests\Doctrine\ORMTestCase
 
 		$resultSet->applySorting('u.status DESC', 'u.name ASC');
 		Assert::same($basicSelect . ' ORDER BY u.status DESC, u.name ASC', $query->getDQL());
+	}
 
-		$query->setDQL($basicSelect . ' ORDER BY u.status DESC');
 
-		$resultSet->applySorting('u.name ASC', TRUE);
-		Assert::same($basicSelect . ' ORDER BY u.name ASC', $query->getDQL());
+
+	public function testClearSorting_subquery()
+	{
+		$basicSelect = "SELECT u,\n (SELECT a FROM " . __NAMESPACE__ . '\CmsArticle ORDER BY a.topic ASC) FROM ' . __NAMESPACE__ . '\CmsUser u';
+
+		$query = new Doctrine\ORM\Query($this->createMemoryManager());
+		$resultSet = new ResultSet($query);
+
+		$query->setDQL($basicSelect);
+		$resultSet->clearSorting();
+		Assert::same($basicSelect, $query->getDQL());
+
+		$query->setDQL($basicSelect . ' ORDER BY u.name ASC');
+		$resultSet->clearSorting();
+		Assert::same($basicSelect, $query->getDQL());
+
+		$query->setDQL($basicSelect . ' ORDER BY u.name ASC, u.status DESC');
+		$resultSet->clearSorting();
+		Assert::same($basicSelect, $query->getDQL());
 	}
 
 
@@ -121,11 +160,6 @@ class ResultSetTest extends KdybyTests\Doctrine\ORMTestCase
 
 		$resultSet->applySorting('u.status DESC', 'u.name ASC');
 		Assert::same($basicSelect . ' ORDER BY u.status DESC, u.name ASC', $query->getDQL());
-
-		$query->setDQL($basicSelect . ' ORDER BY u.status DESC');
-
-		$resultSet->applySorting('u.name ASC', TRUE);
-		Assert::same($basicSelect . ' ORDER BY u.name ASC', $query->getDQL());
 	}
 
 }
