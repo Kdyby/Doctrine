@@ -56,6 +56,8 @@ class ValidateSchemaCommand extends Doctrine\ORM\Tools\Console\Command\ValidateS
 		if (!$this->getDefinition()->hasOption('skip-sync')) {
 			$this->addOption('skip-sync', null, InputOption::VALUE_NONE, 'Skip checking if the mapping is in sync with the database');
 		}
+
+		$this->addOption('debug-mode', NULL, InputOption::VALUE_OPTIONAL, "Force Tracy debug mode", TRUE);
 	}
 
 
@@ -63,8 +65,8 @@ class ValidateSchemaCommand extends Doctrine\ORM\Tools\Console\Command\ValidateS
 	protected function initialize(InputInterface $input, OutputInterface $output)
 	{
 		parent::initialize($input, $output);
+		Debugger::$productionMode = !$input->getOption('debug-mode');
 		$this->cacheCleaner->invalidate();
-		Debugger::$productionMode = FALSE;
 	}
 
 

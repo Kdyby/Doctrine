@@ -14,6 +14,7 @@ use Doctrine;
 use Kdyby;
 use Nette;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Tracy\Debugger;
 
@@ -44,11 +45,19 @@ class GenerateEntitiesCommand extends Doctrine\ORM\Tools\Console\Command\Generat
 
 
 
+	protected function configure()
+	{
+		parent::configure();
+		$this->addOption('debug-mode', NULL, InputOption::VALUE_OPTIONAL, "Force Tracy debug mode", TRUE);
+	}
+
+
+
 	protected function initialize(InputInterface $input, OutputInterface $output)
 	{
 		parent::initialize($input, $output);
+		Debugger::$productionMode = !$input->getOption('debug-mode');
 		$this->cacheCleaner->invalidate();
-		Debugger::$productionMode = FALSE;
 	}
 
 }
