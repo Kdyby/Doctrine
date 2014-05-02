@@ -104,7 +104,7 @@ Now we care only about method `::getClassName()`, because we will use it right a
 There is no repository
 ----------------------
 
-Why not? Because there is now only a DAO (shortcut for Data-Access-Object). It extends the repository and adds some cool features.
+Why not? Because there is now a DAO (shortcut for Data-Access-Object). It extends the repository and adds some cool features.
 
 ```php
 $articles = $entityManager->getDao(App\Article::getClassName());
@@ -117,19 +117,55 @@ $article = $articles->find(1);
 echo $article->title; // "The Tigger Movie"
 ```
 
-The DAO should completely replace the `EntityManager` in your model classes or presenters, it's just not needed anymore.
+If you're prototyping, you can do a lot of work with just a DAO of your entity.
 
 
 Configuring services
 --------------------
 
-If you're not supposed to pass the `EntityManager` to the model classes, how can you use it? Simply inject directly the DAO!
+The best practise for getting a DAO is to pass `EntityManager` to your service and get the DAO from it.
 
 ```yml
 services:
-	articles: App\Articles(@doctrine.dao(App\Article))
+	- App\Articles()
+```
+
+```php
+class Articles extends Nette\Object
+{
+
+	private $em;
+	private $articlesDao;
+	
+	public function __construct(Kdyby\Doctrine\EntityManager $em)
+	{
+		$this->em = $em;
+		$this->articlesDao = $em->getDao(App\Article::class);
+		// $this->articlesDao = $em->getDao(App\Article::getClassName()); // for older PHP
+	}
+	
+	
+	public function publish(App\Article $article)
+	{
+		// validate that the article has title and content, or whatever you want to validate here
+		$article->published = TRUE;
+		$this->em->persist($article);
+		// don't forget to call $em->flush() in your presenter
+	}
+
+}
+```
+
+Passing the `EntityManager` and getting DAO from it it's better, because the refactoring is much simpler and you get to see all the usaged of your entity.
+
+If you wanna, you can pass just the DAO object
+
+```yml
+services:
+	- App\Articles(@doctrine.dao(App\Article))
 ```
 
 This stands for "create a service, that will be instance of `App\Articles` and pass it DAO of entity `App\Article`".
 
+But it's generally better to pass EntityManager, so you write less configuration and more PHP code.
 
