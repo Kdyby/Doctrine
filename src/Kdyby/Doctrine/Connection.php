@@ -14,9 +14,14 @@ use Doctrine;
 use Doctrine\Common\EventManager;
 use Kdyby;
 use Nette;
+use Nette\Utils\ObjectMixin;
 use PDO;
 
 
+
+if (!class_exists('Nette\Utils\ObjectMixin')) {
+	class_alias('Nette\ObjectMixin', 'Nette\Utils\ObjectMixin');
+}
 
 /**
  * @author Filip Procházka <filip@prochazka.su>
@@ -302,7 +307,7 @@ class Connection extends Doctrine\DBAL\Connection
 	 */
 	public function __call($name, $args)
 	{
-		return Nette\ObjectMixin::call($this, $name, $args);
+		return ObjectMixin::call($this, $name, $args);
 	}
 
 
@@ -318,7 +323,7 @@ class Connection extends Doctrine\DBAL\Connection
 	 */
 	public static function __callStatic($name, $args)
 	{
-		return Nette\ObjectMixin::callStatic(get_called_class(), $name, $args);
+		return ObjectMixin::callStatic(get_called_class(), $name, $args);
 	}
 
 
@@ -340,9 +345,9 @@ class Connection extends Doctrine\DBAL\Connection
 			list($class, $name) = explode('::', $name);
 		}
 		if ($callback === NULL) {
-			return Nette\ObjectMixin::getExtensionMethod($class, $name);
+			return ObjectMixin::getExtensionMethod($class, $name);
 		} else {
-			Nette\ObjectMixin::setExtensionMethod($class, $name, $callback);
+			ObjectMixin::setExtensionMethod($class, $name, $callback);
 		}
 	}
 
@@ -358,7 +363,7 @@ class Connection extends Doctrine\DBAL\Connection
 	 */
 	public function &__get($name)
 	{
-		return Nette\ObjectMixin::get($this, $name);
+		return ObjectMixin::get($this, $name);
 	}
 
 
@@ -374,7 +379,7 @@ class Connection extends Doctrine\DBAL\Connection
 	 */
 	public function __set($name, $value)
 	{
-		Nette\ObjectMixin::set($this, $name, $value);
+		ObjectMixin::set($this, $name, $value);
 	}
 
 
@@ -388,7 +393,7 @@ class Connection extends Doctrine\DBAL\Connection
 	 */
 	public function __isset($name)
 	{
-		return Nette\ObjectMixin::has($this, $name);
+		return ObjectMixin::has($this, $name);
 	}
 
 
@@ -403,7 +408,7 @@ class Connection extends Doctrine\DBAL\Connection
 	 */
 	public function __unset($name)
 	{
-		Nette\ObjectMixin::remove($this, $name);
+		ObjectMixin::remove($this, $name);
 	}
 
 }

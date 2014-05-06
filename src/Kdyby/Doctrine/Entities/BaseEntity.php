@@ -14,7 +14,6 @@ use Doctrine;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Nette;
-use Nette\ObjectMixin;
 use Kdyby;
 use Kdyby\Doctrine\MemberAccessException;
 use Kdyby\Doctrine\UnexpectedValueException;

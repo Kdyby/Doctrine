@@ -17,9 +17,13 @@ use Doctrine\ORM\NonUniqueResultException;
 use Kdyby;
 use Kdyby\Persistence;
 use Nette;
-use Nette\Utils\Arrays;
+use Nette\Utils\ObjectMixin;
 
 
+
+if (!class_exists('Nette\Utils\ObjectMixin')) {
+	class_alias('Nette\ObjectMixin', 'Nette\Utils\ObjectMixin');
+}
 
 /**
  * This class is an extension to EntityRepository and should help you with prototyping.
@@ -400,7 +404,7 @@ class EntityRepository extends Doctrine\ORM\EntityRepository implements Persiste
 			return parent::__call($name, $args);
 		}
 
-		return Nette\ObjectMixin::call($this, $name, $args);
+		return ObjectMixin::call($this, $name, $args);
 	}
 
 
@@ -416,7 +420,7 @@ class EntityRepository extends Doctrine\ORM\EntityRepository implements Persiste
 	 */
 	public static function __callStatic($name, $args)
 	{
-		return Nette\ObjectMixin::callStatic(get_called_class(), $name, $args);
+		return ObjectMixin::callStatic(get_called_class(), $name, $args);
 	}
 
 
@@ -438,9 +442,9 @@ class EntityRepository extends Doctrine\ORM\EntityRepository implements Persiste
 			list($class, $name) = explode('::', $name);
 		}
 		if ($callback === NULL) {
-			return Nette\ObjectMixin::getExtensionMethod($class, $name);
+			return ObjectMixin::getExtensionMethod($class, $name);
 		} else {
-			Nette\ObjectMixin::setExtensionMethod($class, $name, $callback);
+			ObjectMixin::setExtensionMethod($class, $name, $callback);
 		}
 	}
 
@@ -456,7 +460,7 @@ class EntityRepository extends Doctrine\ORM\EntityRepository implements Persiste
 	 */
 	public function &__get($name)
 	{
-		return Nette\ObjectMixin::get($this, $name);
+		return ObjectMixin::get($this, $name);
 	}
 
 
@@ -472,7 +476,7 @@ class EntityRepository extends Doctrine\ORM\EntityRepository implements Persiste
 	 */
 	public function __set($name, $value)
 	{
-		Nette\ObjectMixin::set($this, $name, $value);
+		ObjectMixin::set($this, $name, $value);
 	}
 
 
@@ -486,7 +490,7 @@ class EntityRepository extends Doctrine\ORM\EntityRepository implements Persiste
 	 */
 	public function __isset($name)
 	{
-		return Nette\ObjectMixin::has($this, $name);
+		return ObjectMixin::has($this, $name);
 	}
 
 
@@ -501,7 +505,7 @@ class EntityRepository extends Doctrine\ORM\EntityRepository implements Persiste
 	 */
 	public function __unset($name)
 	{
-		Nette\ObjectMixin::remove($this, $name);
+		ObjectMixin::remove($this, $name);
 	}
 
 }
