@@ -1,5 +1,10 @@
 language: php
 
+env:
+  - NETTE=default
+  - NETTE=nette-2.2
+  - NETTE=nette-dev
+
 php:
   - 5.3.3
   - 5.4
@@ -12,6 +17,7 @@ matrix:
     - php: hhvm
 
 before_script:
+  - "php tests/prepare-composer.php"
   - composer self-update
   - composer install --no-interaction --prefer-source --dev
 
