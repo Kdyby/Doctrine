@@ -492,8 +492,15 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 
 		$formattedParams = array();
 		foreach ($params as $key => $param) {
-			if (isset($types[$key]) && array_key_exists($types[$key], Type::getTypesMap())) {
-				$param = Type::getType($types[$key])->convertToDatabaseValue($param, $platform);
+			if (isset($types[$key])) {
+				if (is_scalar($types[$key]) && array_key_exists($types[$key], Type::getTypesMap())) {
+					$types[$key] = Type::getType($types[$key]);
+				}
+
+				/** @var Type[] $types */
+				if ($types[$key] instanceof Type) {
+					$param = $types[$key]->convertToDatabaseValue($param, $platform);
+				}
 			}
 
 			$formattedParams[] = SimpleParameterFormatter::format($param);
