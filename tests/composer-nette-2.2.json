@@ -46,8 +46,9 @@
 		"kdyby/doctrine-cache": "~2.2@dev"
 	},
 	"require-dev": {
+		"dg/dibi" : "~2.0",
 		"nette/tester": "@dev",
-		"dg/dibi" : "~2.0"
+		"jakub-onderka/php-parallel-lint": "~0.6"
 	},
 	"autoload": {
 		"psr-0": {

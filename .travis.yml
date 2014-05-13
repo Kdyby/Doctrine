@@ -20,5 +20,6 @@ before_script:
   - "php tests/prepare-composer.php"
   - composer self-update
   - composer install --no-interaction --prefer-source --dev
+  - ./vendor/bin/parallel-lint -e php,phpt --exclude vendor .
 
-script: php tests/lint.php src/Kdyby/ tests/KdybyTests/ && VERBOSE=true ./tests/run-tests.sh -s tests/KdybyTests/
+script: VERBOSE=true ./tests/run-tests.sh -s tests/KdybyTests/
