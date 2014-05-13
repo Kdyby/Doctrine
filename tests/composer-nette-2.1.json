@@ -20,9 +20,9 @@
 		"nette/nette": "2.1.*",
 
 		"doctrine/orm": "~2.4.1",
-		"kdyby/events": "~2.0@dev",
-		"kdyby/console": "~2.1@dev",
-		"kdyby/annotations": "~2.0.2@dev",
+		"kdyby/events": "~2.1@dev",
+		"kdyby/console": "~2.2@dev",
+		"kdyby/annotations": "~2.0.4@dev",
 		"kdyby/doctrine-cache": "~2.2@dev"
 	},
 	"require-dev": {
