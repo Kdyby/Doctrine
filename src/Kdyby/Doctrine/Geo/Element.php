@@ -19,7 +19,7 @@ use Nette\Utils\Strings;
 /**
  * @author Filip Procházka <filip@prochazka.su>
  */
-class Element extends Nette\Object
+class Element extends Nette\Object implements IElement
 {
 
 	const POINT = 'POINT';
@@ -75,7 +75,7 @@ class Element extends Nette\Object
 	 * @param float $lon
 	 * @param float $lat
 	 * @throws \Kdyby\Doctrine\InvalidStateException
-	 * @return Element
+	 * @return IElement
 	 */
 	public function addCoordinate($lon, $lat)
 	{
@@ -155,7 +155,7 @@ class Element extends Nette\Object
 
 
 	/**
-	 * @return Element
+	 * @return IElement
 	 */
 	public function freeze()
 	{

@@ -68,13 +68,13 @@ abstract class GeometryType extends Kdyby\Doctrine\DbalType
 
 
 	/**
-	 * @param mixed|Kdyby\Doctrine\Geo\Element $value
+	 * @param mixed|Kdyby\Doctrine\Geo\IElement $value
 	 * @param \Doctrine\DBAL\Platforms\AbstractPlatform $platform
 	 * @return string|NULL
 	 */
 	public function convertToDatabaseValue($value, AbstractPlatform $platform)
 	{
-		if (!$value instanceof Kdyby\Doctrine\Geo\Element) {
+		if (!$value instanceof Kdyby\Doctrine\Geo\IElement) {
 			return NULL;
 		}
 
@@ -86,7 +86,7 @@ abstract class GeometryType extends Kdyby\Doctrine\DbalType
 	/**
 	 * @param string $value
 	 * @param \Doctrine\DBAL\Platforms\AbstractPlatform $platform
-	 * @return mixed|Kdyby\Doctrine\Geo\Element
+	 * @return mixed|Kdyby\Doctrine\Geo\IElement
 	 */
 	public function convertToPHPValue($value, AbstractPlatform $platform)
 	{
@@ -94,7 +94,7 @@ abstract class GeometryType extends Kdyby\Doctrine\DbalType
 			return NULL;
 		}
 
-		return Kdyby\Doctrine\Geo\Element::fromString($value);
+		return new Kdyby\Doctrine\Geo\LazyElement($value);
 	}
 
 }
