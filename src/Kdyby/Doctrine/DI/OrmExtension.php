@@ -58,7 +58,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		'classMetadataFactory' => 'Kdyby\Doctrine\Mapping\ClassMetadataFactory',
 		'defaultRepositoryClassName' => 'Kdyby\Doctrine\EntityDao',
 		'autoGenerateProxyClasses' => '%debugMode%',
-		'namingStrategy' => 'Doctrine\ORM\Mapping\DefaultNamingStrategy',
+		'namingStrategy' => 'Doctrine\ORM\Mapping\UnderscoreNamingStrategy',
 		'quoteStrategy' => 'Doctrine\ORM\Mapping\DefaultQuoteStrategy',
 		'entityListenerResolver' => 'Kdyby\Doctrine\Mapping\EntityListenerResolver',
 		'proxyDir' => '%tempDir%/proxies',
