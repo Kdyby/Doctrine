@@ -27,12 +27,6 @@ if (!class_exists('Nette\Utils\ObjectMixin')) {
  *
  * @method QueryBuilder select($select = null)
  * @method QueryBuilder from($from, $alias, $indexBy = null)
- * @method QueryBuilder join($join, $alias, $conditionType = null, $condition = null, $indexBy = null)
- * @method QueryBuilder innerJoin($join, $alias, $conditionType = null, $condition = null, $indexBy = null)
- * @method QueryBuilder leftJoin($join, $alias, $conditionType = null, $condition = null, $indexBy = null)
- * @method QueryBuilder where($where)
- * @method QueryBuilder andWhere($where)
- * @method QueryBuilder orWhere($where)
  * @method QueryBuilder setMaxResults($maxResults)
  * @method QueryBuilder setFirstResult($maxResults)
  * @method QueryBuilder resetDQLPart($parts = null)
@@ -44,6 +38,118 @@ class QueryBuilder extends Doctrine\ORM\QueryBuilder implements \IteratorAggrega
 	 * @var array
 	 */
 	private $criteriaJoins = array();
+
+
+
+	/**
+	 * {@inheritdoc}
+	 * @return QueryBuilder
+	 */
+	public function join($join, $alias, $conditionType = null, $condition = null, $indexBy = null)
+	{
+		return call_user_func_array(array($this, 'innerJoin'), func_get_args());
+	}
+
+
+
+	/**
+	 * {@inheritdoc}
+	 * @return QueryBuilder
+	 */
+	public function innerJoin($join, $alias, $conditionType = null, $condition = null, $indexBy = null)
+	{
+		if ($condition !== NULL) {
+			$beforeArgs = array_slice(func_get_args(), 3);
+			$args = array_values($this->separateParameters($beforeArgs));
+			if (count($beforeArgs) > count($args)) {
+				$indexBy = count($args) === 2 ? $args[1] : NULL;
+				$condition = $args[0];
+			}
+		}
+
+		return parent::innerJoin($join, $alias, $conditionType, $condition, $indexBy);
+	}
+
+
+
+	/**
+	 * {@inheritdoc}
+	 * @return QueryBuilder
+	 */
+	public function leftJoin($join, $alias, $conditionType = null, $condition = null, $indexBy = null)
+	{
+		if ($condition !== NULL) {
+			$beforeArgs = array_slice(func_get_args(), 3);
+			$args = array_values($this->separateParameters($beforeArgs));
+			if (count($beforeArgs) > count($args)) {
+				$indexBy = count($args) === 2 ? $args[1] : NULL;
+				$condition = $args[0];
+			}
+		}
+
+		return parent::leftJoin($join, $alias, $conditionType, $condition, $indexBy);
+	}
+
+
+
+	/**
+	 * {@inheritdoc}
+	 * @return QueryBuilder
+	 */
+	public function where($predicates)
+	{
+		return call_user_func_array('parent::where', $this->separateParameters(func_get_args()));
+	}
+
+
+
+	/**
+	 * {@inheritdoc}
+	 * @return QueryBuilder
+	 */
+	public function andWhere($where)
+	{
+		return call_user_func_array('parent::andWhere', $this->separateParameters(func_get_args()));
+	}
+
+
+
+	/**
+	 * {@inheritdoc}
+	 * @return QueryBuilder
+	 */
+	public function orWhere($where)
+	{
+		return call_user_func_array('parent::orWhere', $this->separateParameters(func_get_args()));
+	}
+
+
+
+	protected function separateParameters(array $args)
+	{
+		for ($i = 0; isset($args[$i]) && isset($args[$i + 1]) && ($arg = $args[$i]) ;$i++) {
+			if (!preg_match_all('~((\\:|\\?)(?P<name>[a-z0-9_]+))(?=(?:\\z|\\s|\\)))~i', $arg, $m)) {
+				continue;
+			}
+
+			foreach ($m['name'] as $l => $name) {
+				$value = $args[++$i];
+				$type = NULL;
+
+				if ($value instanceof \DateTime || $value instanceof \DateTimeImmutable) {
+					$type = DbalType::DATETIME;
+
+				} elseif (is_array($value)) {
+					$type = Connection::PARAM_STR_ARRAY;
+				}
+
+				$this->setParameter($name, $value, $type);
+				unset($args[$i]);
+			}
+		}
+
+		return $args;
+	}
 
 
 

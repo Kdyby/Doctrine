@@ -11,6 +11,7 @@
 namespace KdybyTests\Doctrine;
 
 use Doctrine;
+use Doctrine\ORM\Query\Expr\Join;
 use Kdyby;
 use KdybyTests;
 use Nette;
@@ -221,6 +222,129 @@ class QueryBuilderTest extends KdybyTests\Doctrine\ORMTestCase
 			->whereCriteria(array('user.groups.name' => 'Devel'));
 
 		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsAddress a INNER JOIN a.user u INNER JOIN u.groups g WHERE g.name = :param_1', array('param_1' => 'Devel'), $qb->getQuery());
+	}
+
+
+
+	public function testInlineParameters_Where()
+	{
+		$qb = $this->em->createQueryBuilder()
+			->select('e')->from(__NAMESPACE__ . '\\CmsAddress', 'a')
+			->where("a.user = :username", 'Filip');
+
+		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsAddress a WHERE a.user = :username', array('username' => 'Filip'), $qb->getQuery());
+	}
+
+
+
+	public function testInlineParameters_Where_MultipleParameters()
+	{
+		$qb = $this->em->createQueryBuilder()
+			->select('e')->from(__NAMESPACE__ . '\\CmsAddress', 'a')
+			->where("a.user = :username AND a.city = ?2 AND a.id IN (:ids)", 'Filip', 'Brno', [1, 2, 3]);
+
+		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsAddress a WHERE a.user = :username AND a.city = ?2 AND a.id IN (:ids)', array(
+			'username' => 'Filip',
+			2 => 'Brno',
+			'ids' => [1, 2, 3],
+		), $qb->getQuery());
+	}
+
+
+
+	public function testInlineParameters_Where_MultipleConditions()
+	{
+		$qb = $this->em->createQueryBuilder()
+			->select('e')->from(__NAMESPACE__ . '\\CmsAddress', 'a')
+			->where("a.user = :username AND a.city = ?2", 'Filip', 'Brno', "a.id IN (:ids)", [1, 2, 3]);
+
+		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsAddress a WHERE (a.user = :username AND a.city = ?2) AND a.id IN (:ids)', array(
+			'username' => 'Filip',
+			2 => 'Brno',
+			'ids' => [1, 2, 3],
+		), $qb->getQuery());
+	}
+
+
+
+	public function testInlineParameters_Join()
+	{
+		$qb = $this->em->createQueryBuilder()
+			->select('e')->from(__NAMESPACE__ . '\\CmsAddress', 'a')
+			->join('a.user', 'u', Join::WITH, 'a.city = :city_name', 'Brno');
+
+		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsAddress a INNER JOIN a.user u WITH a.city = :city_name', array(
+			'city_name' => 'Brno',
+		), $qb->getQuery());
+	}
+
+
+
+	public function testInlineParameters_Join_WithIndexBy()
+	{
+		$qb = $this->em->createQueryBuilder()
+			->select('e')->from(__NAMESPACE__ . '\\CmsAddress', 'a')
+			->join('a.user', 'u', Join::WITH, 'a.city = :city_name', 'Brno', 'a.postalCode');
+
+		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsAddress a INNER JOIN a.user u INDEX BY a.postalCode WITH a.city = :city_name', array(
+			'city_name' => 'Brno',
+		), $qb->getQuery());
+	}
+
+
+
+	public function testInlineParameters_Join_MultipleParameters()
+	{
+		$qb = $this->em->createQueryBuilder()
+			->select('e')->from(__NAMESPACE__ . '\\CmsAddress', 'a')
+			->join('a.user', 'u', Join::WITH, "a.user = :username AND a.city = ?2 AND a.id IN (:ids)", 'Filip', 'Brno', [1, 2, 3]);
+
+		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsAddress a INNER JOIN a.user u WITH a.user = :username AND a.city = ?2 AND a.id IN (:ids)', array(
+			'username' => 'Filip',
+			2 => 'Brno',
+			'ids' => [1, 2, 3],
+		), $qb->getQuery());
+	}
+
+
+
+	public function testInlineParameters_Join_MultipleParameters_WithIndexBy()
+	{
+		$qb = $this->em->createQueryBuilder()
+			->select('e')->from(__NAMESPACE__ . '\\CmsAddress', 'a')
+			->join('a.user', 'u', Join::WITH, "a.user = :username AND a.city = ?2 AND a.id IN (:ids)", 'Filip', 'Brno', [1, 2, 3], "a.postalCode");
+
+		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsAddress a INNER JOIN a.user u INDEX BY a.postalCode WITH a.user = :username AND a.city = ?2 AND a.id IN (:ids)', array(
+			'username' => 'Filip',
+			2 => 'Brno',
+			'ids' => [1, 2, 3],
+		), $qb->getQuery());
+	}
+
+
+
+	public function testInlineParameters_InnerJoin()
+	{
+		$qb = $this->em->createQueryBuilder()
+			->select('e')->from(__NAMESPACE__ . '\\CmsAddress', 'a')
+			->innerJoin('a.user', 'u', Join::WITH, 'a.city = :city_name', 'Brno');
+
+		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsAddress a INNER JOIN a.user u WITH a.city = :city_name', array(
+			'city_name' => 'Brno',
+		), $qb->getQuery());
+	}
+
+
+
+	public function testInlineParameters_LeftJoin()
+	{
+		$qb = $this->em->createQueryBuilder()
+			->select('e')->from(__NAMESPACE__ . '\\CmsAddress', 'a')
+			->leftJoin('a.user', 'u', Join::WITH, 'a.city = :city_name', 'Brno');
+
+		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsAddress a LEFT JOIN a.user u WITH a.city = :city_name', array(
+			'city_name' => 'Brno',
+		), $qb->getQuery());
 	}
 
 
