@@ -241,12 +241,12 @@ class QueryBuilderTest extends KdybyTests\Doctrine\ORMTestCase
 	{
 		$qb = $this->em->createQueryBuilder()
 			->select('e')->from(__NAMESPACE__ . '\\CmsAddress', 'a')
-			->where("a.user = :username AND a.city = ?2 AND a.id IN (:ids)", 'Filip', 'Brno', [1, 2, 3]);
+			->where("a.user = :username AND a.city = ?2 AND a.id IN (:ids)", 'Filip', 'Brno', array(1, 2, 3));
 
 		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsAddress a WHERE a.user = :username AND a.city = ?2 AND a.id IN (:ids)', array(
 			'username' => 'Filip',
 			2 => 'Brno',
-			'ids' => [1, 2, 3],
+			'ids' => array(1, 2, 3),
 		), $qb->getQuery());
 	}
 
@@ -256,12 +256,12 @@ class QueryBuilderTest extends KdybyTests\Doctrine\ORMTestCase
 	{
 		$qb = $this->em->createQueryBuilder()
 			->select('e')->from(__NAMESPACE__ . '\\CmsAddress', 'a')
-			->where("a.user = :username AND a.city = ?2", 'Filip', 'Brno', "a.id IN (:ids)", [1, 2, 3]);
+			->where("a.user = :username AND a.city = ?2", 'Filip', 'Brno', "a.id IN (:ids)", array(1, 2, 3));
 
 		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsAddress a WHERE (a.user = :username AND a.city = ?2) AND a.id IN (:ids)', array(
 			'username' => 'Filip',
 			2 => 'Brno',
-			'ids' => [1, 2, 3],
+			'ids' => array(1, 2, 3),
 		), $qb->getQuery());
 	}
 
@@ -297,12 +297,12 @@ class QueryBuilderTest extends KdybyTests\Doctrine\ORMTestCase
 	{
 		$qb = $this->em->createQueryBuilder()
 			->select('e')->from(__NAMESPACE__ . '\\CmsAddress', 'a')
-			->join('a.user', 'u', Join::WITH, "a.user = :username AND a.city = ?2 AND a.id IN (:ids)", 'Filip', 'Brno', [1, 2, 3]);
+			->join('a.user', 'u', Join::WITH, "a.user = :username AND a.city = ?2 AND a.id IN (:ids)", 'Filip', 'Brno', array(1, 2, 3));
 
 		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsAddress a INNER JOIN a.user u WITH a.user = :username AND a.city = ?2 AND a.id IN (:ids)', array(
 			'username' => 'Filip',
 			2 => 'Brno',
-			'ids' => [1, 2, 3],
+			'ids' => array(1, 2, 3),
 		), $qb->getQuery());
 	}
 
@@ -312,12 +312,12 @@ class QueryBuilderTest extends KdybyTests\Doctrine\ORMTestCase
 	{
 		$qb = $this->em->createQueryBuilder()
 			->select('e')->from(__NAMESPACE__ . '\\CmsAddress', 'a')
-			->join('a.user', 'u', Join::WITH, "a.user = :username AND a.city = ?2 AND a.id IN (:ids)", 'Filip', 'Brno', [1, 2, 3], "a.postalCode");
+			->join('a.user', 'u', Join::WITH, "a.user = :username AND a.city = ?2 AND a.id IN (:ids)", 'Filip', 'Brno', array(1, 2, 3), "a.postalCode");
 
 		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsAddress a INNER JOIN a.user u INDEX BY a.postalCode WITH a.user = :username AND a.city = ?2 AND a.id IN (:ids)', array(
 			'username' => 'Filip',
 			2 => 'Brno',
-			'ids' => [1, 2, 3],
+			'ids' => array(1, 2, 3),
 		), $qb->getQuery());
 	}
 
