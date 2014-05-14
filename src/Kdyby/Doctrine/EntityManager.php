@@ -210,6 +210,9 @@ class EntityManager extends Doctrine\ORM\EntityManager
 			case Query::HYDRATE_SIMPLEOBJECT:
 				return new Hydration\SimpleObjectHydrator($this);
 
+			case Hydration\HashHydrator::NAME:
+				return new Hydration\HashHydrator($this);
+
 			default:
 				return parent::newHydrator($hydrationMode);
 		}
