@@ -257,7 +257,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 
 			if ($extension instanceof ITargetEntityProvider) {
 				$targetEntities = $extension->getTargetEntityMappings();
-				Validators::assert($targetEntities, 'array:1..');
+				Validators::assert($targetEntities, 'array');
 				$config['targetEntityMappings'] = Nette\Utils\Arrays::mergeTree($config['targetEntityMappings'], $this->normalizeTargetEntityMappings($targetEntities));
 			}
 
