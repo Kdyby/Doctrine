@@ -38,7 +38,9 @@ This way you'll be creating a "service layer" in your application,
 that can contain all the application logic and will separate responsibilities of your classes in a much better manner.
 
 
-## class `EntityRepository` extends `Doctrine\ORM\EntityRepository`
+## EntityRepository
+
+It extends `Doctrine\ORM\EntityRepository`.
 
 
 ### `->findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)`
@@ -159,7 +161,9 @@ $commentsDao = $articlesDao->relation('comments');
 ```
 
 
-## class `EntityDao` extends `Kdyby\Doctrine\EntityRepository`
+## EntityDao
+
+It extends the `Kdyby\Doctrine\EntityRepository`, and is the default "repository" class for all entities.
 
 
 ### `->add($entity)`
