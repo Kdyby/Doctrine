@@ -185,8 +185,8 @@ You should almost always prefer calling the `EntityManager::flush()`.
 
 ### `->safePersist($entity)`
 
-This method solves the problem, that when you flush entity, that violates unique constraint, the UnitOfWork throws and locks itself and EntityManager,
-and there is no way to unlock it, you have to create new instance of EntityManager.
+This method solves the problem, that when you flush entity, that violates unique constraint, the UnitOfWork throws and locks itself and EntityManager.
+And there is no way to unlock it, you have to create new instance of EntityManager.
 
 So this method finds all the columns in the entity that had to be inserted (unique, not-nullable and identifier columns),
 and then reads their values and builds SQL query that is safely ran against the database.
