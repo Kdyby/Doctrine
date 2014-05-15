@@ -180,7 +180,7 @@ the relations are also persisted (if they're configured to cascade), but when yo
 then the **relations are not saved**!
 
 This method is strictly for prototyping, or when you know you need to save only one entity, or when you really know what you're doing.
-You should most almost always prefer calling the `EntityManager::flush()`.
+You should almost always prefer calling the `EntityManager::flush()`.
 
 
 ### `->safePersist($entity)`
