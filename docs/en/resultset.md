@@ -160,8 +160,8 @@ class QuestionsQuery extends Kdyby\Doctrine\QueryObject
 The `doCreateCountQuery` method is optional, and if you don't provide one, Doctrine will auto-generate it.
 But, you know... if you wanna have a really effective count query, you might wanna write it yourself :)
 
-Also, if you really need to, you can also create `NativeQuery` in the QueryObject and Kdyby will also take care of it,
-but when you need to create `NativeQuery`, you'll have to write your own count query, because that one cannot be auto-generated.
+Also, if you really need to, you can create a `NativeQuery` in the QueryObject and Kdyby will take care of it.
+But when you need to create `NativeQuery`, you'll have to write your own count query, because that one cannot be auto-generated.
 
 How to use this class?
 
@@ -212,7 +212,8 @@ $visualPaginator = $this['vp'];
 // that has getter for Paginator instance
 $paginator = $visualPaginator->getPaginator();
 
-// don't forget to set the number of items per page, you might wanna do this in the component factory of the paginator component
+// don't forget to set the number of items per page,
+// you might wanna do this in the component factory of the paginator component
 $paginator->setItemsPerPage(20);
 
 // and therefore we can apply it
