@@ -38,7 +38,7 @@ This way you'll be creating a "service layer" in your application,
 that can contain all the application logic and will separate responsibilities of your classes in a much better manner.
 
 
-## class `Kdyby\Doctrine\EntityRepository` extends `Doctrine\ORM\EntityRepository`
+## class `EntityRepository` extends `Doctrine\ORM\EntityRepository`
 
 
 ### `->findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)`
@@ -106,7 +106,7 @@ Works in the same way as `->findPairs()` but instead of single property you get 
 So the result is array of entities indexed by key you choose.
 
 
-### `->createNativeQuery($sql, Doctrine\ORM\Query\ResultSetMapping $rsm)`
+### `->createNativeQuery($sql, ResultSetMapping $rsm)`
 
 This is just a shortcut, for example if you have only DAO in your service class and you need a native query,
 you can use it.
@@ -159,7 +159,7 @@ $commentsDao = $articlesDao->relation('comments');
 ```
 
 
-## class `Kdyby\Doctrine\EntityDao` extends `Kdyby\Doctrine\EntityRepository`
+## class `EntityDao` extends `Kdyby\Doctrine\EntityRepository`
 
 
 ### `->add($entity)`
