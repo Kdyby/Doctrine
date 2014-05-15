@@ -62,25 +62,25 @@ DBAL
 
 These are the configuration values you can set and their default values
 
-```
+```yml
 doctrine:
 	dbname:								# database name
-    host: 127.0.0.1						# database hostname
-    port:
-    user:
-    password: NULL
-    charset: UTF8
-    driver: pdo_mysql					# pdo driver name
-    driverClass:						# you can use custom driver class if you need to
-    options:
-    path:
-    memory:								# for sqlite's memory implementation
-    unix_socket:
-    logging: %debugMode%
-    platformService:
-    defaultTableOptions: []				# can be used for changing of collation
-    resultCache: default				# you choose your cache fromt he values in the section above
-    types: []							# custom dbal types for conversion database => php type and back
+	host: 127.0.0.1						# database hostname
+	port:
+	user:
+	password: NULL
+	charset: UTF8
+	driver: pdo_mysql					# pdo driver name
+	driverClass:						# you can use custom driver class if you need to
+	options:
+	path:
+	memory:								# for sqlite's memory implementation
+	unix_socket:
+	logging: %debugMode%
+	platformService:
+	defaultTableOptions: []				# can be used for changing of collation
+	resultCache: default				# you choose your cache fromt he values in the section above
+	types: []							# custom dbal types for conversion database => php type and back
 ```
 
 
