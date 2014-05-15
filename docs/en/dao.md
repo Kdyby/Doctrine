@@ -179,6 +179,9 @@ This method persist the entity, and at the same time, it flushes all the entitie
 the relations are also persisted (if they're configured to cascade), but when you provide already managed entity,
 then the **relations are not saved**!
 
+This method is strictly for prototyping, or when you know you need to save only one entity, or when you really know what you're doing.
+You should most almost always prefer calling the `EntityManager::flush()`.
+
 
 ### `->safePersist($entity)`
 
