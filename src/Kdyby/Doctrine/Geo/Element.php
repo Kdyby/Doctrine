@@ -19,7 +19,7 @@ use Nette\Utils\Strings;
 /**
  * @author Filip Procházka <filip@prochazka.su>
  */
-class Element extends Nette\Object implements IElement
+class Element extends Nette\Object
 {
 
 	const POINT = 'POINT';
@@ -45,9 +45,19 @@ class Element extends Nette\Object implements IElement
 	private $separator = ',';
 
 	/**
+	 * @var string
+	 */
+	private $coordsSeparator = ' ';
+
+	/**
 	 * @var bool
 	 */
 	private $frozen = FALSE;
+
+	/**
+	 * @var string|NULL
+	 */
+	private $stringValue;
 
 
 
@@ -66,6 +76,10 @@ class Element extends Nette\Object implements IElement
 	 */
 	public function getName()
 	{
+		if ($this->stringValue) {
+			$this->init();
+		}
+
 		return $this->name;
 	}
 
@@ -75,10 +89,13 @@ class Element extends Nette\Object implements IElement
 	 * @param float $lon
 	 * @param float $lat
 	 * @throws \Kdyby\Doctrine\InvalidStateException
-	 * @return IElement
+	 * @return Element
 	 */
 	public function addCoordinate($lon, $lat)
 	{
+		if ($this->stringValue) {
+			$this->init();
+		}
 		if ($this->frozen) {
 			$class = get_class($this);
 			throw new Kdyby\Doctrine\InvalidStateException("Cannot modify a frozen object $class.");
@@ -95,6 +112,10 @@ class Element extends Nette\Object implements IElement
 	 */
 	public function getCoordinates()
 	{
+		if ($this->stringValue) {
+			$this->init();
+		}
+
 		return $this->coordinates;
 	}
 
@@ -107,6 +128,10 @@ class Element extends Nette\Object implements IElement
 	 */
 	public function toArray($lat = 'lat', $lon = 'lon')
 	{
+		if ($this->stringValue) {
+			$this->init();
+		}
+
 		$list = array();
 		foreach ($this->coordinates as $coords) {
 			$list[] = array($lat => $coords->getLatitude(), $lon => $coords->getLongitude());
@@ -127,6 +152,16 @@ class Element extends Nette\Object implements IElement
 
 
 	/**
+	 * @return string
+	 */
+	public function getCoordsSeparator()
+	{
+		return $this->coordsSeparator;
+	}
+
+
+
+	/**
 	 * @param string $text
 	 * @param string $separator
 	 * @param string $coordsSeparator
@@ -135,31 +170,26 @@ class Element extends Nette\Object implements IElement
 	 */
 	public static function fromString($text, $separator = ',', $coordsSeparator = ' ')
 	{
-		$coordsRegexp = '[\d\.]+\s*' . preg_quote($coordsSeparator) . '\s*[\d\.]+';
-		$coordsListRegexp = '(?P<coords>(?:' . $coordsRegexp . ')(?:\s*' . preg_quote($separator) . '\s*' . $coordsRegexp . ')*)';
-		if (!$m = Strings::match($text, '~^(?P<name>\w+)\(\(' . $coordsListRegexp . '\)\)$~i')) {
-			throw new Kdyby\Doctrine\InvalidArgumentException("Given expression '$text' is not geometry definition.");
-		}
+		$el = new static();
+		$el->stringValue = $text;
+		$el->separator = $separator;
+		$el->coordsSeparator = $coordsSeparator;
 
-		$el = new static($m['name']);
-		/** @var Element $el */
-
-		foreach (explode($separator, $m['coords']) as $coords) {
-			list($lat, $lon) = explode($coordsSeparator, trim(Strings::replace($coords, '~\s+~', ' ')));
-			$el->addCoordinate($lon, $lat);
-		}
-
-		return $el->freeze();
+		return $el;
 	}
 
 
 
 	/**
-	 * @return IElement
+	 * @return Element
 	 */
 	public function freeze()
 	{
+		if ($this->stringValue) {
+			$this->init();
+		}
 		$this->frozen = TRUE;
+
 		return $this;
 	}
 
@@ -170,13 +200,15 @@ class Element extends Nette\Object implements IElement
 	 */
 	public function __clone()
 	{
-		$this->frozen = FALSE;
+		if (!$this->stringValue) {
+			$this->frozen = FALSE;
 
-		$list = array();
-		foreach ($this->coordinates as $coords) {
-			$list[] = clone $coords;
+			$list = array();
+			foreach ($this->coordinates as $coords) {
+				$list[] = clone $coords;
+			}
+			$this->coordinates = $list;
 		}
-		$this->coordinates = $list;
 	}
 
 
@@ -186,7 +218,34 @@ class Element extends Nette\Object implements IElement
 	 */
 	public function __toString()
 	{
+		if ($this->stringValue) {
+			$this->init();
+		}
+
 		return strtoupper($this->name) . '((' . implode($this->separator, $this->coordinates) . '))';
+	}
+
+
+
+	protected function init()
+	{
+		$separator = $this->separator;
+		$coordsSeparator = $this->coordsSeparator;
+		$coordsRegexp = '[\d\.]+\s*' . preg_quote($coordsSeparator) . '\s*[\d\.]+';
+		$coordsListRegexp = '(?P<coords>(?:' . $coordsRegexp . ')(?:\s*' . preg_quote($separator) . '\s*' . $coordsRegexp . ')*)';
+		if (!$m = Strings::match($this->stringValue, '~^(?P<name>\w+)\(\(' . $coordsListRegexp . '\)\)$~i')) {
+			throw new Kdyby\Doctrine\InvalidArgumentException("Given expression '" . $this->stringValue . "' is not geometry definition.");
+		}
+
+		$this->name = $m['name'];
+
+		foreach (explode($separator, $m['coords']) as $coords) {
+			list($lat, $lon) = explode($coordsSeparator, trim(Strings::replace($coords, '~\s+~', ' ')));
+			$this->coordinates[] = new Coordinates($lon, $lat);
+		}
+
+		$this->frozen = TRUE;
+		$this->stringValue = NULL;
 	}
 
 }

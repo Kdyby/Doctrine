@@ -72,7 +72,7 @@ class GeometryTypeTest extends Tester\TestCase
 	public function testConvertToPhp()
 	{
 		$point = $this->polygon->convertToPHPValue('POINT((1 2))', new MySqlPlatform());
-		Assert::true($point instanceof Kdyby\Doctrine\Geo\IElement);
+		Assert::true($point instanceof Kdyby\Doctrine\Geo\Element);
 	}
 
 
