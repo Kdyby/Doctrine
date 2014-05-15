@@ -136,15 +136,15 @@ class Articles extends Nette\Object
 
 	private $em;
 	private $articlesDao;
-	
+
 	public function __construct(Kdyby\Doctrine\EntityManager $em)
 	{
 		$this->em = $em;
 		$this->articlesDao = $em->getDao(App\Article::class);
 		// $this->articlesDao = $em->getDao(App\Article::getClassName()); // for older PHP
 	}
-	
-	
+
+
 	public function publish(App\Article $article)
 	{
 		// validate that the article has title and content, or whatever you want to validate here
@@ -169,3 +169,12 @@ This stands for "create a service, that will be instance of `App\Articles` and p
 
 But it's generally better to pass EntityManager, so you write less configuration and more PHP code.
 
+
+Want more?
+----------
+
+Read also about
+
+- [How to configure the extension](https://github.com/kdyby/doctrine/blob/master/docs/en/configuring.md)
+- [Benefits of using Kdyby's EntityDao instead of the default one](https://github.com/kdyby/doctrine/blob/master/docs/en/dao.md)
+- [Pagination of DQL that cannot be any simpler](https://github.com/kdyby/doctrine/blob/master/docs/en/resultset.md)
