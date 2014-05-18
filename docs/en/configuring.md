@@ -79,7 +79,7 @@ doctrine:
 	logging: %debugMode%
 	platformService:
 	defaultTableOptions: []				# can be used for changing of collation
-	resultCache: default				# you choose your cache fromt he values in the section above
+	resultCache: default				# you choose your cache from the values in the section above
 	types: []							# custom dbal types for conversion database => php type and back
 ```
 
