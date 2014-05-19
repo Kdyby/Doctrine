@@ -107,11 +107,11 @@ class ObjectHydrator extends \Doctrine\ORM\Internal\Hydration\ObjectHydrator
 				$id[$idProperty] = $this->lastRowData[$dqlAlias][$idProperty];
 			}
 
-			if (!isset($identityMap[$class->name][$idHash = implode(' ', (array) $id)])) {
+			if (!isset($identityMap[$class->rootEntityName][$idHash = implode(' ', (array) $id)])) {
 				continue;
 			}
 
-			$entity = $identityMap[$class->name][$idHash];
+			$entity = $identityMap[$class->rootEntityName][$idHash];
 			$this->lifecycleEventsInvoker->invoke($class, Events::postLoadRelations, $entity, new LifecycleEventArgs($entity, $this->_em), $invokers);
 		}
 	}
