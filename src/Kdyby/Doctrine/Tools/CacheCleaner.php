@@ -27,17 +27,11 @@ class CacheCleaner extends Nette\Object
 	 */
 	private $entityManager;
 
-	/**
-	 * @var \Nette\Caching\IStorage
-	 */
-	private $cacheStorage;
 
 
-
-	public function __construct(Kdyby\Doctrine\EntityManager $entityManager, Nette\Caching\IStorage $cacheStorage)
+	public function __construct(Kdyby\Doctrine\EntityManager $entityManager)
 	{
 		$this->entityManager = $entityManager;
-		$this->cacheStorage = $cacheStorage;
 	}
 
 
@@ -62,8 +56,6 @@ class CacheCleaner extends Nette\Object
 
 			$impl->deleteAll();
 		}
-
-		$this->cacheStorage->clean(array(Nette\Caching\Cache::ALL => TRUE));
 	}
 
 }
