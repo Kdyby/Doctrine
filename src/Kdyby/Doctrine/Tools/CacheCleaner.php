@@ -62,8 +62,6 @@ class CacheCleaner extends Nette\Object
 
 			$impl->deleteAll();
 		}
-
-		$this->cacheStorage->clean(array(Nette\Caching\Cache::ALL => TRUE));
 	}
 
 }
