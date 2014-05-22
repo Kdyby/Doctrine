@@ -54,7 +54,9 @@ class GeoElementTest extends Tester\TestCase
 	 */
 	public function testPhpToSql($inputText, $object, $formattedText)
 	{
-		Assert::equal($object, Kdyby\Doctrine\Geo\Element::fromString($inputText));
+		$input = Kdyby\Doctrine\Geo\Element::fromString($inputText);
+		$input->getName();
+		Assert::equal($object, $input);
 		Assert::same($formattedText, (string) $object);
 	}
 
