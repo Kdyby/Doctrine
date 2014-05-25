@@ -17,10 +17,6 @@ use Nette\Utils\ArrayHash;
 
 
 
-if (!class_exists('Nette\Utils\ArrayHash')) {
-	class_alias('Nette\ArrayHash', 'Nette\Utils\ArrayHash');
-}
-
 /**
  * @author Filip Procházka <filip@prochazka.su>
  */

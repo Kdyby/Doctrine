@@ -17,15 +17,20 @@
 		"issues": "https://github.com/kdyby/doctrine/issues"
 	},
 	"require": {
-		"nette/nette": "2.1.*",
+		"nette/di": "2.2.*",
+		"nette/neon": "2.2.*",
+		"nette/utils": "2.2.*",
 
 		"doctrine/orm": "~2.4.1",
-		"kdyby/events": "~2.1@dev",
-		"kdyby/console": "~2.2@dev",
-		"kdyby/annotations": "~2.0.4@dev",
-		"kdyby/doctrine-cache": "~2.2@dev"
+		"kdyby/events": "~2.2@dev",
+		"kdyby/console": "~2.3@dev",
+		"kdyby/annotations": "~2.1@dev",
+		"kdyby/doctrine-cache": "~2.3@dev"
 	},
 	"require-dev": {
+		"nette/nette": "2.2.*",
+		"nette/bootstrap": "2.2.*",
+
 		"dg/dibi" : "~2.0",
 		"nette/tester": "@dev",
 		"jakub-onderka/php-parallel-lint": "~0.6"
@@ -39,10 +44,5 @@
 		"classmap": [
 			"src/Kdyby/Doctrine/exceptions.php"
 		]
-	},
-	"extra": {
-		"branch-alias": {
-			"dev-master": "1.1-dev"
-		}
 	}
 }

@@ -27,17 +27,6 @@ use Tracy\IBarPanel;
 
 
 
-if (!class_exists('Tracy\Debugger')) {
-	class_alias('Nette\Diagnostics\Debugger', 'Tracy\Debugger');
-}
-
-if (!class_exists('Tracy\Bar')) {
-	class_alias('Nette\Diagnostics\Bar', 'Tracy\Bar');
-	class_alias('Nette\Diagnostics\BlueScreen', 'Tracy\BlueScreen');
-	class_alias('Nette\Diagnostics\Helpers', 'Tracy\Helpers');
-	class_alias('Nette\Diagnostics\IBarPanel', 'Tracy\IBarPanel');
-}
-
 /**
  * Debug panel for Doctrine
  *
@@ -754,7 +743,7 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 	 */
 	private static function getDebuggerBar()
 	{
-		return method_exists('Tracy\Debugger', 'getBar') ? Debugger::getBar() : Debugger::$bar;
+		return Debugger::getBar();
 	}
 
 
@@ -764,7 +753,7 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 	 */
 	private static function getDebuggerBlueScreen()
 	{
-		return method_exists('Tracy\Debugger', 'getBlueScreen') ? Debugger::getBlueScreen() : Debugger::$blueScreen;
+		return Debugger::getBlueScreen();
 	}
 
 }

@@ -9,6 +9,7 @@
  */
 
 namespace Kdyby\Doctrine;
+
 use Doctrine\DBAL\Statement;
 use Kdyby;
 use Nette;

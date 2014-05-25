@@ -21,10 +21,6 @@ use Nette\Utils\ObjectMixin;
 
 
 
-if (!class_exists('Nette\Utils\ObjectMixin')) {
-	class_alias('Nette\ObjectMixin', 'Nette\Utils\ObjectMixin');
-}
-
 /**
  * This class is an extension to EntityRepository and should help you with prototyping.
  * The first and only rule with DAO is not to ever inherit them, ever.

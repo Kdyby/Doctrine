@@ -18,10 +18,6 @@ use Nette\Utils\ObjectMixin;
 
 
 
-if (!class_exists('Nette\Utils\ObjectMixin')) {
-	class_alias('Nette\ObjectMixin', 'Nette\Utils\ObjectMixin');
-}
-
 /**
  * @author Filip Procházka <filip@prochazka.su>
  *
