@@ -19,7 +19,7 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @property-read int $id
  */
-trait Identity
+trait Identifier
 {
 
 	/**
