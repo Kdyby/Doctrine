@@ -2,7 +2,7 @@ Kdyby/Doctrine
 ======
 
 [![Build Status](https://travis-ci.org/Kdyby/Doctrine.svg?branch=master)](https://travis-ci.org/Kdyby/Doctrine)
-[![Downloads this Month](https://img.shields.io/packagist/dm/Kdyby/Doctrine.svg)](https://packagist.org/packages/Kdyby/Doctrine)
+[![Downloads this Month](https://img.shields.io/packagist/dm/kdyby/doctrine.svg)](https://packagist.org/packages/kdyby/doctrine)
 [![Latest stable](https://img.shields.io/packagist/v/kdyby/doctrine.svg)](https://packagist.org/packages/kdyby/doctrine)
 
 
