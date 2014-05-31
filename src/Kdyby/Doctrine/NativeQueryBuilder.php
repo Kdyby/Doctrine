@@ -73,10 +73,10 @@ class NativeQueryBuilder extends Doctrine\DBAL\Query\QueryBuilder
 		$wrapped->setFirstResult($this->getFirstResult());
 		$wrapped->setMaxResults($this->getMaxResults());
 
-		if (!$hasSelect = (bool)$this->getQueryPart('select')) {
-
-
-			$this->select($this->getResultSetMapper()->generateSelectClause());
+		$hasSelect = $this->getQueryPart('select') && $this->getType() === self::SELECT;
+		if (!$hasSelect) {
+			$select = $this->getResultSetMapper()->generateSelectClause();
+			$this->select($select ?: '*');
 		}
 
 		$query->setSQL($this->getSQL());
