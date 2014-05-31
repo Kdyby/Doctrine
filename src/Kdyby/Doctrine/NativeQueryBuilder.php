@@ -115,11 +115,7 @@ class NativeQueryBuilder extends Doctrine\DBAL\Query\QueryBuilder
 	 */
 	public function from($from, $alias)
 	{
-		if (substr_count($from, '\\')) {
-			$from = $this->em->getClassMetadata($from)->getTableName();
-		}
-
-		return parent::from($from, $alias);
+		return parent::from($this->addTableResultMapping($from, $alias), $alias);
 	}
 
 
@@ -141,15 +137,11 @@ class NativeQueryBuilder extends Doctrine\DBAL\Query\QueryBuilder
 	 */
 	public function innerJoin($fromAlias, $join, $alias, $condition = null)
 	{
-		if (substr_count($join, '\\')) {
-			$join = $this->em->getClassMetadata($join)->getTableName();
-		}
-
 		if ($condition !== NULL) {
 			list($condition) = array_values($this->separateParameters(array_slice(func_get_args(), 3)));
 		}
 
-		return parent::innerJoin($fromAlias, $join, $alias, $condition);
+		return parent::innerJoin($fromAlias, $this->addTableResultMapping($join, $alias, $fromAlias), $alias, $condition);
 	}
 
 
@@ -160,15 +152,11 @@ class NativeQueryBuilder extends Doctrine\DBAL\Query\QueryBuilder
 	 */
 	public function leftJoin($fromAlias, $join, $alias, $condition = null)
 	{
-		if (substr_count($join, '\\')) {
-			$join = $this->em->getClassMetadata($join)->getTableName();
-		}
-
 		if ($condition !== NULL) {
 			list($condition) = array_values($this->separateParameters(array_slice(func_get_args(), 3)));
 		}
 
-		return parent::leftJoin($fromAlias, $join, $alias, $condition);
+		return parent::leftJoin($fromAlias, $this->addTableResultMapping($join, $alias, $fromAlias), $alias, $condition);
 	}
 
 
@@ -179,15 +167,72 @@ class NativeQueryBuilder extends Doctrine\DBAL\Query\QueryBuilder
 	 */
 	public function rightJoin($fromAlias, $join, $alias, $condition = null)
 	{
-		if (substr_count($join, '\\')) {
-			$join = $this->em->getClassMetadata($join)->getTableName();
-		}
-
 		if ($condition !== NULL) {
 			list($condition) = array_values($this->separateParameters(array_slice(func_get_args(), 3)));
 		}
 
-		return parent::leftJoin($fromAlias, $join, $alias, $condition);
+		return parent::leftJoin($fromAlias, $this->addTableResultMapping($join, $alias, $fromAlias), $alias, $condition);
+	}
+
+
+
+	/**
+	 * @param string $table
+	 * @param string $alias
+	 * @param string $joinedFrom
+	 * @throws \Doctrine\ORM\Mapping\MappingException
+	 * @return string
+	 */
+	protected function addTableResultMapping($table, $alias, $joinedFrom = NULL)
+	{
+		$rsm = $this->getResultSetMapper();
+		$class = $relation = NULL;
+
+		if (substr_count($table, '\\')) {
+			$class = $this->em->getClassMetadata($table);
+			$table = $class->getTableName();
+
+		} elseif (isset($rsm->aliasMap[$joinedFrom])) {
+			$fromClass = $this->em->getClassMetadata($rsm->aliasMap[$joinedFrom]);
+
+			if ($fromClass->hasAssociation($table)) {
+				$class = $this->em->getClassMetadata($fromClass->getAssociationTargetClass($table));
+				$relation = $fromClass->getAssociationMapping($table);
+				$table = $class->getTableName();
+
+			} else {
+				foreach ($fromClass->getAssociationMappings() as $mapping) {
+					$targetClass = $this->em->getClassMetadata($mapping['targetEntity']);
+					if ($targetClass->getTableName() === $table) {
+						$class = $targetClass;
+						$relation = $mapping;
+						$table = $class->getTableName();
+						break;
+					}
+				}
+			}
+
+		} else {
+			/** @var Kdyby\Doctrine\Mapping\ClassMetadata $class */
+			foreach ($this->em->getMetadataFactory()->getAllMetadata() as $class) {
+				if ($class->getTableName() === $table) {
+					break;
+				}
+			}
+		}
+
+		if (!$class instanceof Doctrine\ORM\Mapping\ClassMetadata || $class->getTableName() !== $table) {
+			return $table;
+		}
+
+		if ($joinedFrom === NULL) {
+			$rsm->addEntityResult($class->getName(), $alias, $alias);
+
+		} elseif ($relation) {
+			$rsm->addJoinedEntityResult($class->getName(), $alias, $joinedFrom, $relation);
+		}
+
+		return $class->getTableName();
 	}
 
 
