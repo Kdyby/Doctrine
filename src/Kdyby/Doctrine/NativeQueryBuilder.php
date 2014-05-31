@@ -88,6 +88,11 @@ class NativeQueryBuilder extends Doctrine\DBAL\Query\QueryBuilder
 			$this->resetQueryPart('select');
 		}
 
+		$rsm = $this->getResultSetMapper();
+		if (empty($rsm->fieldMappings) && empty($rsm->scalarMappings)) {
+			throw new InvalidStateException("No field or columns mapping found, please configure the ResultSetMapper and some fields.");
+		}
+
 		return $wrapped;
 	}
 
