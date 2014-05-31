@@ -10,9 +10,8 @@
 
 namespace Kdyby\Doctrine;
 
-use Doctrine\Common\EventManager;
-use Doctrine\DBAL\DriverManager;
 use Doctrine;
+use Doctrine\DBAL\DriverManager;
 use Doctrine\ORM\ORMException;
 use Doctrine\ORM\Query;
 use Kdyby;
@@ -50,6 +49,17 @@ class EntityManager extends Doctrine\ORM\EntityManager
 	 * @var NonLockingUniqueInserter
 	 */
 	private $nonLockingUniqueInserter;
+
+
+
+	protected function __construct(Doctrine\DBAL\Connection $conn, Doctrine\ORM\Configuration $config, Doctrine\Common\EventManager $eventManager)
+	{
+		parent::__construct($conn, $config, $eventManager);
+
+		if ($conn instanceof Kdyby\Doctrine\Connection) {
+			$conn->bindEntityManager($this);
+		}
+	}
 
 
 
@@ -231,7 +241,7 @@ class EntityManager extends Doctrine\ORM\EntityManager
 	 * @throws \Doctrine\ORM\ORMException
 	 * @return EntityManager
 	 */
-	public static function create($conn, Doctrine\ORM\Configuration $config, EventManager $eventManager = NULL)
+	public static function create($conn, Doctrine\ORM\Configuration $config, Doctrine\Common\EventManager $eventManager = NULL)
 	{
 		if (!$config->getMetadataDriverImpl()) {
 			throw ORMException::missingMappingDriverImpl();
@@ -240,7 +250,7 @@ class EntityManager extends Doctrine\ORM\EntityManager
 		switch (TRUE) {
 			case (is_array($conn)):
 				$conn = DriverManager::getConnection(
-					$conn, $config, ($eventManager ? : new EventManager())
+					$conn, $config, ($eventManager ? : new Doctrine\Common\EventManager())
 				);
 				break;
 

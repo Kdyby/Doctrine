@@ -12,6 +12,7 @@ namespace Kdyby\Doctrine;
 
 use Doctrine;
 use Doctrine\Common\EventManager;
+use Doctrine\DBAL\Driver;
 use Kdyby;
 use Nette;
 use Nette\Utils\ObjectMixin;
@@ -34,6 +35,24 @@ class Connection extends Doctrine\DBAL\Connection
 	const SQLITE_ERR_UNIQUE = 19;
 
 	const POSTGRE_ERR_UNIQUE = 23505; // todo: verify, source: http://www.postgresql.org/docs/8.2/static/errcodes-appendix.html
+
+	/**
+	 * @var Doctrine\ORM\EntityManager
+	 */
+	private $entityManager;
+
+
+
+	/**
+	 * @internal
+	 * @param Doctrine\ORM\EntityManager $em
+	 * @return $this
+	 */
+	public function bindEntityManager(Doctrine\ORM\EntityManager $em)
+	{
+		$this->entityManager = $em;
+		return $this;
+	}
 
 
 
@@ -159,6 +178,20 @@ class Connection extends Doctrine\DBAL\Connection
 		$stmt->setFetchMode(PDO::FETCH_ASSOC);
 
 		return $stmt;
+	}
+
+
+
+	/**
+	 * @return Doctrine\DBAL\Query\QueryBuilder|NativeQueryBuilder
+	 */
+	public function createQueryBuilder()
+	{
+		if (!$this->entityManager) {
+			return parent::createQueryBuilder();
+		}
+
+		return new NativeQueryBuilder($this->entityManager);
 	}
 
 
