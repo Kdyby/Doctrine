@@ -3,7 +3,7 @@ Kdyby/Doctrine
 
 [![Build Status](https://travis-ci.org/Kdyby/Doctrine.svg?branch=master)](https://travis-ci.org/Kdyby/Doctrine)
 [![Downloads this Month](https://img.shields.io/packagist/dm/Kdyby/Doctrine.svg)](https://packagist.org/packages/Kdyby/Doctrine)
-[![Latest stable](img.shields.io/packagist/v/Kdyby/Doctrine.svg)](https://packagist.org/packages/Kdyby/Doctrine)
+[![Latest stable](https://img.shields.io/packagist/v/Kdyby/Doctrine.svg)](https://packagist.org/packages/Kdyby/Doctrine)
 
 
 Requirements
