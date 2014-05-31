@@ -1,5 +1,9 @@
-Kdyby/Doctrine [![Build Status](https://secure.travis-ci.org/Kdyby/Doctrine.png?branch=master)](http://travis-ci.org/Kdyby/Doctrine)
-===========================
+Kdyby/Doctrine
+======
+
+[![Build Status](https://travis-ci.org/Kdyby/Doctrine.svg?branch=master)](https://travis-ci.org/Kdyby/Doctrine)
+[![Downloads this Month](https://img.shields.io/packagist/dm/Kdyby/Doctrine.svg)](https://packagist.org/packages/Kdyby/Doctrine)
+[![Latest stable](img.shields.io/packagist/v/Kdyby/Doctrine.svg)](https://packagist.org/packages/Kdyby/Doctrine)
 
 
 Requirements
