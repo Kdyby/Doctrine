@@ -312,7 +312,13 @@ class ResultSet extends Nette\Object implements \Countable, \IteratorAggregate
 			$this->query->setHydrationMode($hydrationMode);
 
 			if ($this->query->getMaxResults() > 0 || $this->query->getFirstResult() > 0) {
-				$this->iterator = $this->getPaginatedQuery()->getIterator();
+				if ($this->query instanceof ORM\Query) {
+					$this->iterator = $this->getPaginatedQuery()->getIterator();
+
+				} else { // native query
+					$this->iterator = new \ArrayIterator($this->query->getResult(NULL));
+				}
+
 			} else {
 				$this->iterator = new \ArrayIterator($this->query->getResult(NULL));
 			}

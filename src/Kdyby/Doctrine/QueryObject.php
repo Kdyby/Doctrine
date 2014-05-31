@@ -203,6 +203,9 @@ abstract class QueryObject extends Nette\Object implements Kdyby\Persistence\Que
 
 		} elseif ($query instanceof Doctrine\ORM\NativeQuery) {
 			$query = new NativeQueryWrapper($query);
+
+		} elseif ($query instanceof NativeQueryBuilder) {
+			$query = $query->getQuery();
 		}
 
 		if (!$query instanceof Doctrine\ORM\AbstractQuery) {
