@@ -136,6 +136,10 @@ class NativeQueryBuilder extends Doctrine\DBAL\Query\QueryBuilder
 	 */
 	public function innerJoin($fromAlias, $join, $alias, $condition = null)
 	{
+		if (substr_count($join, '\\')) {
+			$join = $this->em->getClassMetadata($join)->getTableName();
+		}
+
 		if ($condition !== NULL) {
 			list($condition) = array_values($this->separateParameters(array_slice(func_get_args(), 3)));
 		}
@@ -151,6 +155,10 @@ class NativeQueryBuilder extends Doctrine\DBAL\Query\QueryBuilder
 	 */
 	public function leftJoin($fromAlias, $join, $alias, $condition = null)
 	{
+		if (substr_count($join, '\\')) {
+			$join = $this->em->getClassMetadata($join)->getTableName();
+		}
+
 		if ($condition !== NULL) {
 			list($condition) = array_values($this->separateParameters(array_slice(func_get_args(), 3)));
 		}
@@ -166,6 +174,10 @@ class NativeQueryBuilder extends Doctrine\DBAL\Query\QueryBuilder
 	 */
 	public function rightJoin($fromAlias, $join, $alias, $condition = null)
 	{
+		if (substr_count($join, '\\')) {
+			$join = $this->em->getClassMetadata($join)->getTableName();
+		}
+
 		if ($condition !== NULL) {
 			list($condition) = array_values($this->separateParameters(array_slice(func_get_args(), 3)));
 		}
