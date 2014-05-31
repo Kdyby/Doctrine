@@ -11,7 +11,6 @@
 namespace Kdyby\Doctrine;
 
 use Doctrine;
-use Doctrine\ORM\Query\ResultSetMappingBuilder;
 use Kdyby;
 use Nette;
 use Nette\Utils\ObjectMixin;
@@ -41,7 +40,7 @@ class NativeQueryBuilder extends Doctrine\DBAL\Query\QueryBuilder
 {
 
 	/**
-	 * @var ResultSetMappingBuilder
+	 * @var Mapping\ResultSetMappingBuilder
 	 */
 	private $rsm;
 
@@ -101,7 +100,7 @@ class NativeQueryBuilder extends Doctrine\DBAL\Query\QueryBuilder
 	public function getResultSetMapper()
 	{
 		if ($this->rsm === NULL) {
-			$this->rsm = new ResultSetMappingBuilder($this->em);
+			$this->rsm = new Mapping\ResultSetMappingBuilder($this->em);
 		}
 
 		return $this->rsm;
@@ -226,7 +225,7 @@ class NativeQueryBuilder extends Doctrine\DBAL\Query\QueryBuilder
 		}
 
 		if ($joinedFrom === NULL) {
-			$rsm->addEntityResult($class->getName(), $alias, $alias);
+			$rsm->addEntityResult($class->getName(), $alias);
 
 		} elseif ($relation) {
 			$rsm->addJoinedEntityResult($class->getName(), $alias, $joinedFrom, $relation);
