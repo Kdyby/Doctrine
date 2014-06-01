@@ -194,19 +194,24 @@ class NativeQueryBuilder extends Doctrine\DBAL\Query\QueryBuilder
 		} elseif (isset($rsm->aliasMap[$joinedFrom])) {
 			$fromClass = $this->em->getClassMetadata($rsm->aliasMap[$joinedFrom]);
 
-			if ($fromClass->hasAssociation($table)) {
-				$class = $this->em->getClassMetadata($fromClass->getAssociationTargetClass($table));
-				$relation = $fromClass->getAssociationMapping($table);
-				$table = $class->getTableName();
+			foreach (array_merge([$fromClass->getName()], $fromClass->subClasses) as $fromClass) {
+				$fromClass = $this->em->getClassMetadata($fromClass);
 
-			} else {
-				foreach ($fromClass->getAssociationMappings() as $mapping) {
-					$targetClass = $this->em->getClassMetadata($mapping['targetEntity']);
-					if ($targetClass->getTableName() === $table) {
-						$class = $targetClass;
-						$relation = $mapping;
-						$table = $class->getTableName();
-						break;
+				if ($fromClass->hasAssociation($table)) {
+					$class = $this->em->getClassMetadata($fromClass->getAssociationTargetClass($table));
+					$relation = $fromClass->getAssociationMapping($table);
+					$table = $class->getTableName();
+					break;
+
+				} else {
+					foreach ($fromClass->getAssociationMappings() as $mapping) {
+						$targetClass = $this->em->getClassMetadata($mapping['targetEntity']);
+						if ($targetClass->getTableName() === $table) {
+							$class = $targetClass;
+							$relation = $mapping;
+							$table = $class->getTableName();
+							break 2;
+						}
 					}
 				}
 			}
