@@ -22,4 +22,44 @@ use Nette;
 class ClassMetadata extends Doctrine\ORM\Mapping\ClassMetadata
 {
 
+	/**
+	 * The prototype from which new instances of the mapped class are created.
+	 *
+	 * @var object
+	 */
+	private $_prototype;
+
+
+
+	/**
+	 * {@inheritDoc}
+	 */
+	public function getReflectionClass()
+	{
+		if ($this->reflClass === NULL) {
+			$this->reflClass = new Nette\Reflection\ClassType($this->name);
+		}
+
+		return $this->reflClass;
+	}
+
+
+
+	/**
+	 * @return object
+	 */
+	public function newInstance()
+	{
+		if ($this->_prototype === null) {
+			if (PHP_VERSION_ID >= 50400) {
+				$this->_prototype = $this->getReflectionClass()->newInstanceWithoutConstructor();
+
+			} else {
+				$this->_prototype = unserialize(sprintf('O:%d:"%s":0:{}', strlen($this->name), $this->name));
+			}
+		}
+
+		return clone $this->_prototype;
+	}
+
 }
