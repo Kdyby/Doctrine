@@ -45,7 +45,7 @@ class NativeQueryBuilderTest extends KdybyTests\Doctrine\ORMTestCase
 
 	public function testSelect()
 	{
-		$qb = (new NativeQueryBuilder($this->em));
+		$qb = new NativeQueryBuilder($this->em);
 		$qb->select('e.*')->from(__NAMESPACE__ . '\\CmsUser', 'e')
 			->where('e.name = ' . $qb->createNamedParameter('Filip'));
 
@@ -58,8 +58,8 @@ class NativeQueryBuilderTest extends KdybyTests\Doctrine\ORMTestCase
 
 	public function testInlineParameters_Where()
 	{
-		$qb = (new NativeQueryBuilder($this->em))
-			->select('e.*')->from(__NAMESPACE__ . '\\CmsAddress', 'a')
+		$qb = new NativeQueryBuilder($this->em);
+		$qb->select('e.*')->from(__NAMESPACE__ . '\\CmsAddress', 'a')
 			->where("a.user = :username", 'Filip');
 
 		$qb->getResultSetMapper()->addScalarResult('id', 'id');
@@ -71,8 +71,8 @@ class NativeQueryBuilderTest extends KdybyTests\Doctrine\ORMTestCase
 
 	public function testInlineParameters_Where_MultipleParameters()
 	{
-		$qb = (new NativeQueryBuilder($this->em))
-			->select('e.*')->from(__NAMESPACE__ . '\\CmsAddress', 'a')
+		$qb = new NativeQueryBuilder($this->em);
+		$qb->select('e.*')->from(__NAMESPACE__ . '\\CmsAddress', 'a')
 			->where("a.user = :username AND a.city = ?2 AND a.id IN (:ids)", 'Filip', 'Brno', array(1, 2, 3));
 
 		$qb->getResultSetMapper()->addScalarResult('id', 'id');
@@ -88,8 +88,8 @@ class NativeQueryBuilderTest extends KdybyTests\Doctrine\ORMTestCase
 
 	public function testInlineParameters_Where_MultipleConditions()
 	{
-		$qb = (new NativeQueryBuilder($this->em))
-			->select('e.*')->from(__NAMESPACE__ . '\\CmsAddress', 'a')
+		$qb = new NativeQueryBuilder($this->em);
+		$qb->select('e.*')->from(__NAMESPACE__ . '\\CmsAddress', 'a')
 			->where("a.user = :username AND a.city = ?2", 'Filip', 'Brno', "a.id IN (:ids)", array(1, 2, 3));
 
 		$qb->getResultSetMapper()->addScalarResult('id', 'id');
@@ -105,8 +105,8 @@ class NativeQueryBuilderTest extends KdybyTests\Doctrine\ORMTestCase
 
 	public function testInlineParameters_Join()
 	{
-		$qb = (new NativeQueryBuilder($this->em))
-			->select('e.*')->from(__NAMESPACE__ . '\\CmsAddress', 'a')
+		$qb = new NativeQueryBuilder($this->em);
+		$qb->select('e.*')->from(__NAMESPACE__ . '\\CmsAddress', 'a')
 			->join('a', 'cms_users', 'u', 'a.city = :city_name', 'Brno');
 
 		$qb->getResultSetMapper()->addScalarResult('id', 'id');
@@ -120,8 +120,8 @@ class NativeQueryBuilderTest extends KdybyTests\Doctrine\ORMTestCase
 
 	public function testInlineParameters_Join_WithIndexBy()
 	{
-		$qb = (new NativeQueryBuilder($this->em))
-			->select('e.*')->from(__NAMESPACE__ . '\\CmsAddress', 'a')
+		$qb = new NativeQueryBuilder($this->em);
+		$qb->select('e.*')->from(__NAMESPACE__ . '\\CmsAddress', 'a')
 			->join('a', 'cms_users', 'u', 'a.city = :city_name', 'Brno');
 
 		$qb->getResultSetMapper()->addScalarResult('id', 'id');
@@ -135,8 +135,8 @@ class NativeQueryBuilderTest extends KdybyTests\Doctrine\ORMTestCase
 
 	public function testInlineParameters_Join_MultipleParameters()
 	{
-		$qb = (new NativeQueryBuilder($this->em))
-			->select('e.*')->from(__NAMESPACE__ . '\\CmsAddress', 'a')
+		$qb = new NativeQueryBuilder($this->em);
+		$qb->select('e.*')->from(__NAMESPACE__ . '\\CmsAddress', 'a')
 			->join('a', 'cms_users', 'u', "a.user = :username AND a.city = ?2 AND a.id IN (:ids)", 'Filip', 'Brno', array(1, 2, 3));
 
 		$qb->getResultSetMapper()->addScalarResult('id', 'id');
@@ -152,8 +152,8 @@ class NativeQueryBuilderTest extends KdybyTests\Doctrine\ORMTestCase
 
 	public function testInlineParameters_Join_MultipleParameters_WithIndexBy()
 	{
-		$qb = (new NativeQueryBuilder($this->em))
-			->select('e.*')->from(__NAMESPACE__ . '\\CmsAddress', 'a')
+		$qb = new NativeQueryBuilder($this->em);
+		$qb->select('e.*')->from(__NAMESPACE__ . '\\CmsAddress', 'a')
 			->join('a', 'cms_users', 'u', "a.user = :username AND a.city = ?2 AND a.id IN (:ids)", 'Filip', 'Brno', array(1, 2, 3));
 
 		$qb->getResultSetMapper()->addScalarResult('id', 'id');
@@ -169,8 +169,8 @@ class NativeQueryBuilderTest extends KdybyTests\Doctrine\ORMTestCase
 
 	public function testInlineParameters_InnerJoin()
 	{
-		$qb = (new NativeQueryBuilder($this->em))
-			->select('e.*')->from(__NAMESPACE__ . '\\CmsAddress', 'a')
+		$qb = new NativeQueryBuilder($this->em);
+		$qb->select('e.*')->from(__NAMESPACE__ . '\\CmsAddress', 'a')
 			->innerJoin('a', 'cms_users', 'u', 'a.city = :city_name', 'Brno');
 
 		$qb->getResultSetMapper()->addScalarResult('id', 'id');
@@ -184,8 +184,8 @@ class NativeQueryBuilderTest extends KdybyTests\Doctrine\ORMTestCase
 
 	public function testInlineParameters_LeftJoin()
 	{
-		$qb = (new NativeQueryBuilder($this->em))
-			->select('e.*')->from(__NAMESPACE__ . '\\CmsAddress', 'a')
+		$qb = new NativeQueryBuilder($this->em);
+		$qb->select('e.*')->from(__NAMESPACE__ . '\\CmsAddress', 'a')
 			->leftJoin('a', 'cms_users', 'u', 'a.city = :city_name', 'Brno');
 
 		$qb->getResultSetMapper()->addScalarResult('id', 'id');
@@ -199,8 +199,8 @@ class NativeQueryBuilderTest extends KdybyTests\Doctrine\ORMTestCase
 
 	public function testInlineParameters_RightJoin()
 	{
-		$qb = (new NativeQueryBuilder($this->em))
-			->select('e.*')->from(__NAMESPACE__ . '\\CmsAddress', 'a')
+		$qb = new NativeQueryBuilder($this->em);
+		$qb->select('e.*')->from(__NAMESPACE__ . '\\CmsAddress', 'a')
 			->rightJoin('a', 'cms_users', 'u', 'a.city = :city_name', 'Brno');
 
 		$qb->getResultSetMapper()->addScalarResult('id', 'id');

@@ -1,4 +1,4 @@
-<?php
+<?php // lint >= 5.4
 
 /**
  * This file is part of the Kdyby (http://www.kdyby.org)

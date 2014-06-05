@@ -194,7 +194,7 @@ class NativeQueryBuilder extends Doctrine\DBAL\Query\QueryBuilder
 		} elseif (isset($rsm->aliasMap[$joinedFrom])) {
 			$fromClass = $this->em->getClassMetadata($rsm->aliasMap[$joinedFrom]);
 
-			foreach (array_merge([$fromClass->getName()], $fromClass->subClasses) as $fromClass) {
+			foreach (array_merge(array($fromClass->getName()), $fromClass->subClasses) as $fromClass) {
 				$fromClass = $this->em->getClassMetadata($fromClass);
 
 				if ($fromClass->hasAssociation($table)) {
