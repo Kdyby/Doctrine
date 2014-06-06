@@ -157,7 +157,7 @@ This method was also originally protected.
 Returns instance of other DAO of entity that is on the other side of given relation.
 
 ```php
-$commentsDao = $articlesDao->relation('comments');
+$commentsDao = $articlesDao->related('comments');
 ```
 
 
