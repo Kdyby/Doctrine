@@ -206,7 +206,7 @@ Marks entity that it should be deleted and flushes the EntityManager.
 
 
 
-### `->transactional($entity)`
+### `->transactional($callback)`
 
 
 You can pass a closure and be sure that it's execution will be wrapped in transaction.
