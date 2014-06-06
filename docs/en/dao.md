@@ -196,7 +196,7 @@ which means that you'll get an exception, but it won't kill the EntityManager.
 
 If the query runs and returns newly inserted identifier, the identifier is forced to the entity and the entity is merged to the EntityManager.
 This also means that you will always get new instance of your entity,
-because merging cannot merge references of two entities and it has to drop on of them (so it drops reference to the one you've provided).
+because merging cannot merge references of two entities and it has to drop one of them (so it drops reference to the one you've provided).
 
 
 ### `->delete($entity)`
