@@ -157,7 +157,7 @@ This method was also originally protected.
 Returns instance of other DAO of entity that is on the other side of given relation.
 
 ```php
-$commentsDao = $articlesDao->relation('comments');
+$commentsDao = $articlesDao->related('comments');
 ```
 
 
@@ -196,7 +196,7 @@ which means that you'll get an exception, but it won't kill the EntityManager.
 
 If the query runs and returns newly inserted identifier, the identifier is forced to the entity and the entity is merged to the EntityManager.
 This also means that you will always get new instance of your entity,
-because merging cannot merge references of two entities and it has to drop on of them (so it drops reference to the one you've provided).
+because merging cannot merge references of two entities and it has to drop one of them (so it drops reference to the one you've provided).
 
 
 ### `->delete($entity)`
@@ -206,7 +206,7 @@ Marks entity that it should be deleted and flushes the EntityManager.
 
 
 
-### `->transactional($entity)`
+### `->transactional($callback)`
 
 
 You can pass a closure and be sure that it's execution will be wrapped in transaction.
