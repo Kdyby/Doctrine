@@ -109,6 +109,47 @@ class NativeQueryBuilder extends Doctrine\DBAL\Query\QueryBuilder
 
 
 	/**
+	 * @param string $tableAlias
+	 * @param string|array $columns
+	 * @return NativeQueryBuilder
+	 */
+	public function addColumn($tableAlias, $columns)
+	{
+		$rsm = $this->getResultSetMapper();
+
+		$args = func_get_args();
+		array_shift($args); // shit tableAlias
+
+		$class = $this->em->getClassMetadata($rsm->aliasMap[$tableAlias]);
+
+		foreach (is_array($columns) ? $columns : $args as $column) {
+			try {
+				$field = $class->getFieldForColumn($column);
+				if ($class->hasField($field)) {
+					$type = $class->getTypeOfField($field);
+
+				} else {
+					$type = $class->hasAssociation($field) ? 'integer' : 'string';
+				}
+
+			} catch (Doctrine\ORM\Mapping\MappingException $e) {
+				$type = 'string';
+
+				if ($class->discriminatorColumn['fieldName'] === $column) {
+					$type = $class->discriminatorColumn['type'];
+				}
+			}
+
+			$this->addSelect("{$tableAlias}.{$column} as {$tableAlias}_{$column}");
+			$rsm->addScalarResult("{$tableAlias}_{$column}", "{$tableAlias}_{$column}", $type);
+		}
+
+		return $this;
+	}
+
+
+
+	/**
 	 * {@inheritdoc}
 	 * @return NativeQueryBuilder
 	 */
