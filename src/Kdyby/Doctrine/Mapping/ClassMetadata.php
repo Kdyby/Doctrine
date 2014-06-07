@@ -51,11 +51,18 @@ class ClassMetadata extends Doctrine\ORM\Mapping\ClassMetadata
 	public function newInstance()
 	{
 		if ($this->_prototype === null) {
-			if (PHP_VERSION_ID >= 50400) {
-				$this->_prototype = $this->getReflectionClass()->newInstanceWithoutConstructor();
+			if (PHP_VERSION_ID === 50429 || PHP_VERSION_ID === 50513) {
+				if ($this->getReflectionClass()->implementsInterface('Serializable')) {
+					$this->_prototype = @unserialize(sprintf('C:%d:"%s":0:{}', strlen($this->name), $this->name));
+				}
+			}
 
-			} else {
-				$this->_prototype = unserialize(sprintf('O:%d:"%s":0:{}', strlen($this->name), $this->name));
+			if (!$this->_prototype) {
+				$this->_prototype = @unserialize(sprintf('O:%d:"%s":0:{}', strlen($this->name), $this->name));
+			}
+
+			if (!$this->_prototype) {
+				throw new Kdyby\Doctrine\UnexpectedValueException("Prototype of class {$this->name} cannot be created, probably due to some PHP bug.");
 			}
 		}
 
