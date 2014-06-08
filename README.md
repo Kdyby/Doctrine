@@ -12,7 +12,7 @@ Requirements
 Kdyby/Doctrine requires PHP 5.3.2 with pdo extension.
 
 - [Nette Framework](https://github.com/nette/nette)
-- [Doctrine ORM >=2.4](https://github.com/doctrine/orm)
+- [Doctrine ORM >=2.4](https://github.com/doctrine/doctrine2)
 - [Kdyby/Annotations](https://github.com/kdyby/annotations)
 - [Kdyby/Console](https://github.com/kdyby/console)
 - [Kdyby/Events](https://github.com/kdyby/events)
