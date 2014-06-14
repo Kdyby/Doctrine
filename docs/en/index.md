@@ -83,8 +83,15 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Entity
  */
-class Article extends \Kdyby\Doctrine\Entities\IdentifiedEntity
+class Article extends \Kdyby\Doctrine\Entities\BaseEntity
 {
+
+	/**
+	 * @ORM\Id
+	 * @ORM\Column(type="integer")
+	 * @ORM\GeneratedValue
+	 */
+	public $id;
 
 	/**
 	 * @ORM\Column(type="string")
@@ -97,6 +104,18 @@ class Article extends \Kdyby\Doctrine\Entities\IdentifiedEntity
 The full name of annotation `@ORM\Entity` is `Doctrine\ORM\Mapping\Entity`, that's why there is that namespace alias before class definition.
 
 Every entity, inherited from `Kdyby\Doctrine\Entities\BaseEntity` will have some cool features, the complete behaviour is listed [here](todo).
+
+If you don't want to declare $id column in every entity, you can use Identifier trait included in Kdyby\Doctrine\Entities\Attributes\Identifier. However, traits are only available since PHP 5.4. See [documentation](http://www.php.net/manual/en/language.oop5.traits.php).
+
+```php
+class Article extends \Kdyby\Doctrine\Entities\BaseEntity
+{
+
+	use \Kdyby\Doctrine\Entities\Attributes\Identifier; // Using Identifier trait for id column
+	
+	// ...
+}
+```
 
 Now we care only about method `::getClassName()`, because we will use it right away. All it does is return the class name. Oh, but what is it good for? Well, most modern IDE's works with classnames in code as if they were reference - they can find you usages and provide you refactorings. This wouldn't work, if the classname would be simply written in string. Instead, we call static method, that returns the classname. That way, it's always actual, even when you rename the class in your project!
 
