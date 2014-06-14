@@ -32,7 +32,7 @@ $ composer require kdyby/doctrine:~2.0.1
 Documentation
 ------------
 
-Lear more in the [documentation](https://github.com/Kdyby/Doctrine/blob/nette-2.1/docs/en/index.md).
+Learn more in the [documentation](https://github.com/Kdyby/Doctrine/blob/nette-2.1/docs/en/index.md).
 
 
 -----
