@@ -19,6 +19,7 @@ use Doctrine\DBAL\Types\Type;
 use Kdyby;
 use Nette;
 use Nette\Utils\Strings;
+use Nette\Utils\Callback;
 use Tracy\Bar;
 use Tracy\BlueScreen;
 use Tracy\Debugger;
@@ -731,7 +732,7 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 
 		$panel->setConnection($connection);
 		$panel->registerBarPanel(static::getDebuggerBar());
-		static::getDebuggerBlueScreen()->addPanel(callback($panel, 'renderQueryException'));
+		static::getDebuggerBlueScreen()->addPanel(Callback::closure($panel, 'renderQueryException'));
 
 		return $panel;
 	}
