@@ -83,8 +83,15 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Entity
  */
-class Article extends \Kdyby\Doctrine\Entities\IdentifiedEntity
+class Article extends \Kdyby\Doctrine\Entities\BaseEntity
 {
+
+	/**
+	 * @ORM\Id
+	 * @ORM\Column(type="integer", name="id", unique=true)
+	 * @ORM\GeneratedValue
+	 */
+	public $id;
 
 	/**
 	 * @ORM\Column(type="string")
