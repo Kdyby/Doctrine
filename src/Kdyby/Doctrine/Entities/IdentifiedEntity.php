@@ -24,7 +24,7 @@ use Kdyby;
  *
  * @property-read int $id
  * 
- * @deprecated
+ * @deprecated Use Kdyby\Doctrine\Entities\Attributes\Identifier trait instead.
  */
 abstract class IdentifiedEntity extends BaseEntity
 {
