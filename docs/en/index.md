@@ -105,7 +105,7 @@ The full name of annotation `@ORM\Entity` is `Doctrine\ORM\Mapping\Entity`, that
 
 Every entity, inherited from `Kdyby\Doctrine\Entities\BaseEntity` will have some cool features, the complete behaviour is listed [here](todo).
 
-If you don't want to declare $id column in every entity, you can use Identifier trait included in Kdyby\Doctrine\Entities\Identifier. However, traits are only available since PHP 5.4. See [documentation](http://www.php.net/manual/en/language.oop5.traits.php).
+If you don't want to declare $id column in every entity, you can use Identifier trait included in Kdyby\Doctrine\Entities\Attributes\Identifier. However, traits are only available since PHP 5.4. See [documentation](http://www.php.net/manual/en/language.oop5.traits.php).
 
 ```php
 class Article extends \Kdyby\Doctrine\Entities\BaseEntity
