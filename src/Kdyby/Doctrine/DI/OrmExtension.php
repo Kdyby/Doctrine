@@ -187,8 +187,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 
 		foreach ($this->loadFromFile(__DIR__ . '/console.neon') as $i => $command) {
 			$cli = $builder->addDefinition($this->prefix('cli.' . $i))
-				->addTag(Kdyby\Console\DI\ConsoleExtension::COMMAND_TAG)
-				->setInject(FALSE); // lazy injects
+				->addTag(Kdyby\Console\DI\ConsoleExtension::COMMAND_TAG);
 
 			if (is_string($command)) {
 				$cli->setClass($command);
@@ -220,8 +219,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 
 		$metadataDriver = $builder->addDefinition($this->prefix($name . '.metadataDriver'))
 			->setClass('Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain')
-			->setAutowired(FALSE)
-			->setInject(FALSE);
+			->setAutowired(FALSE);
 		/** @var Nette\DI\ServiceDefinition $metadataDriver */
 
 		Validators::assertField($config, 'metadata', 'array');
@@ -295,8 +293,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			->addSetup('setNamingStrategy', CacheHelpers::filterArgs($config['namingStrategy']))
 			->addSetup('setQuoteStrategy', CacheHelpers::filterArgs($config['quoteStrategy']))
 			->addSetup('setEntityListenerResolver', CacheHelpers::filterArgs($config['entityListenerResolver']))
-			->setAutowired(FALSE)
-			->setInject(FALSE);
+			->setAutowired(FALSE);
 		/** @var Nette\DI\ServiceDefinition $configuration */
 
 		$this->proxyAutoLoaders[$config['proxyNamespace']] = $config['proxyDir'];
@@ -321,8 +318,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 				$this->prefix('@' . $name . '.ormConfiguration')
 			))
 			->addTag(self::TAG_ENTITY_MANAGER)
-			->setAutowired($isDefault)
-			->setInject(FALSE);
+			->setAutowired($isDefault);
 	}
 
 
@@ -341,8 +337,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			->setClass('Doctrine\DBAL\Configuration')
 			->addSetup('setResultCacheImpl', array($this->processCache($config['resultCache'], $name . '.dbalResult')))
 			->addSetup('setSQLLogger', array(new Nette\DI\Statement('Doctrine\DBAL\Logging\LoggerChain')))
-			->setAutowired(FALSE)
-			->setInject(FALSE);
+			->setAutowired(FALSE);
 
 		// types
 		Validators::assertField($config, 'types', 'array');
@@ -358,8 +353,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			$builder->addDefinition($name . '.events.mysqlSessionInit')
 				->setClass('Doctrine\DBAL\Event\Listeners\MysqlSessionInit', array($config['charset']))
 				->addTag(Kdyby\Events\DI\EventsExtension::SUBSCRIBER_TAG)
-				->setAutowired(FALSE)
-				->setInject(FALSE);
+				->setAutowired(FALSE);
 		}
 
 		// connection
@@ -373,8 +367,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 				$schemaTypes
 			))
 			->addTag(self::TAG_CONNECTION)
-			->setAutowired($isDefault)
-			->setInject(FALSE);
+			->setAutowired($isDefault);
 		/** @var Nette\DI\ServiceDefinition $connection */
 
 		if (!is_bool($config['logging'])) {
@@ -457,8 +450,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		$this->getContainerBuilder()->addDefinition($serviceName)
 			->setClass('Doctrine\Common\Persistence\Mapping\Driver\MappingDriver')
 			->setFactory($driver->entity, $driver->arguments)
-			->setAutowired(FALSE)
-			->setInject(FALSE);
+			->setAutowired(FALSE);
 
 		$metadataDriver->addSetup('addDriver', array('@' . $serviceName, $namespace));
 		return '@' . $serviceName;
