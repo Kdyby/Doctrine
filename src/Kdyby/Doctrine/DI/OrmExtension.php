@@ -143,8 +143,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		$builder->addDefinition($this->prefix('dao'))
 			->setClass('Kdyby\Doctrine\EntityDao')
 			->setFactory('@Kdyby\Doctrine\EntityManager::getDao', array(new Code\PhpLiteral('$entityName')))
-			->setParameters(array('entityName'))
-			->setInject(FALSE);
+			->setParameters(array('entityName'));
 
 		// interface for models & presenters
 		$builder->addDefinition($this->prefix('daoFactory'))
@@ -152,30 +151,25 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			->setFactory('@Kdyby\Doctrine\EntityManager::getDao', array(new Code\PhpLiteral('$entityName')))
 			->setParameters(array('entityName'))
 			->setImplement('Kdyby\Doctrine\EntityDaoFactory')
-			->setInject(FALSE)->setAutowired(TRUE);
+			->setAutowired(TRUE);
 
 		$builder->addDefinition($this->prefix('schemaValidator'))
-			->setClass('Doctrine\ORM\Tools\SchemaValidator')
-			->setInject(FALSE);
+			->setClass('Doctrine\ORM\Tools\SchemaValidator');
 
 		$builder->addDefinition($this->prefix('schemaTool'))
-			->setClass('Doctrine\ORM\Tools\SchemaTool')
-			->setInject(FALSE);
+			->setClass('Doctrine\ORM\Tools\SchemaTool');
 
 		$builder->addDefinition($this->prefix('schemaManager'))
 			->setClass('Doctrine\DBAL\Schema\AbstractSchemaManager')
-			->setFactory('@Kdyby\Doctrine\Connection::getSchemaManager')
-			->setInject(FALSE);
+			->setFactory('@Kdyby\Doctrine\Connection::getSchemaManager');
 
 		$builder->addDefinition($this->prefix('cacheCleaner'))
-			->setClass('Kdyby\Doctrine\Tools\CacheCleaner')
-			->setInject(FALSE);
+			->setClass('Kdyby\Doctrine\Tools\CacheCleaner');
 
 		if ($this->targetEntityMappings) {
 			$listener = $builder->addDefinition($this->prefix('resolveTargetEntityListener'))
 				->setClass('Kdyby\Doctrine\Tools\ResolveTargetEntityListener')
-				->addTag(Kdyby\Events\DI\EventsExtension::SUBSCRIBER_TAG)
-				->setInject(FALSE);
+				->addTag(Kdyby\Events\DI\EventsExtension::SUBSCRIBER_TAG);
 
 			foreach ($this->targetEntityMappings as $originalEntity => $mapping) {
 				$listener->addSetup('addResolveTargetEntity', array($originalEntity, $mapping['targetEntity'], $mapping));
