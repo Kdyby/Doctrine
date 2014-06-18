@@ -64,6 +64,17 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 	public $failed = array();
 
 	/**
+	 * @var array
+	 */
+	public $skipPaths = array(
+		'vendor/nette',
+		'vendor/doctrine/dbal',
+		'vendor/doctrine/orm',
+		'vendor/kdyby/doctrine',
+		'vendor/phpunit',
+	);
+
+	/**
 	 * @var \Doctrine\DBAL\Connection
 	 */
 	private $connection;
@@ -136,19 +147,15 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 	 */
 	protected function filterTracePaths($file)
 	{
-		static $netteDir;
-		if ($netteDir === NULL) {
-			$netteDir = dirname(dirname(Nette\Reflection\ClassType::from('Nette\Framework')->getFileName()));
-			$netteDir = str_replace(DIRECTORY_SEPARATOR, '/', $netteDir);
+		$file = str_replace(DIRECTORY_SEPARATOR, '/', $file);
+		$return = is_file($file);
+		foreach ($this->skipPaths as $path) {
+			if (!$return) {
+				break;
+			}
+			$return = $return && strpos($file, '/' . trim($path, '/') . '/') === FALSE; 
 		}
-		$replaced = str_replace(DIRECTORY_SEPARATOR, '/', $file);
-		return is_file($file)
-			&& strpos($file, $netteDir) === FALSE
-			&& strpos($replaced, '/Doctrine/ORM/') === FALSE
-			&& strpos($replaced, '/Doctrine/DBAL/') === FALSE
-			&& strpos($replaced, "/Kdyby/Doctrine/") === FALSE
-			&& stripos($replaced, "/phpunit") === FALSE
-			&& stripos($replaced, "/nette/tester") === FALSE;
+		return $return;
 	}
 
 
