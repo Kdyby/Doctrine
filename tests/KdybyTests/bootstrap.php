@@ -29,12 +29,6 @@ $_SERVER = array_intersect_key($_SERVER, array_flip(array(
 $_SERVER['REQUEST_TIME'] = 1234567890;
 $_ENV = $_GET = $_POST = array();
 
-
-if (extension_loaded('xdebug')) {
-	xdebug_disable();
-	Tester\CodeCoverage\Collector::start(__DIR__ . '/coverage.dat');
-}
-
 function id($val) {
 	return $val;
 }
