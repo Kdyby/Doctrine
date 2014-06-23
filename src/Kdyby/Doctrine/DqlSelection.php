@@ -16,6 +16,7 @@ use Doctrine\ORM\Query\Parameter;
 use Doctrine\Common\Collections\ArrayCollection;
 use Kdyby;
 use Nette;
+use Nette\Utils\Callback;
 use Nette\Utils\Strings;
 
 
@@ -215,7 +216,7 @@ class DqlSelection extends Nette\Object implements \IteratorAggregate
 	public function where($cond)
 	{
 		$this->state = self::STATE_DIRTY;
-		callback($this->builder->where, 'addAnd')->invokeArgs(func_get_args());
+		Callback::invokeArgs(array($this->builder->where, 'addAnd'), func_get_args());
 
 		return $this;
 	}
@@ -229,7 +230,7 @@ class DqlSelection extends Nette\Object implements \IteratorAggregate
 	public function orWhere($cond)
 	{
 		$this->state = self::STATE_DIRTY;
-		callback($this->builder->where, 'addOr')->invokeArgs(func_get_args());
+		Callback::invokeArgs(array($this->builder->where, 'addOr'), func_get_args());
 
 		return $this;
 	}
@@ -257,7 +258,7 @@ class DqlSelection extends Nette\Object implements \IteratorAggregate
 	public function having($cond)
 	{
 		$this->state = self::STATE_DIRTY;
-		callback($this->builder->having, 'addAnd')->invokeArgs(func_get_args());
+		Callback::invokeArgs(array($this->builder->having, 'addAnd'), func_get_args());
 
 		return $this;
 	}
@@ -271,7 +272,7 @@ class DqlSelection extends Nette\Object implements \IteratorAggregate
 	public function orHaving($cond)
 	{
 		$this->state = self::STATE_DIRTY;
-		callback($this->builder->having, 'addOr')->invokeArgs(func_get_args());
+		Callback::invokeArgs(array($this->builder->having, 'addOr'), func_get_args());
 
 		return $this;
 	}
