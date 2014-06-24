@@ -54,6 +54,17 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 	public $failed = array();
 
 	/**
+	 * @var array
+	 */
+	public $skipPaths = array(
+		'vendor/nette',
+		'vendor/doctrine/dbal',
+		'vendor/doctrine/orm',
+		'vendor/kdyby/doctrine',
+		'vendor/phpunit',
+	);
+
+	/**
 	 * @var \Doctrine\DBAL\Connection
 	 */
 	private $connection;
@@ -126,19 +137,15 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 	 */
 	protected function filterTracePaths($file)
 	{
-		static $netteDir;
-		if ($netteDir === NULL) {
-			$netteDir = dirname(dirname(Nette\Reflection\ClassType::from('Nette\Framework')->getFileName()));
-			$netteDir = str_replace(DIRECTORY_SEPARATOR, '/', $netteDir);
+		$file = str_replace(DIRECTORY_SEPARATOR, '/', $file);
+		$return = is_file($file);
+		foreach ($this->skipPaths as $path) {
+			if (!$return) {
+				break;
+			}
+			$return = $return && strpos($file, '/' . trim($path, '/') . '/') === FALSE; 
 		}
-		$replaced = str_replace(DIRECTORY_SEPARATOR, '/', $file);
-		return is_file($file)
-			&& strpos($file, $netteDir) === FALSE
-			&& strpos($replaced, '/Doctrine/ORM/') === FALSE
-			&& strpos($replaced, '/Doctrine/DBAL/') === FALSE
-			&& strpos($replaced, "/Kdyby/Doctrine/") === FALSE
-			&& stripos($replaced, "/phpunit") === FALSE
-			&& stripos($replaced, "/nette/tester") === FALSE;
+		return $return;
 	}
 
 
@@ -432,19 +439,47 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 
 
 
-	public static function highlightQuery($query, $params = array())
+	/**
+	 * Returns syntax highlighted SQL command.
+	 * This method is same as Nette\Database\Helpers::dumpSql except for parameters handling.
+	 * @link https://github.com/nette/database/blob/667143b2d5b940f78c8dc9212f95b1bbc033c6a3/src/Database/Helpers.php#L75-L138
+	 * @author David Grudl
+	 * @param string $sql
+	 * @return string
+	 */
+	public static function highlightQuery($sql)
 	{
-		$params = array_map(function ($param) {
-			return is_array($param) ?  implode(', ', $param) : $param;
-		}, $params);
+		static $keywords1 = 'SELECT|(?:ON\s+DUPLICATE\s+KEY)?UPDATE|INSERT(?:\s+INTO)?|REPLACE(?:\s+INTO)?|DELETE|CALL|UNION|FROM|WHERE|HAVING|GROUP\s+BY|ORDER\s+BY|LIMIT|OFFSET|SET|VALUES|LEFT\s+JOIN|INNER\s+JOIN|TRUNCATE';
+		static $keywords2 = 'ALL|DISTINCT|DISTINCTROW|IGNORE|AS|USING|ON|AND|OR|IN|IS|NOT|NULL|[RI]?LIKE|REGEXP|TRUE|FALSE|WITH|INSTANCE\s+OF';
 
-		array_walk_recursive($params, function (&$param) {
-			if ($param instanceof \DateTime) {
-				$param = $param->format('Y-m-d H:i:s');
+		// insert new lines
+		$sql = " $sql ";
+		$sql = preg_replace("#(?<=[\\s,(])($keywords1)(?=[\\s,)])#i", "\n\$1", $sql);
+
+		// reduce spaces
+		$sql = preg_replace('#[ \t]{2,}#', ' ', $sql);
+
+		$sql = wordwrap($sql, 100);
+		$sql = preg_replace('#([ \t]*\r?\n){2,}#', "\n", $sql);
+
+		// syntax highlight
+		$sql = htmlSpecialChars($sql);
+		$sql = preg_replace_callback("#(/\\*.+?\\*/)|(\\*\\*.+?\\*\\*)|(?<=[\\s,(])($keywords1)(?=[\\s,)])|(?<=[\\s,(=])($keywords2)(?=[\\s,)=])#is", function($matches) {
+			if (!empty($matches[1])) { // comment
+				return '<em style="color:gray">' . $matches[1] . '</em>';
+
+			} elseif (!empty($matches[2])) { // error
+				return '<strong style="color:red">' . $matches[2] . '</strong>';
+
+			} elseif (!empty($matches[3])) { // most important keywords
+				return '<strong style="color:blue">' . $matches[3] . '</strong>';
+
+			} elseif (!empty($matches[4])) { // other keywords
+				return '<strong style="color:green">' . $matches[4] . '</strong>';
 			}
-		});
+		}, $sql);
 
-		return Nette\Database\Helpers::dumpSql($query, $params);
+		return '<pre class="dump">' . trim($sql) . "</pre>\n";
 	}
 
 

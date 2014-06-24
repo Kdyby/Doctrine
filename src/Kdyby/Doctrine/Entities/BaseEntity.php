@@ -13,11 +13,12 @@ namespace Kdyby\Doctrine\Entities;
 use Doctrine;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Nette;
 use Kdyby;
 use Kdyby\Doctrine\Collections\ReadOnlyCollectionWrapper;
 use Kdyby\Doctrine\MemberAccessException;
 use Kdyby\Doctrine\UnexpectedValueException;
+use Nette;
+use Nette\Utils\Callback;
 
 
 
@@ -175,7 +176,7 @@ abstract class BaseEntity extends Nette\Object implements \Serializable
 			if ($rp->isPublic() && !$rp->isStatic()) {
 				if (is_array($list = $this->$name) || $list instanceof \Traversable) {
 					foreach ($list as $handler) {
-						callback($handler)->invokeArgs($args);
+						Callback::invokeArgs($handler, $args);
 					}
 				} elseif ($list !== NULL) {
 					throw UnexpectedValueException::invalidEventValue($list, $this, $name);

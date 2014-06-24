@@ -17,6 +17,7 @@ use Doctrine\ORM\NonUniqueResultException;
 use Kdyby;
 use Kdyby\Persistence;
 use Nette;
+use Nette\Utils\Callback;
 use Nette\Utils\Arrays;
 
 
@@ -179,7 +180,7 @@ class EntityDao extends EntityRepository implements Persistence\ObjectDao
 		$connection->beginTransaction();
 
 		try {
-			$return = callback($callback)->invoke($this, $this->getEntityManager());
+			$return = Callback::invoke($callback, $this, $this->getEntityManager());
 			$this->flush();
 			$connection->commit();
 
