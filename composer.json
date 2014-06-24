@@ -33,7 +33,7 @@
 
 		"dg/dibi" : "~2.0",
 		"nette/tester": "@dev",
-		"jakub-onderka/php-parallel-lint": "~0.6"
+		"jakub-onderka/php-parallel-lint": "dev-master#f3c25d3aced13"
 	},
 	"autoload": {
 		"psr-0": {
@@ -45,6 +45,9 @@
 			"src/Kdyby/Doctrine/exceptions.php"
 		]
 	},
+	"repositories": [
+		{ "type": "vcs", "url": "https://github.com/fprochazka/PHP-Parallel-Lint" }
+	],
 	"extra": {
 		"branch-alias": {
 			"dev-master": "2.1-dev"
