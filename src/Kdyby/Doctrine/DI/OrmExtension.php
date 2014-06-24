@@ -15,6 +15,7 @@ use Doctrine\Common\Proxy\AbstractProxyFactory;
 use Kdyby;
 use Kdyby\DoctrineCache\DI\Helpers as CacheHelpers;
 use Nette;
+use Nette\DI\Statement;
 use Nette\PhpGenerator as Code;
 use Nette\Utils\Strings;
 use Nette\Utils\Validators;
@@ -266,7 +267,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 
 		if (empty($config['metadata'])) {
 			$metadataDriver->addSetup('setDefaultDriver', array(
-				new Nette\DI\Statement($this->metadataDriverClasses[self::ANNOTATION_DRIVER], array(array($builder->expand('%appDir%'))))
+				new Statement($this->metadataDriverClasses[self::ANNOTATION_DRIVER], array(array($builder->expand('%appDir%'))))
 			));
 		}
 
@@ -346,7 +347,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		$configuration = $builder->addDefinition($this->prefix($name . '.dbalConfiguration'))
 			->setClass('Doctrine\DBAL\Configuration')
 			->addSetup('setResultCacheImpl', array($this->processCache($config['resultCache'], $name . '.dbalResult')))
-			->addSetup('setSQLLogger', array(new Nette\DI\Statement('Doctrine\DBAL\Logging\LoggerChain')))
+			->addSetup('setSQLLogger', array(new Statement('Doctrine\DBAL\Logging\LoggerChain')))
 			->setAutowired(FALSE)
 			->setInject(FALSE);
 
@@ -384,7 +385,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		/** @var Nette\DI\ServiceDefinition $connection */
 
 		if (!is_bool($config['logging'])) {
-			$fileLogger = new Nette\DI\Statement('Kdyby\Doctrine\Diagnostics\FileLogger', array($builder->expand($config['logging'])));
+			$fileLogger = new Statement('Kdyby\Doctrine\Diagnostics\FileLogger', array($builder->expand($config['logging'])));
 			$configuration->addSetup('$service->getSQLLogger()->addLogger(?)', array($fileLogger));
 
 		} elseif ($config['logging']) {
@@ -434,22 +435,19 @@ class OrmExtension extends Nette\DI\CompilerExtension
 					throw new Nette\Utils\AssertionException("The metadata path expects to be an existing directory, $path given.");
 				}
 			}
-			$driver = (object)array('value' => self::ANNOTATION_DRIVER, 'attributes' => $paths);
+
+			$driver = new Statement(self::ANNOTATION_DRIVER, is_array($paths) ? $paths : array($paths));
 		}
 
-		if ($driver instanceof \stdClass && !is_array($driver->attributes)) {
-			$driver->attributes = array($driver->attributes);
-		}
-
-		$impl = $driver instanceof \stdClass ? $driver->value : (string) $driver;
+		$impl = $driver instanceof \stdClass ? $driver->value : ($driver instanceof Statement ? $driver->entity : (string) $driver);
 		list($driver) = CacheHelpers::filterArgs($driver);
-		/** @var Nette\DI\Statement $driver */
+		/** @var Statement $driver */
 
 		if (isset($this->metadataDriverClasses[$impl])) {
 			$driver->entity = $this->metadataDriverClasses[$impl];
 		}
 
-		if (substr($driver->entity, 0, 1) === '@') {
+		if (is_string($driver->entity) && substr($driver->entity, 0, 1) === '@') {
 			$metadataDriver->addSetup('addDriver', array($driver->entity, $namespace));
 			return $driver->entity;
 		}
