@@ -11,8 +11,10 @@
 namespace Kdyby\Doctrine\Mapping;
 
 use Doctrine;
+use Doctrine\Common\Persistence\Mapping\MappingException;
 use Kdyby;
 use Nette;
+use Nette\Caching\Storages\MemoryStorage;
 
 
 
@@ -70,6 +72,30 @@ class AnnotationDriver extends Doctrine\ORM\Mapping\Driver\AnnotationDriver
 
 
 
+	/**
+	 * @param string $path
+	 * @return array of class => filename
+	 */
+	protected function findAllClasses($path)
+	{
+		$loader = new Nette\Loaders\RobotLoader();
+		$loader->setCacheStorage(new MemoryStorage());
+
+		$exts = isset($this->fileExtensions[$path]) ? $this->fileExtensions[$path] : array($this->fileExtension);
+		$loader->acceptFiles = array_map(function ($ext) { return '*' . $ext; }, $exts);
+
+		$loader->addDirectory($path);
+		$loader->rebuild();
+
+		return $loader->getIndexedClasses();
+	}
+
+
+
+	/**
+	 * @throws \Doctrine\Common\Persistence\Mapping\MappingException
+	 * @return string[]
+	 */
 	public function getAllClassNames()
 	{
 		if ($this->classNames !== NULL) {
@@ -77,31 +103,23 @@ class AnnotationDriver extends Doctrine\ORM\Mapping\Driver\AnnotationDriver
 		}
 
 		$classes = array();
-		$paths = $this->paths;
-		$defaultFileExtension = $this->fileExtension;
-
-		try {
-			foreach ($paths as $path) {
-				$exts = isset($this->fileExtensions[$path]) ? $this->fileExtensions[$path] : array($defaultFileExtension);
-				foreach ($exts as $ext) {
-					$this->paths = array($path);
-					$this->fileExtension = $ext;
-
-					$this->classNames = NULL;
-					$classes = array_merge($classes, parent::getAllClassNames());
-				}
+		foreach ($this->paths as $path) {
+			if ( ! is_dir($path)) {
+				throw MappingException::fileMappingDriversRequireConfiguredDirectoryPath($path);
 			}
 
-		} catch (\Exception $e) { }
-
-		$this->paths = $paths;
-		$this->fileExtension = $defaultFileExtension;
-
-		if (isset($e)) {
-			throw $e;
+			foreach ($this->findAllClasses($path) as $class => $sourceFile) {
+				include_once $sourceFile;
+				$classes[] = $class;
+			}
 		}
 
-		return $this->classNames = array_unique($classes);
+		$self = $this;
+		$classes = array_filter($classes, function ($className) use ($self) {
+			return ! $self->isTransient($className);
+		});
+
+		return $this->classNames = $classes;
 	}
 
 }
