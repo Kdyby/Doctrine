@@ -10,6 +10,7 @@
 
 namespace KdybyTests\Doctrine;
 
+use Doctrine\ORM\Mapping\ClassMetadata;
 use Kdyby;
 use Nette;
 use Tester;
@@ -36,6 +37,7 @@ class ExtensionTest extends Tester\TestCase
 		$config = new Nette\Configurator();
 		$config->setTempDirectory(TEMP_DIR);
 		$config->addParameters(array('container' => array('class' => 'SystemContainer_' . md5($configFile))));
+		$config->addParameters(array('appDir' => $rootDir = __DIR__ . '/../..', 'wwwDir' => $rootDir));
 		$config->addConfig(__DIR__ . '/../nette-reset.neon');
 		$config->addConfig(__DIR__ . '/config/' . $configFile . '.neon');
 
@@ -48,11 +50,11 @@ class ExtensionTest extends Tester\TestCase
 	{
 		$container = $this->createContainer('memory');
 
-		$entityManager = $container->getByType('Kdyby\Doctrine\EntityManager');
-		Assert::true($entityManager instanceof Kdyby\Doctrine\EntityManager);
-		/** @var Kdyby\Doctrine\EntityManager $entityManager */
+		/** @var Kdyby\Doctrine\EntityManager $default */
+		$default = $container->getByType('Kdyby\Doctrine\EntityManager');
+		Assert::true($default instanceof Kdyby\Doctrine\EntityManager);
 
-		$userDao = $entityManager->getDao('KdybyTests\Doctrine\CmsUser');
+		$userDao = $default->getDao('KdybyTests\Doctrine\CmsUser');
 		Assert::true($userDao instanceof Kdyby\Doctrine\EntityDao);
 	}
 
@@ -69,6 +71,35 @@ class ExtensionTest extends Tester\TestCase
 
 		Assert::true($container->getService('doctrine.remote.entityManager') instanceof Kdyby\Doctrine\EntityManager);
 		Assert::notSame($container->getService('doctrine.remote.entityManager'), $default);
+	}
+
+
+
+	public function testCmsModelEntities()
+	{
+		$container = $this->createContainer('memory');
+
+		/** @var Kdyby\Doctrine\EntityManager $default */
+		$default = $container->getByType('Kdyby\Doctrine\EntityManager');
+		$entityClasses = array_map(function (ClassMetadata $class) {
+			return $class->getName();
+		}, $default->getMetadataFactory()->getAllMetadata());
+
+		Assert::same(array(
+			'KdybyTests\\Doctrine\\AnnotationDriver\\App\\FooEntity',
+			'KdybyTests\\Doctrine\\AnnotationDriver\\App\\Bar',
+			'KdybyTests\\Doctrine\\AnnotationDriver\\Something\\Baz',
+			'KdybyTests\\Doctrine\\CmsAddress',
+			'KdybyTests\\Doctrine\\CmsArticle',
+			'KdybyTests\\Doctrine\\CmsComment',
+			'KdybyTests\\Doctrine\\CmsEmail',
+			'KdybyTests\\Doctrine\\CmsEmployee',
+			'KdybyTests\\Doctrine\\CmsGroup',
+			'KdybyTests\\Doctrine\\CmsPhoneNumber',
+			'KdybyTests\\Doctrine\\CmsUser',
+			'Kdyby\\Doctrine\\Entities\\BaseEntity',
+			'Kdyby\\Doctrine\\Entities\\IdentifiedEntity',
+		), $entityClasses);
 	}
 
 }
