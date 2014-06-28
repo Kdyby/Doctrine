@@ -124,12 +124,19 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		}
 
 		$builder = $this->getContainerBuilder();
-		$config = $this->getConfig(array('debug' => $builder->parameters['debugMode']));
+		$config = $this->getConfig();
 
 		$builder->parameters[$this->prefix('debug')] = !empty($config['debug']);
-
 		if (isset($config['dbname']) || isset($config['driver']) || isset($config['connection'])) {
 			$config = array('default' => $config);
+			$defaults = array('debug' => $builder->parameters['debugMode']);
+
+		} else {
+			$defaults = array_intersect_key($config, $this->managerDefaults)
+				+ array_intersect_key($config, $this->connectionDefaults)
+				+ array('debug' => $builder->parameters['debugMode']);
+
+			$config = array_diff_key($config, $defaults);
 		}
 
 		foreach ($config as $name => $emConfig) {
@@ -137,6 +144,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 				throw new Kdyby\Doctrine\UnexpectedValueException("Please configure the Doctrine extensions using the section '{$this->name}:' in your config file.");
 			}
 
+			$emConfig = Nette\DI\Config\Helpers::merge($emConfig, $defaults);
 			$this->processEntityManager($name, $emConfig);
 		}
 

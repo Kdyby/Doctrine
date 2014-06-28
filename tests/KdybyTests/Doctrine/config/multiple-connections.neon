@@ -1,0 +1,12 @@
+doctrine:
+	default:
+		driver: pdo_sqlite
+		memory: true
+		metadata:
+			KdybyTests\Doctrine: annotations(%appDir%/KdybyTests/Doctrine/models)
+
+	remote:
+		driver: pdo_sqlite
+		memory: true
+		metadata:
+			KdybyTests\Doctrine: annotations(%appDir%/KdybyTests/Doctrine/models)

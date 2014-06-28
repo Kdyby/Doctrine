@@ -31,6 +31,8 @@ class ExtensionTest extends Tester\TestCase
 	 */
 	public function createContainer($configFile)
 	{
+		require_once __DIR__ . '/models/cms.php';
+
 		$config = new Nette\Configurator();
 		$config->setTempDirectory(TEMP_DIR);
 		$config->addParameters(array('container' => array('class' => 'SystemContainer_' . md5($configFile))));
@@ -44,15 +46,29 @@ class ExtensionTest extends Tester\TestCase
 
 	public function testFunctionality()
 	{
-		require_once __DIR__ . '/models/cms.php';
-
 		$container = $this->createContainer('memory');
+
 		$entityManager = $container->getByType('Kdyby\Doctrine\EntityManager');
 		Assert::true($entityManager instanceof Kdyby\Doctrine\EntityManager);
 		/** @var Kdyby\Doctrine\EntityManager $entityManager */
 
 		$userDao = $entityManager->getDao('KdybyTests\Doctrine\CmsUser');
 		Assert::true($userDao instanceof Kdyby\Doctrine\EntityDao);
+	}
+
+
+
+	public function testMultipleConnections()
+	{
+		$container = $this->createContainer('multiple-connections');
+
+		/** @var Kdyby\Doctrine\EntityManager $default */
+		$default = $container->getByType('Kdyby\Doctrine\EntityManager');
+		Assert::true($default instanceof Kdyby\Doctrine\EntityManager);
+		Assert::same($container->getService('doctrine.default.entityManager'), $default);
+
+		Assert::true($container->getService('doctrine.remote.entityManager') instanceof Kdyby\Doctrine\EntityManager);
+		Assert::notSame($container->getService('doctrine.remote.entityManager'), $default);
 	}
 
 }
