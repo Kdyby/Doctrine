@@ -56,6 +56,22 @@ class NativeQueryBuilderTest extends KdybyTests\Doctrine\ORMTestCase
 
 
 
+	public function testSubSelect()
+	{
+		$subQueryBuilder = new NativeQueryBuilder($this->em);
+		$subQueryBuilder->select('a.id')->from(__NAMESPACE__ . '\\CmsAddress', 'a');
+
+		$qb = new NativeQueryBuilder($this->em);
+		$qb->select('e.id')
+			->addSelect($subQueryBuilder, 'e.name')
+			->from(__NAMESPACE__ . '\\CmsUser', 'e');
+
+		$qb->getResultSetMapper()->addScalarResult('id', 'id');
+		self::assertQuery('SELECT e.id, (SELECT a.id FROM cms_addresses a), e.name FROM cms_users e', array(), $qb->getQuery());
+	}
+
+
+
 	public function testInlineParameters_Where()
 	{
 		$qb = new NativeQueryBuilder($this->em);

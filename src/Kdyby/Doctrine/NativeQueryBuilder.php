@@ -11,6 +11,7 @@
 namespace Kdyby\Doctrine;
 
 use Doctrine;
+use Doctrine\DBAL\Query\QueryBuilder;
 use Kdyby;
 use Nette;
 use Nette\Utils\ObjectMixin;
@@ -145,6 +146,20 @@ class NativeQueryBuilder extends Doctrine\DBAL\Query\QueryBuilder
 		}
 
 		return $this;
+	}
+
+
+
+	public function addSelect($select = NULL)
+	{
+		$selects = is_array($select) ? $select : func_get_args();
+		foreach ($selects as &$arg) {
+			if ($arg instanceof QueryBuilder) {
+				$arg = '(' . $arg->getSQL() . ')';
+			}
+		}
+
+		return parent::addSelect($selects);
 	}
 
 
