@@ -38,7 +38,7 @@ class RobotLoader extends Nette\Loaders\RobotLoader
 
 	public function tryLoad($type)
 	{
-		if (!$this->initialized) {
+		if ( ! $this->initialized) {
 			$this->initialize();
 		}
 
