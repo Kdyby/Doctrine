@@ -21,6 +21,15 @@ use Nette;
 class RobotLoader extends Nette\Loaders\RobotLoader
 {
 
+	/**
+	 * comma separated wildcards
+	 * @var string|array
+	 */
+	public $acceptFiles = '*.php, *.php5';
+
+	/**
+	 * @var bool
+	 */
 	private $initialized = FALSE;
 
 

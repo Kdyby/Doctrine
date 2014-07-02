@@ -289,7 +289,10 @@ class OrmExtension extends Nette\DI\CompilerExtension
 
 		if (empty($config['metadata'])) {
 			$metadataDriver->addSetup('setDefaultDriver', array(
-				new Nette\DI\Statement($this->metadataDriverClasses[self::ANNOTATION_DRIVER], array(array($builder->expand('%appDir%'))))
+				new Nette\DI\Statement($this->metadataDriverClasses[self::ANNOTATION_DRIVER], array(
+					array($builder->expand('%appDir%')),
+					2 => $this->prefix('@cache.' . $name . '.metadata')
+				))
 			));
 		}
 
@@ -478,7 +481,10 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		}
 
 		if ($impl === self::ANNOTATION_DRIVER) {
-			$driver->arguments = array(Nette\Utils\Arrays::flatten($driver->arguments));
+			$driver->arguments = array(
+				Nette\Utils\Arrays::flatten($driver->arguments),
+				2 => $this->prefix('@cache.' . $prefix . '.metadata')
+			);
 		}
 
 		$serviceName = $this->prefix($prefix . '.driver.' . str_replace('\\', '_', $namespace) . '.' . $impl . 'Impl');
