@@ -85,9 +85,11 @@ class ExtensionTest extends Tester\TestCase
 			return $class->getName();
 		}, $default->getMetadataFactory()->getAllMetadata());
 
+		sort($entityClasses);
+
 		Assert::same(array(
-			'KdybyTests\\Doctrine\\AnnotationDriver\\App\\FooEntity',
 			'KdybyTests\\Doctrine\\AnnotationDriver\\App\\Bar',
+			'KdybyTests\\Doctrine\\AnnotationDriver\\App\\FooEntity',
 			'KdybyTests\\Doctrine\\AnnotationDriver\\Something\\Baz',
 			'KdybyTests\\Doctrine\\CmsAddress',
 			'KdybyTests\\Doctrine\\CmsArticle',
