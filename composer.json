@@ -23,7 +23,7 @@
 		"kdyby/events": "~2.1.1@dev",
 		"kdyby/console": "~2.2.1@dev",
 		"kdyby/annotations": "~2.0.4@dev",
-		"kdyby/doctrine-cache": "~2.2.2@dev"
+		"kdyby/doctrine-cache": "~2.2.4@dev"
 	},
 	"require-dev": {
 		"dg/dibi" : "~2.0",
