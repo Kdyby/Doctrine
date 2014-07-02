@@ -13,6 +13,7 @@ namespace Kdyby\Doctrine\Mapping;
 use Doctrine;
 use Doctrine\Common\Persistence\Mapping\MappingException;
 use Kdyby;
+use Kdyby\Doctrine\Tools\RobotLoader;
 use Nette;
 use Nette\Caching\Storages\MemoryStorage;
 
@@ -36,6 +37,11 @@ class AnnotationDriver extends Doctrine\ORM\Mapping\Driver\AnnotationDriver
 	 * @var array
 	 */
 	protected $fileExtensions = array();
+
+	/**
+	 * @var RobotLoader[]
+	 */
+	private $loaders = array();
 
 
 
@@ -78,14 +84,13 @@ class AnnotationDriver extends Doctrine\ORM\Mapping\Driver\AnnotationDriver
 	 */
 	protected function findAllClasses($path)
 	{
-		$loader = new Nette\Loaders\RobotLoader();
-		$loader->setCacheStorage(new MemoryStorage());
+		$loader = new RobotLoader(new MemoryStorage());
 
 		$exts = isset($this->fileExtensions[$path]) ? $this->fileExtensions[$path] : array($this->fileExtension);
 		$loader->acceptFiles = array_map(function ($ext) { return '*' . $ext; }, $exts);
 
 		$loader->addDirectory($path);
-		$loader->rebuild();
+		$this->loaders[$path] = $loader;
 
 		return $loader->getIndexedClasses();
 	}
@@ -109,7 +114,10 @@ class AnnotationDriver extends Doctrine\ORM\Mapping\Driver\AnnotationDriver
 			}
 
 			foreach ($this->findAllClasses($path) as $class => $sourceFile) {
-				include_once $sourceFile;
+				if (!class_exists($class, FALSE)) {
+					$this->loaders[$path]->tryLoad($class);
+				}
+
 				$classes[] = $class;
 			}
 		}
