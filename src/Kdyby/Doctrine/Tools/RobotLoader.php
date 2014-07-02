@@ -21,6 +21,9 @@ use Nette;
 class RobotLoader extends Nette\Loaders\RobotLoader
 {
 
+	/**
+	 * @var bool
+	 */
 	private $initialized = FALSE;
 
 
