@@ -20,6 +20,7 @@
 		"nette/di": "~2.2@dev",
 		"nette/neon": "~2.2@dev",
 		"nette/utils": "~2.2@dev",
+		"nette/robot-loader": "~2.2@dev",
 
 		"doctrine/orm": "~2.4.1",
 		"kdyby/events": "~2.2@dev",
