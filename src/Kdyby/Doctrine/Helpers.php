@@ -21,6 +21,46 @@ use Nette;
 class Helpers extends Nette\Object
 {
 
+
+	/**
+	 * @param QueryBuilder|NativeQueryBuilder $query
+	 * @param array $args
+	 * @return array
+	 */
+	public static function separateParameters($query, array $args)
+	{
+		for ($i = 0; array_key_exists($i, $args) && array_key_exists($i + 1, $args) && ($arg = $args[$i]); $i++) {
+			if ( ! preg_match_all('~((\\:|\\?)(?P<name>[a-z0-9_]+))(?=(?:\\z|\\s|\\)))~i', $arg, $m)) {
+				continue;
+			}
+
+			$repeatedArgs = [];
+			foreach ($m['name'] as $l => $name) {
+				if (isset($repeatedArgs[$name])) {
+					continue;
+				}
+
+				$value = $args[++$i];
+				$type = NULL;
+
+				if ($value instanceof \DateTime || $value instanceof \DateTimeImmutable) {
+					$type = DbalType::DATETIME;
+
+				} elseif (is_array($value)) {
+					$type = Connection::PARAM_STR_ARRAY;
+				}
+
+				$query->setParameter($name, $value, $type);
+				$repeatedArgs[$name] = TRUE;
+				unset($args[$i]);
+			}
+		}
+
+		return $args;
+	}
+
+
+
 	/**
 	 * @param \ReflectionProperty $property
 	 * @return int

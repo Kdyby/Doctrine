@@ -193,7 +193,7 @@ class NativeQueryBuilder extends Doctrine\DBAL\Query\QueryBuilder
 	public function innerJoin($fromAlias, $join, $alias, $condition = null)
 	{
 		if ($condition !== NULL) {
-			list($condition) = array_values($this->separateParameters(array_slice(func_get_args(), 3)));
+			list($condition) = array_values(Helpers::separateParameters($this, array_slice(func_get_args(), 3)));
 		}
 
 		return parent::innerJoin($fromAlias, $this->addTableResultMapping($join, $alias, $fromAlias), $alias, $condition);
@@ -208,7 +208,7 @@ class NativeQueryBuilder extends Doctrine\DBAL\Query\QueryBuilder
 	public function leftJoin($fromAlias, $join, $alias, $condition = null)
 	{
 		if ($condition !== NULL) {
-			list($condition) = array_values($this->separateParameters(array_slice(func_get_args(), 3)));
+			list($condition) = array_values(Helpers::separateParameters($this, array_slice(func_get_args(), 3)));
 		}
 
 		return parent::leftJoin($fromAlias, $this->addTableResultMapping($join, $alias, $fromAlias), $alias, $condition);
@@ -223,7 +223,7 @@ class NativeQueryBuilder extends Doctrine\DBAL\Query\QueryBuilder
 	public function rightJoin($fromAlias, $join, $alias, $condition = null)
 	{
 		if ($condition !== NULL) {
-			list($condition) = array_values($this->separateParameters(array_slice(func_get_args(), 3)));
+			list($condition) = array_values(Helpers::separateParameters($this, array_slice(func_get_args(), 3)));
 		}
 
 		return parent::leftJoin($fromAlias, $this->addTableResultMapping($join, $alias, $fromAlias), $alias, $condition);
@@ -303,7 +303,7 @@ class NativeQueryBuilder extends Doctrine\DBAL\Query\QueryBuilder
 	 */
 	public function where($predicates)
 	{
-		return call_user_func_array('parent::where', $this->separateParameters(func_get_args()));
+		return call_user_func_array('parent::where', Helpers::separateParameters($this, func_get_args()));
 	}
 
 
@@ -314,7 +314,7 @@ class NativeQueryBuilder extends Doctrine\DBAL\Query\QueryBuilder
 	 */
 	public function andWhere($where)
 	{
-		return call_user_func_array('parent::andWhere', $this->separateParameters(func_get_args()));
+		return call_user_func_array('parent::andWhere', Helpers::separateParameters($this, func_get_args()));
 	}
 
 
@@ -325,35 +325,7 @@ class NativeQueryBuilder extends Doctrine\DBAL\Query\QueryBuilder
 	 */
 	public function orWhere($where)
 	{
-		return call_user_func_array('parent::orWhere', $this->separateParameters(func_get_args()));
-	}
-
-
-
-	protected function separateParameters(array $args)
-	{
-		for ($i = 0; isset($args[$i]) && isset($args[$i + 1]) && ($arg = $args[$i]); $i++) {
-			if (!preg_match_all('~((\\:|\\?)(?P<name>[a-z0-9_]+))(?=(?:\\z|\\s|\\)))~i', $arg, $m)) {
-				continue;
-			}
-
-			foreach ($m['name'] as $l => $name) {
-				$value = $args[++$i];
-				$type = NULL;
-
-				if ($value instanceof \DateTime || $value instanceof \DateTimeImmutable) {
-					$type = DbalType::DATETIME;
-
-				} elseif (is_array($value)) {
-					$type = Connection::PARAM_STR_ARRAY;
-				}
-
-				$this->setParameter($name, $value, $type);
-				unset($args[$i]);
-			}
-		}
-
-		return $args;
+		return call_user_func_array('parent::orWhere', Helpers::separateParameters($this, func_get_args()));
 	}
 
 

@@ -252,6 +252,32 @@ class QueryBuilderTest extends KdybyTests\Doctrine\ORMTestCase
 
 
 
+	public function testInlineParameters_Where_SameParameters()
+	{
+		$qb = $this->em->createQueryBuilder()
+			->select('e')->from(__NAMESPACE__ . '\\CmsAddress', 'a')
+			->where("a.user = :username AND a.city = :username", 'Filip');
+
+		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsAddress a WHERE a.user = :username AND a.city = :username', array(
+			'username' => 'Filip',
+		), $qb->getQuery());
+	}
+
+
+
+	public function testInlineParameters_Where_NullParameters()
+	{
+		$qb = $this->em->createQueryBuilder()
+			->select('e')->from(__NAMESPACE__ . '\\CmsAddress', 'a')
+			->where("a.user = :username AND a.city = :username", NULL);
+
+		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsAddress a WHERE a.user = :username AND a.city = :username', array(
+			'username' => NULL,
+		), $qb->getQuery());
+	}
+
+
+
 	public function testInlineParameters_Where_MultipleConditions()
 	{
 		$qb = $this->em->createQueryBuilder()
