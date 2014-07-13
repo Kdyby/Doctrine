@@ -34,7 +34,7 @@ class Helpers extends Nette\Object
 				continue;
 			}
 
-			$repeatedArgs = [];
+			$repeatedArgs = array();
 			foreach ($m['name'] as $l => $name) {
 				if (isset($repeatedArgs[$name])) {
 					continue;
