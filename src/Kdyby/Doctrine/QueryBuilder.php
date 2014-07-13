@@ -56,7 +56,7 @@ class QueryBuilder extends Doctrine\ORM\QueryBuilder implements \IteratorAggrega
 	{
 		if ($condition !== NULL) {
 			$beforeArgs = array_slice(func_get_args(), 3);
-			$args = array_values($this->separateParameters($beforeArgs));
+			$args = array_values(Helpers::separateParameters($this, $beforeArgs));
 			if (count($beforeArgs) > count($args)) {
 				$indexBy = count($args) === 2 ? $args[1] : NULL;
 				$condition = $args[0];
@@ -76,7 +76,7 @@ class QueryBuilder extends Doctrine\ORM\QueryBuilder implements \IteratorAggrega
 	{
 		if ($condition !== NULL) {
 			$beforeArgs = array_slice(func_get_args(), 3);
-			$args = array_values($this->separateParameters($beforeArgs));
+			$args = array_values(Helpers::separateParameters($this, $beforeArgs));
 			if (count($beforeArgs) > count($args)) {
 				$indexBy = count($args) === 2 ? $args[1] : NULL;
 				$condition = $args[0];
@@ -94,7 +94,7 @@ class QueryBuilder extends Doctrine\ORM\QueryBuilder implements \IteratorAggrega
 	 */
 	public function where($predicates)
 	{
-		return call_user_func_array('parent::where', $this->separateParameters(func_get_args()));
+		return call_user_func_array('parent::where', Helpers::separateParameters($this, func_get_args()));
 	}
 
 
@@ -105,7 +105,7 @@ class QueryBuilder extends Doctrine\ORM\QueryBuilder implements \IteratorAggrega
 	 */
 	public function andWhere($where)
 	{
-		return call_user_func_array('parent::andWhere', $this->separateParameters(func_get_args()));
+		return call_user_func_array('parent::andWhere', Helpers::separateParameters($this, func_get_args()));
 	}
 
 
@@ -116,35 +116,7 @@ class QueryBuilder extends Doctrine\ORM\QueryBuilder implements \IteratorAggrega
 	 */
 	public function orWhere($where)
 	{
-		return call_user_func_array('parent::orWhere', $this->separateParameters(func_get_args()));
-	}
-
-
-
-	protected function separateParameters(array $args)
-	{
-		for ($i = 0; isset($args[$i]) && isset($args[$i + 1]) && ($arg = $args[$i]) ;$i++) {
-			if (!preg_match_all('~((\\:|\\?)(?P<name>[a-z0-9_]+))(?=(?:\\z|\\s|\\)))~i', $arg, $m)) {
-				continue;
-			}
-
-			foreach ($m['name'] as $l => $name) {
-				$value = $args[++$i];
-				$type = NULL;
-
-				if ($value instanceof \DateTime || $value instanceof \DateTimeImmutable) {
-					$type = DbalType::DATETIME;
-
-				} elseif (is_array($value)) {
-					$type = Connection::PARAM_STR_ARRAY;
-				}
-
-				$this->setParameter($name, $value, $type);
-				unset($args[$i]);
-			}
-		}
-
-		return $args;
+		return call_user_func_array('parent::orWhere', Helpers::separateParameters($this, func_get_args()));
 	}
 
 
