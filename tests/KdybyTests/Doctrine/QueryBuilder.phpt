@@ -43,7 +43,7 @@ class QueryBuilderTest extends KdybyTests\Doctrine\ORMTestCase
 
 
 
-	public function testWhere_Equals()
+	public function testWhereCriteria_Equals()
 	{
 		$qb = $this->em->createQueryBuilder()
 			->select('e')->from(__NAMESPACE__ . '\\CmsUser', 'e')
@@ -114,7 +114,7 @@ class QueryBuilderTest extends KdybyTests\Doctrine\ORMTestCase
 
 
 
-	public function testWhere_LowerThan()
+	public function testWhereCriteria_LowerThan()
 	{
 		$qb = $this->em->createQueryBuilder()
 			->select('e')->from(__NAMESPACE__ . '\\CmsUser', 'e')
@@ -131,7 +131,7 @@ class QueryBuilderTest extends KdybyTests\Doctrine\ORMTestCase
 
 
 
-	public function testWhere_LowerOrEqual()
+	public function testWhereCriteria_LowerOrEqual()
 	{
 		$qb = $this->em->createQueryBuilder()
 			->select('e')->from(__NAMESPACE__ . '\\CmsUser', 'e')
@@ -148,7 +148,7 @@ class QueryBuilderTest extends KdybyTests\Doctrine\ORMTestCase
 
 
 
-	public function testWhere_GreaterThan()
+	public function testWhereCriteria_GreaterThan()
 	{
 		$qb = $this->em->createQueryBuilder()
 			->select('e')->from(__NAMESPACE__ . '\\CmsUser', 'e')
@@ -165,7 +165,7 @@ class QueryBuilderTest extends KdybyTests\Doctrine\ORMTestCase
 
 
 
-	public function testWhere_GreaterOrEqual()
+	public function testWhereCriteria_GreaterOrEqual()
 	{
 		$qb = $this->em->createQueryBuilder()
 			->select('e')->from(__NAMESPACE__ . '\\CmsUser', 'e')
@@ -182,7 +182,7 @@ class QueryBuilderTest extends KdybyTests\Doctrine\ORMTestCase
 
 
 
-	public function testWhere_IsNull()
+	public function testWhereCriteria_IsNull()
 	{
 		$qb = $this->em->createQueryBuilder()
 			->select('e')->from(__NAMESPACE__ . '\\CmsUser', 'e')
@@ -193,7 +193,7 @@ class QueryBuilderTest extends KdybyTests\Doctrine\ORMTestCase
 
 
 
-	public function testWhere_InArray()
+	public function testWhereCriteria_InArray()
 	{
 		$qb = $this->em->createQueryBuilder()
 			->select('e')->from(__NAMESPACE__ . '\\CmsUser', 'c')
@@ -204,7 +204,7 @@ class QueryBuilderTest extends KdybyTests\Doctrine\ORMTestCase
 
 
 
-	public function testWhere_AutoJoin_Equals()
+	public function testWhereCriteria_AutoJoin_Equals()
 	{
 		$qb = $this->em->createQueryBuilder()
 			->select('e')->from(__NAMESPACE__ . '\\CmsUser', 'u')
@@ -215,7 +215,7 @@ class QueryBuilderTest extends KdybyTests\Doctrine\ORMTestCase
 
 
 
-	public function testWhere_AutoJoin_Deep()
+	public function testWhereCriteria_AutoJoin_Deep()
 	{
 		$qb = $this->em->createQueryBuilder()
 			->select('e')->from(__NAMESPACE__ . '\\CmsAddress', 'a')
