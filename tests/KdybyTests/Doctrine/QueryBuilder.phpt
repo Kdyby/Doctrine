@@ -215,6 +215,17 @@ class QueryBuilderTest extends KdybyTests\Doctrine\ORMTestCase
 
 
 
+	public function testWhereCriteria_AutoJoin_MultipleConditionsOnTheSameRelation()
+	{
+		$qb = $this->em->createQueryBuilder()
+			->select('e')->from(__NAMESPACE__ . '\\CmsUser', 'u')
+			->whereCriteria(array('groups.name' => 'Devel', 'groups.title' => 'Nemam'));
+
+		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsUser u INNER JOIN u.groups g WHERE g.name = :param_1 AND g.title = :param_2', array('param_1' => 'Devel', 'param_2' => 'Nemam'), $qb->getQuery());
+	}
+
+
+
 	public function testWhereCriteria_AutoJoin_Deep()
 	{
 		$qb = $this->em->createQueryBuilder()
