@@ -175,10 +175,14 @@ class QueryBuilder extends Doctrine\ORM\QueryBuilder implements \IteratorAggrega
 	 * @param string $order
 	 * @return Doctrine\ORM\QueryBuilder
 	 */
-	public function autoJoinOrderBy($sort, $order = null)
+	public function autoJoinOrderBy($sort, $order = NULL)
 	{
 		if (is_array($sort)) {
 			foreach (func_get_arg(0) as $sort => $order) {
+				if (!is_string($sort)) {
+					$sort = $order;
+					$order = NULL;
+				}
 				$this->autoJoinOrderBy($sort, $order);
 			}
 

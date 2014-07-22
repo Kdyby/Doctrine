@@ -138,6 +138,11 @@ class EntityDaoTest extends ORMTestCase
 		Assert::same(array(
 			3 => 'b',
 			1 => 'c',
+		), $dao->findPairs(array('status' => 'new'), 'name', array('name')));
+
+		Assert::same(array(
+			3 => 'b',
+			1 => 'c',
 		), $dao->findPairs(array('status' => 'new'), 'name', array('name' => 'ASC')));
 	}
 
