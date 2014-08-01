@@ -12,9 +12,11 @@ namespace Kdyby\Doctrine\Entities;
 
 use Doctrine;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Selectable;
 use Doctrine\ORM\Mapping as ORM;
 use Kdyby;
 use Kdyby\Doctrine\Collections\ReadOnlyCollectionWrapper;
+use Kdyby\Doctrine\Collections\SelectableReadOnlyCollectionWrapper;
 use Kdyby\Doctrine\MemberAccessException;
 use Kdyby\Doctrine\UnexpectedValueException;
 use Nette;
@@ -333,7 +335,7 @@ abstract class BaseEntity extends Nette\Object implements \Serializable
 	protected function convertCollection($property, array $args)
 	{
 		if (isset($args[0]) && $args[0] === TRUE) {
-			return new ReadOnlyCollectionWrapper($this->$property);
+			return $this->property instanceof Selectable ? new SelectableReadOnlyCollectionWrapper($this->property) : new ReadOnlyCollectionWrapper($this->$property);
 		}
 
 		return $this->$property->toArray();
