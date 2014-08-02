@@ -23,8 +23,8 @@ use Nette\Caching\Storages\MemoryStorage;
 
 
 /**
- * Allows pairing multiple file extensions to multiple paths using wildmark.
- * The wildmark represent filename part and directories (it's recursive).
+ * Allows pairing multiple file extensions to multiple paths using wildcard.
+ * The wildcard represents filename part and directories (it's recursive).
  *
  * <code>
  * $driver = new AnnotationDriver([%appDir%/models/App/*Entity.php, %appDir%/obscure/Something/*Foo.php])
