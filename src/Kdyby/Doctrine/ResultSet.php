@@ -327,6 +327,10 @@ class ResultSet extends Nette\Object implements \Countable, \IteratorAggregate
 				$this->iterator = new \ArrayIterator($this->query->getResult(NULL));
 			}
 
+			if ($this->queryObject !== NULL && $this->repository !== NULL) {
+				$this->queryObject->postFetch($this->repository, $this->iterator);
+			}
+
 			return $this->iterator;
 
 		} catch (ORMException $e) {
