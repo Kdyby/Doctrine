@@ -184,6 +184,19 @@ abstract class QueryObject extends Nette\Object implements Kdyby\Persistence\Que
 
 	/**
 	 * @param \Kdyby\Persistence\Queryable $repository
+	 * @param int|NULL $limit
+	 * @param int|NULL $offset
+	 * @return void
+	 */
+	public function preFetch(Queryable $repository, $limit = NULL, $offset = NULL)
+	{
+
+	}
+
+
+
+	/**
+	 * @param \Kdyby\Persistence\Queryable $repository
 	 * @param \Iterator $iterator
 	 * @return void
 	 */
