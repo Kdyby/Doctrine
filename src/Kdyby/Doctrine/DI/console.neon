@@ -10,3 +10,4 @@
 - Kdyby\Doctrine\Console\GenerateProxiesCommand
 - Kdyby\Doctrine\Console\ValidateSchemaCommand
 - Kdyby\Doctrine\Console\InfoCommand
+- Kdyby\Doctrine\Console\MigrationCommand
