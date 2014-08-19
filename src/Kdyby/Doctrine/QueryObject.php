@@ -187,7 +187,7 @@ abstract class QueryObject extends Nette\Object implements Kdyby\Persistence\Que
 	 * @param \Iterator $iterator
 	 * @return void
 	 */
-	public function doAfterFetch(Queryable $repository, \Iterator $iterator)
+	public function postFetch(Queryable $repository, \Iterator $iterator)
 	{
 
 	}
