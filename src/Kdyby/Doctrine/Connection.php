@@ -179,6 +179,28 @@ class Connection extends Doctrine\DBAL\Connection
 
 
 	/**
+	 * This method executes very simple query against database
+	 * and if the connection timeouted, it will try to reconnect.
+	 *
+	 * @throws \Exception
+	 * @return Connection
+	 */
+	public function ping()
+	{
+		try {
+			$this->executeQuery('SELECT 1')->fetchAll();
+
+		} catch (\Exception $e) {
+			$this->close();
+			$this->connect();
+		}
+
+		return $this;
+	}
+
+
+
+	/**
 	 * @return Doctrine\DBAL\Query\QueryBuilder|NativeQueryBuilder
 	 */
 	public function createQueryBuilder()
