@@ -412,6 +412,11 @@ class Connection extends Doctrine\DBAL\Connection
 	 */
 	public function __set($name, $value)
 	{
+		if ($name === '_conn') {
+			$this->_conn = $value;
+			return;
+		}
+
 		ObjectMixin::set($this, $name, $value);
 	}
 
@@ -441,6 +446,11 @@ class Connection extends Doctrine\DBAL\Connection
 	 */
 	public function __unset($name)
 	{
+		if ($name === '_conn') {
+			$this->$name = NULL;
+			return;
+		}
+
 		ObjectMixin::remove($this, $name);
 	}
 
