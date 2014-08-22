@@ -22,6 +22,7 @@ use Nette\Utils\ObjectMixin;
  * @author Filip Procházka <filip@prochazka.su>
  *
  * @method QueryBuilder select($select = null)
+ * @method QueryBuilder addSelect($select = null)
  * @method QueryBuilder from($from, $alias, $indexBy = null)
  * @method QueryBuilder setMaxResults($maxResults)
  * @method QueryBuilder setFirstResult($maxResults)
