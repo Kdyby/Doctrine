@@ -17,7 +17,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Kdyby;
 use Nette;
 use Nette\Utils\Callback;
-use Nette\Utils\Strings;
 
 
 
