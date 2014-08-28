@@ -125,7 +125,7 @@ class Helpers extends Nette\Object
 	 * @author   Jakub Vrána, Jan Tvrdík, Michael Moravec, Filip Procházka
 	 * @license  Apache License
 	 */
-	public static function executeBatch(Connection $connection, $query)
+	public static function executeBatch(Connection $connection, $query, $callback = NULL)
 	{
 		$db = $connection->getWrappedConnection();
 
@@ -148,6 +148,10 @@ class Helpers extends Nette\Object
 					$q = substr($query, 0, $match[0][1]);
 
 					try {
+						if ($callback) {
+							call_user_func($callback, $q, $db);
+						}
+
 						$db->query($q);
 
 					} catch (\Exception $e) {
@@ -171,9 +175,51 @@ class Helpers extends Nette\Object
 
 
 
-	public static function loadFromFile(Connection $connection, $file)
+	/**
+	 * @author David Grudl
+	 * @see https://github.com/dg/dibi/blob/cde5af7cbe02d231fe2d3f904fc2c3d3eeda66f0/dibi/libs/DibiConnection.php#L630
+	 */
+	public static function loadFromFile(Connection $connection, $file, $callback = NULL)
 	{
-		self::executeBatch($connection, file_get_contents($file));
+		@set_time_limit(0); // intentionally @
+
+		if (!$handle = @fopen($file, 'r')) { // intentionally @
+			throw new InvalidArgumentException("Cannot open file '$file'.");
+		}
+
+		$count = 0;
+		$delimiter = ';';
+		$sql = '';
+		while (!feof($handle)) {
+			$s = rtrim(fgets($handle));
+			if (substr($s, 0, 10) === 'DELIMITER ') {
+				$delimiter = substr($s, 10);
+
+			} elseif (substr($s, -strlen($delimiter)) === $delimiter) {
+				$sql .= substr($s, 0, -strlen($delimiter));
+				if ($callback) {
+					call_user_func($callback, $sql, ftell($handle));
+				}
+				$connection->query($sql);
+				$sql = '';
+				$count++;
+
+			} else {
+				$sql .= $s . "\n";
+			}
+		}
+
+		if (trim($sql) !== '') {
+			if ($callback) {
+				call_user_func($callback, $sql, ftell($handle));
+			}
+			$connection->query($sql);
+			$count++;
+		}
+
+		fclose($handle);
+
+		return $count;
 	}
 
 }
