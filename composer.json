@@ -20,6 +20,7 @@
 		"nette/nette": "2.1.*@dev",
 
 		"doctrine/orm": "~2.4.1",
+		"doctrine/instantiator": "~1.0.2",
 		"kdyby/events": "~2.1.1@dev",
 		"kdyby/console": "~2.2.1@dev",
 		"kdyby/annotations": "~2.0.4@dev",
