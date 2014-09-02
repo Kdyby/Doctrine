@@ -56,7 +56,7 @@ $commentsDao->findBy(['article.title' => $title]);
 And you can even use other operation than only equals!
 
 ```php
-$commentsDao->findBy(['article.date >= ?' => new \DateTime('-1 day')]);
+$commentsDao->findBy(['article.date >=' => new \DateTime('-1 day')]);
 ```
 
 You can even order by relations
@@ -64,6 +64,8 @@ You can even order by relations
 ```php
 $commentsDao->findBy([], ['article.title' => 'DESC']);
 ```
+
+If you wanna checkout all the supported syntaxes, have a look at all the `whereCriteria` tests in the [QueryBuilderTest](https://github.com/Kdyby/Doctrine/blob/master/tests/KdybyTests/Doctrine/QueryBuilder.phpt).
 
 
 ### `->findOneBy(array $criteria, array $orderBy = null)`
