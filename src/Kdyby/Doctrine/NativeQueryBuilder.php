@@ -168,7 +168,7 @@ class NativeQueryBuilder extends Doctrine\DBAL\Query\QueryBuilder
 	 * {@inheritdoc}
 	 * @return NativeQueryBuilder
 	 */
-	public function from($from, $alias)
+	public function from($from, $alias = NULL)
 	{
 		return parent::from($this->addTableResultMapping($from, $alias), $alias);
 	}
