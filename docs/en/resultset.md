@@ -220,6 +220,13 @@ $paginator->setItemsPerPage(20);
 $result->applyPaginator($paginator);
 ```
 
+Or you know... you can oneline it :)
+
+```php
+// the second argument is optional, and if it's passed, the ResultSet sets the itemsPerPage from it
+$result->applyPaginator($this['vp']->getPaginator(), 20);
+```
+
 Done! Just iterate the result and you'll get your 20 entities from the page that the visual paginator accepted from url.
 
 
