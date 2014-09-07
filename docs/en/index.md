@@ -91,7 +91,7 @@ class Article extends \Kdyby\Doctrine\Entities\BaseEntity
 	 * @ORM\Column(type="integer")
 	 * @ORM\GeneratedValue
 	 */
-	public $id;
+	protected $id;
 
 	/**
 	 * @ORM\Column(type="string")
