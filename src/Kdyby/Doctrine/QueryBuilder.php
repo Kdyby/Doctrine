@@ -145,7 +145,7 @@ class QueryBuilder extends Doctrine\ORM\QueryBuilder implements \IteratorAggrega
 			}
 
 			$not = substr($operator, 0, 1) === '!';
-			if (substr($operator, 0, 3) == 'not') {
+			if (substr($operator, 0, 3) === 'not') {
 				$operator = substr($operator, 4);
 				$not = TRUE;
 			}
@@ -153,11 +153,11 @@ class QueryBuilder extends Doctrine\ORM\QueryBuilder implements \IteratorAggrega
 			$paramName = 'param_' . (count($this->getParameters()) + 1);
 
 			if (is_array($val)) {
-				$this->andWhere("$alias.$key " . ($not ? 'NOT ' :'') . "IN (:$paramName)");
+				$this->andWhere("$alias.$key " . ($not ? 'NOT ' : '') . "IN (:$paramName)");
 				$this->setParameter($paramName, $val, is_integer(reset($val)) ? Connection::PARAM_INT_ARRAY : Connection::PARAM_STR_ARRAY);
 
 			} elseif ($val === NULL) {
-				$this->andWhere("$alias.$key IS " . ($not ? 'NOT ' : '') . "NULL");
+				$this->andWhere("$alias.$key IS " . ($not ? 'NOT ' : '') . 'NULL');
 
 			} else {
 				$this->andWhere(sprintf('%s.%s %s :%s', $alias, $key, strtoupper($operator), $paramName));
