@@ -100,6 +100,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			'multiPolygon' => 'Kdyby\Doctrine\Types\MultiPolygon',
 			'geometryCollection' => 'Kdyby\Doctrine\Types\GeometryCollection',
 		),
+		'schemaFilter' => NULL,
 	);
 
 	/**
@@ -373,6 +374,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			->setClass('Doctrine\DBAL\Configuration')
 			->addSetup('setResultCacheImpl', array($this->processCache($config['resultCache'], $name . '.dbalResult')))
 			->addSetup('setSQLLogger', array(new Nette\DI\Statement('Doctrine\DBAL\Logging\LoggerChain')))
+			->addSetup('setFilterSchemaAssetsExpression', array($config['schemaFilter']))
 			->setAutowired(FALSE)
 			->setInject(FALSE);
 
