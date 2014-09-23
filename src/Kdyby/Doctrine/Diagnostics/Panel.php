@@ -143,7 +143,7 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 			if (!$return) {
 				break;
 			}
-			$return = $return && strpos($file, '/' . trim($path, '/') . '/') === FALSE; 
+			$return = $return && strpos($file, '/' . trim($path, '/') . '/') === FALSE;
 		}
 		return $return;
 	}
