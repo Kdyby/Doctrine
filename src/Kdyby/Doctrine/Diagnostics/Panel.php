@@ -217,8 +217,14 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 			$s .= $this->processQuery($query);
 		}
 
+		$host = sprintf('%s%s/%s',
+			$this->connection->getHost(),
+			(($p = $this->connection->getPort()) ? ':' . $p : ''),
+			$this->connection->getDatabase()
+		);
+
 		return $this->renderStyles() .
-			'<h1>Queries: ' . count($this->queries) . ($this->totalTime ? ', time: ' . sprintf('%0.3f', $this->totalTime * 1000) . ' ms' : '') . '</h1>' .
+			'<h1>Queries: ' . count($this->queries) . ($this->totalTime ? ', time: ' . sprintf('%0.3f', $this->totalTime * 1000) . ' ms' : '') . ', host: ' . $host . '</h1>' .
 			'<div class="nette-inner tracy-inner nette-Doctrine2Panel">' .
 			'<table><tr><th>ms</th><th>SQL Statement</th></tr>' . $s . '</table></div>';
 	}
