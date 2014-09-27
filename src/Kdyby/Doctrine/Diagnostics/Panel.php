@@ -67,10 +67,10 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 	 * @var array
 	 */
 	public $skipPaths = array(
-		'vendor/nette',
-		'vendor/doctrine/dbal',
-		'vendor/doctrine/orm',
-		'vendor/kdyby/doctrine',
+		'vendor/nette/', 'src/Nette/',
+		'vendor/doctrine/dbal/', 'lib/Doctrine/DBAL/',
+		'vendor/doctrine/orm/', 'lib/Doctrine/ORM/',
+		'vendor/kdyby/doctrine/', 'src/Kdyby/Doctrine/',
 		'vendor/phpunit',
 	);
 
