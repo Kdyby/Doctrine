@@ -36,6 +36,7 @@
 		"nette/caching": "~2.2@dev",
 		"nette/component-model": "~2.2@dev",
 		"nette/database": "~2.2@dev",
+		"nette/deprecated": "~2.2@dev",
 		"nette/finder": "~2.2@dev",
 		"nette/forms": "~2.2@dev",
 		"nette/http": "~2.2@dev",
