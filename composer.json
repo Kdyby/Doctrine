@@ -23,7 +23,7 @@
 		"nette/robot-loader": "~2.2@dev",
 
 		"doctrine/orm": "~2.4.1",
-		"doctrine/instantiator": "~1.0.2",
+		"doctrine/instantiator": "~1.0.3",
 		"kdyby/events": "~2.2@dev",
 		"kdyby/console": "~2.3@dev",
 		"kdyby/annotations": "~2.1@dev",
