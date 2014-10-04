@@ -29,7 +29,7 @@
 	"require-dev": {
 		"dg/dibi" : "~2.0",
 		"nette/tester": "@dev",
-		"jakub-onderka/php-parallel-lint": "~0.7"
+		"jakub-onderka/php-parallel-lint": "~0.8"
 	},
 	"autoload": {
 		"psr-0": {
