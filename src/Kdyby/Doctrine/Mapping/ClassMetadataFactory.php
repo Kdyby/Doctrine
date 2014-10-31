@@ -61,6 +61,7 @@ class ClassMetadataFactory extends Doctrine\ORM\Mapping\ClassMetadataFactory
 
 	protected function loadMetadata($name)
 	{
+		$origName = $name;
 		if ($this->config instanceof Kdyby\Doctrine\Configuration) {
 			$name = $this->config->getTargetEntityClassName($name);
 		}
@@ -69,7 +70,12 @@ class ClassMetadataFactory extends Doctrine\ORM\Mapping\ClassMetadataFactory
 			throw new Kdyby\Doctrine\MissingClassException("Metadata of class $name was not found, because the class is missing or cannot be autoloaded.");
 		}
 
-		return parent::loadMetadata($name);
+		$result = parent::loadMetadata($name);
+		if ($name !== $origName) {
+			$this->setMetadataFor($origName, $this->getMetadataFor($name));
+		}
+
+		return $result;
 	}
 
 
