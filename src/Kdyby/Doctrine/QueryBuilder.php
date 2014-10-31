@@ -129,6 +129,10 @@ class QueryBuilder extends Doctrine\ORM\QueryBuilder implements \IteratorAggrega
 	public function whereCriteria(array $criteria)
 	{
 		foreach ($criteria as $key => $val) {
+			if (is_int($key) && is_callable($val)) {
+				$val($this);
+				continue;
+			}
 			$alias = $this->autoJoin($key);
 
 			$operator = '=';
