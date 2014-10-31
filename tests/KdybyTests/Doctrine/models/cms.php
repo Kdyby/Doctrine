@@ -14,6 +14,13 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 
+interface ICmsAddress
+{
+
+}
+
+
+
 /**
  * CmsAddress
  *
@@ -21,7 +28,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity
  * @ORM\Table(name="cms_addresses")
  */
-class CmsAddress
+class CmsAddress implements ICmsAddress
 {
 
 	/**
