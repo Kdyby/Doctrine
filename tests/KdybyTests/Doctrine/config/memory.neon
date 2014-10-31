@@ -3,3 +3,5 @@ doctrine:
 	memory: true
 	metadata:
 		KdybyTests\Doctrine: annotations(%appDir%/KdybyTests/Doctrine/models)
+	targetEntityMappings:
+		KdybyTests\Doctrine\ICmsAddress: KdybyTests\Doctrine\CmsAddress
