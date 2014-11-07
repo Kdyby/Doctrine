@@ -29,19 +29,19 @@ class SimpleParameterFormatterTest extends Tester\TestCase
 	public function testNumeric()
 	{
 		Assert::same(1024, SimpleParameterFormatter::format(1024));
-		Assert::same("1024", SimpleParameterFormatter::format("1024"));
 		Assert::same(1024.001, SimpleParameterFormatter::format(1024.001));
-		Assert::same("1024.001", SimpleParameterFormatter::format("1024.001"));
 		Assert::same(-1024, SimpleParameterFormatter::format(-1024));
-		Assert::same("-1024", SimpleParameterFormatter::format("-1024"));
 		Assert::same(-1024.001, SimpleParameterFormatter::format(-1024.001));
-		Assert::same("-1024.001", SimpleParameterFormatter::format("-1024.001"));
 	}
 
 
 
 	public function testString()
 	{
+		Assert::same("'1024'", SimpleParameterFormatter::format("1024"));
+		Assert::same("'1024.001'", SimpleParameterFormatter::format("1024.001"));
+		Assert::same("'-1024'", SimpleParameterFormatter::format("-1024"));
+		Assert::same("'-1024.001'", SimpleParameterFormatter::format("-1024.001"));
 		Assert::same("'quick brown fox jumps over lazy dog'", SimpleParameterFormatter::format("quick brown fox jumps over lazy dog"));
 		Assert::same("'//\\\\\\\\'", SimpleParameterFormatter::format("//\\\\"));
 	}
