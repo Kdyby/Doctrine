@@ -27,7 +27,7 @@ class SimpleParameterFormatter extends Nette\Object
 	 */
 	public static function format($param)
 	{
-		if (is_numeric($param) && $param !== (string) $param) {
+		if (is_int($param) || is_float($param)) {
 			return $param;
 
 		} elseif (is_string($param)) {
