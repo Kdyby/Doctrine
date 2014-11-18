@@ -111,10 +111,23 @@ class OrmExtension extends Nette\DI\CompilerExtension
 	 */
 	private $targetEntityMappings = array();
 
+	/**
+	 * @var array
+	 */
+	private $configuredManagers = array();
+
+	/**
+	 * @var array
+	 */
+	private $configuredConnections = array();
+
+
 
 	public function loadConfiguration()
 	{
-		$this->proxyAutoLoaders = array();
+		$this->proxyAutoLoaders =
+		$this->configuredConnections =
+		$this->configuredManagers = array();
 
 		$extensions = array_filter($this->compiler->getExtensions(), function ($item) {
 			return $item instanceof Kdyby\Annotations\DI\AnnotationsExtension;
@@ -197,6 +210,14 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		}
 
 		$this->loadConsole();
+
+		$builder->addDefinition($this->prefix('registry'))
+			->setClass('Kdyby\Doctrine\Registry', [
+				$this->configuredManagers,
+				$this->configuredConnections,
+				$builder->expand('%' . $this->prefix('orm.defaultEntityManager') . '%'),
+				$builder->expand('%' . $this->prefix('dbal.defaultConnection') . '%'),
+			]);
 	}
 
 
@@ -234,8 +255,8 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		$builder = $this->getContainerBuilder();
 		$config = $this->resolveConfig($defaults, $this->managerDefaults, $this->connectionDefaults);
 
-		if ($isDefault = !isset($builder->parameters[$this->prefix('orm.defaultEntityManager')])) {
-			$builder->parameters[$this->prefix('orm.defaultEntityManager')] = $name;
+		if ($isDefault = !isset($builder->parameters[$this->name]['orm']['defaultEntityManager'])) {
+			$builder->parameters[$this->name]['orm']['defaultEntityManager'] = $name;
 		}
 
 		$metadataDriver = $builder->addDefinition($this->prefix($name . '.metadataDriver'))
@@ -337,7 +358,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		}
 
 		// entity manager
-		$builder->addDefinition($this->prefix($name . '.entityManager'))
+		$builder->addDefinition($managerServiceId = $this->prefix($name . '.entityManager'))
 			->setClass('Kdyby\Doctrine\EntityManager')
 			->setFactory('Kdyby\Doctrine\EntityManager::create', array(
 				$connectionService = $this->processConnection($name, $defaults, $isDefault),
@@ -346,6 +367,8 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			->addTag(self::TAG_ENTITY_MANAGER)
 			->setAutowired($isDefault)
 			->setInject(FALSE);
+
+		$this->configuredManagers[$name] = $managerServiceId;
 	}
 
 
@@ -354,6 +377,10 @@ class OrmExtension extends Nette\DI\CompilerExtension
 	{
 		$builder = $this->getContainerBuilder();
 		$config = $this->resolveConfig($defaults, $this->connectionDefaults, $this->managerDefaults);
+
+		if ($isDefault) {
+			$builder->parameters[$this->name]['dbal']['defaultConnection'] = $name;
+		}
 
 		if (isset($defaults['connection'])) {
 			return $this->prefix('@' . $defaults['connection'] . '.connection');
@@ -388,7 +415,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 
 		// connection
 		$options = array_diff_key($config, array_flip(array('types', 'resultCache', 'connection', 'logging')));
-		$connection = $builder->addDefinition($this->prefix($name . '.connection'))
+		$connection = $builder->addDefinition($connectionServiceId = $this->prefix($name . '.connection'))
 			->setClass('Kdyby\Doctrine\Connection')
 			->setFactory('Kdyby\Doctrine\Connection::create', array(
 				$options,
@@ -400,6 +427,8 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			->setAutowired($isDefault)
 			->setInject(FALSE);
 		/** @var Nette\DI\ServiceDefinition $connection */
+
+		$this->configuredConnections[$name] = $connectionServiceId;
 
 		if (!is_bool($config['logging'])) {
 			$fileLogger = new Statement('Kdyby\Doctrine\Diagnostics\FileLogger', array($builder->expand($config['logging'])));
