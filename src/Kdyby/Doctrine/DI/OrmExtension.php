@@ -226,12 +226,12 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		$this->loadConsole();
 
 		$builder->addDefinition($this->prefix('registry'))
-			->setClass('Kdyby\Doctrine\Registry', [
+			->setClass('Kdyby\Doctrine\Registry', array(
 				$this->configuredManagers,
 				$this->configuredConnections,
 				$builder->expand('%' . $this->prefix('orm.defaultEntityManager') . '%'),
 				$builder->expand('%' . $this->prefix('dbal.defaultConnection') . '%'),
-			]);
+			));
 	}
 
 
