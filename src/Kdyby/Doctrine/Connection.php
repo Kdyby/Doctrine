@@ -205,8 +205,13 @@ class Connection extends Doctrine\DBAL\Connection
 	public function ping()
 	{
 		try {
-			$this->executeQuery('SELECT 1')->fetchAll();
-			return TRUE;
+			$ping = $this->prepare('SELECT 1');
+			if ($ping->execute()) {
+				$ping->closeCursor();
+				return TRUE;
+			}
+
+			return FALSE;
 
 		} catch (Doctrine\DBAL\DBALException $e) {
 			return FALSE;
