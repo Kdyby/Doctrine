@@ -53,32 +53,72 @@ class Connection extends Doctrine\DBAL\Connection
 
 
 	/**
-	 * Inserts a table row with specified data.
+	 * Tries to autodetect, if identifier has to be quoted and quotes it.
 	 *
-	 * @param string $tableName The name of the table to insert data into.
-	 * @param array $data An associative array containing column-value pairs.
-	 * @param array $types Types of the inserted data.
-	 * @return integer The number of affected rows.
+	 * @param string $expression
+	 * @return string
 	 */
-	public function insert($tableName, array $data, array $types = array())
+	public function quoteIdentifier($expression)
 	{
-		$this->connect();
-		$platform = $this->getDriver()->getDatabasePlatform();
-
-		// column names are specified as array keys
-		$cols = array();
-		$placeholders = array();
-
-		foreach ($data as $columnName => $value) {
-			$cols[] = $platform->quoteIdentifier($columnName);
-			$placeholders[] = '?';
+		$expression = trim($expression);
+		if ($expression[0] === $this->getDatabasePlatform()->getIdentifierQuoteCharacter()) {
+			return $expression; // already quoted
 		}
 
-		$query = 'INSERT INTO ' . $platform->quoteIdentifier($tableName) . ' (' . implode(', ', $cols) . ')'
-			. ' VALUES (' . implode(', ', $placeholders) . ')';
-
-		return $this->executeUpdate($query, array_values($data), $types);
+		return parent::quoteIdentifier($expression);
 	}
+
+
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function delete($tableExpression, array $identifier, array $types = array())
+	{
+		$fixedIdentifier = array();
+		foreach ($identifier as $columnName => $value) {
+			$fixedIdentifier[$this->quoteIdentifier($columnName)] = $value;
+		}
+
+		return parent::delete($this->quoteIdentifier($tableExpression), $fixedIdentifier, $types);
+	}
+
+
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function update($tableExpression, array $data, array $identifier, array $types = array())
+	{
+		$fixedData = array();
+		foreach ($data as $columnName => $value) {
+			$fixedData[$this->quoteIdentifier($columnName)] = $value;
+		}
+
+		$fixedIdentifier = array();
+		foreach ($identifier as $columnName => $value) {
+			$fixedIdentifier[$this->quoteIdentifier($columnName)] = $value;
+		}
+
+		return parent::update($this->quoteIdentifier($tableExpression), $fixedData, $fixedIdentifier, $types);
+	}
+
+
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function insert($tableExpression, array $data, array $types = array())
+	{
+		$fixedData = array();
+		foreach ($data as $columnName => $value) {
+			$fixedData[$this->quoteIdentifier($columnName)] = $value;
+		}
+
+		return parent::insert($this->quoteIdentifier($tableExpression), $fixedData, $types);
+	}
+
+
 
 	/**
 	 * @param string $query
