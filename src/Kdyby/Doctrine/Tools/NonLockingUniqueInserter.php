@@ -10,6 +10,7 @@
 
 namespace Kdyby\Doctrine\Tools;
 
+use Doctrine;
 use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\Platforms\MySqlPlatform;
 use Doctrine\DBAL\Platforms\PostgreSqlPlatform;
@@ -92,6 +93,11 @@ class NonLockingUniqueInserter extends Nette\Object
 			$this->db->commit();
 
 			return $persisted;
+
+		} catch (Doctrine\DBAL\Exception\UniqueConstraintViolationException $e) {
+			$this->db->rollback();
+
+			return FALSE;
 
 		} catch (Kdyby\Doctrine\DuplicateEntryException $e) {
 			$this->db->rollback();
