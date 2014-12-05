@@ -183,51 +183,6 @@ class Connection extends Doctrine\DBAL\Connection
 
 
 	/**
-	 * Ping the server
-	 *
-	 * When the server is not available the method returns FALSE.
-	 * It is responsibility of the developer to handle this case
-	 * and abort the request or reconnect manually:
-	 *
-	 * @example
-	 *
-	 *   if ($conn->ping() === false) {
-	 *      $conn->close();
-	 *      $conn->connect();
-	 *   }
-	 *
-	 * It is undefined if the underlying driver attempts to reconnect
-	 * or disconnect when the connection is not available anymore
-	 * as long it returns TRUE when a reconnect succeeded and
-	 * FALSE when the connection was dropped.
-	 *
-	 * @todo remove me with doctrine/dbal:2.5-stable
-	 * @see https://github.com/doctrine/dbal/blob/7175964c30f4fd54c90f6f9c7c6f7bf49fc1c939/lib/Doctrine/DBAL/Connection.php#L1590
-	 *
-	 * @return bool
-	 */
-	public function ping()
-	{
-		try {
-			$ping = $this->prepare('SELECT 1');
-			if ($ping->execute()) {
-				$ping->closeCursor();
-				return TRUE;
-			}
-
-			return FALSE;
-
-		} catch (Doctrine\DBAL\DBALException $e) {
-			return FALSE;
-
-		} catch (DBALException $e) {
-			return FALSE;
-		}
-	}
-
-
-
-	/**
 	 * @return Doctrine\DBAL\Query\QueryBuilder|NativeQueryBuilder
 	 */
 	public function createQueryBuilder()
