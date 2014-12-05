@@ -17,6 +17,7 @@ use Kdyby;
 use Nette;
 use Nette\Utils\ObjectMixin;
 use PDO;
+use Tracy;
 
 
 
@@ -25,11 +26,20 @@ use PDO;
  */
 class Connection extends Doctrine\DBAL\Connection
 {
+	/**
+	 * @var bool
+	 */
+	public $throwOldKdybyExceptions = FALSE;
+
+	/** @deprecated */
 	const MYSQL_ERR_UNIQUE = 1062;
+	/** @deprecated */
 	const MYSQL_ERR_NOT_NULL = 1048;
 
+	/** @deprecated */
 	const SQLITE_ERR_UNIQUE = 19;
 
+	/** @deprecated */
 	const POSTGRE_ERR_UNIQUE = 23505; // todo: verify, source: http://www.postgresql.org/docs/8.2/static/errcodes-appendix.html
 
 	/**
@@ -208,7 +218,7 @@ class Connection extends Doctrine\DBAL\Connection
 			$stmt = new PDOStatement($statement, $this);
 
 		} catch (\Exception $ex) {
-			throw $this->resolveException(Doctrine\DBAL\DBALException::driverExceptionDuringQuery($ex, $statement), $statement);
+			throw $this->resolveException(Doctrine\DBAL\DBALException::driverExceptionDuringQuery($this->getDriver(), $ex, $statement), $statement);
 		}
 
 		$stmt->setFetchMode(PDO::FETCH_ASSOC);
@@ -269,6 +279,7 @@ class Connection extends Doctrine\DBAL\Connection
 
 
 	/**
+	 * @deprecated
 	 * @internal
 	 * @param \Exception $e
 	 * @param string $query
@@ -277,6 +288,10 @@ class Connection extends Doctrine\DBAL\Connection
 	 */
 	public function resolveException(\Exception $e, $query = NULL, $params = array())
 	{
+		if ($this->throwOldKdybyExceptions !== TRUE) {
+			return $e;
+		}
+
 		if ($e instanceof Doctrine\DBAL\DBALException && ($pe = $e->getPrevious()) instanceof \PDOException) {
 			$info = $pe->errorInfo;
 
@@ -334,13 +349,8 @@ class Connection extends Doctrine\DBAL\Connection
 			return NULL;
 		}
 
-		list($caused) = $e->getTrace();
-
-		if (!empty($caused['class']) && !empty($caused['function'])
-			&& $caused['class'] === 'Doctrine\DBAL\DBALException'
-			&& $caused['function'] === 'driverExceptionDuringQuery'
-		) {
-			if (preg_match('~(?:INSERT|UPDATE|REPLACE)(?:[A-Z_\s]*)`?([^\s`]+)`?\s*~', $caused['args'][1], $m)) {
+		if ($caused = Tracy\Helpers::findTrace($e->getTrace(), 'Doctrine\DBAL\DBALException::driverExceptionDuringQuery')) {
+			if (preg_match('~(?:INSERT|UPDATE|REPLACE)(?:[A-Z_\s]*)`?([^\s`]+)`?\s*~', is_string($caused['args'][1]) ? $caused['args'][1] : $caused['args'][2], $m)) {
 				return $m[1];
 			}
 		}
