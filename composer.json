@@ -22,6 +22,7 @@
 		"nette/utils": "~2.2@dev",
 		"nette/robot-loader": "~2.2@dev",
 
+		"doctrine/dbal": "~2.5",
 		"doctrine/orm": "~2.4.1",
 		"doctrine/instantiator": "~1.0.3",
 		"kdyby/events": "~2.2@dev",
