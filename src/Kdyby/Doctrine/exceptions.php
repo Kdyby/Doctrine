@@ -237,6 +237,7 @@ class MemberAccessException extends \LogicException implements Exception
 
 /**
  * @author Filip Procházka <filip@prochazka.su>
+ * @deprecated
  */
 class DBALException extends \RuntimeException implements Exception
 {
@@ -291,6 +292,7 @@ class DBALException extends \RuntimeException implements Exception
 
 /**
  * @author Filip Procházka <filip@prochazka.su>
+ * @deprecated
  */
 class DuplicateEntryException extends DBALException
 {
@@ -331,6 +333,7 @@ class DuplicateEntryException extends DBALException
 
 /**
  * @author Filip Procházka <filip@prochazka.su>
+ * @deprecated
  */
 class EmptyValueException extends DBALException
 {

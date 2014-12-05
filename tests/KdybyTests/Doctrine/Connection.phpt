@@ -11,6 +11,7 @@
 namespace KdybyTests\Doctrine;
 
 use Doctrine;
+use Doctrine\DBAL\Driver\PDOException;
 use Kdyby;
 use Nette;
 use Tester;
@@ -35,7 +36,9 @@ class ConnectionTest extends Tester\TestCase
 	 */
 	public function testDriverExceptions_MySQL($exception, $class, array $props)
 	{
-		$conn = new Kdyby\Doctrine\Connection(array(), new MysqlDriverMock());
+		$conn = new ConnectionMock(array(), new MysqlDriverMock());
+		$conn->platform = new Doctrine\DBAL\Platforms\MySqlPlatform();
+		$conn->throwOldKdybyExceptions = TRUE;
 
 		$resolved = $conn->resolveException($exception);
 		Assert::true($resolved instanceof $class);
@@ -51,24 +54,47 @@ class ConnectionTest extends Tester\TestCase
 	 */
 	public function dataMySqlExceptions()
 	{
-		$emptyPdo = new \PDOException('SQLSTATE[23000]: Integrity constraint violation: 1048 Column \'name\' cannot be null', '23000');
-		$emptyPdo->errorInfo = array('23000', 1048, 'Column \'name\' cannot be null');
+		$e = new \PDOException('SQLSTATE[23000]: Integrity constraint violation: 1048 Column \'name\' cannot be null', '23000');
+		$e->errorInfo = array('23000', 1048, 'Column \'name\' cannot be null');
+		$emptyPdo = new PDOException($e);
+
+		$driver = new MysqlDriverMock();
 
 		$empty = Doctrine\DBAL\DBALException::driverExceptionDuringQuery(
-			$emptyPdo, "INSERT INTO `test_empty` (`name`) VALUES (NULL)", array()
+			$driver, $emptyPdo, "INSERT INTO `test_empty` (`name`) VALUES (NULL)", array()
 		);
 
-		$uniquePdo = new \PDOException('SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry \'filip-prochazka\' for key \'uniq_name_surname\'', '23000');
-		$uniquePdo->errorInfo = array('23000', 1062, 'Duplicate entry \'filip-prochazka\' for key \'uniq_name_surname\'');
+		$e = new \PDOException('SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry \'filip-prochazka\' for key \'uniq_name_surname\'', '23000');
+		$e->errorInfo = array('23000', 1062, 'Duplicate entry \'filip-prochazka\' for key \'uniq_name_surname\'');
+		$uniquePdo = new PDOException($e);
 
 		$unique = Doctrine\DBAL\DBALException::driverExceptionDuringQuery(
-			$uniquePdo, "INSERT INTO `test_empty` (`name`, `surname`) VALUES ('filip', 'prochazka')", array()
+			$driver, $uniquePdo, "INSERT INTO `test_empty` (`name`, `surname`) VALUES ('filip', 'prochazka')", array()
 		);
 
 		return array(
 			array($empty, 'Kdyby\Doctrine\EmptyValueException', array('column' => 'name')),
 			array($unique, 'Kdyby\Doctrine\DuplicateEntryException', array('columns' => array('uniq_name_surname' => array('name', 'surname')))),
 		);
+	}
+
+}
+
+
+class ConnectionMock extends Kdyby\Doctrine\Connection
+{
+
+	public $platform;
+
+
+
+	public function getDatabasePlatform()
+	{
+		if ($this->platform !== NULL) {
+			return $this->platform;
+		}
+
+		return parent::getDatabasePlatform();
 	}
 
 }
