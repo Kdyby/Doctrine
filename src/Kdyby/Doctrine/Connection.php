@@ -25,6 +25,13 @@ if (!class_exists('Nette\Utils\ObjectMixin')) {
 	class_alias('Nette\ObjectMixin', 'Nette\Utils\ObjectMixin');
 }
 
+if (!class_exists('Tracy\Bar')) {
+	class_alias('Nette\Diagnostics\Bar', 'Tracy\Bar');
+	class_alias('Nette\Diagnostics\BlueScreen', 'Tracy\BlueScreen');
+	class_alias('Nette\Diagnostics\Helpers', 'Tracy\Helpers');
+	class_alias('Nette\Diagnostics\IBarPanel', 'Tracy\IBarPanel');
+}
+
 /**
  * @author Filip Procházka <filip@prochazka.su>
  */
