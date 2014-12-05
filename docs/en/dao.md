@@ -133,7 +133,7 @@ Just accepts the DQL and creates `Doctrine\ORM\Query` instance.
 
 ### `->fetch(Persistence\Query $queryObject)`
 
-This method is part of something bigger, and you can [read more about it in here](https://github.com/Kdyby/Doctrine/blob/master/docs/en/resultset.md).
+This method is part of something bigger, and you can [read more about it in here](https://github.com/Kdyby/Doctrine/blob/nette-2.1/docs/en/resultset.md).
 
 
 ### `->getReference($id)`
