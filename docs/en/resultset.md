@@ -7,7 +7,7 @@ There are two objects you wanna get to know. It's `QueryObject` and `ResultSet`.
 
 If you have complicated DQLs, you might wanna not write them in [extended repositories](https://github.com/kdyby/doctrine/blob/master/docs/en/dao.md), but in query objects instead.
 
-Your query object might for example look like this. It's real-world example of Query object in a forum that is build on Kdyby\Doctrine.
+Your query object might for example look like this. It's real-world example of Query object in a forum that is built on Kdyby\Doctrine.
 
 ```php
 class QuestionsQuery extends Kdyby\Doctrine\QueryObject
@@ -177,7 +177,7 @@ You get an iterable object of entities, that is an instance of `ResultSet`.
 
 ## ResultSet
 
-You'll love this class, it will made your model classes much more cleaner.
+You'll love this class, for it will make your model classes much cleaner.
 
 Let's say we have the instance of `ResultSet` in the variable `$result` from previous chapter.
 
