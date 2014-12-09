@@ -12,7 +12,6 @@ namespace Kdyby\Doctrine;
 
 use Doctrine;
 use Doctrine\ORM\AbstractQuery;
-use Doctrine\ORM\Tools\Pagination\Paginator as ResultPaginator;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Kdyby;
 use Kdyby\Persistence\Queryable;
@@ -121,7 +120,7 @@ abstract class QueryObject extends Nette\Object implements Kdyby\Persistence\Que
 	 * @param \Doctrine\ORM\Tools\Pagination\Paginator $paginatedQuery
 	 * @return integer
 	 */
-	public function count(Queryable $repository, ResultSet $resultSet = NULL, ResultPaginator $paginatedQuery = NULL)
+	public function count(Queryable $repository, ResultSet $resultSet = NULL, Paginator $paginatedQuery = NULL)
 	{
 		if ($query = $this->doCreateCountQuery($repository)) {
 			return $this->toQuery($query)->getSingleScalarResult();
@@ -129,7 +128,7 @@ abstract class QueryObject extends Nette\Object implements Kdyby\Persistence\Que
 
 		if ($this->lastQuery && $this->lastQuery instanceof NativeQueryWrapper) {
 			$class = get_called_class();
-			throw new NotSupportedException("You must implement your own count query in $class::doCreateCountQuery(), ResultPaginator from Doctrine doesn't support NativeQueries.");
+			throw new NotSupportedException("You must implement your own count query in $class::doCreateCountQuery(), Paginator from Doctrine doesn't support NativeQueries.");
 		}
 
 		if ($paginatedQuery !== NULL) {
@@ -140,7 +139,7 @@ abstract class QueryObject extends Nette\Object implements Kdyby\Persistence\Que
 			->setFirstResult(NULL)
 			->setMaxResults(NULL);
 
-		$paginatedQuery = new ResultPaginator($query, $resultSet ? $resultSet->getFetchJoinCollection() : TRUE);
+		$paginatedQuery = new Paginator($query, $resultSet ? $resultSet->getFetchJoinCollection() : TRUE);
 		$paginatedQuery->setUseOutputWalkers($resultSet ? $resultSet->getUseOutputWalkers() : NULL);
 
 		return $paginatedQuery->count();
