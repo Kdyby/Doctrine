@@ -419,14 +419,6 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			$schemaTypes[$dbType] = $typeInst->getName();
 		}
 
-		if ($this->connectionUsesMysqlDriver($config)) {
-			$builder->addDefinition($name . '.events.mysqlSessionInit')
-				->setClass('Doctrine\DBAL\Event\Listeners\MysqlSessionInit', array($config['charset']))
-				->addTag(Kdyby\Events\DI\EventsExtension::SUBSCRIBER_TAG)
-				->setAutowired(FALSE)
-				->setInject(FALSE);
-		}
-
 		// connection
 		$options = array_diff_key($config, array_flip(array('types', 'resultCache', 'connection', 'logging')));
 		$connection = $builder->addDefinition($connectionServiceId = $this->prefix($name . '.connection'))
@@ -453,18 +445,6 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		}
 
 		return $this->prefix('@' . $name . '.connection');
-	}
-
-
-
-	/**
-	 * @param array $config
-	 * @return boolean
-	 */
-	protected function connectionUsesMysqlDriver(array $config)
-	{
-		return (isset($config['driver']) && stripos($config['driver'], 'mysql') !== FALSE)
-			|| (isset($config['driverClass']) && stripos($config['driverClass'], 'mysql') !== FALSE);
 	}
 
 
