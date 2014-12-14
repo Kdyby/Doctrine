@@ -12,6 +12,7 @@ namespace Kdyby\Doctrine\Tools;
 
 use Doctrine;
 use Kdyby;
+use Kdyby\Doctrine\Events;
 
 
 
@@ -28,7 +29,7 @@ class ResolveTargetEntityListener extends Doctrine\ORM\Tools\ResolveTargetEntity
 	 */
 	public function getSubscribedEvents()
 	{
-		return array( Doctrine\ORM\Events::loadClassMetadata );
+		return array(Events::loadClassMetadata);
 	}
 
 }
