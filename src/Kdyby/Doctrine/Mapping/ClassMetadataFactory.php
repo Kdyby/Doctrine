@@ -48,9 +48,9 @@ class ClassMetadataFactory extends Doctrine\ORM\Mapping\ClassMetadataFactory
 
 
 	/**
-	 * @param EntityManager $em
+	 * @param Doctrine\ORM\EntityManagerInterface $em
 	 */
-	public function setEntityManager(EntityManager $em)
+	public function setEntityManager(Doctrine\ORM\EntityManagerInterface $em)
 	{
 		$this->em = $em;
 		$this->config = $em->getConfiguration();

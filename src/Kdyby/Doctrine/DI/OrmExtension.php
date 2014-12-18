@@ -41,6 +41,17 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		'queryCache' => 'default',
 		'resultCache' => 'default',
 		'hydrationCache' => 'default',
+		'secondLevelCache' => array(
+			'enabled' => FALSE,
+			'factoryClass' => 'Doctrine\ORM\Cache\DefaultCacheFactory',
+			'driver' => 'default',
+			'regions' => array(
+				'defaultLifetime' => 3600,
+				'defaultLockLifetime' => 60,
+			),
+			'fileLockRegionDirectory' => '%tempDir%/cache/Doctrine.Cache.Locks', // todo fix
+			'logging' => '%debugMode%',
+		),
 		'classMetadataFactory' => 'Kdyby\Doctrine\Mapping\ClassMetadataFactory',
 		'defaultRepositoryClassName' => 'Kdyby\Doctrine\EntityDao',
 		'autoGenerateProxyClasses' => '%debugMode%',
@@ -348,6 +359,8 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			->setInject(FALSE);
 		/** @var Nette\DI\ServiceDefinition $configuration */
 
+		$this->processSecondLevelCache($name, $config['secondLevelCache'], $isDefault);
+
 		$this->proxyAutoLoaders[$config['proxyNamespace']] = $config['proxyDir'];
 
 		Validators::assertField($config, 'filters', 'array');
@@ -368,7 +381,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			->setAutowired(FALSE);
 
 		// entity manager
-		$builder->addDefinition($managerServiceId = $this->prefix($name . '.entityManager'))
+		$entityManager = $builder->addDefinition($managerServiceId = $this->prefix($name . '.entityManager'))
 			->setClass('Kdyby\Doctrine\EntityManager')
 			->setFactory('Kdyby\Doctrine\EntityManager::create', array(
 				$connectionService = $this->processConnection($name, $defaults, $isDefault),
@@ -379,7 +392,65 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			->setAutowired($isDefault)
 			->setInject(FALSE);
 
+		if (!empty($config['logging']) || $config['secondLevelCache']['enabled']) {
+			$entityManager->addSetup('?->bindEntityManager(?)', array($this->prefix('@' . $name . '.diagnosticsPanel'), '@self'));
+		}
+
 		$this->configuredManagers[$name] = $managerServiceId;
+	}
+
+
+
+	private function processSecondLevelCache($name, array $config, $isDefault)
+	{
+		if (!$config['enabled']) {
+			return;
+		}
+
+		$builder = $this->getContainerBuilder();
+
+		$cacheFactory = $builder->addDefinition($this->prefix($name . '.cacheFactory'))
+			->setClass('Doctrine\ORM\Cache\CacheFactory')
+			->setFactory($config['factoryClass'], array(
+				$this->prefix('@' . $name . '.cacheRegionsConfiguration'),
+				$this->processCache($config['driver'], $name . '.secondLevel'),
+			))
+			->setAutowired($isDefault);
+
+		if ($config['factoryClass'] === $this->managerDefaults['secondLevelCache']['factoryClass']
+			|| is_subclass_of($config['factoryClass'], $this->managerDefaults['secondLevelCache']['factoryClass'])
+		) {
+			$cacheFactory->addSetup('setFileLockRegionDirectory', array($config['fileLockRegionDirectory']));
+		}
+
+		$builder->addDefinition($this->prefix($name . '.cacheRegionsConfiguration'))
+			->setClass('Doctrine\ORM\Cache\RegionsConfiguration', array(
+				$config['regions']['defaultLifetime'],
+				$config['regions']['defaultLockLifetime'],
+			))
+			->setAutowired($isDefault);
+
+		$logger = $builder->addDefinition($this->prefix($name . '.cacheLogger'))
+			->setClass('Doctrine\ORM\Cache\Logging\CacheLogger')
+			->setFactory('Doctrine\ORM\Cache\Logging\CacheLoggerChain')
+			->setAutowired(FALSE);
+
+		if ($config['logging']) {
+			$logger->addSetup('setLogger', array(
+				'statistics',
+				new Statement('Doctrine\ORM\Cache\Logging\StatisticsCacheLogger')
+			));
+		}
+
+		$builder->addDefinition($cacheConfigName = $this->prefix($name . '.ormCacheConfiguration'))
+			->setClass('Doctrine\ORM\Cache\CacheConfiguration')
+			->addSetup('setCacheFactory', array($this->prefix('@' . $name . '.cacheFactory')))
+			->addSetup('setCacheLogger', array($this->prefix('@' . $name . '.cacheLogger')))
+			->setAutowired($isDefault);
+
+		$configuration = $builder->getDefinition($this->prefix($name . '.ormConfiguration'));
+		$configuration->addSetup('setSecondLevelCacheEnabled');
+		$configuration->addSetup('setSecondLevelCacheConfiguration', array('@' . $cacheConfigName));
 	}
 
 
@@ -434,12 +505,16 @@ class OrmExtension extends Nette\DI\CompilerExtension
 
 		$this->configuredConnections[$name] = $connectionServiceId;
 
+		$builder->addDefinition($this->prefix($name . '.diagnosticsPanel'))
+			->setClass('Kdyby\Doctrine\Diagnostics\Panel')
+			->setAutowired(FALSE);
+
 		if (!is_bool($config['logging'])) {
 			$fileLogger = new Statement('Kdyby\Doctrine\Diagnostics\FileLogger', array($builder->expand($config['logging'])));
 			$configuration->addSetup('$service->getSQLLogger()->addLogger(?)', array($fileLogger));
 
 		} elseif ($config['logging']) {
-			$connection->addSetup('Kdyby\Doctrine\Diagnostics\Panel::register', array('@self'));
+			$connection->addSetup('?->bindConnection(?)', array($this->prefix('@' . $name . '.diagnosticsPanel'), '@self'));
 		}
 
 		return $this->prefix('@' . $name . '.connection');

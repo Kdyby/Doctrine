@@ -84,9 +84,9 @@ class ObjectHydrator extends \Doctrine\ORM\Internal\Hydration\ObjectHydrator
 
 
 
-	protected function hydrateRowData(array $row, array &$cache, array &$result)
+	protected function hydrateRowData(array $row, array &$result)
 	{
-		parent::hydrateRowData($row, $cache, $result);
+		parent::hydrateRowData($row, $result);
 
 		$identityMap = $this->uow->getIdentityMap();
 
@@ -118,9 +118,9 @@ class ObjectHydrator extends \Doctrine\ORM\Internal\Hydration\ObjectHydrator
 
 
 
-	protected function gatherRowData(array $data, array &$cache, array &$id, array &$nonemptyComponents)
+	protected function gatherRowData(array $data, array &$id, array &$nonemptyComponents)
 	{
-		return $this->lastRowData = parent::gatherRowData($data, $cache, $id, $nonemptyComponents);
+		return $this->lastRowData = parent::gatherRowData($data, $id, $nonemptyComponents);
 	}
 
 

@@ -78,9 +78,9 @@ class SimpleObjectHydrator extends \Doctrine\ORM\Internal\Hydration\SimpleObject
 
 
 
-	protected function hydrateRowData(array $sqlResult, array &$cache, array &$result)
+	protected function hydrateRowData(array $sqlResult, array &$result)
 	{
-		parent::hydrateRowData($sqlResult, $cache, $result);
+		parent::hydrateRowData($sqlResult, $result);
 
 		if (empty($this->aliasInvokers)) {
 			return;
