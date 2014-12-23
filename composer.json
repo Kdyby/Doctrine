@@ -25,7 +25,7 @@
 		"doctrine/dbal": "~2.5",
 		"doctrine/orm": ">=2.4.7,<2.6-dev",
 		"doctrine/instantiator": "~1.0.3",
-		"kdyby/events": "~2.2@dev",
+		"kdyby/events": "~2.3@dev",
 		"kdyby/console": "~2.3@dev",
 		"kdyby/annotations": "~2.1@dev",
 		"kdyby/doctrine-cache": "~2.3.1@dev"

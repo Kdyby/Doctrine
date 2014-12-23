@@ -357,12 +357,18 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			$this->targetEntityMappings = Nette\Utils\Arrays::mergeTree($this->targetEntityMappings, $config['targetEntityMappings']);
 		}
 
+		$builder->addDefinition($this->prefix($name . '.evm'))
+			->setClass('Kdyby\Events\NamespacedEventManager', array(Kdyby\Doctrine\Events::NS . '::'))
+			->addSetup('$dispatchGlobalEvents', array(TRUE)) // for BC
+			->setAutowired(FALSE);
+
 		// entity manager
 		$builder->addDefinition($managerServiceId = $this->prefix($name . '.entityManager'))
 			->setClass('Kdyby\Doctrine\EntityManager')
 			->setFactory('Kdyby\Doctrine\EntityManager::create', array(
 				$connectionService = $this->processConnection($name, $defaults, $isDefault),
-				$this->prefix('@' . $name . '.ormConfiguration')
+				$this->prefix('@' . $name . '.ormConfiguration'),
+				$this->prefix('@' . $name . '.evm'),
 			))
 			->addTag(self::TAG_ENTITY_MANAGER)
 			->setAutowired($isDefault)
@@ -412,7 +418,8 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			->setFactory('Kdyby\Doctrine\Connection::create', array(
 				$options,
 				$this->prefix('@' . $name . '.dbalConfiguration'),
-				3 => $dbalTypes,
+				$this->prefix('@' . $name . '.evm'),
+				$dbalTypes,
 				$schemaTypes
 			))
 			->addTag(self::TAG_CONNECTION)
