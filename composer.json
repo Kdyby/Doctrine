@@ -31,6 +31,24 @@
 		"kdyby/doctrine-cache": "~2.3.1@dev"
 	},
 	"require-dev": {
+		"nette/application": "~2.2@dev",
+		"nette/bootstrap": "~2.2@dev",
+		"nette/caching": "~2.2@dev",
+		"nette/component-model": "~2.2@dev",
+		"nette/database": "~2.2@dev",
+		"nette/deprecated": "~2.2@dev",
+		"nette/finder": "~2.2@dev",
+		"nette/forms": "~2.2@dev",
+		"nette/http": "~2.2@dev",
+		"nette/mail": "~2.2@dev",
+		"nette/php-generator": "~2.2@dev",
+		"nette/reflection": "~2.2@dev",
+		"nette/safe-stream": "~2.2@dev",
+		"nette/security": "~2.2@dev",
+		"nette/tokenizer": "~2.2@dev",
+		"latte/latte": "~2.2@dev",
+		"tracy/tracy": "~2.2@dev",
+
 		"dg/dibi" : "~2.0",
 		"nette/tester": "@dev"
 	},
