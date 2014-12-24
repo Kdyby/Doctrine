@@ -19,14 +19,16 @@ matrix:
 
 before_install:
   - composer self-update
-  - composer create-project --prefer-source --dev --no-interaction jakub-onderka/php-parallel-lint vendor/jakub-onderka/php-parallel-lint
-  - php vendor/jakub-onderka/php-parallel-lint/parallel-lint.php -e php,phpt --exclude vendor .
 
 install:
   - mkdir -p vendor/bin
   - wget -O vendor/bin/composer-nette https://raw.githubusercontent.com/Kdyby/TesterExtras/master/bin/composer-nette.php
   - php vendor/bin/composer-nette
   - composer install --no-interaction --prefer-source --dev
+
+before_script:
+  - composer create-project --prefer-source --dev --no-interaction jakub-onderka/php-parallel-lint vendor/php-parallel-lint
+  - php vendor/php-parallel-lint/parallel-lint.php -e php,phpt --exclude vendor .
 
 script: vendor/bin/tester -c ./tests/php.ini-unix ./tests/KdybyTests/
 
