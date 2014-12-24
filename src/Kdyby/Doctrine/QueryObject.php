@@ -38,9 +38,9 @@ use Nette;
  * <code>
  * $productsQuery = new ProductsQuery();
  * $productsQuery
- * 	->setColor('green')
- * 	->setMaxDeliveryPrice(100)
- * 	->setMaxDeliveryMinutes(75);
+ *    ->setColor('green')
+ *    ->setMaxDeliveryPrice(100)
+ *    ->setMaxDeliveryMinutes(75);
  *
  * $productsQuery->size = 'big';
  *
