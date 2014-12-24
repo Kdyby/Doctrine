@@ -23,8 +23,8 @@ before_install:
 install:
   - mkdir -p vendor/bin
   - wget -O vendor/bin/composer-nette https://raw.githubusercontent.com/Kdyby/TesterExtras/master/bin/composer-nette.php
-  - composer create-project --prefer-source --dev --no-interaction jakub-onderka/php-parallel-lint vendor/jakub-onderka/php-parallel-lint
   - php vendor/bin/composer-nette
+  - composer create-project --prefer-source --dev --no-interaction jakub-onderka/php-parallel-lint vendor/jakub-onderka/php-parallel-lint
   - composer install --no-interaction --prefer-source --dev
 
 before_script:
