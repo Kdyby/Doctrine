@@ -39,7 +39,7 @@ class ColoredSqlOutput extends Nette\Object implements OutputInterface
 
 	protected function formatSqls($message)
 	{
-		$message = Nette\Utils\Strings::replace($message, "~((?:CREATE|ALTER|DROP)\s+TABLE|(?:DROP|CREATE)\s+INDEX)[^;]+;~i", function (array $match) {
+		$message = Nette\Utils\Strings::replace($message, "~((?:CREATE|ALTER|DROP)\\s+TABLE|(?:DROP|CREATE)\\s+INDEX)[^;]+;~i", function (array $match) {
 			$output = Nette\Utils\Strings::replace($match[0], '~(?<=\b)([^\s]*[a-z]+[^\s]*)(?=\b)~', function ($id) {
 				return '<info>' . $id[0] . '</info>';
 			});

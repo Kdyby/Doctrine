@@ -27,14 +27,14 @@ use Nette\Utils\Paginator as UIPaginator;
  * <code>
  * public function renderDefault()
  * {
- * 	$articles = $this->articlesDao->fetch(new ArticlesQuery());
- * 	$articles->applyPaginator($this['vp']->paginator);
- * 	$this->template->articles = $articles;
+ *    $articles = $this->articlesDao->fetch(new ArticlesQuery());
+ *    $articles->applyPaginator($this['vp']->paginator);
+ *    $this->template->articles = $articles;
  * }
  *
  * protected function createComponentVp()
  * {
- * 	return new VisualPaginator;
+ *    return new VisualPaginator;
  * }
  * </code>.
  *

@@ -23,7 +23,7 @@ use Kdyby;
  * @ORM\MappedSuperclass()
  *
  * @property-read int $id
- * 
+ *
  * @deprecated
  */
 abstract class IdentifiedEntity extends BaseEntity
