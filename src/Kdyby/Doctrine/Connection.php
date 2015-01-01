@@ -47,6 +47,16 @@ class Connection extends Doctrine\DBAL\Connection
 	 */
 	private $entityManager;
 
+	/**
+	 * @var array
+	 */
+	private $schemaTypes = array();
+
+	/**
+	 * @var array
+	 */
+	private $dbalTypes = array();
+
 
 
 	/**
@@ -243,16 +253,32 @@ class Connection extends Doctrine\DBAL\Connection
 
 
 	/**
-	 * @param array $params
-	 * @param \Doctrine\DBAL\Configuration $config
-	 * @param \Doctrine\Common\EventManager $eventManager
-	 * @param array $dbalTypes
 	 * @param array $schemaTypes
-	 * @return Connection
 	 */
-	public static function create(array $params, Doctrine\DBAL\Configuration $config, EventManager $eventManager, array $dbalTypes = array(), array $schemaTypes = array())
+	public function setSchemaTypes(array $schemaTypes)
 	{
-		foreach ($dbalTypes as $name => $className) {
+		$this->schemaTypes = $schemaTypes;
+	}
+
+
+
+	/**
+	 * @param array $dbalTypes
+	 */
+	public function setDbalTypes(array $dbalTypes)
+	{
+		$this->dbalTypes = $dbalTypes;
+	}
+
+
+
+	public function connect()
+	{
+		if ($this->isConnected()) {
+			return FALSE;
+		}
+
+		foreach ($this->dbalTypes as $name => $className) {
 			if (DbalType::hasType($name)) {
 				DbalType::overrideType($name, $className);
 
@@ -261,21 +287,38 @@ class Connection extends Doctrine\DBAL\Connection
 			}
 		}
 
-		if (!isset($params['wrapperClass'])) {
-			$params['wrapperClass'] = get_called_class();
-		}
-		$connection = Doctrine\DBAL\DriverManager::getConnection($params, $config, $eventManager);
-		$platform = $connection->getDatabasePlatform();
+		parent::connect();
 
-		foreach ($schemaTypes as $dbType => $doctrineType) {
+		$platform = $this->getDatabasePlatform();
+
+		foreach ($this->schemaTypes as $dbType => $doctrineType) {
 			$platform->registerDoctrineTypeMapping($dbType, $doctrineType);
 		}
 
-		foreach ($dbalTypes as $type => $className) {
+		foreach ($this->dbalTypes as $type => $className) {
 			$platform->markDoctrineTypeCommented(DbalType::getType($type));
 		}
 
-		return $connection;
+		return TRUE;
+	}
+
+
+
+	/**
+	 * @param array $params
+	 * @param \Doctrine\DBAL\Configuration $config
+	 * @param \Doctrine\Common\EventManager $eventManager
+	 * @param array $dbalTypes
+	 * @param array $schemaTypes
+	 * @return Connection
+	 */
+	public static function create(array $params, Doctrine\DBAL\Configuration $config, EventManager $eventManager)
+	{
+		if (!isset($params['wrapperClass'])) {
+			$params['wrapperClass'] = get_called_class();
+		}
+
+		return Doctrine\DBAL\DriverManager::getConnection($params, $config, $eventManager);
 	}
 
 

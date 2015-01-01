@@ -418,10 +418,10 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			->setFactory('Kdyby\Doctrine\Connection::create', array(
 				$options,
 				$this->prefix('@' . $name . '.dbalConfiguration'),
-				$this->prefix('@' . $name . '.evm'),
-				$dbalTypes,
-				$schemaTypes
+				$this->prefix('@' . $name . '.evm')
 			))
+			->addSetup('setSchemaTypes', array($schemaTypes))
+			->addSetup('setDbalTypes', array($dbalTypes))
 			->addTag(self::TAG_CONNECTION)
 			->setAutowired($isDefault)
 			->setInject(FALSE);
