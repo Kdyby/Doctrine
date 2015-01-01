@@ -261,7 +261,9 @@ class Connection extends Doctrine\DBAL\Connection
 			}
 		}
 
-		$params['wrapperClass'] = get_called_class();
+		if (!isset($params['wrapperClass'])) {
+			$params['wrapperClass'] = get_called_class();
+		}
 		$connection = Doctrine\DBAL\DriverManager::getConnection($params, $config, $eventManager);
 		$platform = $connection->getDatabasePlatform();
 
