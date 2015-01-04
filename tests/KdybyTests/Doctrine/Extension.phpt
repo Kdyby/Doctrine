@@ -67,10 +67,10 @@ class ExtensionTest extends Tester\TestCase
 		/** @var Kdyby\Doctrine\EntityManager $default */
 		$default = $container->getByType('Kdyby\Doctrine\EntityManager');
 		Assert::true($default instanceof Kdyby\Doctrine\EntityManager);
-		Assert::same($container->getService('doctrine.default.entityManager'), $default);
+		Assert::same($container->getService('kdyby.doctrine.default.entityManager'), $default);
 
-		Assert::true($container->getService('doctrine.remote.entityManager') instanceof Kdyby\Doctrine\EntityManager);
-		Assert::notSame($container->getService('doctrine.remote.entityManager'), $default);
+		Assert::true($container->getService('kdyby.doctrine.remote.entityManager') instanceof Kdyby\Doctrine\EntityManager);
+		Assert::notSame($container->getService('kdyby.doctrine.remote.entityManager'), $default);
 	}
 
 
