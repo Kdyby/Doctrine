@@ -1,4 +1,4 @@
-doctrine:
+kdyby.doctrine:
 	driver: pdo_sqlite
 	memory: true
 	metadata:
