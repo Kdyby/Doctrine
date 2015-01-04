@@ -229,8 +229,8 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			->setClass('Kdyby\Doctrine\Registry', array(
 				$this->configuredConnections,
 				$this->configuredManagers,
-				$builder->expand('%' . $this->prefix('dbal.defaultConnection') . '%'),
-				$builder->expand('%' . $this->prefix('orm.defaultEntityManager') . '%'),
+				$builder->parameters[$this->name]['dbal']['defaultConnection'],
+				$builder->parameters[$this->name]['orm']['defaultEntityManager'],
 			));
 	}
 

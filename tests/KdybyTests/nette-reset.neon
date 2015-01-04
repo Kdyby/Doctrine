@@ -6,10 +6,10 @@ extensions:
 	events: Kdyby\Events\DI\EventsExtension
 	console: Kdyby\Console\DI\ConsoleExtension
 	annotations: Kdyby\Annotations\DI\AnnotationsExtension
-	doctrine: Kdyby\Doctrine\DI\OrmExtension
+	kdyby.doctrine: Kdyby\Doctrine\DI\OrmExtension
 
 
-doctrine:
+kdyby.doctrine:
 	metadataCache: array
 	queryCache: array
 	resultCache: array
