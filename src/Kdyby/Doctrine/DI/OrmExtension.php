@@ -181,6 +181,10 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			->setImplement('Kdyby\Doctrine\EntityDaoFactory')
 			->setInject(FALSE)->setAutowired(TRUE);
 
+		$builder->addDefinition($this->prefix('repositoryFactory'))
+			->setClass('Kdyby\Doctrine\RepositoryFactory')
+			->setAutowired(FALSE);
+
 		$builder->addDefinition($this->prefix('schemaValidator'))
 			->setClass('Doctrine\ORM\Tools\SchemaValidator')
 			->setInject(FALSE);
@@ -307,10 +311,6 @@ class OrmExtension extends Nette\DI\CompilerExtension
 				))
 			));
 		}
-
-		$builder->addDefinition($this->prefix('repositoryFactory'))
-			->setClass('Kdyby\Doctrine\RepositoryFactory')
-			->setAutowired(FALSE);
 
 		Validators::assertField($config, 'namespaceAlias', 'array');
 		Validators::assertField($config, 'hydrators', 'array');
