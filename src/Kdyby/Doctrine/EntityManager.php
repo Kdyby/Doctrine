@@ -30,6 +30,7 @@ if (!class_exists('Nette\Utils\ObjectMixin')) {
  *
  * @method \Kdyby\Doctrine\Connection getConnection()
  * @method \Kdyby\Doctrine\Configuration getConfiguration()
+ * @method \Kdyby\Doctrine\EntityRepository getRepository($entityName)
  * @method onDaoCreate(EntityManager $em, EntityDao $dao)
  */
 class EntityManager extends Doctrine\ORM\EntityManager
@@ -39,11 +40,6 @@ class EntityManager extends Doctrine\ORM\EntityManager
 	 * @var array
 	 */
 	public $onDaoCreate = array();
-
-	/**
-	 * @var array|EntityDao[]
-	 */
-	private $repositories = array();
 
 	/**
 	 * @var NonLockingUniqueInserter
@@ -157,40 +153,6 @@ class EntityManager extends Doctrine\ORM\EntityManager
 		}
 
 		return $this->nonLockingUniqueInserter->persist($entity);
-	}
-
-
-
-	/**
-	 * @param string|object $entityName
-	 * @return EntityDao
-	 */
-	public function getRepository($entityName)
-	{
-		if (is_object($entityName)) {
-			$entityName = Doctrine\Common\Util\ClassUtils::getRealClass(get_class($entityName));
-		}
-
-		$entityName = ltrim($entityName, '\\');
-
-		if (isset($this->repositories[$entityName])) {
-			return $this->repositories[$entityName];
-		}
-
-		$metadata = $this->getClassMetadata($entityName);
-		if ($metadata->name !== $entityName) {
-			return $this->repositories[$entityName] = $this->getRepository($metadata->name);
-		}
-
-		if (!$daoClassName = $metadata->customRepositoryClassName) {
-			$daoClassName = $this->getConfiguration()->getDefaultRepositoryClassName();
-		}
-
-		$dao = new $daoClassName($this, $metadata);
-		$this->repositories[$entityName] = $dao;
-		$this->onDaoCreate($this, $dao);
-
-		return $dao;
 	}
 
 
