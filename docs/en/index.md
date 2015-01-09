@@ -130,7 +130,7 @@ $articles = $entityManager->getDao(App\Article::getClassName());
 
 $article = new Article();
 $article->title = "The Tigger Movie";
-$articles->save($article);
+$articles->publish($article);
 
 $article = $articles->find(1);
 echo $article->title; // "The Tigger Movie"
