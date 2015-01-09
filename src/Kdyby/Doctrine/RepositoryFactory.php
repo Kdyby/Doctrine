@@ -95,7 +95,7 @@ class RepositoryFactory extends Nette\Object implements Doctrine\ORM\Repository\
 			return new $repositoryClassName($entityManager, $metadata);
 
 		} else {
-			return $this->serviceLocator->createService($services[0], ['entityManager' => $entityManager, 'metadata' => $metadata]);
+			return $this->serviceLocator->createService($services[0], array('entityManager' => $entityManager, 'metadata' => $metadata));
 		}
 	}
 
