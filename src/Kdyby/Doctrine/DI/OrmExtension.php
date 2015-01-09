@@ -308,6 +308,10 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			));
 		}
 
+		$builder->addDefinition($this->prefix('repositoryFactory'))
+			->setClass('Kdyby\Doctrine\RepositoryFactory')
+			->setAutowired(FALSE);
+
 		Validators::assertField($config, 'namespaceAlias', 'array');
 		Validators::assertField($config, 'hydrators', 'array');
 		Validators::assertField($config, 'dql', 'array');
@@ -328,6 +332,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			->addSetup('setMetadataDriverImpl', array($this->prefix('@' . $name . '.metadataDriver')))
 			->addSetup('setClassMetadataFactoryName', array($config['classMetadataFactory']))
 			->addSetup('setDefaultRepositoryClassName', array($config['defaultRepositoryClassName']))
+			->addSetup('setRepositoryFactory', array($this->prefix('@repositoryFactory')))
 			->addSetup('setProxyDir', array($config['proxyDir']))
 			->addSetup('setProxyNamespace', array($config['proxyNamespace']))
 			->addSetup('setAutoGenerateProxyClasses', array($autoGenerateProxyClasses))
