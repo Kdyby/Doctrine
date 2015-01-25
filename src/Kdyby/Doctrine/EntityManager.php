@@ -158,6 +158,8 @@ class EntityManager extends Doctrine\ORM\EntityManager
 
 
 	/**
+	 * @deprecated Use the EntityManager::getRepository(), this is a useless alias.
+	 *
 	 * @param string $entityName
 	 * @return EntityDao
 	 */
