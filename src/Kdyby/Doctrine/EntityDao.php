@@ -72,6 +72,8 @@ class EntityDao extends EntityRepository implements Persistence\ObjectDao
 	 * Persists given entities and flushes them, and only them, to the storage.
 	 * If no entities are passed, all the entities of current type are persisted.
 	 *
+	 * @deprecated I won't remove this method for BC, but please stop using it ASAP! Use EntityManager->persist() and ->flush(), this is only a dumb shortcut for VERY specific use-cases!
+	 *
 	 * @param object|array|\Traversable $entity
 	 * @param object|array|\Traversable $relations
 	 * @throws InvalidArgumentException
@@ -109,6 +111,8 @@ class EntityDao extends EntityRepository implements Persistence\ObjectDao
 
 
 	/**
+	 * @deprecated I won't remove this method for BC, but please stop using it ASAP! Use EntityManager->remove() and ->flush(), this is only a dumb shortcut for VERY specific use-cases!
+	 *
 	 * @param object|array|\Traversable $entity
 	 * @param object|array|\Traversable|bool $relations
 	 * @param bool $flush
@@ -169,6 +173,8 @@ class EntityDao extends EntityRepository implements Persistence\ObjectDao
 
 
 	/**
+	 * @deprecated I won't remove this method for BC, but please stop using it ASAP! Use EntityManager->transactional(), this is only a dumb shortcut for VERY specific use-cases!
+	 *
 	 * @param callable $callback
 	 * @throws \Exception
 	 * @return mixed|boolean
