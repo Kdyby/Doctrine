@@ -29,7 +29,7 @@
 		"kdyby/events": "~2.3@dev",
 		"kdyby/console": "~2.3@dev",
 		"kdyby/annotations": "~2.1@dev",
-		"kdyby/doctrine-cache": "~2.3.1@dev"
+		"kdyby/doctrine-cache": "~2.3.2@dev"
 	},
 	"require-dev": {
 		"nette/application": "~2.3@dev",
