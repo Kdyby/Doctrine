@@ -5,7 +5,7 @@ There are two objects you wanna get to know. It's `QueryObject` and `ResultSet`.
 
 ## QueryObject
 
-If you have complicated DQLs, you might wanna not write them in [extended repositories](https://github.com/kdyby/doctrine/blob/master/docs/en/dao.md), but in query objects instead.
+If you have complicated DQLs, you might wanna not write them in [extended repositories](https://github.com/kdyby/doctrine/blob/master/docs/en/repository.md), but in query objects instead.
 
 Your query object might for example look like this. It's real-world example of Query object in a forum that is built on Kdyby\Doctrine.
 
@@ -170,7 +170,7 @@ $query = (new QuestionsQuery())
 	->withLastPost()
 	->byUser($user);
 
-$result = $dao->fetch($query);
+$result = $repository->fetch($query);
 ```
 
 You get an iterable object of entities, that is an instance of `ResultSet`.
@@ -235,7 +235,7 @@ Done! Just iterate the result and you'll get your 20 entities from the page that
 Note that the `QueryObject` is optional and you can create the ResultSet using just a `Doctrine\ORM\Query` object.
 
 ```php
-$result = new ResultSet($dao->createQuery("SELECT a FROM App\Article a"));
+$result = new ResultSet($repository->createQuery("SELECT a FROM App\Article a"));
 ```
 
 There you go, you've just created the simplest collection of `Article` entities that can be lazily paginated.
@@ -247,7 +247,7 @@ This
 ```php
 public function findAll();
 {
-	return new ResultSet($dao->createQuery("SELECT a FROM App\Article a"));
+	return new ResultSet($repository->createQuery("SELECT a FROM App\Article a"));
 }
 
 // usage
@@ -259,14 +259,14 @@ Is so much cleaner than this
 ```php
 public function findAll($limit, $offset);
 {
-	return $dao->createQuery("SELECT a FROM App\Article a")
+	return $this->repository->createQuery("SELECT a FROM App\Article a")
 		->setMaxResults($limit)
 		->setFirstResult($offset);
 }
 
 public function countAll()
 {
-	return $dao->createQuery("SELECT COUNT(a.id) FROM App\Article a")
+	return $this->repository->createQuery("SELECT COUNT(a.id) FROM App\Article a")
 		->getSingleScalarResult();
 }
 
