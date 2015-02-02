@@ -1,6 +1,6 @@
 kdyby.doctrine:
 	metadata:
-		KdybyTests\Doctrine: annotations(%appDir%/KdybyTests/Doctrine/models)
+		KdybyTests\Doctrine: annotations(%appDir%/Doctrine/models)
 
 	default:
 		driver: pdo_sqlite

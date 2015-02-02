@@ -36,7 +36,7 @@ abstract class ORMTestCase extends Tester\TestCase
 	 */
 	protected function createMemoryManager()
 	{
-		$rootDir = __DIR__ . '/../../';
+		$rootDir = __DIR__ . '/..';
 
 		$config = new Nette\Configurator();
 		$container = $config->setTempDirectory(TEMP_DIR)
