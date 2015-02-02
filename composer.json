@@ -22,7 +22,7 @@
 		"nette/utils": "~2.2@dev",
 		"nette/robot-loader": "~2.2@dev",
 
-		"doctrine/orm": "2.4.*",
+		"doctrine/orm": ">=2.4.7,<2.6",
 		"doctrine/dbal": "~2.5",
 		"doctrine/instantiator": "~1.0.3",
 
