@@ -20,14 +20,6 @@ console:
 	url: http://www.kdyby.org/
 
 
-nette:
-	security:
-		frames: null
-
-	session:
-		autoStart: false
-
-
 services:
 	cacheStorage:
 		class: Nette\Caching\Storages\MemoryStorage
