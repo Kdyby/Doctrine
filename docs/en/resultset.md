@@ -247,7 +247,7 @@ This
 ```php
 public function findAll();
 {
-	return new ResultSet($repository->createQuery("SELECT a FROM App\Article a"));
+	return new ResultSet($this->repository->createQuery("SELECT a FROM App\Article a"));
 }
 
 // usage
