@@ -19,7 +19,7 @@
 	"require": {
 		"nette/nette": "2.1.*@dev",
 
-		"doctrine/orm": "2.4.*",
+		"doctrine/orm": ">=2.4.7,<2.6",
 		"doctrine/dbal": "~2.5",
 		"doctrine/instantiator": "~1.0.3",
 
