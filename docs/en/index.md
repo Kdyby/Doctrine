@@ -120,49 +120,57 @@ class Article extends \Kdyby\Doctrine\Entities\BaseEntity
 Now we care only about method `::getClassName()`, because we will use it right away. All it does is return the class name. Oh, but what is it good for? Well, most modern IDE's works with classnames in code as if they were reference - they can find you usages and provide you refactorings. This wouldn't work, if the classname would be simply written in string. Instead, we call static method, that returns the classname. That way, it's always actual, even when you rename the class in your project!
 
 
-There is no repository
-----------------------
+Working with entities
+---------------------
 
-Why not? Because there is now a DAO (shortcut for Data-Access-Object). It extends the repository and adds some cool features.
+Saving your first entity is as easy as
 
 ```php
-$articles = $entityManager->getDao(App\Article::getClassName());
-
 $article = new Article();
 $article->title = "The Tigger Movie";
-$articles->save($article);
+
+$entityManager->persist($article); // start managing the entity
+$entityManager->flush(); // save it to the database
+```
+
+And if you wanna read it
+
+```php
+$articles = $entityManager->getRepository(App\Article::class);
 
 $article = $articles->find(1);
 echo $article->title; // "The Tigger Movie"
 ```
 
-If you're prototyping, you can do a lot of work with just a DAO of your entity.
+You can learn more in the [Doctrine Quickstart](http://docs.doctrine-project.org/projects/doctrine-orm/en/latest/tutorials/getting-started.html).
 
 
 Configuring services
 --------------------
 
-The best practise for getting a DAO is to pass `EntityManager` to your service and get the DAO from it.
+You should always pass the `EntityManager` to your services and then get the Repositories from it.
+Thanks to autowiring, it's really easy :)
+
 
 ```yml
 services:
 	- App\Articles()
 ```
 
+Ideally, to not violate the [SRP](http://en.wikipedia.org/wiki/Single_responsibility_principle), you should not extend repository to add custom bussines logic, but rather decorate it.
+
 ```php
 class Articles extends Nette\Object
 {
-
 	private $em;
-	private $articlesDao;
+	private $articles;
 
 	public function __construct(Kdyby\Doctrine\EntityManager $em)
 	{
 		$this->em = $em;
-		$this->articlesDao = $em->getDao(App\Article::class);
-		// $this->articlesDao = $em->getDao(App\Article::getClassName()); // for older PHP
+		$this->articles = $em->getRepository(App\Article::class);
+		// $this->articles = $em->getRepository(App\Article::getClassName()); // for older PHP
 	}
-
 
 	public function publish(App\Article $article)
 	{
@@ -171,22 +179,8 @@ class Articles extends Nette\Object
 		$this->em->persist($article);
 		// don't forget to call $em->flush() in your presenter
 	}
-
 }
 ```
-
-Passing the `EntityManager` and getting DAO from it it's better, because the refactoring is much simpler and you get to see all the usaged of your entity.
-
-If you wanna, you can pass just the DAO object
-
-```yml
-services:
-	- App\Articles(@doctrine.dao(App\Article))
-```
-
-This stands for "create a service, that will be instance of `App\Articles` and pass it DAO of entity `App\Article`".
-
-But it's generally better to pass EntityManager, so you write less configuration and more PHP code.
 
 
 Want more?
@@ -195,5 +189,5 @@ Want more?
 Read also about
 
 - [How to configure the extension](https://github.com/kdyby/doctrine/blob/master/docs/en/configuring.md)
-- [Benefits of using Kdyby's EntityDao instead of the default one](https://github.com/kdyby/doctrine/blob/master/docs/en/dao.md)
+- [Benefits of using Kdyby's EntityRepository instead of the default one](https://github.com/kdyby/doctrine/blob/master/docs/en/repository.md)
 - [Pagination of DQL that cannot be any simpler](https://github.com/kdyby/doctrine/blob/master/docs/en/resultset.md)
