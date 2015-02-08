@@ -11,7 +11,6 @@
 namespace Kdyby\Doctrine;
 
 use Doctrine;
-use Doctrine\DBAL\Query\QueryBuilder;
 use Kdyby;
 use Nette;
 use Nette\Utils\ObjectMixin;
