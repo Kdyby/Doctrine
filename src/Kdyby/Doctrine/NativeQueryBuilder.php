@@ -11,7 +11,6 @@
 namespace Kdyby\Doctrine;
 
 use Doctrine;
-use Doctrine\DBAL\Query\QueryBuilder;
 use Kdyby;
 use Nette;
 use Nette\Utils\ObjectMixin;
@@ -154,7 +153,7 @@ class NativeQueryBuilder extends Doctrine\DBAL\Query\QueryBuilder
 	{
 		$selects = is_array($select) ? $select : func_get_args();
 		foreach ($selects as &$arg) {
-			if ($arg instanceof QueryBuilder) {
+			if ($arg instanceof Doctrine\DBAL\Query\QueryBuilder) {
 				$arg = '(' . $arg->getSQL() . ')';
 			}
 		}
