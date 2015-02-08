@@ -78,6 +78,22 @@ class ConnectionTest extends Tester\TestCase
 		);
 	}
 
+
+	public function testDatabasePlatform_types()
+	{
+		$conn = new Kdyby\Doctrine\Connection(array(
+			'memory' => TRUE,
+		), new Doctrine\DBAL\Driver\PDOSqlite\Driver());
+		$conn->setSchemaTypes(array(
+			'enum' => 'enum',
+		));
+		$conn->setDbalTypes(array(
+			'enum' => 'Kdyby\\Doctrine\\Types\\Enum',
+		));
+		$platform = $conn->getDatabasePlatform();
+		Assert::same('enum', $platform->getDoctrineTypeMapping('enum'));
+	}
+
 }
 
 

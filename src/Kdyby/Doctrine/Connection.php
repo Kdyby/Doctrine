@@ -305,6 +305,20 @@ class Connection extends Doctrine\DBAL\Connection
 
 
 	/**
+	 * @return Doctrine\DBAL\Platforms\AbstractPlatform
+	 */
+	public function getDatabasePlatform()
+	{
+		if (!$this->isConnected()) {
+			$this->connect();
+		}
+
+		return parent::getDatabasePlatform();
+	}
+
+
+
+	/**
 	 * @param array $params
 	 * @param \Doctrine\DBAL\Configuration $config
 	 * @param \Doctrine\Common\EventManager $eventManager
