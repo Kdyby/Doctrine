@@ -315,6 +315,9 @@ class ResultSet extends Nette\Object implements \Countable, \IteratorAggregate
 		try {
 			$this->query->setHydrationMode($hydrationMode);
 
+			if ($this->queryObject !== NULL && $this->repository !== NULL) {
+				$this->queryObject->preFetch($this->repository, $this->query->getMaxResults(), $this->query->getFirstResult());
+			}
 			if ($this->query->getMaxResults() > 0 || $this->query->getFirstResult() > 0) {
 				if ($this->query instanceof ORM\Query) {
 					$this->iterator = $this->getPaginatedQuery()->getIterator();
@@ -325,6 +328,9 @@ class ResultSet extends Nette\Object implements \Countable, \IteratorAggregate
 
 			} else {
 				$this->iterator = new \ArrayIterator($this->query->getResult(NULL));
+			}
+			if ($this->queryObject !== NULL && $this->repository !== NULL) {
+				$this->queryObject->postFetch($this->repository, $this->iterator);
 			}
 
 			return $this->iterator;
