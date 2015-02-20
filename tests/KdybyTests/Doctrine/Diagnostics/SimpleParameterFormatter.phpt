@@ -86,7 +86,7 @@ class SimpleParameterFormatterTest extends Tester\TestCase
 	{
 		$element = new Element();
 		$element->addCoordinate(14.000000, 51.000000);
-		Assert::same('"POINT((51.0000000000000 14.0000000000000))"', SimpleParameterFormatter::format($element));
+		Assert::same('"POINT(51.0000000000000 14.0000000000000)"', SimpleParameterFormatter::format($element));
 	}
 
 
