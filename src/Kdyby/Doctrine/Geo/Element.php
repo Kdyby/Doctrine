@@ -222,7 +222,12 @@ class Element extends Nette\Object
 			$this->init();
 		}
 
-		return strtoupper($this->name) . '((' . implode($this->separator, $this->coordinates) . '))';
+		$coordinates = implode($this->separator, $this->coordinates);
+		if (in_array($this->name, array(self::POINT, self::LINE_STRING))) {
+			return strtoupper($this->name) . '(' . $coordinates . ')';
+		} else {
+			return strtoupper($this->name) . '((' . $coordinates . '))';
+		}
 	}
 
 
@@ -233,7 +238,7 @@ class Element extends Nette\Object
 		$coordsSeparator = $this->coordsSeparator;
 		$coordsRegexp = '[\d\.]+\s*' . preg_quote($coordsSeparator) . '\s*[\d\.]+';
 		$coordsListRegexp = '(?P<coords>(?:' . $coordsRegexp . ')(?:\s*' . preg_quote($separator) . '\s*' . $coordsRegexp . ')*)';
-		if (!$m = Strings::match($this->stringValue, '~^(?P<name>\w+)\(\(' . $coordsListRegexp . '\)\)$~i')) {
+		if (!$m = Strings::match($this->stringValue, '~^(?P<name>\w+)\(\(?' . $coordsListRegexp . '\)?\)$~i')) {
 			throw new Kdyby\Doctrine\InvalidArgumentException("Given expression '" . $this->stringValue . "' is not geometry definition.");
 		}
 

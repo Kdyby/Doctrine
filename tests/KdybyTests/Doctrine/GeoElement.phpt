@@ -30,14 +30,14 @@ class GeoElementTest extends Tester\TestCase
 	{
 		return array(
 			array(
-				'POINT((1 2))',
+				'POINT(1 2)',
 				$this->stubElement('POINT', array(array(1.0, 2.0))),
-				'POINT((1.0000000000000 2.0000000000000))'
+				'POINT(1.0000000000000 2.0000000000000)'
 			),
 			array(
-				'LINESTRING((1 2,3 4))',
+				'LINESTRING(1 2,3 4)',
 				$this->stubElement('LINESTRING', array(array(1.0, 2.0), array(3.0, 4.0))),
-				'LINESTRING((1.0000000000000 2.0000000000000,3.0000000000000 4.0000000000000))',
+				'LINESTRING(1.0000000000000 2.0000000000000,3.0000000000000 4.0000000000000)',
 			),
 			array(
 				"POLYGON((1.0000000000000  2.0000000000000, 3.0000000000000 \t4.0000000000000))",
