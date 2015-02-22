@@ -67,11 +67,6 @@ class ResultSet extends Nette\Object implements \Countable, \IteratorAggregate
 	private $repository;
 
 	/**
-	 * @var \Doctrine\ORM\Tools\Pagination\Paginator
-	 */
-	private $paginatedQuery;
-
-	/**
 	 * @var bool
 	 */
 	private $fetchJoinCollection = TRUE;
@@ -86,6 +81,11 @@ class ResultSet extends Nette\Object implements \Countable, \IteratorAggregate
 	 */
 	private $iterator;
 
+	/**
+	 * @var bool
+	 */
+	private $frozen = FALSE;
+
 
 
 	/**
@@ -98,6 +98,10 @@ class ResultSet extends Nette\Object implements \Countable, \IteratorAggregate
 		$this->query = $query;
 		$this->queryObject = $queryObject;
 		$this->repository = $repository;
+
+		if ($this->query instanceof NativeQueryWrapper || $this->query instanceof ORM\NativeQuery) {
+			$this->fetchJoinCollection = FALSE;
+		}
 	}
 
 
@@ -109,9 +113,7 @@ class ResultSet extends Nette\Object implements \Countable, \IteratorAggregate
 	 */
 	public function setFetchJoinCollection($fetchJoinCollection)
 	{
-		if ($this->paginatedQuery !== NULL) {
-			throw new InvalidStateException("Cannot modify result set, that was already fetched from storage.");
-		}
+		$this->updating();
 
 		$this->fetchJoinCollection = (bool) $fetchJoinCollection;
 		$this->iterator = NULL;
@@ -128,9 +130,7 @@ class ResultSet extends Nette\Object implements \Countable, \IteratorAggregate
 	 */
 	public function setUseOutputWalkers($useOutputWalkers)
 	{
-		if ($this->paginatedQuery !== NULL) {
-			throw new InvalidStateException("Cannot modify result set, that was already fetched from storage.");
-		}
+		$this->updating();
 
 		$this->useOutputWalkers = $useOutputWalkers;
 		$this->iterator = NULL;
@@ -168,9 +168,7 @@ class ResultSet extends Nette\Object implements \Countable, \IteratorAggregate
 	 */
 	public function clearSorting()
 	{
-		if ($this->paginatedQuery !== NULL) {
-			throw new InvalidStateException("Cannot modify result set, that was already fetched from storage.");
-		}
+		$this->updating();
 
 		$dql = Strings::normalize($this->query->getDQL());
 		if (preg_match('~^(.+)\\s+(ORDER BY\\s+((?!FROM|WHERE|ORDER\\s+BY|GROUP\\sBY|JOIN).)*)\\z~si', $dql, $m)) {
@@ -190,9 +188,7 @@ class ResultSet extends Nette\Object implements \Countable, \IteratorAggregate
 	 */
 	public function applySorting($columns)
 	{
-		if ($this->paginatedQuery !== NULL) {
-			throw new InvalidStateException("Cannot modify result set, that was already fetched from storage.");
-		}
+		$this->updating();
 
 		$sorting = array();
 		foreach (is_array($columns) ? $columns : func_get_args() as $name => $column) {
@@ -247,6 +243,7 @@ class ResultSet extends Nette\Object implements \Countable, \IteratorAggregate
 
 	/**
 	 * @param \Nette\Utils\Paginator $paginator
+	 * @param int $itemsPerPage
 	 * @return ResultSet
 	 */
 	public function applyPaginator(UIPaginator $paginator, $itemsPerPage = NULL)
@@ -284,11 +281,15 @@ class ResultSet extends Nette\Object implements \Countable, \IteratorAggregate
 	{
 		if ($this->totalCount === NULL) {
 			try {
+				$this->frozen = TRUE;
+
+				$paginatedQuery = $this->createPaginatedQuery($this->query);
+
 				if ($this->queryObject !== NULL && $this->repository !== NULL) {
-					$this->totalCount = $this->queryObject->count($this->repository, $this, $this->getPaginatedQuery());
+					$this->totalCount = $this->queryObject->count($this->repository, $this, $paginatedQuery);
 
 				} else {
-					$this->totalCount = $this->getPaginatedQuery()->count();
+					$this->totalCount = $paginatedQuery->count();
 				}
 
 			} catch (ORMException $e) {
@@ -312,16 +313,13 @@ class ResultSet extends Nette\Object implements \Countable, \IteratorAggregate
 			return $this->iterator;
 		}
 
+		$this->query->setHydrationMode($hydrationMode);
+
 		try {
-			$this->query->setHydrationMode($hydrationMode);
+			$this->frozen = TRUE;
 
-			if ($this->query->getMaxResults() > 0 || $this->query->getFirstResult() > 0) {
-				if ($this->query instanceof ORM\Query) {
-					$this->iterator = $this->getPaginatedQuery()->getIterator();
-
-				} else { // native query
-					$this->iterator = new \ArrayIterator($this->query->getResult(NULL));
-				}
+			if ($this->fetchJoinCollection) {
+				$this->iterator = $this->createPaginatedQuery($this->query)->getIterator();
 
 			} else {
 				$this->iterator = new \ArrayIterator($this->query->getResult(NULL));
@@ -362,16 +360,24 @@ class ResultSet extends Nette\Object implements \Countable, \IteratorAggregate
 
 
 	/**
-	 * @return \Doctrine\ORM\Tools\Pagination\Paginator
+	 * @param ORM\Query $query
+	 * @return ResultPaginator
 	 */
-	private function getPaginatedQuery()
+	private function createPaginatedQuery(ORM\Query $query)
 	{
-		if ($this->paginatedQuery === NULL) {
-			$this->paginatedQuery = new ResultPaginator($this->query, $this->fetchJoinCollection);
-			$this->paginatedQuery->setUseOutputWalkers($this->useOutputWalkers);
-		}
+		$paginated = new ResultPaginator($query, $this->fetchJoinCollection);
+		$paginated->setUseOutputWalkers($this->useOutputWalkers);
 
-		return $this->paginatedQuery;
+		return $paginated;
+	}
+
+
+
+	private function updating()
+	{
+		if ($this->frozen !== FALSE) {
+			throw new InvalidStateException("Cannot modify result set, that was already fetched from storage.");
+		}
 	}
 
 }
