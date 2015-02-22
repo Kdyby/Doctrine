@@ -318,7 +318,7 @@ class ResultSet extends Nette\Object implements \Countable, \IteratorAggregate
 		try {
 			$this->frozen = TRUE;
 
-			if ($this->fetchJoinCollection) {
+			if ($this->fetchJoinCollection && ($this->query->getMaxResults() > 0 || $this->query->getFirstResult() > 0)) {
 				$this->iterator = $this->createPaginatedQuery($this->query)->getIterator();
 
 			} else {
