@@ -1,22 +1,22 @@
 language: php
 
-env:
-  - NETTE=nette-2.3-dev
-  - NETTE=nette-2.3
-  - NETTE=nette-2.2
-
 php:
   - 5.3.3
   - 5.4
   - 5.5
   - 5.6
+  - 7.0
   - hhvm
   - hhvm-nightly
 
 matrix:
   allow_failures:
+    - php: 7.0
     - php: hhvm
     - php: hhvm-nightly
+  include:
+    - php: 5.6
+      env: NETTE=nette-2.2
 
 before_install:
   - composer self-update
@@ -25,16 +25,13 @@ install:
   - mkdir -p vendor/bin
   - wget -O vendor/bin/composer-nette https://raw.githubusercontent.com/Kdyby/TesterExtras/master/bin/composer-nette.php
   - php vendor/bin/composer-nette
-  - composer install --no-interaction --prefer-source --dev
+  - composer install --no-interaction --prefer-source
 
 before_script:
-  - composer create-project --prefer-source --dev --no-interaction jakub-onderka/php-parallel-lint vendor/php-parallel-lint ~0.8
-  - php vendor/php-parallel-lint/parallel-lint.php -e php,phpt --exclude vendor .
-  - composer create-project --prefer-source --dev --no-interaction nette/code-checker vendor/code-checker ~2.2
-  - php vendor/code-checker/src/code-checker.php -d src
-  - php vendor/code-checker/src/code-checker.php -d tests
+  - travis/static_analysis.sh
 
-script: vendor/bin/tester -p php -c ./tests/php.ini-unix ./tests/KdybyTests/
+script:
+  - vendor/bin/tester -p php -c ./tests/php.ini-unix ./tests/KdybyTests/
 
 after_failure:
   - 'for i in $(find ./tests -name \*.actual); do echo "--- $i"; cat $i; echo; echo; done'
