@@ -348,6 +348,13 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			->setInject(FALSE);
 		/** @var Nette\DI\ServiceDefinition $configuration */
 
+		$builder->addDefinition($this->prefix($name . '.proxyAutoloader'))
+			->setClass('Kdyby\Doctrine\Proxy\ProxyAutoloader')
+			->setArguments(array($config['proxyDir'], $config['proxyNamespace']))
+			->addTag(Kdyby\Events\DI\EventsExtension::SUBSCRIBER_TAG)
+			->setAutowired(FALSE)
+			->setInject(FALSE);
+
 		$this->proxyAutoloaders[$config['proxyNamespace']] = $config['proxyDir'];
 
 		Validators::assertField($config, 'filters', 'array');
@@ -545,24 +552,6 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		$init = $class->methods['initialize'];
 
 		$init->addBody('Kdyby\Doctrine\Diagnostics\Panel::registerBluescreen($this);');
-
-		foreach ($this->proxyAutoloaders as $namespace => $dir) {
-			$init->addBody('Kdyby\Doctrine\Proxy\ProxyAutoloader::create(?, ?)->register();', array($dir, $namespace));
-		}
-
-		/** @hack This moves the start of session after warmup of proxy classes, so they will be always available to the autoloader. */
-		$foundSessionStart = FALSE;
-		$lines = explode("\n", trim($init->body));
-		$init->body = NULL;
-		while (($line = array_shift($lines)) || $lines) {
-			if (!$foundSessionStart && stripos($line, 'session->start(') !== FALSE) {
-				$lines[] = $line;
-				$foundSessionStart = TRUE;
-				continue;
-			}
-
-			$init->addBody($line);
-		}
 
 		if (property_exists('Tracy\BlueScreen', 'collapsePaths')) {
 			$blueScreen = 'Tracy\Debugger::getBlueScreen()';
