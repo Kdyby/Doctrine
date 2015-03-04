@@ -104,7 +104,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 	/**
 	 * @var array
 	 */
-	private $proxyAutoLoaders = array();
+	private $proxyAutoloaders = array();
 
 	/**
 	 * @var array
@@ -125,7 +125,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 
 	public function loadConfiguration()
 	{
-		$this->proxyAutoLoaders =
+		$this->proxyAutoloaders =
 		$this->configuredConnections =
 		$this->configuredManagers = array();
 
@@ -348,7 +348,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			->setInject(FALSE);
 		/** @var Nette\DI\ServiceDefinition $configuration */
 
-		$this->proxyAutoLoaders[$config['proxyNamespace']] = $config['proxyDir'];
+		$this->proxyAutoloaders[$config['proxyNamespace']] = $config['proxyDir'];
 
 		Validators::assertField($config, 'filters', 'array');
 		foreach ($config['filters'] as $filterName => $filterClass) {
@@ -546,7 +546,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 
 		$init->addBody('Kdyby\Doctrine\Diagnostics\Panel::registerBluescreen($this);');
 
-		foreach ($this->proxyAutoLoaders as $namespace => $dir) {
+		foreach ($this->proxyAutoloaders as $namespace => $dir) {
 			$init->addBody('Kdyby\Doctrine\Proxy\ProxyAutoloader::create(?, ?)->register();', array($dir, $namespace));
 		}
 
@@ -570,7 +570,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 
 			$init->addBody($blueScreen . '->collapsePaths[] = ?;', array(dirname(Nette\Reflection\ClassType::from('Kdyby\Doctrine\Exception')->getFileName())));
 			$init->addBody($blueScreen . '->collapsePaths[] = ?;', array(dirname(dirname(dirname(dirname($commonDirname)))))); // this should be vendor/doctrine
-			foreach ($this->proxyAutoLoaders as $dir) {
+			foreach ($this->proxyAutoloaders as $dir) {
 				$init->addBody($blueScreen . '->collapsePaths[] = ?;', array($dir));
 			}
 		}
