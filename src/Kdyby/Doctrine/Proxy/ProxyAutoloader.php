@@ -18,7 +18,7 @@ use Nette;
 /**
  * @author Filip Procházka <filip@prochazka.su>
  */
-class ProxyAutoloader extends Nette\Object
+class ProxyAutoloader extends Nette\Object implements Kdyby\Events\Subscriber
 {
 
 	/**
@@ -51,6 +51,20 @@ class ProxyAutoloader extends Nette\Object
 
 
 	/**
+	 * Returns an array of events this subscriber wants to listen to.
+	 *
+	 * @return array
+	 */
+	public function getSubscribedEvents()
+	{
+		return array(
+			'Nette\DI\Container::onInitialize' => 'initialize',
+		);
+	}
+
+
+
+	/**
 	 * @param string $proxyDir
 	 * @param string $proxyNamespace
 	 * @return ProxyAutoloader
@@ -58,6 +72,17 @@ class ProxyAutoloader extends Nette\Object
 	public static function create($proxyDir, $proxyNamespace)
 	{
 		return new static($proxyDir, $proxyNamespace);
+	}
+
+
+
+	/**
+	 * @internal
+	 */
+	public function initialize()
+	{
+		// Needs to be called without arguments.
+		$this->register();
 	}
 
 
