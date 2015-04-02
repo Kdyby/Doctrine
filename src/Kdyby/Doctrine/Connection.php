@@ -100,7 +100,7 @@ class Connection extends Doctrine\DBAL\Connection
 			$fixedIdentifier[$this->quoteIdentifier($columnName)] = $value;
 		}
 
-		return parent::delete($this->quoteIdentifier($tableExpression), $fixedIdentifier, $types);
+		return parent::delete($tableExpression, $fixedIdentifier, $types);
 	}
 
 
