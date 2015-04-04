@@ -25,7 +25,7 @@ trait Identifier
 	/**
 	 * @ORM\Id
 	 * @ORM\Column(type="integer")
-	 * @ORM\GeneratedValue
+	 * @ORM\GeneratedValue(strategy="IDENTITY")
 	 * @var integer
 	 */
 	private $id;
