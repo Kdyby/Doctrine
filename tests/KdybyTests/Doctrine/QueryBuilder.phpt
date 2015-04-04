@@ -210,7 +210,7 @@ class QueryBuilderTest extends KdybyTests\Doctrine\ORMTestCase
 			->select('e')->from(__NAMESPACE__ . '\\CmsUser', 'u')
 			->whereCriteria(array('groups.name' => 'Devel'));
 
-		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsUser u INNER JOIN u.groups g WHERE g.name = :param_1', array('param_1' => 'Devel'), $qb->getQuery());
+		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsUser u INNER JOIN u.groups g0 WHERE g0.name = :param_1', array('param_1' => 'Devel'), $qb->getQuery());
 	}
 
 
@@ -221,7 +221,7 @@ class QueryBuilderTest extends KdybyTests\Doctrine\ORMTestCase
 			->select('e')->from(__NAMESPACE__ . '\\CmsUser', 'u')
 			->whereCriteria(array('groups.name' => 'Devel', 'groups.title' => 'Nemam'));
 
-		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsUser u INNER JOIN u.groups g WHERE g.name = :param_1 AND g.title = :param_2', array('param_1' => 'Devel', 'param_2' => 'Nemam'), $qb->getQuery());
+		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsUser u INNER JOIN u.groups g0 WHERE g0.name = :param_1 AND g0.title = :param_2', array('param_1' => 'Devel', 'param_2' => 'Nemam'), $qb->getQuery());
 	}
 
 
@@ -232,7 +232,18 @@ class QueryBuilderTest extends KdybyTests\Doctrine\ORMTestCase
 			->select('e')->from(__NAMESPACE__ . '\\CmsAddress', 'a')
 			->whereCriteria(array('user.groups.name' => 'Devel'));
 
-		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsAddress a INNER JOIN a.user u INNER JOIN u.groups g WHERE g.name = :param_1', array('param_1' => 'Devel'), $qb->getQuery());
+		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsAddress a INNER JOIN a.user u0 INNER JOIN u0.groups g0 WHERE g0.name = :param_1', array('param_1' => 'Devel'), $qb->getQuery());
+	}
+
+
+
+	public function testWhereCriteria_AutoJoin_FixKeywords()
+	{
+		$qb = $this->em->createQueryBuilder()
+			->select('e')->from(__NAMESPACE__ . '\\CmsUser', 'u')
+			->whereCriteria(array('u.order1.status' => 'draft', 'u.order2.status' => 'draft'));
+
+		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsUser u INNER JOIN u.order1 o0 INNER JOIN u.order2 o1 WHERE o0.status = :param_1 AND o1.status = :param_2', array('param_1' => 'draft', 'param_2' => 'draft'), $qb->getQuery());
 	}
 
 

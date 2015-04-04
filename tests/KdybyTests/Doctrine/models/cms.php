@@ -362,6 +362,18 @@ class CmsUser
 	 */
 	public $groups;
 
+	/**
+	 * @ORM\ManyToOne(targetEntity="CmsOrder", cascade={"detach"})
+	 * @var CmsOrder
+	 */
+	public $order1;
+
+	/**
+	 * @ORM\ManyToOne(targetEntity="CmsOrder", cascade={"detach"})
+	 * @var CmsOrder
+	 */
+	public $order2;
+
 	public $nonPersistedProperty;
 
 	public $nonPersistedPropertyObject;
@@ -443,5 +455,27 @@ class CmsUser
 			}
 		}
 	}
+
+}
+
+
+
+/**
+ * @ORM\Entity
+ * @ORM\Table(name="cms_orders")
+ */
+class CmsOrder
+{
+
+	/**
+	 * @ORM\Id @ORM\Column(type="integer")
+	 * @ORM\GeneratedValue
+	 */
+	public $id;
+
+	/**
+	 * @ORM\Column(type="string", length=50, nullable=true)
+	 */
+	public $status;
 
 }
