@@ -236,16 +236,25 @@ class QueryBuilder extends Doctrine\ORM\QueryBuilder implements \IteratorAggrega
 
 			$aliasLength = 1;
 			do {
-				$joinAs = substr($property, 0, $aliasLength++);
+				$joinAs = $this->buildJoinAs($property, $aliasLength);
 			} while (isset($this->criteriaJoins[$joinAs]));
 			$this->criteriaJoins[$joinAs] = array();
-
 			$this->innerJoin("$alias.$property", $joinAs);
 			$this->criteriaJoins[$alias][$property] = $joinAs;
 			$alias = $joinAs;
 		}
 
 		return $alias;
+	}
+
+	private function buildJoinAs($property, &$aliasLength){
+		$keywords = ['or'];
+		$joinAs = substr($property, 0, $aliasLength);
+		$aliasLength++;
+		if(in_array($joinAs,$keywords)){
+			$joinAs = $this->buildJoinAs($property,$aliasLength);
+		}
+		return $joinAs;
 	}
 
 
