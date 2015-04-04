@@ -25,7 +25,7 @@ Installation
 The best way to install Kdyby/Doctrine is using  [Composer](http://getcomposer.org/):
 
 ```sh
-$ composer require kdyby/doctrine:~2.1
+$ composer require kdyby/doctrine
 ```
 
 
