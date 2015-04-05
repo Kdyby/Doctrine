@@ -23,6 +23,7 @@ use Nette\Utils\Callback;
 use Tracy\Bar;
 use Tracy\BlueScreen;
 use Tracy\Debugger;
+use Tracy\Dumper;
 use Tracy\Helpers;
 use Tracy\IBarPanel;
 
@@ -69,27 +70,10 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 	 */
 	private $connection;
 
-
-
 	/**
-	 * @param \Doctrine\DBAL\Connection $connection
-	 * @throws \Kdyby\Doctrine\InvalidStateException
+	 * @var \Doctrine\ORM\EntityManager
 	 */
-	public function setConnection(Doctrine\DBAL\Connection $connection)
-	{
-		if ($this->connection !== NULL) {
-			throw new Kdyby\Doctrine\InvalidStateException("Doctrine Panel is already bound to connection.");
-		}
-
-		if (($logger = $connection->getConfiguration()->getSQLLogger()) instanceof Doctrine\DBAL\Logging\LoggerChain) {
-			$logger->addLogger($this);
-
-		} else {
-			$connection->getConfiguration()->setSQLLogger($this);
-		}
-
-		$this->connection = $connection;
-	}
+	private $em;
 
 
 
@@ -199,6 +183,60 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 	public function getPanel()
 	{
 		if (empty($this->queries)) {
+			return '';
+		}
+
+		return
+			$this->renderStyles() .
+			sprintf('<h1>Queries: %s %s, host: %s</h1>',
+				count($this->queries),
+				($this->totalTime ? ', time: ' . sprintf('%0.3f', $this->totalTime * 1000) . ' ms' : ''),
+				sprintf('%s%s/%s',
+					$this->connection->getHost(),
+					(($p = $this->connection->getPort()) ? ':' . $p : ''),
+					$this->connection->getDatabase()
+				)
+			) .
+			'<div class="nette-inner tracy-inner nette-Doctrine2Panel">' .
+				implode('<br>', array_filter(array(
+					$this->renderPanelCacheStatistics(),
+					$this->renderPanelQueries()
+				))) .
+			'</div>';
+	}
+
+
+
+	private function renderPanelCacheStatistics()
+	{
+		if (empty($this->em)) {
+			return '';
+		}
+
+		$config = $this->em->getConfiguration();
+		if (!$config->isSecondLevelCacheEnabled()) {
+			return '';
+		}
+
+		$loggerChain = $config->getSecondLevelCacheConfiguration()
+			->getCacheLogger();
+
+		if (!$loggerChain instanceof Doctrine\ORM\Cache\Logging\CacheLoggerChain) {
+			return '';
+		}
+
+		if (!$statistics = $loggerChain->getLogger('statistics')) {
+			return '';
+		}
+
+		return Dumper::toHtml($statistics, [Dumper::DEPTH => 5]);
+	}
+
+
+
+	private function renderPanelQueries()
+	{
+		if (empty($this->queries)) {
 			return "";
 		}
 
@@ -207,16 +245,7 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 			$s .= $this->processQuery($query);
 		}
 
-		$host = sprintf('%s%s/%s',
-			$this->connection->getHost(),
-			(($p = $this->connection->getPort()) ? ':' . $p : ''),
-			$this->connection->getDatabase()
-		);
-
-		return $this->renderStyles() .
-			'<h1>Queries: ' . count($this->queries) . ($this->totalTime ? ', time: ' . sprintf('%0.3f', $this->totalTime * 1000) . ' ms' : '') . ', host: ' . $host . '</h1>' .
-			'<div class="nette-inner tracy-inner nette-Doctrine2Panel">' .
-			'<table><tr><th>ms</th><th>SQL Statement</th></tr>' . $s . '</table></div>';
+		return '<table><tr><th>ms</th><th>SQL Statement</th></tr>' . $s . '</table>';
 	}
 
 
@@ -739,6 +768,55 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 
 
 	/**
+	 * @param \Doctrine\DBAL\Connection $connection
+	 * @return Panel
+	 */
+	public function bindConnection(Doctrine\DBAL\Connection $connection)
+	{
+		if ($this->connection !== NULL) {
+			throw new Kdyby\Doctrine\InvalidStateException("Doctrine Panel is already bound to connection.");
+		}
+
+		if (($logger = $connection->getConfiguration()->getSQLLogger()) instanceof Doctrine\DBAL\Logging\LoggerChain) {
+			$logger->addLogger($this);
+
+		} else {
+			$connection->getConfiguration()->setSQLLogger($this);
+		}
+
+		$this->connection = $connection;
+
+		// Tracy
+		$this->registerBarPanel(Debugger::getBar());
+		Debugger::getBlueScreen()->addPanel(Callback::closure($this, 'renderQueryException'));
+
+		return $this;
+	}
+
+
+
+	/**
+	 * @param Doctrine\ORM\EntityManager $em
+	 * @return Panel
+	 */
+	public function bindEntityManager(Doctrine\ORM\EntityManager $em)
+	{
+		if ($this->em !== NULL) {
+			throw new Kdyby\Doctrine\InvalidStateException("Doctrine Panel is already bound to entity manager.");
+		}
+
+		$this->em = $em;
+
+		if ($this->connection === NULL) {
+			$this->bindConnection($em->getConnection());
+		}
+
+		return $this;
+	}
+
+
+
+	/**
 	 * Registers panel to debugger
 	 *
 	 * @param \Tracy\Bar $bar
@@ -755,47 +833,9 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 	 */
 	public static function registerBluescreen(Nette\DI\Container $dic)
 	{
-		static::getDebuggerBlueScreen()->addPanel(function ($e) use ($dic) {
+		Debugger::getBlueScreen()->addPanel(function ($e) use ($dic) {
 			return Panel::renderException($e, $dic);
 		});
-	}
-
-
-
-	/**
-	 * @param \Doctrine\DBAL\Connection $connection
-	 * @return Panel
-	 */
-	public static function register(Doctrine\DBAL\Connection $connection)
-	{
-		$panel = new static();
-		/** @var Panel $panel */
-
-		$panel->setConnection($connection);
-		$panel->registerBarPanel(static::getDebuggerBar());
-		static::getDebuggerBlueScreen()->addPanel(Callback::closure($panel, 'renderQueryException'));
-
-		return $panel;
-	}
-
-
-
-	/**
-	 * @return Bar
-	 */
-	private static function getDebuggerBar()
-	{
-		return Debugger::getBar();
-	}
-
-
-
-	/**
-	 * @return BlueScreen
-	 */
-	private static function getDebuggerBlueScreen()
-	{
-		return Debugger::getBlueScreen();
 	}
 
 }
