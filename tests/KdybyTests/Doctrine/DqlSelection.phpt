@@ -16,6 +16,9 @@ use Doctrine\ORM\Query\Parameter;
 use Kdyby;
 use Kdyby\Doctrine\DqlSelection;
 use KdybyTests;
+use KdybyTests\DoctrineMocks\ConnectionMock;
+use KdybyTests\DoctrineMocks\DriverMock;
+use KdybyTests\DoctrineMocks\EntityManagerMock;
 use Nette;
 use Tester;
 use Tester\Assert;
@@ -40,7 +43,7 @@ class DqlSelectionTest extends KdybyTests\Doctrine\ORMTestCase
 
 	protected function setUp()
 	{
-		$this->em = $this->newInstance('Kdyby\Doctrine\EntityManager');
+		$this->em = EntityManagerMock::create(new ConnectionMock([], new DriverMock()));
 	}
 
 

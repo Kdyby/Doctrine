@@ -10,13 +10,12 @@
 
 namespace KdybyTests\DoctrineMocks;
 
-use Doctrine\DBAL\Connection;
 use Doctrine;
-use KdybyTests\DoctrineMocks\DatabasePlatformMock;
+use Kdyby;
 
 
 
-class ConnectionMock extends Doctrine\DBAL\Connection
+class ConnectionMock extends Kdyby\Doctrine\Connection
 {
 
 	private $_fetchOneResult;
@@ -47,7 +46,11 @@ class ConnectionMock extends Doctrine\DBAL\Connection
 	 */
 	public function getDatabasePlatform()
 	{
-		return $this->_platformMock;
+		if ($this->_platformMock !== NULL) {
+			return $this->_platformMock;
+		}
+
+		return parent::getDatabasePlatform();
 	}
 
 
@@ -85,7 +88,7 @@ class ConnectionMock extends Doctrine\DBAL\Connection
 	/**
 	 * @override
 	 */
-	public function fetchColumn($statement, array $params = array(), $colnum = 0)
+	public function fetchColumn($statement, array $params = array(), $column = 0, array $types = array())
 	{
 		return $this->_fetchOneResult;
 	}

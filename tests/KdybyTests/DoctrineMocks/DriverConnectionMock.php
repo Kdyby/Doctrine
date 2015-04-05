@@ -11,7 +11,6 @@
 namespace KdybyTests\DoctrineMocks;
 
 use Doctrine;
-use KdybyTests\DoctrineMocks\StatementMock;
 
 
 

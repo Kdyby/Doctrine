@@ -13,6 +13,7 @@ namespace KdybyTests\Doctrine;
 use Doctrine;
 use Doctrine\DBAL\Driver\PDOException;
 use Kdyby;
+use KdybyTests\DoctrineMocks\ConnectionMock;
 use Nette;
 use Tester;
 use Tester\Assert;
@@ -37,7 +38,7 @@ class ConnectionTest extends Tester\TestCase
 	public function testDriverExceptions_MySQL($exception, $class, array $props)
 	{
 		$conn = new ConnectionMock(array(), new MysqlDriverMock());
-		$conn->platform = new Doctrine\DBAL\Platforms\MySqlPlatform();
+		$conn->setDatabasePlatform(new Doctrine\DBAL\Platforms\MySqlPlatform());
 		$conn->throwOldKdybyExceptions = TRUE;
 
 		$resolved = $conn->resolveException($exception);
@@ -92,25 +93,6 @@ class ConnectionTest extends Tester\TestCase
 		));
 		$platform = $conn->getDatabasePlatform();
 		Assert::same('enum', $platform->getDoctrineTypeMapping('enum'));
-	}
-
-}
-
-
-class ConnectionMock extends Kdyby\Doctrine\Connection
-{
-
-	public $platform;
-
-
-
-	public function getDatabasePlatform()
-	{
-		if ($this->platform !== NULL) {
-			return $this->platform;
-		}
-
-		return parent::getDatabasePlatform();
 	}
 
 }
