@@ -22,9 +22,8 @@
 		"nette/utils": "~2.2@dev",
 		"nette/robot-loader": "~2.2@dev",
 
-		"doctrine/orm": ">=2.4.7,<2.5",
+		"doctrine/orm": "~2.5",
 		"doctrine/dbal": "~2.5",
-		"doctrine/instantiator": "~1.0.3",
 
 		"kdyby/events": "~2.3@dev",
 		"kdyby/console": "~2.3@dev",
@@ -69,7 +68,7 @@
 	},
 	"extra": {
 		"branch-alias": {
-			"dev-master": "2.3-dev"
+			"dev-master": "3.0-dev"
 		}
 	}
 }
