@@ -388,7 +388,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			->setAutowired(FALSE);
 
 		// entity manager
-		$builder->addDefinition($managerServiceId = $this->prefix($name . '.entityManager'))
+		$entityManager = $builder->addDefinition($managerServiceId = $this->prefix($name . '.entityManager'))
 			->setClass('Kdyby\Doctrine\EntityManager')
 			->setFactory('Kdyby\Doctrine\EntityManager::create', array(
 				$connectionService = $this->processConnection($name, $defaults, $isDefault),
@@ -398,6 +398,10 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			->addTag(self::TAG_ENTITY_MANAGER)
 			->setAutowired($isDefault)
 			->setInject(FALSE);
+
+		if (!empty($config['logging']) || $config['secondLevelCache']['enabled']) {
+			$entityManager->addSetup('?->bindEntityManager(?)', array($this->prefix('@' . $name . '.diagnosticsPanel'), '@self'));
+		}
 
 		$this->configuredManagers[$name] = $managerServiceId;
 	}
@@ -508,12 +512,16 @@ class OrmExtension extends Nette\DI\CompilerExtension
 
 		$this->configuredConnections[$name] = $connectionServiceId;
 
+		$builder->addDefinition($this->prefix($name . '.diagnosticsPanel'))
+			->setClass('Kdyby\Doctrine\Diagnostics\Panel')
+			->setAutowired(FALSE);
+
 		if (!is_bool($config['logging'])) {
 			$fileLogger = new Statement('Kdyby\Doctrine\Diagnostics\FileLogger', array($builder->expand($config['logging'])));
 			$configuration->addSetup('$service->getSQLLogger()->addLogger(?)', array($fileLogger));
 
 		} elseif ($config['logging']) {
-			$connection->addSetup('Kdyby\Doctrine\Diagnostics\Panel::register', array('@self'));
+			$connection->addSetup('?->bindConnection(?)', array($this->prefix('@' . $name . '.diagnosticsPanel'), '@self'));
 		}
 
 		return $this->prefix('@' . $name . '.connection');
