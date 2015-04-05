@@ -41,6 +41,17 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		'queryCache' => 'default',
 		'resultCache' => 'default',
 		'hydrationCache' => 'default',
+		'secondLevelCache' => array(
+			'enabled' => FALSE,
+			'factoryClass' => 'Doctrine\ORM\Cache\DefaultCacheFactory',
+			'driver' => 'default',
+			'regions' => array(
+				'defaultLifetime' => 3600,
+				'defaultLockLifetime' => 60,
+			),
+			'fileLockRegionDirectory' => '%tempDir%/cache/Doctrine.Cache.Locks', // todo fix
+			'logging' => '%debugMode%',
+		),
 		'classMetadataFactory' => 'Kdyby\Doctrine\Mapping\ClassMetadataFactory',
 		'defaultRepositoryClassName' => 'Kdyby\Doctrine\EntityDao',
 		'autoGenerateProxyClasses' => '%debugMode%',
@@ -357,6 +368,8 @@ class OrmExtension extends Nette\DI\CompilerExtension
 
 		$this->proxyAutoloaders[$config['proxyNamespace']] = $config['proxyDir'];
 
+		$this->processSecondLevelCache($name, $config['secondLevelCache'], $isDefault);
+
 		Validators::assertField($config, 'filters', 'array');
 		foreach ($config['filters'] as $filterName => $filterClass) {
 			$configuration->addSetup('addFilter', array($filterName, $filterClass));
@@ -387,6 +400,60 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			->setInject(FALSE);
 
 		$this->configuredManagers[$name] = $managerServiceId;
+	}
+
+
+
+	private function processSecondLevelCache($name, array $config, $isDefault)
+	{
+		if (!$config['enabled']) {
+			return;
+		}
+
+		$builder = $this->getContainerBuilder();
+
+		$cacheFactory = $builder->addDefinition($this->prefix($name . '.cacheFactory'))
+			->setClass('Doctrine\ORM\Cache\CacheFactory')
+			->setFactory($config['factoryClass'], array(
+				$this->prefix('@' . $name . '.cacheRegionsConfiguration'),
+				$this->processCache($config['driver'], $name . '.secondLevel'),
+			))
+			->setAutowired($isDefault);
+
+		if ($config['factoryClass'] === $this->managerDefaults['secondLevelCache']['factoryClass']
+			|| is_subclass_of($config['factoryClass'], $this->managerDefaults['secondLevelCache']['factoryClass'])
+		) {
+			$cacheFactory->addSetup('setFileLockRegionDirectory', array($config['fileLockRegionDirectory']));
+		}
+
+		$builder->addDefinition($this->prefix($name . '.cacheRegionsConfiguration'))
+			->setClass('Doctrine\ORM\Cache\RegionsConfiguration', array(
+				$config['regions']['defaultLifetime'],
+				$config['regions']['defaultLockLifetime'],
+			))
+			->setAutowired($isDefault);
+
+		$logger = $builder->addDefinition($this->prefix($name . '.cacheLogger'))
+			->setClass('Doctrine\ORM\Cache\Logging\CacheLogger')
+			->setFactory('Doctrine\ORM\Cache\Logging\CacheLoggerChain')
+			->setAutowired(FALSE);
+
+		if ($config['logging']) {
+			$logger->addSetup('setLogger', array(
+				'statistics',
+				new Statement('Doctrine\ORM\Cache\Logging\StatisticsCacheLogger')
+			));
+		}
+
+		$builder->addDefinition($cacheConfigName = $this->prefix($name . '.ormCacheConfiguration'))
+			->setClass('Doctrine\ORM\Cache\CacheConfiguration')
+			->addSetup('setCacheFactory', array($this->prefix('@' . $name . '.cacheFactory')))
+			->addSetup('setCacheLogger', array($this->prefix('@' . $name . '.cacheLogger')))
+			->setAutowired($isDefault);
+
+		$configuration = $builder->getDefinition($this->prefix($name . '.ormConfiguration'));
+		$configuration->addSetup('setSecondLevelCacheEnabled');
+		$configuration->addSetup('setSecondLevelCacheConfiguration', array('@' . $cacheConfigName));
 	}
 
 
