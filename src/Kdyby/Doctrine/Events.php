@@ -27,7 +27,7 @@ final class Events
 	const NS = 'Doctrine\\ORM\\Event';
 
 	/**
-	 * Is invoked right after entity is hydrated with at least it's toOne relations.
+	 * @deprecated
 	 */
 	const postLoadRelations = 'Doctrine\\ORM\\Event::postLoadRelations';
 

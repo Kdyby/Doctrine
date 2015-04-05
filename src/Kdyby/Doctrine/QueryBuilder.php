@@ -104,7 +104,7 @@ class QueryBuilder extends Doctrine\ORM\QueryBuilder implements \IteratorAggrega
 	 * {@inheritdoc}
 	 * @return QueryBuilder
 	 */
-	public function andWhere($where)
+	public function andWhere()
 	{
 		return call_user_func_array('parent::andWhere', Helpers::separateParameters($this, func_get_args()));
 	}
@@ -115,7 +115,7 @@ class QueryBuilder extends Doctrine\ORM\QueryBuilder implements \IteratorAggrega
 	 * {@inheritdoc}
 	 * @return QueryBuilder
 	 */
-	public function orWhere($where)
+	public function orWhere()
 	{
 		return call_user_func_array('parent::orWhere', Helpers::separateParameters($this, func_get_args()));
 	}

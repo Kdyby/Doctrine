@@ -168,18 +168,12 @@ class EntityManager extends Doctrine\ORM\EntityManager
 
 	/**
 	 * @param int $hydrationMode
-	 * @return Doctrine\ORM\Internal\Hydration\AbstractHydrator|Hydration\ObjectHydrator|Hydration\SimpleObjectHydrator
+	 * @return Doctrine\ORM\Internal\Hydration\AbstractHydrator
 	 * @throws \Doctrine\ORM\ORMException
 	 */
 	public function newHydrator($hydrationMode)
 	{
 		switch ($hydrationMode) {
-			case Query::HYDRATE_OBJECT:
-				return new Hydration\ObjectHydrator($this);
-
-			case Query::HYDRATE_SIMPLEOBJECT:
-				return new Hydration\SimpleObjectHydrator($this);
-
 			case Hydration\HashHydrator::NAME:
 				return new Hydration\HashHydrator($this);
 
