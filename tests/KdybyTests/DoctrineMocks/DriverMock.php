@@ -11,8 +11,6 @@
 namespace KdybyTests\DoctrineMocks;
 
 use Doctrine;
-use KdybyTests\DoctrineMocks\DatabasePlatformMock;
-use KdybyTests\DoctrineMocks\DriverConnectionMock;
 use KdybyTests\Doctrine\SchemaManagerMock;
 
 
