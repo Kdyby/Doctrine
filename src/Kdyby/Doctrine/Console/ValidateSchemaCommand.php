@@ -44,15 +44,6 @@ class ValidateSchemaCommand extends Doctrine\ORM\Tools\Console\Command\ValidateS
 	protected function configure()
 	{
 		parent::configure();
-
-		if (!$this->getDefinition()->hasOption('skip-mapping')) {
-			$this->addOption('skip-mapping', null, InputOption::VALUE_NONE, 'Skip the mapping validation check');
-		}
-
-		if (!$this->getDefinition()->hasOption('skip-sync')) {
-			$this->addOption('skip-sync', null, InputOption::VALUE_NONE, 'Skip checking if the mapping is in sync with the database');
-		}
-
 		$this->addOption('debug-mode', NULL, InputOption::VALUE_OPTIONAL, "Force Tracy debug mode", TRUE);
 	}
 
@@ -63,35 +54,6 @@ class ValidateSchemaCommand extends Doctrine\ORM\Tools\Console\Command\ValidateS
 		parent::initialize($input, $output);
 		Debugger::$productionMode = !$input->getOption('debug-mode');
 		$this->cacheCleaner->invalidate();
-	}
-
-
-
-	/**
-	 * Hack to simulate behaviour of newer doctrine for older 2.4.* versions users.
-	 * It does the check but doesn't return exit code for that check.
-	 *
-	 * @param InputInterface $input
-	 * @param OutputInterface $output
-	 * @return int|null
-	 */
-	protected function execute(InputInterface $input, OutputInterface $output)
-	{
-		$exit = parent::execute($input, $output);
-
-		if ($input->getOption('skip-sync')) {
-			if ($exit >= 2) {
-				$exit -= 2;
-			}
-		}
-
-		if ($input->getOption('skip-mapping')) {
-			if ($exit === 1 || $exit === 3) {
-				$exit -= 1;
-			}
-		}
-
-		return $exit;
 	}
 
 }
