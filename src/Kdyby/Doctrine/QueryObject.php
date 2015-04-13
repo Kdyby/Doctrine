@@ -46,10 +46,17 @@ use Nette;
  * $this->template->products = $this->productsDao->fetch($productsQuery);
  * </code>
  *
+ * @method onPostFetch(QueryObject $self, Queryable $repository, \Iterator $iterator)
+ *
  * @author Filip Procházka <filip@prochazka.su>
  */
 abstract class QueryObject extends Nette\Object implements Kdyby\Persistence\Query
 {
+
+	/**
+	 * @var array
+	 */
+	public $onPostFetch = [];
 
 	/**
 	 * @var \Doctrine\ORM\Query
@@ -188,7 +195,7 @@ abstract class QueryObject extends Nette\Object implements Kdyby\Persistence\Que
 	 */
 	public function postFetch(Queryable $repository, \Iterator $iterator)
 	{
-
+		$this->onPostFetch($this, $repository, $iterator);
 	}
 
 
