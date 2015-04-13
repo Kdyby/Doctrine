@@ -251,6 +251,20 @@ class QueryBuilderTest extends KdybyTests\Doctrine\ORMTestCase
 
 
 
+	public function testWhereCriteria__Callback()
+	{
+		$filter = function (Kdyby\Doctrine\QueryBuilder $qb) {
+			$qb->andWhere('u.name IS NULL');
+		};
+		$qb = $this->em->createQueryBuilder()
+			->select('u')->from(__NAMESPACE__ . '\\CmsUser', 'u')
+			->whereCriteria(array($filter));
+
+		self::assertQuery('SELECT u FROM KdybyTests\Doctrine\CmsUser u WHERE u.name IS NULL', array(), $qb->getQuery());
+	}
+
+
+
 	public function testInlineParameters_Where()
 	{
 		$qb = $this->em->createQueryBuilder()
