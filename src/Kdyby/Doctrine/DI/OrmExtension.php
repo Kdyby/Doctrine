@@ -184,6 +184,12 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			->setParameters(array('entityName'))
 			->setInject(FALSE);
 
+		$builder->addDefinition($this->prefix('repository'))
+			->setClass('Kdyby\Doctrine\EntityRepository')
+			->setFactory('@Kdyby\Doctrine\EntityManager::getRepository', array(new Code\PhpLiteral('$entityName')))
+			->setParameters(array('entityName'))
+			->setInject(FALSE);
+
 		// interface for models & presenters
 		$builder->addDefinition($this->prefix('daoFactory'))
 			->setClass('Kdyby\Doctrine\EntityDao')
