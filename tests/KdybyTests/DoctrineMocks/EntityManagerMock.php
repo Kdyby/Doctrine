@@ -10,6 +10,7 @@
 
 namespace KdybyTests\DoctrineMocks;
 
+use Kdyby\Doctrine\Configuration;
 use Kdyby\Doctrine\EntityManager;
 use Doctrine\Common\EventManager;
 use Doctrine;
@@ -85,7 +86,7 @@ class EntityManagerMock extends EntityManager
 	public static function create($conn, Doctrine\ORM\Configuration $config = NULL, EventManager $eventManager = NULL)
 	{
 		if (is_null($config)) {
-			$config = new Doctrine\ORM\Configuration();
+			$config = new Configuration();
 			$config->setProxyDir(TEMP_DIR . '/proxies');
 			$config->setProxyNamespace('KdybyTests\DoctrineProxies');
 			$config->setMetadataDriverImpl($config->newDefaultAnnotationDriver(array(), TRUE));

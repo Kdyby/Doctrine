@@ -54,6 +54,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		),
 		'classMetadataFactory' => 'Kdyby\Doctrine\Mapping\ClassMetadataFactory',
 		'defaultRepositoryClassName' => 'Kdyby\Doctrine\EntityDao',
+		'queryBuilderClassName' => 'Kdyby\Doctrine\QueryBuilder',
 		'autoGenerateProxyClasses' => '%debugMode%',
 		'namingStrategy' => 'Doctrine\ORM\Mapping\UnderscoreNamingStrategy',
 		'quoteStrategy' => 'Doctrine\ORM\Mapping\DefaultQuoteStrategy',
@@ -343,6 +344,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			->addSetup('setMetadataDriverImpl', array($this->prefix('@' . $name . '.metadataDriver')))
 			->addSetup('setClassMetadataFactoryName', array($config['classMetadataFactory']))
 			->addSetup('setDefaultRepositoryClassName', array($config['defaultRepositoryClassName']))
+			->addSetup('setQueryBuilderClassName', array($config['queryBuilderClassName']))
 			->addSetup('setRepositoryFactory', array($this->prefix('@repositoryFactory')))
 			->addSetup('setProxyDir', array($config['proxyDir']))
 			->addSetup('setProxyNamespace', array($config['proxyNamespace']))

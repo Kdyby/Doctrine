@@ -10,11 +10,13 @@
 
 namespace KdybyTests\Doctrine;
 
+use Doctrine;
 use Doctrine\ORM\Tools\SchemaTool;
 use Kdyby;
 use Nette;
 use Nette\PhpGenerator as Code;
 use Tester;
+use Tester\Assert;
 
 
 
