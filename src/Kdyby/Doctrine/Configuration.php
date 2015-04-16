@@ -23,6 +23,22 @@ use Nette;
 class Configuration extends BaseConfiguration
 {
 
+	public function getQueryBuilderClassName()
+	{
+		return isset($this->_attributes['queryBuilderClass'])
+			? $this->_attributes['queryBuilderClass']
+			: 'Kdyby\Doctrine\QueryBuilder';
+	}
+
+
+
+	public function setQueryBuilderClassName($className)
+	{
+		$this->_attributes['queryBuilderClass'] = $className;
+	}
+
+
+
 	public function setTargetEntityMap($targetEntityMap)
 	{
 		$this->_attributes['targetEntityMap'] = $targetEntityMap;

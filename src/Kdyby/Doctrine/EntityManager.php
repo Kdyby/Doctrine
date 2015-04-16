@@ -60,6 +60,11 @@ class EntityManager extends Doctrine\ORM\EntityManager
 	 */
 	public function createQueryBuilder()
 	{
+		if (($config = $this->getConfiguration()) instanceof Configuration) {
+			$class = $config->getQueryBuilderClassName();
+			return new $class($this);
+		}
+
 		return new QueryBuilder($this);
 	}
 
