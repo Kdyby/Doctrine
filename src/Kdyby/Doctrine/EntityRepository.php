@@ -245,13 +245,14 @@ class EntityRepository extends Doctrine\ORM\EntityRepository implements Persiste
 
 	/**
 	 * @param \Kdyby\Persistence\Query|\Kdyby\Doctrine\QueryObject $queryObject
+	 * @param int $hydrationMode
 	 * @throws QueryException
 	 * @return array|\Kdyby\Doctrine\ResultSet
 	 */
-	public function fetch(Persistence\Query $queryObject)
+	public function fetch(Persistence\Query $queryObject, $hydrationMode = AbstractQuery::HYDRATE_OBJECT)
 	{
 		try {
-			return $queryObject->fetch($this);
+			return $queryObject->fetch($this, $hydrationMode);
 
 		} catch (\Exception $e) {
 			throw $this->handleQueryException($e, $queryObject);
