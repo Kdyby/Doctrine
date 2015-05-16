@@ -1,0 +1,15 @@
+common:
+	doctrine:
+		host: 127.0.0.1
+		user: root
+		charset: UTF8
+		driver: pdo_mysql
+
+
+travis < common:
+	doctrine:
+		password: ""
+
+localhost < common:
+	doctrine:
+		password: "heslo"

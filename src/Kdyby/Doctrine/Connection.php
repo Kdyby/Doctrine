@@ -318,6 +318,35 @@ class Connection extends Doctrine\DBAL\Connection
 
 
 
+	public function ping()
+	{
+		$conn = $this->getWrappedConnection();
+		if ($conn instanceof Driver\PingableConnection) {
+			return $conn->ping();
+		}
+
+		set_error_handler(function ($severity, $message) {
+			throw new \PDOException($message, $severity);
+		});
+
+		try {
+			$this->query($this->getDatabasePlatform()->getDummySelectSQL());
+			restore_error_handler();
+
+			return TRUE;
+
+		} catch (Doctrine\DBAL\DBALException $e) {
+			restore_error_handler();
+			return FALSE;
+
+		} catch (\Exception $e) {
+			restore_error_handler();
+			throw $e;
+		}
+	}
+
+
+
 	/**
 	 * @param array $params
 	 * @param \Doctrine\DBAL\Configuration $config
