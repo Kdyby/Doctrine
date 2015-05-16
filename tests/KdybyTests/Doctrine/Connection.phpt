@@ -29,6 +29,40 @@ class ConnectionTest extends Tester\TestCase
 {
 
 	/**
+	 * @return array
+	 */
+	protected function loadMysqlConfig()
+	{
+		$configLoader = new Nette\DI\Config\Loader();
+		$config = $configLoader->load(__DIR__ . '/../../mysql.neon', isset($_ENV['TRAVIS']) ? 'travis' : 'localhost');
+
+		return $config['doctrine'];
+	}
+
+
+
+	public function testPing()
+	{
+		$conn = Kdyby\Doctrine\Connection::create($this->loadMysqlConfig(), new Doctrine\DBAL\Configuration(), new Kdyby\Events\EventManager());
+
+		/** @var \PDO $pdo */
+		$pdo = $conn->getWrappedConnection();
+		$pdo->setAttribute(\PDO::ATTR_TIMEOUT, 3);
+		$conn->query("SET interactive_timeout = 3");
+		$conn->query("SET wait_timeout = 3");
+
+		Assert::false($pdo instanceof Doctrine\DBAL\Driver\PingableConnection);
+
+		$conn->connect();
+		Assert::true($conn->ping());
+
+		sleep(5);
+		Assert::false($conn->ping());
+	}
+
+
+
+	/**
 	 * @dataProvider dataMySqlExceptions
 	 *
 	 * @param \Exception $exception
