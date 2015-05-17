@@ -29,7 +29,7 @@ use Nette;
  * Don't be afraid to use them in presenters
  *
  * <code>
- * $this->template->articles = $this->articlesDao->fetch(new ArticlesQuery());
+ * $this->template->articles = $this->articlesRepository->fetch(new ArticlesQuery());
  * </code>
  *
  * or in more complex ways
