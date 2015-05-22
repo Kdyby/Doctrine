@@ -42,6 +42,11 @@ class EntityManager extends Doctrine\ORM\EntityManager
 	 */
 	private $nonLockingUniqueInserter;
 
+	/**
+	 * @var Diagnostics\Panel
+	 */
+	private $panel;
+
 
 
 	protected function __construct(Doctrine\DBAL\Connection $conn, Doctrine\ORM\Configuration $config, Doctrine\Common\EventManager $eventManager)
@@ -51,6 +56,17 @@ class EntityManager extends Doctrine\ORM\EntityManager
 		if ($conn instanceof Kdyby\Doctrine\Connection) {
 			$conn->bindEntityManager($this);
 		}
+	}
+
+
+
+	/**
+	 * @internal
+	 * @param Diagnostics\Panel $panel
+	 */
+	public function bindTracyPanel(Diagnostics\Panel $panel)
+	{
+		$this->panel = $panel;
 	}
 
 
@@ -135,8 +151,29 @@ class EntityManager extends Doctrine\ORM\EntityManager
 	 */
 	public function flush($entity = null)
 	{
-		parent::flush($entity);
+		try {
+			parent::flush($entity);
+
+		} catch (\Exception $e) {
+			if ($this->panel) {
+				$this->panel->markExceptionOwner($this, $e);
+			}
+
+			throw $e;
+		}
+
 		return $this;
+	}
+
+
+
+	public function close()
+	{
+		if ($this->panel) {
+			$this->panel->snapshotUnitOfWork($this);
+		}
+
+		parent::close();
 	}
 
 
