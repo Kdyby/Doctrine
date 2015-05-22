@@ -390,20 +390,17 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			->setAutowired(FALSE);
 
 		// entity manager
-		$entityManager = $builder->addDefinition($managerServiceId = $this->prefix($name . '.entityManager'))
+		$builder->addDefinition($managerServiceId = $this->prefix($name . '.entityManager'))
 			->setClass('Kdyby\Doctrine\EntityManager')
 			->setFactory('Kdyby\Doctrine\EntityManager::create', array(
 				$connectionService = $this->processConnection($name, $defaults, $isDefault),
 				$this->prefix('@' . $name . '.ormConfiguration'),
 				$this->prefix('@' . $name . '.evm'),
 			))
+			->addSetup('?->bindEntityManager(?)', array($this->prefix('@' . $name . '.diagnosticsPanel'), '@self'))
 			->addTag(self::TAG_ENTITY_MANAGER)
 			->setAutowired($isDefault)
 			->setInject(FALSE);
-
-		if (!empty($config['logging']) || $config['secondLevelCache']['enabled']) {
-			$entityManager->addSetup('?->bindEntityManager(?)', array($this->prefix('@' . $name . '.diagnosticsPanel'), '@self'));
-		}
 
 		$this->configuredManagers[$name] = $managerServiceId;
 	}
@@ -496,6 +493,11 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			$schemaTypes[$dbType] = $typeInst->getName();
 		}
 
+		// tracy panel
+		$builder->addDefinition($this->prefix($name . '.diagnosticsPanel'))
+			->setClass('Kdyby\Doctrine\Diagnostics\Panel')
+			->setAutowired(FALSE);
+
 		// connection
 		$options = array_diff_key($config, array_flip(array('types', 'resultCache', 'connection', 'logging')));
 		$connection = $builder->addDefinition($connectionServiceId = $this->prefix($name . '.connection'))
@@ -507,6 +509,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			))
 			->addSetup('setSchemaTypes', array($schemaTypes))
 			->addSetup('setDbalTypes', array($dbalTypes))
+			->addSetup('$panel = ?->bindConnection(?)', array($this->prefix('@' . $name . '.diagnosticsPanel'), '@self'))
 			->addTag(self::TAG_CONNECTION)
 			->setAutowired($isDefault)
 			->setInject(FALSE);
@@ -514,16 +517,12 @@ class OrmExtension extends Nette\DI\CompilerExtension
 
 		$this->configuredConnections[$name] = $connectionServiceId;
 
-		$builder->addDefinition($this->prefix($name . '.diagnosticsPanel'))
-			->setClass('Kdyby\Doctrine\Diagnostics\Panel')
-			->setAutowired(FALSE);
-
 		if (!is_bool($config['logging'])) {
 			$fileLogger = new Statement('Kdyby\Doctrine\Diagnostics\FileLogger', array($builder->expand($config['logging'])));
 			$configuration->addSetup('$service->getSQLLogger()->addLogger(?)', array($fileLogger));
 
 		} elseif ($config['logging']) {
-			$connection->addSetup('?->bindConnection(?)', array($this->prefix('@' . $name . '.diagnosticsPanel'), '@self'));
+			$connection->addSetup('?->enableLogging()', array(new Code\PhpLiteral('$panel')));
 		}
 
 		return $this->prefix('@' . $name . '.connection');

@@ -77,6 +77,38 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 	 */
 	private $em;
 
+	/**
+	 * @var array
+	 */
+	private $whitelistExceptions = [];
+
+	/**
+	 * @var Doctrine\ORM\UnitOfWork
+	 */
+	private $unitOfWorkSnapshot;
+
+
+
+	public function markExceptionOwner(Doctrine\ORM\EntityManager $em, \Exception $exception)
+	{
+		if ($this->em !== $em) {
+			return;
+		}
+
+		$this->whitelistExceptions[] = $exception;
+	}
+
+
+
+	public function snapshotUnitOfWork(Doctrine\ORM\EntityManager $em)
+	{
+		if ($this->em !== $em) {
+			return;
+		}
+
+		$this->unitOfWorkSnapshot = clone $em->getUnitOfWork();
+	}
+
 
 
 	/***************** Doctrine\DBAL\Logging\SQLLogger ********************/
@@ -333,6 +365,51 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 					'panel' => $this->dumpQuery($e->query->getSQL(), $e->query->getParameters()),
 				);
 			}
+		}
+	}
+
+
+
+	/**
+	 * @param \Exception $e
+	 * @param \Nette\DI\Container $dic
+	 * @return array
+	 */
+	public function renderEntityManagerException($e)
+	{
+		if (!in_array($e, $this->whitelistExceptions, TRUE)) {
+			return NULL; // ignore
+		}
+
+		if (strpos(get_class($e), 'Doctrine\\ORM\\') !== FALSE && Helpers::findTrace($e->getTrace(), 'Doctrine\ORM\EntityManager::flush')) {
+			$UoW = $this->unitOfWorkSnapshot ?: $this->em->getUnitOfWork();
+
+			$panel = '<div class="inner"><p><b>IdentityMap</b></p>' .
+				Dumper::toHtml($UoW->getIdentityMap(), [Dumper::COLLAPSE => TRUE]) .
+				'</div>';
+
+			if ($scheduled = $UoW->getScheduledEntityInsertions()) {
+				$panel .= '<div class="inner"><p><b>Scheduled entity insertions</b></p>' .
+					Dumper::toHtml($scheduled, [Dumper::COLLAPSE => TRUE]) .
+					'</div>';
+			}
+
+			if ($scheduled = $UoW->getScheduledEntityDeletions()) {
+				$panel .= '<div class="inner"><p><b>Scheduled entity deletions</b></p>' .
+					Dumper::toHtml($scheduled, [Dumper::COLLAPSE => TRUE]) .
+					'</div>';
+			}
+
+			if ($scheduled = $UoW->getScheduledEntityUpdates()) {
+				$panel .= '<div class="inner"><p><b>Scheduled entity updates</b></p>' .
+					Dumper::toHtml($scheduled, [Dumper::COLLAPSE => TRUE]) .
+					'</div>';
+			}
+
+			return array(
+				'tab' => 'Doctrine\\ORM\\UnitOfWork',
+				'panel' => $panel,
+			);
 		}
 	}
 
@@ -780,6 +857,25 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 
 
 
+	public function enableLogging()
+	{
+		if ($this->connection === NULL) {
+			throw new Kdyby\Doctrine\InvalidStateException("Doctrine Panel is not bound to connection.");
+		}
+
+		$config = $this->connection->getConfiguration();
+		$logger = $config->getSQLLogger();
+
+		if ($logger instanceof Doctrine\DBAL\Logging\LoggerChain) {
+			$logger->addLogger($this);
+
+		} else {
+			$config->setSQLLogger($this);
+		}
+	}
+
+
+
 	/**
 	 * @param \Doctrine\DBAL\Connection $connection
 	 * @return Panel
@@ -788,13 +884,6 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 	{
 		if ($this->connection !== NULL) {
 			throw new Kdyby\Doctrine\InvalidStateException("Doctrine Panel is already bound to connection.");
-		}
-
-		if (($logger = $connection->getConfiguration()->getSQLLogger()) instanceof Doctrine\DBAL\Logging\LoggerChain) {
-			$logger->addLogger($this);
-
-		} else {
-			$connection->getConfiguration()->setSQLLogger($this);
 		}
 
 		$this->connection = $connection;
@@ -819,10 +908,15 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 		}
 
 		$this->em = $em;
+		if ($this->em instanceof Kdyby\Doctrine\EntityManager) {
+			$this->em->bindTracyPanel($this);
+		}
 
 		if ($this->connection === NULL) {
 			$this->bindConnection($em->getConnection());
 		}
+
+		Debugger::getBlueScreen()->addPanel(Callback::closure($this, 'renderEntityManagerException'));
 
 		return $this;
 	}
