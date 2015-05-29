@@ -35,7 +35,7 @@ trait Identifier
 	/**
 	 * @return integer
 	 */
-	public function getId()
+	final public function getId()
 	{
 		return $this->id;
 	}
