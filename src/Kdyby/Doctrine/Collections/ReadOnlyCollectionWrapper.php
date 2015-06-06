@@ -11,6 +11,9 @@
 namespace Kdyby\Doctrine\Collections;
 
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\Criteria;
+use Doctrine\Common\Collections\Selectable;
+use Kdyby\Doctrine\NotSupportedException;
 use Kdyby\Doctrine\ReadOnlyCollectionException;
 use Nette\Object;
 
@@ -19,7 +22,7 @@ use Nette\Object;
  * Prohibits any write/modify operations, but allows all non-modifying.
  * @author Michael Moravec
  */
-class ReadOnlyCollectionWrapper extends Object implements Collection
+class ReadOnlyCollectionWrapper extends Object implements Collection, Selectable
 {
 	/** @var Collection */
 	private $inner;
@@ -274,5 +277,17 @@ class ReadOnlyCollectionWrapper extends Object implements Collection
 	public function count()
 	{
 		return $this->inner->count();
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function matching(Criteria $criteria)
+	{
+		if (!$this->inner instanceof Selectable) {
+			throw new NotSupportedException(sprintf('Collection %s does not implement Doctrine\Common\Collections\Selectable, so you cannot call ->matching() over it.', get_class($this->inner)));
+		}
+
+		return $this->inner->matching($criteria);
 	}
 }
