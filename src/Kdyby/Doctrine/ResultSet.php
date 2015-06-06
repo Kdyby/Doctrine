@@ -344,7 +344,7 @@ class ResultSet extends Nette\Object implements \Countable, \IteratorAggregate
 	 */
 	public function toArray($hydrationMode = ORM\AbstractQuery::HYDRATE_OBJECT)
 	{
-		return iterator_to_array(clone $this->getIterator($hydrationMode));
+		return iterator_to_array(clone $this->getIterator($hydrationMode), TRUE);
 	}
 
 
