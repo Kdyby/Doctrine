@@ -210,9 +210,14 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			->setFactory('@Kdyby\Doctrine\Connection::getSchemaManager')
 			->setInject(FALSE);
 
-		$builder->addDefinition($this->prefix('cacheCleaner'))
+		$cacheCleaner = $builder->addDefinition($this->prefix('cacheCleaner'))
 			->setClass('Kdyby\Doctrine\Tools\CacheCleaner')
 			->setInject(FALSE);
+
+		foreach ($this->compiler->getExtensions('Kdyby\Annotations\DI\AnnotationsExtension') as $extension) {
+			/** @var Kdyby\Annotations\DI\AnnotationsExtension $extension */
+			$cacheCleaner->addSetup('addCacheStorage', array($extension->prefix('cache.annotations')));
+		}
 
 		if ($this->targetEntityMappings) {
 			$listener = $builder->addDefinition($this->prefix('resolveTargetEntityListener'))
