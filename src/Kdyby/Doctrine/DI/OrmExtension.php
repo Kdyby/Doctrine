@@ -216,7 +216,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 
 		foreach ($this->compiler->getExtensions('Kdyby\Annotations\DI\AnnotationsExtension') as $extension) {
 			/** @var Kdyby\Annotations\DI\AnnotationsExtension $extension */
-			$cacheCleaner->addSetup('addCacheStorage', array($extension->prefix('cache.annotations')));
+			$cacheCleaner->addSetup('addCacheStorage', array($extension->prefix('@cache.annotations')));
 		}
 
 		if ($this->targetEntityMappings) {
