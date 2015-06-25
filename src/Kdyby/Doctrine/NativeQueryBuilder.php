@@ -49,6 +49,11 @@ class NativeQueryBuilder extends Doctrine\DBAL\Query\QueryBuilder
 	 */
 	private $em;
 
+	/**
+	 * @var int
+	 */
+	private $defaultRenameMode = Doctrine\ORM\Query\ResultSetMappingBuilder::COLUMN_RENAMING_INCREMENT;
+
 
 
 	public function __construct(Doctrine\ORM\EntityManager $em)
@@ -97,10 +102,26 @@ class NativeQueryBuilder extends Doctrine\DBAL\Query\QueryBuilder
 
 
 
+	/**
+	 * @param int $defaultRenameMode
+	 * @return NativeQueryBuilder
+	 */
+	public function setDefaultRenameMode($defaultRenameMode)
+	{
+		if ($this->rsm !== NULL) {
+			throw new InvalidStateException("It's too late for changing rename mode for ResultSetMappingBuilder, it has already been created. Call this method earlier.");
+		}
+
+		$this->defaultRenameMode = $defaultRenameMode;
+		return $this;
+	}
+
+
+
 	public function getResultSetMapper()
 	{
 		if ($this->rsm === NULL) {
-			$this->rsm = new Mapping\ResultSetMappingBuilder($this->em);
+			$this->rsm = new Mapping\ResultSetMappingBuilder($this->em, $this->defaultRenameMode);
 		}
 
 		return $this->rsm;
