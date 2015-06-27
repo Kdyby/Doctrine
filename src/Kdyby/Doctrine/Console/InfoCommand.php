@@ -41,18 +41,9 @@ class InfoCommand extends Doctrine\ORM\Tools\Console\Command\InfoCommand
 
 
 
-	protected function configure()
-	{
-		parent::configure();
-		$this->addOption('debug-mode', NULL, InputOption::VALUE_OPTIONAL, "Force Tracy debug mode", TRUE);
-	}
-
-
-
 	protected function initialize(InputInterface $input, OutputInterface $output)
 	{
 		parent::initialize($input, $output);
-		Debugger::$productionMode = !$input->getOption('debug-mode');
 		$this->cacheCleaner->invalidate();
 	}
 

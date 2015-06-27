@@ -42,21 +42,12 @@ class SchemaUpdateCommand extends Doctrine\ORM\Tools\Console\Command\SchemaTool\
 
 
 
-	protected function configure()
-	{
-		parent::configure();
-		$this->addOption('debug-mode', NULL, InputOption::VALUE_OPTIONAL, "Force Tracy debug mode", TRUE);
-	}
-
-
-
 	/**
 	 * {@inheritdoc}
 	 */
 	protected function initialize(InputInterface $input, OutputInterface $output)
 	{
 		parent::initialize($input, $output);
-		Debugger::$productionMode = !$input->getOption('debug-mode');
 		$this->cacheCleaner->invalidate();
 	}
 
