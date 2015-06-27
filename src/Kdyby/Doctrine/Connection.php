@@ -369,12 +369,12 @@ class Connection extends Doctrine\DBAL\Connection
 	/**
 	 * @deprecated
 	 * @internal
-	 * @param \Exception $e
+	 * @param \Exception|\Throwable $e
 	 * @param string $query
 	 * @param array $params
 	 * @return DBALException
 	 */
-	public function resolveException(\Exception $e, $query = NULL, $params = array())
+	public function resolveException($e, $query = NULL, $params = array())
 	{
 		if ($this->throwOldKdybyExceptions !== TRUE) {
 			return $e;
@@ -428,10 +428,10 @@ class Connection extends Doctrine\DBAL\Connection
 
 
 	/**
-	 * @param \Exception $e
+	 * @param \Exception|\Throwable $e
 	 * @return string|NULL
 	 */
-	private static function resolveExceptionTable(\Exception $e)
+	private static function resolveExceptionTable($e)
 	{
 		if (!$e instanceof Doctrine\DBAL\DBALException) {
 			return NULL;

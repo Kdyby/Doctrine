@@ -266,7 +266,7 @@ class DBALException extends \RuntimeException implements Exception
 	 * @param \Doctrine\DBAL\Connection $connection
 	 * @param string $message
 	 */
-	public function __construct(\Exception $previous, $query = NULL, $params = array(), Doctrine\DBAL\Connection $connection = NULL, $message = NULL)
+	public function __construct($previous, $query = NULL, $params = array(), Doctrine\DBAL\Connection $connection = NULL, $message = NULL)
 	{
 		parent::__construct($message ?: $previous->getMessage(), $previous->getCode(), $previous);
 		$this->query = $query;
@@ -311,7 +311,7 @@ class DuplicateEntryException extends DBALException
 	 * @param array $params
 	 * @param \Doctrine\DBAL\Connection $connection
 	 */
-	public function __construct(\Exception $previous, $columns = array(), $query = NULL, $params = array(), Doctrine\DBAL\Connection $connection = NULL)
+	public function __construct($previous, $columns = array(), $query = NULL, $params = array(), Doctrine\DBAL\Connection $connection = NULL)
 	{
 		parent::__construct($previous, $query, $params, $connection);
 		$this->columns = $columns;
@@ -352,7 +352,7 @@ class EmptyValueException extends DBALException
 	 * @param array $params
 	 * @param \Doctrine\DBAL\Connection $connection
 	 */
-	public function __construct(\Exception $previous, $column = NULL, $query = NULL, $params = array(), Doctrine\DBAL\Connection $connection = NULL)
+	public function __construct($previous, $column = NULL, $query = NULL, $params = array(), Doctrine\DBAL\Connection $connection = NULL)
 	{
 		parent::__construct($previous, $query, $params, $connection);
 		$this->column = $column;
@@ -390,7 +390,7 @@ class QueryException extends \RuntimeException implements Exception
 	 * @param \Doctrine\ORM\AbstractQuery $query
 	 * @param string $message
 	 */
-	public function __construct(\Exception $previous, Doctrine\ORM\AbstractQuery $query = NULL, $message = "")
+	public function __construct($previous, Doctrine\ORM\AbstractQuery $query = NULL, $message = "")
 	{
 		parent::__construct($message ?: $previous->getMessage(), 0, $previous);
 		$this->query = $query;
