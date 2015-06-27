@@ -92,7 +92,14 @@ class BaseEntityTest extends Tester\TestCase
 	public function testGetProtectedCollection()
 	{
 		$entity = new ConcreteEntity();
+
 		Assert::equal($entity->twos, $entity->getTwos());
+		Assert::type('Kdyby\Doctrine\Collections\ReadOnlyCollectionWrapper', $entity->twos);
+		Assert::type('Kdyby\Doctrine\Collections\ReadOnlyCollectionWrapper', $entity->getTwos());
+
+		Assert::equal($entity->proxies, $entity->getProxies());
+		Assert::type('Kdyby\Doctrine\Collections\ReadOnlyCollectionWrapper', $entity->proxies);
+		Assert::type('Kdyby\Doctrine\Collections\ReadOnlyCollectionWrapper', $entity->getProxies());
 	}
 
 
@@ -234,8 +241,8 @@ class BaseEntityTest extends Tester\TestCase
 	public function testCallGetterOnProtectedCollection()
 	{
 		$entity = new ConcreteEntity();
-		Assert::equal(array((object) array('id' => 2)), $entity->getTwos());
-		Assert::equal(array((object) array('id' => 3)), $entity->getProxies());
+		Assert::equal(array((object) array('id' => 2)), $entity->getTwos()->toArray());
+		Assert::equal(array((object) array('id' => 3)), $entity->getProxies()->toArray());
 	}
 
 
@@ -274,12 +281,12 @@ class BaseEntityTest extends Tester\TestCase
 	{
 		$entity = new ConcreteEntity();
 		$entity->addTwo($a = (object) array('id' => 2));
-		Assert::true((bool) array_filter($entity->getTwos(), function ($two) use ($a) {
+		Assert::truthy($entity->getTwos()->filter(function ($two) use ($a) {
 			return $two === $a;
 		}));
 
 		$entity->addProxy($b = (object) array('id' => 3));
-		Assert::true((bool) array_filter($entity->getProxies(), function ($two) use ($b) {
+		Assert::truthy((bool) $entity->getProxies()->filter(function ($two) use ($b) {
 			return $two === $b;
 		}));
 	}
@@ -313,12 +320,12 @@ class BaseEntityTest extends Tester\TestCase
 		Assert::false($entity->hasProxy((object) array('id' => 3)));
 
 		$twos = $entity->getTwos();
-		Assert::true(!empty($twos));
-		Assert::true($entity->hasTwo(reset($twos)));
+		Assert::false($twos->isEmpty());
+		Assert::true($entity->hasTwo($twos->first()));
 
 		$proxies = $entity->getProxies();
-		Assert::true(!empty($proxies));
-		Assert::true($entity->hasProxy(reset($proxies)));
+		Assert::false($proxies->isEmpty());
+		Assert::true($entity->hasProxy($proxies->first()));
 	}
 
 
@@ -347,16 +354,16 @@ class BaseEntityTest extends Tester\TestCase
 	{
 		$entity = new ConcreteEntity();
 		$twos = $entity->getTwos();
-		Assert::true(!empty($twos));
-		$entity->removeTwo(reset($twos));
+		Assert::false($twos->isEmpty());
+		$entity->removeTwo($twos->first());
 		$twos = $entity->getTwos();
-		Assert::true(empty($twos));
+		Assert::true($twos->isEmpty());
 
 		$proxies = $entity->getProxies();
-		Assert::true(!empty($proxies));
-		$entity->removeProxy(reset($proxies));
+		Assert::false($proxies->isEmpty());
+		$entity->removeProxy($proxies->first());
 		$proxies = $entity->getProxies();
-		Assert::true(empty($proxies));
+		Assert::true($proxies->isEmpty());
 	}
 
 
@@ -382,17 +389,16 @@ class BaseEntityTest extends Tester\TestCase
 
 /**
  * @author Filip Procházka <filip@prochazka.su>
- *
  * @method setTwo()
  * @method addTwo()
  * @method getTwo()
  * @method removeTwo()
  * @method hasTwo()
- * @method getTwos()
+ * @method \Doctrine\Common\Collections\ArrayCollection getTwos()
  * @method addProxy()
  * @method hasProxy()
  * @method removeProxy()
- * @method getProxies()
+ * @method \Doctrine\Common\Collections\ArrayCollection getProxies()
  */
 class ConcreteEntity extends BaseEntity
 {
