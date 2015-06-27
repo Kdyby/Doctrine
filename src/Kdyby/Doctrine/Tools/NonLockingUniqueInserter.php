@@ -116,6 +116,10 @@ class NonLockingUniqueInserter extends Nette\Object
 		} catch (\Exception $e) {
 			$this->db->rollback();
 			throw $e;
+
+		} catch (\Throwable $e) {
+			$this->db->rollback();
+			throw $e;
 		}
 	}
 
@@ -183,7 +187,7 @@ class NonLockingUniqueInserter extends Nette\Object
 	 * @param \Exception|\PDOException $e
 	 * @return bool
 	 */
-	private function isUniqueConstraintViolation(\Exception $e)
+	private function isUniqueConstraintViolation($e)
 	{
 		if (!$e instanceof \PDOException && !(($e = $e->getPrevious()) instanceof \PDOException)) {
 			return FALSE;

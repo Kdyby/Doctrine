@@ -89,7 +89,7 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 
 
 
-	public function markExceptionOwner(Doctrine\ORM\EntityManager $em, \Exception $exception)
+	public function markExceptionOwner(Doctrine\ORM\EntityManager $em, $exception)
 	{
 		if ($this->em !== $em) {
 			return;
@@ -184,9 +184,9 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 
 
 	/**
-	 * @param \Exception $exception
+	 * @param \Exception|\Throwable $exception
 	 */
-	public function queryFailed(\Exception $exception)
+	public function queryFailed($exception)
 	{
 		$this->failed[spl_object_hash($exception)] = $this->stopQuery();
 	}
@@ -321,7 +321,7 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 
 
 	/**
-	 * @param \Exception $e
+	 * @param \Exception|\Throwable $e
 	 * @return void|array
 	 */
 	public function renderQueryException($e)
@@ -371,7 +371,7 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 
 
 	/**
-	 * @param \Exception $e
+	 * @param \Exception|\Throwable $e
 	 * @param \Nette\DI\Container $dic
 	 * @return array
 	 */
@@ -416,7 +416,7 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 
 
 	/**
-	 * @param \Exception $e
+	 * @param \Exception|\Throwable $e
 	 * @param \Nette\DI\Container $dic
 	 * @return array
 	 */
@@ -734,12 +734,12 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 
 	/**
 	 * @param \Reflector|\Nette\Reflection\ClassType|\Nette\Reflection\Method $refl
-	 * @param \Exception $e
+	 * @param \Exception|\Throwable $e
 	 * @param int $startLine
 	 *
 	 * @return int|string
 	 */
-	public static function calculateErrorLine(\Reflector $refl, \Exception $e, $startLine = NULL)
+	public static function calculateErrorLine(\Reflector $refl, $e, $startLine = NULL)
 	{
 		if ($startLine === NULL) {
 			$startLine = $refl->getStartLine();
