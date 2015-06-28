@@ -32,6 +32,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 	const PHP_NAMESPACE = '[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff\\\\]*';
 	const TAG_CONNECTION = 'kdyby.doctrine.connection';
 	const TAG_ENTITY_MANAGER = 'kdyby.doctrine.entityManager';
+	const TAG_LOGGER = 'kdyby.doctrine.logger';
 
 	/**
 	 * @var array
@@ -622,6 +623,15 @@ class OrmExtension extends Nette\DI\CompilerExtension
 
 		if ($eventsExt === NULL) {
 			throw new Nette\Utils\AssertionException('Please register the required Kdyby\Events\DI\EventsExtension to Compiler.');
+		}
+
+		$builder = $this->getContainerBuilder();
+		$loggers = $builder->findByTag(self::TAG_LOGGER);
+		foreach ($builder->findByTag(self::TAG_CONNECTION) as $connectionService => $value) {
+			$connection = $builder->getDefinition($connectionService);
+			foreach ($loggers as $loggerService => $value) {
+				$connection->addSetup('$service->getConfiguration()->getSQLLogger()->addLogger(?)', array('@' . $loggerService));
+			}
 		}
 	}
 
