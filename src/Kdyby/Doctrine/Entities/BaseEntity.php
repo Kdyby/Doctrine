@@ -89,7 +89,8 @@ abstract class BaseEntity extends Nette\Object implements \Serializable
 
 			} elseif ($op === 'get' && isset($properties[$prop])) {
 				if ($this->$prop instanceof Collection) {
-					return $this->convertCollection($prop, $args);
+					return new ReadOnlyCollectionWrapper($this->$prop);
+
 				} else {
 					return $this->$prop;
 				}
@@ -238,7 +239,7 @@ abstract class BaseEntity extends Nette\Object implements \Serializable
 		$properties = $this->listObjectProperties();
 		if (isset($properties[$name = func_get_arg(0)])) {
 			if ($this->$name instanceof Collection) {
-				$coll = $this->$name->toArray();
+				$coll = new ReadOnlyCollectionWrapper($this->$name);
 
 				return $coll;
 
@@ -321,22 +322,6 @@ abstract class BaseEntity extends Nette\Object implements \Serializable
 		$name[0] = $name[0] & "\xDF";
 
 		return isset($methods['get' . $name]) || isset($methods['is' . $name]);
-	}
-
-
-
-	/**
-	 * @param string $property property name
-	 * @param array $args
-	 * @return Collection|array
-	 */
-	protected function convertCollection($property, array $args)
-	{
-		if (isset($args[0]) && $args[0] === TRUE) {
-			return new ReadOnlyCollectionWrapper($this->$property);
-		}
-
-		return $this->$property->toArray();
 	}
 
 
