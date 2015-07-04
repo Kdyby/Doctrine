@@ -27,12 +27,12 @@ use Nette\Utils\ObjectMixin;
  * @method \Kdyby\Doctrine\Connection getConnection()
  * @method \Kdyby\Doctrine\Configuration getConfiguration()
  * @method \Kdyby\Doctrine\EntityRepository getRepository($entityName)
- * @method onDaoCreate(EntityManager $em, EntityDao $dao)
  */
 class EntityManager extends Doctrine\ORM\EntityManager
 {
 
 	/**
+	 * @deprecated
 	 * @var array
 	 */
 	public $onDaoCreate = array();
@@ -261,6 +261,16 @@ class EntityManager extends Doctrine\ORM\EntityManager
 		}
 
 		return new EntityManager($conn, $config, $conn->getEventManager());
+	}
+
+
+
+	/**
+	 * @deprecated
+	 */
+	public function onDaoCreate(EntityManager $em, Doctrine\Common\Persistence\ObjectRepository $dao)
+	{
+		$this->__call(__FUNCTION__, func_get_args());
 	}
 
 
