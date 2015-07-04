@@ -412,7 +412,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 
 
 
-	private function processSecondLevelCache($name, array $config, $isDefault)
+	protected function processSecondLevelCache($name, array $config, $isDefault)
 	{
 		if (!$config['enabled']) {
 			return;
