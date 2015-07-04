@@ -30,8 +30,8 @@ class OrmExtension extends Nette\DI\CompilerExtension
 
 	const ANNOTATION_DRIVER = 'annotations';
 	const PHP_NAMESPACE = '[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff\\\\]*';
-	const TAG_CONNECTION = 'kdyby.doctrine.connection';
-	const TAG_ENTITY_MANAGER = 'kdyby.doctrine.entityManager';
+	const TAG_CONNECTION = 'doctrine.connection';
+	const TAG_ENTITY_MANAGER = 'doctrine.entityManager';
 
 	/**
 	 * @var array
@@ -403,6 +403,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			))
 			->addSetup('?->bindEntityManager(?)', array($this->prefix('@' . $name . '.diagnosticsPanel'), '@self'))
 			->addTag(self::TAG_ENTITY_MANAGER)
+			->addTag('kdyby.doctrine.entityManager')
 			->setAutowired($isDefault)
 			->setInject(FALSE);
 
@@ -515,6 +516,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			->addSetup('setDbalTypes', array($dbalTypes))
 			->addSetup('$panel = ?->bindConnection(?)', array($this->prefix('@' . $name . '.diagnosticsPanel'), '@self'))
 			->addTag(self::TAG_CONNECTION)
+			->addTag('kdyby.doctrine.connection')
 			->setAutowired($isDefault)
 			->setInject(FALSE);
 		/** @var Nette\DI\ServiceDefinition $connection */
