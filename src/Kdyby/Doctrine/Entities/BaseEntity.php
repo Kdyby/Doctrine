@@ -25,6 +25,7 @@ use Nette\Utils\Callback;
 /**
  * @author Filip Procházka <filip@prochazka.su>
  *
+ * @deprecated
  * @ORM\MappedSuperclass()
  */
 abstract class BaseEntity extends Nette\Object implements \Serializable
