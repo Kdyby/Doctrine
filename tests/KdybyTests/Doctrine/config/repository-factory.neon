@@ -1,0 +1,19 @@
+kdyby.doctrine:
+	driver: pdo_sqlite
+	memory: true
+	metadata:
+		KdybyTests\Doctrine: annotations(%appDir%/Doctrine/models)
+	defaultRepositoryClassName: Kdyby\Doctrine\EntityRepository
+
+
+services:
+	- KdybyTests\Doctrine\CmsAddressRepository
+	- KdybyTests\Doctrine\CmsArticleRepository
+
+	-
+		class: KdybyTests\Doctrine\CmsEmployeeRepository
+		factory: @Kdyby\Doctrine\EntityManager::getRepository(KdybyTests\Doctrine\CmsEmployee)
+
+	-
+		class: KdybyTests\Doctrine\CmsGroupRepository
+		factory: @Kdyby\Doctrine\EntityManager::getDao(KdybyTests\Doctrine\CmsGroup)

@@ -66,6 +66,11 @@
 			"src/Kdyby/Doctrine/exceptions.php"
 		]
 	},
+	"autoload-dev": {
+		"classmap": [
+			"tests/KdybyTests/Doctrine"
+		]
+	},
 	"extra": {
 		"branch-alias": {
 			"dev-master": "3.0-dev"

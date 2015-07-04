@@ -25,7 +25,7 @@ interface ICmsAddress
  * CmsAddress
  *
  * @author Roman S. Borschel
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="\KdybyTests\Doctrine\CmsAddressRepository")
  * @ORM\Table(name="cms_addresses")
  */
 class CmsAddress implements ICmsAddress
@@ -85,7 +85,7 @@ class CmsAddress implements ICmsAddress
 
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="\KdybyTests\Doctrine\CmsArticleRepository")
  * @ORM\Table(name="cms_articles")
  */
 class CmsArticle
@@ -144,7 +144,7 @@ class CmsArticle
 
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="\KdybyTests\Doctrine\CmsCommentRepository")
  * @ORM\Table(name="cms_comments")
  */
 class CmsComment
@@ -184,7 +184,7 @@ class CmsComment
 /**
  * CmsEmail
  *
- * @ORM\Entity
+ * @ORM\Entity()
  * @ORM\Table(name="cms_emails")
  */
 class CmsEmail
@@ -215,7 +215,7 @@ class CmsEmail
  * Description of CmsEmployee
  *
  * @author robo
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="KdybyTests\Doctrine\CmsEmployeeRepository")
  * @ORM\Table(name="cms_employees")
  */
 class CmsEmployee
@@ -247,7 +247,7 @@ class CmsEmployee
  * Description of CmsGroup
  *
  * @author robo
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="KdybyTests\Doctrine\CmsGroupRepository")
  * @ORM\Table(name="cms_groups")
  */
 class CmsGroup
@@ -284,7 +284,7 @@ class CmsGroup
 
 
 /**
- * @ORM\Entity
+ * @ORM\Entity()
  * @ORM\Table(name="cms_phonenumbers")
  */
 class CmsPhoneNumber
@@ -305,7 +305,7 @@ class CmsPhoneNumber
 
 
 /**
- * @ORM\Entity
+ * @ORM\Entity()
  * @ORM\Table(name="cms_users")
  */
 class CmsUser
@@ -461,7 +461,7 @@ class CmsUser
 
 
 /**
- * @ORM\Entity
+ * @ORM\Entity()
  * @ORM\Table(name="cms_orders")
  */
 class CmsOrder

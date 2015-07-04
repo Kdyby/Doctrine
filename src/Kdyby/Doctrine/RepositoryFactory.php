@@ -35,11 +35,33 @@ class RepositoryFactory extends Nette\Object implements Doctrine\ORM\Repository\
 	 */
 	private $repositoryList = array();
 
+	/**
+	 * @var array
+	 */
+	private $repositoryServicesMap = array();
+
+	/**
+	 * @var string
+	 */
+	private $defaultRepositoryFactory;
+
 
 
 	public function __construct(Nette\DI\Container $serviceLocator)
 	{
 		$this->serviceLocator = $serviceLocator;
+	}
+
+
+
+	/**
+	 * @param array $repositoryServicesMap [RepositoryType => repositoryServiceId]
+	 * @param string $defaultRepositoryFactory
+	 */
+	public function setServiceIdsMap(array $repositoryServicesMap, $defaultRepositoryFactory)
+	{
+		$this->repositoryServicesMap = $repositoryServicesMap;
+		$this->defaultRepositoryFactory = $defaultRepositoryFactory;
 	}
 
 
@@ -77,26 +99,35 @@ class RepositoryFactory extends Nette\Object implements Doctrine\ORM\Repository\
 	 *
 	 * @param \Doctrine\ORM\EntityManagerInterface $entityManager The EntityManager instance.
 	 * @param Doctrine\ORM\Mapping\ClassMetadata $metadata
-
 	 * @return Doctrine\Common\Persistence\ObjectRepository
 	 */
 	private function createRepository(EntityManagerInterface $entityManager, Doctrine\ORM\Mapping\ClassMetadata $metadata)
 	{
-		$defaultRepository = $entityManager->getConfiguration()->getDefaultRepositoryClassName();
-		$repositoryClassName = $metadata->customRepositoryClassName ?: $defaultRepository;
+		$defaultClass = $entityManager->getConfiguration()->getDefaultRepositoryClassName();
+		$customClass = ltrim($metadata->customRepositoryClassName, '\\');
 
-		if ($repositoryClassName === $defaultRepository) {
-			return new $repositoryClassName($entityManager, $metadata);
+		if (empty($customClass) || $customClass === $defaultClass) {
+			$factory = $this->getRepositoryFactory($this->defaultRepositoryFactory);
 
-		} elseif (!$services = $this->serviceLocator->findByType($repositoryClassName)) { // todo: solve me in future, maybe just throw an exception?
-			return new $repositoryClassName($entityManager, $metadata);
-
-		} elseif (count($services) > 1) { // todo: solve me in future, maybe just throw an exception?
-			return new $repositoryClassName($entityManager, $metadata);
+		} elseif (isset($this->repositoryServicesMap[$customClass])) {
+			$factory = $this->getRepositoryFactory($this->repositoryServicesMap[$customClass]);
 
 		} else {
-			return $this->serviceLocator->createService($services[0], array('entityManager' => $entityManager, 'metadata' => $metadata));
+			return new $customClass($entityManager, $metadata);
 		}
+
+		return $factory->create($entityManager, $metadata);
+	}
+
+
+
+	/**
+	 * @param string $serviceName
+	 * @return Kdyby\Doctrine\DI\IRepositoryFactory
+	 */
+	protected function getRepositoryFactory($serviceName)
+	{
+		return $this->serviceLocator->getService($serviceName);
 	}
 
 }
