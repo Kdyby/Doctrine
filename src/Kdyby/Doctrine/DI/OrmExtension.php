@@ -54,6 +54,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		),
 		'classMetadataFactory' => 'Kdyby\Doctrine\Mapping\ClassMetadataFactory',
 		'defaultRepositoryClassName' => 'Kdyby\Doctrine\EntityDao',
+		'repositoryFactoryClassName' => 'Kdyby\Doctrine\RepositoryFactory',
 		'queryBuilderClassName' => 'Kdyby\Doctrine\Dql\InlineParamsBuilder',
 		'autoGenerateProxyClasses' => '%debugMode%',
 		'namingStrategy' => 'Doctrine\ORM\Mapping\UnderscoreNamingStrategy',
@@ -192,10 +193,6 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			->setImplement('Kdyby\Doctrine\EntityDaoFactory')
 			->setInject(FALSE)->setAutowired(TRUE);
 
-		$builder->addDefinition($this->prefix('repositoryFactory'))
-			->setClass('Kdyby\Doctrine\RepositoryFactory')
-			->setAutowired(FALSE);
-
 		$builder->addDefinition($this->prefix('schemaValidator'))
 			->setClass('Doctrine\ORM\Tools\SchemaValidator')
 			->setInject(FALSE);
@@ -328,6 +325,10 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			));
 		}
 
+		$builder->addDefinition($this->prefix($name . '.repositoryFactory'))
+			->setClass($config['repositoryFactoryClassName'])
+			->setAutowired(FALSE);
+
 		Validators::assertField($config, 'namespaceAlias', 'array');
 		Validators::assertField($config, 'hydrators', 'array');
 		Validators::assertField($config, 'dql', 'array');
@@ -349,7 +350,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			->addSetup('setClassMetadataFactoryName', array($config['classMetadataFactory']))
 			->addSetup('setDefaultRepositoryClassName', array($config['defaultRepositoryClassName']))
 			->addSetup('setQueryBuilderClassName', array($config['queryBuilderClassName']))
-			->addSetup('setRepositoryFactory', array($this->prefix('@repositoryFactory')))
+			->addSetup('setRepositoryFactory', array($this->prefix('@' . $name . '.repositoryFactory')))
 			->addSetup('setProxyDir', array($config['proxyDir']))
 			->addSetup('setProxyNamespace', array($config['proxyNamespace']))
 			->addSetup('setAutoGenerateProxyClasses', array($autoGenerateProxyClasses))
