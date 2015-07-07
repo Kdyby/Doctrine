@@ -2,9 +2,7 @@
 
 /**
  * This file is part of the Kdyby (http://www.kdyby.org)
- *
  * Copyright (c) 2008 Filip Procházka (filip@prochazka.su)
- *
  * For the full copyright and license information, please view the file license.txt that was distributed with this source code.
  */
 
@@ -19,27 +17,25 @@ use Kdyby\Doctrine\MemberAccessException;
 use Kdyby\Doctrine\UnexpectedValueException;
 use Nette;
 use Nette\Utils\Callback;
+use Nette\Utils\ObjectMixin;
 
 
 
 /**
  * @author Filip Procházka <filip@prochazka.su>
- *
- * @deprecated
- * @ORM\MappedSuperclass()
  */
-abstract class BaseEntity extends Nette\Object implements \Serializable
+trait MagicAccessors
 {
 
 	/**
 	 * @var array
 	 */
-	private static $properties = array();
+	private static $__properties = array();
 
 	/**
 	 * @var array
 	 */
-	private static $methods = array();
+	private static $__methods = array();
 
 
 
@@ -51,9 +47,38 @@ abstract class BaseEntity extends Nette\Object implements \Serializable
 
 
 
+	/**
+	 * @param string $property property name
+	 * @param array $args
+	 * @return Collection|array
+	 */
+	protected function convertCollection($property, array $args = NULL)
+	{
+		return new ReadOnlyCollectionWrapper($this->$property);
+	}
+
+
+
+	/**
+	 * Utility method, that can be replaced with `::class` since php 5.5
+	 * @return string
+	 */
 	public static function getClassName()
 	{
 		return get_called_class();
+	}
+
+
+
+	/**
+	 * Access to reflection.
+	 *
+	 * @return Nette\Reflection\ClassType|\ReflectionClass
+	 */
+	public static function getReflection()
+	{
+		$class = class_exists('Nette\Reflection\ClassType') ? 'Nette\Reflection\ClassType' : 'ReflectionClass';
+		return new $class(get_called_class());
 	}
 
 
@@ -91,6 +116,7 @@ abstract class BaseEntity extends Nette\Object implements \Serializable
 			} elseif ($op === 'get' && isset($properties[$prop])) {
 				if ($this->$prop instanceof Collection) {
 					return $this->convertCollection($prop, $args);
+
 				} else {
 					return $this->$prop;
 				}
@@ -201,6 +227,45 @@ abstract class BaseEntity extends Nette\Object implements \Serializable
 
 
 	/**
+	 * Call to undefined static method.
+	 *
+	 * @param  string  method name (in lower case!)
+	 * @param  array   arguments
+	 * @return mixed
+	 * @throws MemberAccessException
+	 */
+	public static function __callStatic($name, $args)
+	{
+		return ObjectMixin::callStatic(get_called_class(), $name, $args);
+	}
+
+
+
+	/**
+	 * Adding method to class.
+	 *
+	 * @param  string  method name
+	 * @param  callable
+	 * @return mixed
+	 */
+	public static function extensionMethod($name, $callback = NULL)
+	{
+		if (strpos($name, '::') === FALSE) {
+			$class = get_called_class();
+		} else {
+			list($class, $name) = explode('::', $name);
+			$class = (new \ReflectionClass($class))->getName();
+		}
+		if ($callback === NULL) {
+			return ObjectMixin::getExtensionMethod($class, $name);
+		} else {
+			ObjectMixin::setExtensionMethod($class, $name, $callback);
+		}
+	}
+
+
+
+	/**
 	 * Returns property value. Do not call directly.
 	 *
 	 * @param string $name property name
@@ -239,7 +304,7 @@ abstract class BaseEntity extends Nette\Object implements \Serializable
 		$properties = $this->listObjectProperties();
 		if (isset($properties[$name = func_get_arg(0)])) {
 			if ($this->$name instanceof Collection) {
-				$coll = $this->$name->toArray();
+				$coll = $this->convertCollection($name);
 
 				return $coll;
 
@@ -327,17 +392,15 @@ abstract class BaseEntity extends Nette\Object implements \Serializable
 
 
 	/**
-	 * @param string $property property name
-	 * @param array $args
-	 * @return Collection|array
+	 * Access to undeclared property.
+	 *
+	 * @param  string  property name
+	 * @return void
+	 * @throws MemberAccessException
 	 */
-	protected function convertCollection($property, array $args)
+	public function __unset($name)
 	{
-		if (isset($args[0]) && $args[0] === TRUE) {
-			return new ReadOnlyCollectionWrapper($this->$property);
-		}
-
-		return $this->$property->toArray();
+		ObjectMixin::remove($this, $name);
 	}
 
 
@@ -350,11 +413,16 @@ abstract class BaseEntity extends Nette\Object implements \Serializable
 	private function listObjectProperties()
 	{
 		$class = get_class($this);
-		if (!isset(self::$properties[$class])) {
-			self::$properties[$class] = array_flip(array_keys(get_object_vars($this)));
+		if (!isset(self::$__properties[$class])) {
+			$refl = new \ReflectionClass($class);
+			$properties = array_map(function (\ReflectionProperty $property) {
+				return $property->getName();
+			}, $refl->getProperties(\ReflectionProperty::IS_PUBLIC | \ReflectionProperty::IS_PROTECTED));
+
+			self::$__properties[$class] = array_flip($properties);
 		}
 
-		return self::$properties[$class];
+		return self::$__properties[$class];
 	}
 
 
@@ -367,41 +435,16 @@ abstract class BaseEntity extends Nette\Object implements \Serializable
 	private function listObjectMethods()
 	{
 		$class = get_class($this);
-		if (!isset(self::$methods[$class])) {
-			// get_class_methods returns ONLY PUBLIC methods of objects
-			// but returns static methods too (nothing doing...)
-			// and is much faster than reflection
-			// (works good since 5.0.4)
-			self::$methods[$class] = array_flip(get_class_methods($class));
+		if (!isset(self::$__methods[$class])) {
+			$refl = new \ReflectionClass($class);
+			$methods = array_map(function (\ReflectionMethod $method) {
+				return $method->getName();
+			}, $refl->getMethods(\ReflectionMethod::IS_PUBLIC));
+
+			self::$__methods[$class] = array_flip($methods);
 		}
 
-		return self::$methods[$class];
-	}
-
-
-
-	/**************************** \Serializable ****************************/
-
-
-
-	/**
-	 * @internal
-	 * @return string
-	 */
-	public function serialize()
-	{
-		return SerializableMixin::serialize($this);
-	}
-
-
-
-	/**
-	 * @internal
-	 * @param string $serialized
-	 */
-	public function unserialize($serialized)
-	{
-		SerializableMixin::unserialize($this, $serialized);
+		return self::$__methods[$class];
 	}
 
 }
