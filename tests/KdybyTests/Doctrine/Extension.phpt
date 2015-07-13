@@ -100,6 +100,10 @@ class ExtensionTest extends Tester\TestCase
 			'KdybyTests\\Doctrine\\CmsOrder',
 			'KdybyTests\\Doctrine\\CmsPhoneNumber',
 			'KdybyTests\\Doctrine\\CmsUser',
+			'KdybyTests\\Doctrine\\StiAdmin',
+			'KdybyTests\\Doctrine\\StiBoss',
+			'KdybyTests\\Doctrine\\StiEmployee',
+			'KdybyTests\\Doctrine\\StiUser',
 			'Kdyby\\Doctrine\\Entities\\BaseEntity',
 			'Kdyby\\Doctrine\\Entities\\IdentifiedEntity',
 		), $entityClasses);

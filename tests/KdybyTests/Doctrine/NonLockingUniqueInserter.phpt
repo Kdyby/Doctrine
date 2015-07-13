@@ -18,6 +18,7 @@ use Tester\Assert;
 
 require_once __DIR__ . '/../bootstrap.php';
 require_once __DIR__ . '/models/cms.php';
+require_once __DIR__ . '/models/sti.php';
 
 
 
@@ -93,6 +94,24 @@ class NonLockingUniqueInserterTest extends KdybyTests\Doctrine\ORMTestCase
 		$email = $em->getDao(__NAMESPACE__ . '\CmsEmail')->find($id);
 		Assert::true($email instanceof CmsEmail);
 		Assert::true($email->user instanceof CmsUser);
+	}
+
+
+
+	public function testSavingDiscriminatorColumn()
+	{
+		$em = $this->createMemoryManager();
+
+		$boss = new StiBoss('boss', 'Alfred Kelcey');
+
+		/** @var StiBoss $boss */
+		$boss = $em->safePersist($boss);
+		Assert::true($boss instanceof StiBoss);
+		Assert::true($em->isOpen());
+		$em->clear();
+
+		$row = $em->getConnection()->fetchAssoc('SELECT * FROM sti_users WHERE id = :id', [ 'id' => $boss->id ]);
+		Assert::equal('boss', $row['type']);
 	}
 
 }
