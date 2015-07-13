@@ -479,10 +479,11 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 			if (($prev = $e->getPrevious()) && ($item = Helpers::findTrace($e->getTrace(), 'Doctrine\DBAL\DBALException::driverExceptionDuringQuery'))) {
 				/** @var \Doctrine\DBAL\Driver $driver */
 				$driver = $item['args'][0];
+				$params = isset($item['args'][3]) ? $item['args'][3] : array();
 
 				return array(
 					'tab' => 'SQL',
-					'panel' => self::highlightQuery(static::formatQuery($item['args'][2], $item['args'][3], array(), $driver->getDatabasePlatform())),
+					'panel' => self::highlightQuery(static::formatQuery($item['args'][2], $params, array(), $driver->getDatabasePlatform())),
 				);
 			}
 
