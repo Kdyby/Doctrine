@@ -134,9 +134,11 @@ class NonLockingUniqueInserter extends Nette\Object
 		$fields = $this->getUniqueAndRequiredFields($meta, $entity);
 		// associations that have to be inserted
 		$associations = $this->getUniqueAndRequiredAssociations($meta, $entity);
+		// discriminator column
+		$discriminator = $this->getDiscriminatorColumn($meta);
 
 		// prepare statement && execute
-		$this->prepareInsert($meta, array_merge($fields, $associations))->execute();
+		$this->prepareInsert($meta, array_merge($fields, $associations, $discriminator))->execute();
 
 		// assign ID to entity
 		if ($idGen = $meta->idGenerator) {
@@ -273,6 +275,25 @@ class NonLockingUniqueInserter extends Nette\Object
 		}
 
 		return $associations;
+	}
+
+
+
+	private function getDiscriminatorColumn(ClassMetadata $meta)
+	{
+		if (!$meta->isInheritanceTypeSingleTable()) {
+			return [];
+		}
+
+		$column = $meta->discriminatorColumn;
+
+		return [
+			$column['fieldName'] => [
+				'value' => $meta->discriminatorValue,
+				'quotedColumn' => $this->platform->quoteIdentifier($column['name']),
+				'type' => Type::getType($column['type']),
+			],
+		];
 	}
 
 }
