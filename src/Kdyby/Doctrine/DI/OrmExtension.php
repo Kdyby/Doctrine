@@ -32,6 +32,8 @@ class OrmExtension extends Nette\DI\CompilerExtension
 	const PHP_NAMESPACE = '[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff\\\\]*';
 	const TAG_CONNECTION = 'doctrine.connection';
 	const TAG_ENTITY_MANAGER = 'doctrine.entityManager';
+	const TAG_BIND_TO_MANAGER = 'doctrine.bindToManager';
+	const TAG_REPOSITORY_ENTITY = 'doctrine.repositoryEntity';
 
 	/**
 	 * @var array
@@ -132,15 +134,28 @@ class OrmExtension extends Nette\DI\CompilerExtension
 	/**
 	 * @var array
 	 */
+	private $managerConfigs = array();
+
+	/**
+	 * @var array
+	 */
 	private $configuredConnections = array();
+
+	/**
+	 * @var array
+	 */
+	private $postCompileRepositoriesQueue = array();
 
 
 
 	public function loadConfiguration()
 	{
 		$this->proxyAutoloaders =
+		$this->targetEntityMappings =
 		$this->configuredConnections =
-		$this->configuredManagers = array();
+		$this->managerConfigs =
+		$this->configuredManagers =
+		$this->postCompileRepositoriesQueue = array();
 
 		$extensions = array_filter($this->compiler->getExtensions(), function ($item) {
 			return $item instanceof Kdyby\Annotations\DI\AnnotationsExtension;
@@ -177,21 +192,6 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			$emConfig = Nette\DI\Config\Helpers::merge($emConfig, $defaults);
 			$this->processEntityManager($name, $emConfig);
 		}
-
-		// syntax sugar for config
-		$builder->addDefinition($this->prefix('dao'))
-			->setClass('Kdyby\Doctrine\EntityDao')
-			->setFactory('@Kdyby\Doctrine\EntityManager::getDao', array(new Code\PhpLiteral('$entityName')))
-			->setParameters(array('entityName'))
-			->setInject(FALSE);
-
-		// interface for models & presenters
-		$builder->addDefinition($this->prefix('daoFactory'))
-			->setClass('Kdyby\Doctrine\EntityDao')
-			->setFactory('@Kdyby\Doctrine\EntityManager::getDao', array(new Code\PhpLiteral('$entityName')))
-			->setParameters(array('entityName'))
-			->setImplement('Kdyby\Doctrine\EntityDaoFactory')
-			->setInject(FALSE)->setAutowired(TRUE);
 
 		$builder->addDefinition($this->prefix('schemaValidator'))
 			->setClass('Doctrine\ORM\Tools\SchemaValidator')
@@ -325,6 +325,9 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			));
 		}
 
+		if ($config['repositoryFactoryClassName'] === 'default') {
+			$config['repositoryFactoryClassName'] = 'Doctrine\ORM\Repository\DefaultRepositoryFactory';
+		}
 		$builder->addDefinition($this->prefix($name . '.repositoryFactory'))
 			->setClass($config['repositoryFactoryClassName'])
 			->setAutowired(FALSE);
@@ -408,7 +411,32 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			->setAutowired($isDefault)
 			->setInject(FALSE);
 
+		if ($isDefault && $config['defaultRepositoryClassName'] === 'Kdyby\Doctrine\EntityDao') {
+			// syntax sugar for config
+			$builder->addDefinition($this->prefix('dao'))
+				->setClass('Kdyby\Doctrine\EntityDao')
+				->setFactory('@Kdyby\Doctrine\EntityManager::getDao', array(new Code\PhpLiteral('$entityName')))
+				->setParameters(array('entityName'))
+				->setInject(FALSE);
+
+			// interface for models & presenters
+			$builder->addDefinition($this->prefix('daoFactory'))
+				->setClass('Kdyby\Doctrine\EntityDao')
+				->setFactory('@Kdyby\Doctrine\EntityManager::getDao', array(new Code\PhpLiteral('$entityName')))
+				->setParameters(array('entityName'))
+				->setImplement('Kdyby\Doctrine\EntityDaoFactory')
+				->setInject(FALSE)->setAutowired(TRUE);
+		}
+
+		$builder->addDefinition($this->prefix('repositoryFactory.' . $name . '.defaultRepositoryFactory'))
+				->setClass($config['defaultRepositoryClassName'])
+				->setImplement('Kdyby\Doctrine\DI\IRepositoryFactory')
+				->setArguments([new Code\PhpLiteral('$entityManager'), new Code\PhpLiteral('$classMetadata')])
+				->setParameters(array('Doctrine\ORM\EntityManagerInterface entityManager', 'Doctrine\ORM\Mapping\ClassMetadata classMetadata'))
+				->setAutowired(FALSE);
+
 		$this->configuredManagers[$name] = $managerServiceId;
+		$this->managerConfigs[$name] = $config;
 	}
 
 
@@ -626,6 +654,106 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		if ($eventsExt === NULL) {
 			throw new Nette\Utils\AssertionException('Please register the required Kdyby\Events\DI\EventsExtension to Compiler.');
 		}
+
+		$this->processRepositories();
+	}
+
+
+
+	protected function processRepositories()
+	{
+		$builder = $this->getContainerBuilder();
+
+		$disabled = TRUE;
+		foreach ($this->configuredManagers as $managerName => $_) {
+			$factoryClassName = $builder->getDefinition($this->prefix($managerName . '.repositoryFactory'))->class;
+			if ($factoryClassName === 'Kdyby\Doctrine\RepositoryFactory' || in_array('Kdyby\Doctrine\RepositoryFactory', class_parents($factoryClassName), TRUE)) {
+				$disabled = FALSE;
+			}
+		}
+
+		if ($disabled) {
+			return;
+		}
+
+		if (!method_exists($builder, 'findByType')) {
+			foreach ($this->configuredManagers as $managerName => $_) {
+				$builder->getDefinition($this->prefix($managerName . '.repositoryFactory'))
+					->addSetup('setServiceIdsMap', array(array(), $this->prefix('repositoryFactory.' . $managerName . '.defaultRepositoryFactory')));
+			}
+
+			return;
+		}
+
+		$serviceMap = array_fill_keys(array_keys($this->configuredManagers), array());
+		foreach ($builder->findByType('Doctrine\ORM\EntityRepository', FALSE) as $originalServiceName => $originalDef) {
+			if (is_string($originalDef)) {
+				$originalServiceName = $originalDef;
+				$originalDef = $builder->getDefinition($originalServiceName);
+			}
+
+			if (strpos($originalServiceName, $this->name . '.') === 0) {
+				continue; // ignore
+			}
+
+			$factory = $originalDef->getFactory() ? $originalDef->getFactory()->getEntity() : $originalDef->getClass();
+			if (stripos($factory, '::getRepository') !== FALSE || stripos($factory, '::getDao') !== FALSE) {
+				continue; // ignore
+			}
+
+			$factoryServiceName = $this->prefix('repositoryFactory.' . $originalServiceName);
+			$factoryDef = $builder->addDefinition($factoryServiceName, $originalDef)
+				->setImplement('Kdyby\Doctrine\DI\IRepositoryFactory')
+				->setParameters(array('Doctrine\ORM\EntityManagerInterface entityManager', 'Doctrine\ORM\Mapping\ClassMetadata classMetadata'))
+				->setAutowired(FALSE);
+			$factoryStatement = $factoryDef->getFactory() ?: new Statement($factoryDef->getClass());
+			$factoryStatement->arguments[0] = new Code\PhpLiteral('$entityManager');
+			$factoryStatement->arguments[1] = new Code\PhpLiteral('$classMetadata');
+			$factoryDef->setArguments($factoryStatement->arguments);
+
+			$boundManagers = $this->getServiceBoundManagers($originalDef);
+			Validators::assert($boundManagers, 'list:1', 'bound manager');
+
+			if ($boundEntity = $originalDef->getTag(self::TAG_REPOSITORY_ENTITY)) {
+				if (!is_string($boundEntity) || !class_exists($boundEntity)) {
+					throw new Nette\Utils\AssertionException(sprintf('The entity "%s" for repository "%s" cannot be autoloaded.'));
+				}
+				$entityArgument = $boundEntity;
+
+			} else {
+				$entityArgument = new Code\PhpLiteral('"%entityName%"');
+				$this->postCompileRepositoriesQueue[$boundManagers[0]][] = [ltrim($originalDef->class, '\\'), $originalServiceName];
+			}
+
+			$builder->removeDefinition($originalServiceName);
+			$builder->addDefinition($originalServiceName)
+				->setClass($originalDef->class)
+				->setFactory(sprintf('@%s::getRepository', $this->configuredManagers[$boundManagers[0]]), array($entityArgument));
+
+			$serviceMap[$boundManagers[0]][$originalDef->class] = $factoryServiceName;
+		}
+
+		foreach ($this->configuredManagers as $managerName => $_) {
+			$builder->getDefinition($this->prefix($managerName . '.repositoryFactory'))
+				->addSetup('setServiceIdsMap', array(
+					$serviceMap[$managerName],
+					$this->prefix('repositoryFactory.' . $managerName . '.defaultRepositoryFactory')
+				));
+		}
+	}
+
+
+
+	/**
+	 * @param Nette\DI\ServiceDefinition $def
+	 * @return string[]
+	 */
+	protected function getServiceBoundManagers(Nette\DI\ServiceDefinition $def)
+	{
+		$builder = $this->getContainerBuilder();
+		$boundManagers = $def->getTag(self::TAG_BIND_TO_MANAGER);
+
+		return is_array($boundManagers) ? $boundManagers : array($builder->parameters[$this->name]['orm']['defaultEntityManager']);
 	}
 
 
@@ -646,6 +774,68 @@ class OrmExtension extends Nette\DI\CompilerExtension
 				$init->addBody($blueScreen . '->collapsePaths[] = ?;', array($dir));
 			}
 		}
+
+		$this->processRepositoryFactoryEntities($class);
+	}
+
+
+
+	protected function processRepositoryFactoryEntities(Code\ClassType $class)
+	{
+		if (empty($this->postCompileRepositoriesQueue)) {
+			return;
+		}
+
+		$dic = self::evalAndInstantiateContainer($class);
+
+		foreach ($this->postCompileRepositoriesQueue as $manager => $items) {
+			$config = $this->managerConfigs[$manager];
+			/** @var Kdyby\Doctrine\EntityManager $entityManager */
+			$entityManager = $dic->getService($this->configuredManagers[$manager]);
+			/** @var Doctrine\ORM\Mapping\ClassMetadata $entityMetadata */
+			$metadataFactory = $entityManager->getMetadataFactory();
+
+			$allMetadata = [];
+			foreach ($metadataFactory->getAllMetadata() as $entityMetadata) {
+				if ($config['defaultRepositoryClassName'] === $entityMetadata->customRepositoryClassName || empty($entityMetadata->customRepositoryClassName)) {
+					continue;
+				}
+
+				$allMetadata[ltrim($entityMetadata->customRepositoryClassName, '\\')] = $entityMetadata;
+			}
+
+			foreach ($items as $item) {
+				if (!isset($allMetadata[$item[0]])) {
+					throw new Nette\Utils\AssertionException(sprintf('Repository class %s have been found in DIC, but no entity has it assigned and it has no entity configured', $item[0]));
+				}
+
+				$entityMetadata = $allMetadata[$item[0]];
+				$serviceMethod = Nette\DI\Container::getMethodName($item[1]);
+
+				$method = $class->getMethod($serviceMethod);
+				$methodBody = $method->getBody();
+				$method->setBody(str_replace('"%entityName%"', Code\Helpers::format('?', $entityMetadata->getName()), $methodBody));
+			}
+		}
+	}
+
+
+
+	/**
+	 * @param Code\ClassType $class
+	 * @return Nette\DI\Container
+	 */
+	private static function evalAndInstantiateContainer(Code\ClassType $class)
+	{
+		$classCopy = clone $class;
+		$classCopy->setName($className = 'Kdyby_Doctrine_IamTheKingOfHackingNette_' . $class->getName() . '_' . rand());
+
+		$containerCode = "$classCopy";
+
+		return call_user_func(function () use ($className, $containerCode) {
+			eval($containerCode);
+			return new $className();
+		});
 	}
 
 
