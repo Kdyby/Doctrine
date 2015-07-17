@@ -54,7 +54,7 @@ class NonLockingUniqueInserterTest extends KdybyTests\Doctrine\ORMTestCase
 		Assert::true($em->isOpen());
 		$em->clear();
 
-		list($h, $l) = $em->getDao(__NAMESPACE__ . '\CmsUser')->findAll();
+		list($h, $l) = $em->getRepository(__NAMESPACE__ . '\CmsUser')->findAll();
 
 		Assert::true($h instanceof CmsUser);
 		Assert::equal('HosipLan', $h->username);
@@ -91,7 +91,7 @@ class NonLockingUniqueInserterTest extends KdybyTests\Doctrine\ORMTestCase
 		$em->clear();
 
 		/** @var CmsEmail $email */
-		$email = $em->getDao(__NAMESPACE__ . '\CmsEmail')->find($id);
+		$email = $em->getRepository(__NAMESPACE__ . '\CmsEmail')->find($id);
 		Assert::true($email instanceof CmsEmail);
 		Assert::true($email->user instanceof CmsUser);
 	}

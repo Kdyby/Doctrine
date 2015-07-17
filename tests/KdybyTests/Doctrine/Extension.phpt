@@ -54,7 +54,7 @@ class ExtensionTest extends Tester\TestCase
 		$default = $container->getByType('Kdyby\Doctrine\EntityManager');
 		Assert::true($default instanceof Kdyby\Doctrine\EntityManager);
 
-		$userDao = $default->getDao('KdybyTests\Doctrine\CmsUser');
+		$userDao = $default->getRepository('KdybyTests\Doctrine\CmsUser');
 		Assert::true($userDao instanceof Kdyby\Doctrine\EntityDao);
 	}
 

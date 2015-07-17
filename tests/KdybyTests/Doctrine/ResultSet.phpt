@@ -62,7 +62,7 @@ class ResultSetTest extends KdybyTests\Doctrine\ORMTestCase
 		$em->persist($phone2);
 		$em->flush();
 
-		$query = $em->getDao(__NAMESPACE__ . '\CmsUser')->createQueryBuilder("u")
+		$query = $em->getRepository(__NAMESPACE__ . '\CmsUser')->createQueryBuilder("u")
 			->leftJoin("u.phoneNumbers", "p")->addSelect("p")
 			->getQuery();
 		$resultSet = new ResultSet($query);
