@@ -70,6 +70,7 @@ class RobotLoader extends Nette\Loaders\RobotLoader
 	{
 		$this->register();
 		spl_autoload_unregister(array($this, 'tryLoad'));
+		$this->initialized = TRUE;
 	}
 
 }
