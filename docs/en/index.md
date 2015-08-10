@@ -90,6 +90,19 @@ class Article extends \Kdyby\Doctrine\Entities\BaseEntity
 }
 ```
 
+You can also use an UUID - [Universally unique identifier](https://en.wikipedia.org/wiki/Universally_unique_identifier) using similar approach, but different trait named UniversallyUniqueIdentifier.
+
+```php
+class Article extends \Kdyby\Doctrine\Entities\BaseEntity
+{
+
+	use \Kdyby\Doctrine\Entities\Attributes\UniversallyUniqueIdentifier; // Using UUI trait for id column
+
+	// ...
+
+}
+```
+
 Now we care only about method `::getClassName()`, because we will use it right away. All it does is return the class name. Oh, but what is it good for? Well, most modern IDE's works with classnames in code as if they were reference - they can find you usages and provide you refactorings. This wouldn't work, if the classname would be simply written in string. Instead, we call static method, that returns the classname. That way, it's always actual, even when you rename the class in your project!
 
 
