@@ -280,6 +280,7 @@ trait MagicAccessors
 		}
 
 		// property getter support
+		$originalName = $name;
 		$name[0] = $name[0] & "\xDF"; // case-sensitive checking, capitalize first character
 		$m = 'get' . $name;
 
@@ -302,7 +303,7 @@ trait MagicAccessors
 
 		// protected attribute support
 		$properties = $this->listObjectProperties();
-		if (isset($properties[$name = func_get_arg(0)])) {
+		if (isset($properties[$name = $originalName])) {
 			if ($this->$name instanceof Collection) {
 				$coll = $this->convertCollection($name);
 
@@ -316,7 +317,7 @@ trait MagicAccessors
 		}
 
 		$type = isset($methods['set' . $name]) ? 'a write-only' : 'an undeclared';
-		throw MemberAccessException::propertyNotReadable($type, $this, func_get_arg(0));
+		throw MemberAccessException::propertyNotReadable($type, $this, $originalName);
 	}
 
 
@@ -337,6 +338,7 @@ trait MagicAccessors
 		}
 
 		// property setter support
+		$originalName = $name;
 		$name[0] = $name[0] & "\xDF"; // case-sensitive checking, capitalize first character
 
 		$methods = $this->listObjectMethods();
@@ -349,7 +351,7 @@ trait MagicAccessors
 
 		// protected attribute support
 		$properties = $this->listObjectProperties();
-		if (isset($properties[$name = func_get_arg(0)])) {
+		if (isset($properties[$name = $originalName])) {
 			if ($this->$name instanceof Collection) {
 				throw UnexpectedValueException::collectionCannotBeReplaced($this, $name);
 			}
@@ -360,7 +362,7 @@ trait MagicAccessors
 		}
 
 		$type = isset($methods['get' . $name]) || isset($methods['is' . $name]) ? 'a read-only' : 'an undeclared';
-		throw MemberAccessException::propertyNotWritable($type, $this, func_get_arg(0));
+		throw MemberAccessException::propertyNotWritable($type, $this, $originalName);
 	}
 
 
