@@ -77,6 +77,9 @@ class NonLockingUniqueInserter extends Nette\Object
 	 * When entity have columns for required associations, this will fail.
 	 * Calls $em->flush().
 	 *
+	 * Warning: You must NOT use the passed entity further in your application.
+	 * Use the returned one instead!
+	 *
 	 * @todo fix error codes! PDO is returning database-specific codes
 	 *
 	 * @param object $entity

@@ -179,6 +179,12 @@ class EntityManager extends Doctrine\ORM\EntityManager
 
 
 	/**
+	 * Tries to persist the given entity and returns FALSE if an unique
+	 * constaint was violated.
+	 *
+	 * Warning: On success you must NOT use the passed entity further
+	 * in your application. Use the returned one instead!
+	 *
 	 * @param $entity
 	 * @throws \Doctrine\DBAL\DBALException
 	 * @throws \Exception
