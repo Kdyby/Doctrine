@@ -62,7 +62,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		'entityListenerResolver' => 'Kdyby\Doctrine\Mapping\EntityListenerResolver',
 		'proxyDir' => '%tempDir%/proxies',
 		'proxyNamespace' => 'Kdyby\GeneratedProxy',
-		'dql' => array('string' => array(), 'numeric' => array(), 'datetime' => array()),
+		'dql' => array('string' => array(), 'numeric' => array(), 'datetime' => array(), 'hints' => array()),
 		'hydrators' => array(),
 		'metadata' => array(),
 		'filters' => array(),
@@ -335,6 +335,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		Validators::assertField($config['dql'], 'string', 'array');
 		Validators::assertField($config['dql'], 'numeric', 'array');
 		Validators::assertField($config['dql'], 'datetime', 'array');
+		Validators::assertField($config['dql'], 'hints', 'array');
 
 		$autoGenerateProxyClasses = is_bool($config['autoGenerateProxyClasses'])
 			? ($config['autoGenerateProxyClasses'] ? AbstractProxyFactory::AUTOGENERATE_ALWAYS : AbstractProxyFactory::AUTOGENERATE_FILE_NOT_EXISTS)
@@ -359,6 +360,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			->addSetup('setCustomStringFunctions', array($config['dql']['string']))
 			->addSetup('setCustomNumericFunctions', array($config['dql']['numeric']))
 			->addSetup('setCustomDatetimeFunctions', array($config['dql']['datetime']))
+			->addSetup('setDefaultQueryHints', array($config['dql']['hints']))
 			->addSetup('setNamingStrategy', CacheHelpers::filterArgs($config['namingStrategy']))
 			->addSetup('setQuoteStrategy', CacheHelpers::filterArgs($config['quoteStrategy']))
 			->addSetup('setEntityListenerResolver', CacheHelpers::filterArgs($config['entityListenerResolver']))
