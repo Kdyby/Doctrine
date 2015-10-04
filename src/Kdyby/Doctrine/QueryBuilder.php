@@ -126,7 +126,7 @@ class QueryBuilder extends Doctrine\ORM\QueryBuilder implements \IteratorAggrega
 
 
 
-	private function autoJoin(&$key)
+	private function autoJoin(&$key, $methodJoin = "innerJoin")
 	{
 		$rootAliases = $this->getRootAliases();
 		$alias = reset($rootAliases);
@@ -156,7 +156,7 @@ class QueryBuilder extends Doctrine\ORM\QueryBuilder implements \IteratorAggrega
 			} while (isset($this->criteriaJoins[$joinAs]));
 			$this->criteriaJoins[$joinAs] = array();
 
-			$this->innerJoin("$alias.$property", $joinAs);
+			$this->{$methodJoin}("$alias.$property", $joinAs);
 			$this->criteriaJoins[$alias][$property] = $joinAs;
 			$alias = $joinAs;
 		}
