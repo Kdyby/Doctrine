@@ -1,0 +1,7 @@
+- Kdyby\Doctrine\Console\ExecuteCommand
+- Kdyby\Doctrine\Console\DiffCommand
+- Kdyby\Doctrine\Console\GenerateCommand
+- Kdyby\Doctrine\Console\MigrateCommand
+- Kdyby\Doctrine\Console\StatusCommand
+- Kdyby\Doctrine\Console\VersionCommand
+- Kdyby\Doctrine\Console\LatestCommand

@@ -1,0 +1,2 @@
+extensions:
+    migrations: Kdyby\Doctrine\DI\MigrationsExtension
