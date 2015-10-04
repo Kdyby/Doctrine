@@ -30,7 +30,6 @@ class MigrationsExtension extends Nette\DI\CompilerExtension
 		foreach ($services as $i => $command) {
 			$builder->addDefinition($this->prefix('cli.migrations.' . $i))
 				->addTag(Kdyby\Console\DI\ConsoleExtension::TAG_COMMAND)
-				->setInject(FALSE)
 				->setClass($command);
 		}
 	}

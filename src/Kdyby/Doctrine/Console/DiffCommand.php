@@ -21,7 +21,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * @author Pavel Kouřil <pk@pavelkouril.cz>
  */
-class DiffCommand extends \Doctrine\DBAL\Migrations\Tools\Console\Command\DiffCommand
+class DiffCommand extends Doctrine\DBAL\Migrations\Tools\Console\Command\DiffCommand
 {
 
     /**
