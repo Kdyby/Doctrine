@@ -107,13 +107,25 @@ class QueryBuilder extends Doctrine\ORM\QueryBuilder implements \IteratorAggrega
 		}
 
 		if (is_string($sort)) {
-			$alias = $this->autoJoin($sort);
-			$sort = $alias . '.' . $sort;
+			$reg = "#([a-zA-Z_. ]+)\)#";
+			if(preg_match($reg, $sort, $matches)) {
+				$sortMix = $sort;
+				$sort = $matches[1];
+				$alias = $this->autoJoin($sort, "leftJoin");
+				$hiddenAlias = $alias . $sort . count($this->getDQLPart("orderBy"));
+
+				$this->addSelect(preg_replace($reg, $alias . '.' . $sort . ")", $sortMix) . " as HIDDEN " . $hiddenAlias);
+				$this->addGroupBy(reset(($this->getRootAliases())) . ".id");
+				$sort = $hiddenAlias;
+			}
+			else {
+				$alias = $this->autoJoin($sort);
+				$sort = $alias . '.' . $sort;
+			}
 		}
 
 		return $this->addOrderBy($sort, $order);
 	}
-
 
 
 	/**

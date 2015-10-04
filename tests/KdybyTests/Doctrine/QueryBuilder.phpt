@@ -249,6 +249,25 @@ class QueryBuilderTest extends KdybyTests\Doctrine\ORMTestCase
 	}
 
 
+	public function testOrderByCriteria_AutoJoin_Equals()
+	{
+		$qb = $this->em->createQueryBuilder()
+			->select('u')->from(__NAMESPACE__ . '\\CmsUser', 'u')
+			->autoJoinOrderBy('COUNT(groups.id)');
+
+		Assert::same('SELECT u, COUNT(g0.id) as HIDDEN g0id0 FROM KdybyTests\Doctrine\CmsUser u LEFT JOIN u.groups g0 GROUP BY u.id ORDER BY g0id0 ASC', $qb->getDQL());
+	}
+
+
+	public function testOrderByCriteria_AutoJoin_Equals2()
+	{
+		$qb = $this->em->createQueryBuilder()
+			->select('u')->from(__NAMESPACE__ . '\\CmsUser', 'u')
+			->autoJoinOrderBy('COUNT(DISTINCT(groups.id))');
+
+		Assert::same('SELECT u, COUNT(DISTINCT(g0.id)) as HIDDEN g0id0 FROM KdybyTests\Doctrine\CmsUser u LEFT JOIN u.groups g0 GROUP BY u.id ORDER BY g0id0 ASC', $qb->getDQL());
+	}
+
 
 	protected static function assertQuery($expectedDql, $expectedParams, Doctrine\ORM\Query $query)
 	{
