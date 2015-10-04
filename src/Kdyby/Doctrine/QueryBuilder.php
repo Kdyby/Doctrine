@@ -107,13 +107,26 @@ class QueryBuilder extends Doctrine\ORM\QueryBuilder implements \IteratorAggrega
 		}
 
 		if (is_string($sort)) {
-			$alias = $this->autoJoin($sort);
-			$sort = $alias . '.' . $sort;
+			$reg = '~[^()]+(?=\))~';
+			if (preg_match($reg, $sort, $matches)) {
+				$sortMix = $sort;
+				$sort = $matches[0];
+				$alias = $this->autoJoin($sort, 'leftJoin');
+				$hiddenAlias = $alias . $sort . count($this->getDQLPart('orderBy'));
+
+				$this->addSelect(preg_replace($reg, $alias . '.' . $sort, $sortMix) . ' as HIDDEN ' . $hiddenAlias);
+				$rootAliases = $this->getRootAliases();
+				$this->addGroupBy(reset($rootAliases) . '.id');
+				$sort = $hiddenAlias;
+
+			} else {
+				$alias = $this->autoJoin($sort);
+				$sort = $alias . '.' . $sort;
+			}
 		}
 
 		return $this->addOrderBy($sort, $order);
 	}
-
 
 
 	/**
@@ -126,7 +139,7 @@ class QueryBuilder extends Doctrine\ORM\QueryBuilder implements \IteratorAggrega
 
 
 
-	private function autoJoin(&$key)
+	private function autoJoin(&$key, $methodJoin = "innerJoin")
 	{
 		$rootAliases = $this->getRootAliases();
 		$alias = reset($rootAliases);
@@ -156,7 +169,7 @@ class QueryBuilder extends Doctrine\ORM\QueryBuilder implements \IteratorAggrega
 			} while (isset($this->criteriaJoins[$joinAs]));
 			$this->criteriaJoins[$joinAs] = array();
 
-			$this->innerJoin("$alias.$property", $joinAs);
+			$this->{$methodJoin}("$alias.$property", $joinAs);
 			$this->criteriaJoins[$alias][$property] = $joinAs;
 			$alias = $joinAs;
 		}

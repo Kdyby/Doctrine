@@ -64,6 +64,10 @@ You can even order by relations
 ```php
 $commentsRepository->findBy([], ['article.title' => 'DESC']);
 ```
+Or you can order by SQL function
+```php
+$commentsRepository->findBy([], ['COUNT(article.id)' => 'DESC']);
+```
 
 If you wanna checkout all the supported syntaxes, have a look at all the `whereCriteria` tests in the [QueryBuilderTest](https://github.com/Kdyby/Doctrine/blob/master/tests/KdybyTests/Doctrine/QueryBuilder.phpt).
 
