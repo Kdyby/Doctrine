@@ -61,7 +61,7 @@ class ArticlesQuery extends QueryObject
     $repository->createQueryBuilder()
       ->select('partial article.{id}')->from(Article::class, 'article')
       ->leftJoin('article.comments', 'comments')->addSelect('comments')
-      ->andWhere('article.id IN :ids')->setParameter('ids', $ids)
+      ->andWhere('article.id IN (:ids)')->setParameter('ids', $ids)
       ->getQuery()->getResult();
   }
 
