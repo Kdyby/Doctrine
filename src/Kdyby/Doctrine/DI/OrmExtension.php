@@ -39,14 +39,14 @@ class OrmExtension extends Nette\DI\CompilerExtension
 	 * @var array
 	 */
 	public $managerDefaults = array(
-		'metadataCache' => 'default',
-		'queryCache' => 'default',
-		'resultCache' => 'default',
-		'hydrationCache' => 'default',
+		'metadataCache' => null,
+		'queryCache' => 'filesystem',
+		'resultCache' => 'filesystem',
+		'hydrationCache' => 'filesystem',
 		'secondLevelCache' => array(
 			'enabled' => FALSE,
 			'factoryClass' => 'Doctrine\ORM\Cache\DefaultCacheFactory',
-			'driver' => 'default',
+			'driver' => 'filesystem',
 			'regions' => array(
 				'defaultLifetime' => 3600,
 				'defaultLockLifetime' => 60,
@@ -271,6 +271,10 @@ class OrmExtension extends Nette\DI\CompilerExtension
 	{
 		$builder = $this->getContainerBuilder();
 		$config = $this->resolveConfig($defaults, $this->managerDefaults, $this->connectionDefaults);
+
+		if ($config['metadataCache'] === NULL) {
+			$config['metadataCache'] = $config['debug'] ? 'array' : 'filesystem';
+		}
 
 		if ($isDefault = !isset($builder->parameters[$this->name]['orm']['defaultEntityManager'])) {
 			$builder->parameters[$this->name]['orm']['defaultEntityManager'] = $name;
