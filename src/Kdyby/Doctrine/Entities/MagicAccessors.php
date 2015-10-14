@@ -218,7 +218,7 @@ trait MagicAccessors
 			/** @var \Nette\Callback $cb */
 			array_unshift($args, $this);
 
-			return $cb->invokeArgs($args);
+			return call_user_func_array($cb, $args);
 		}
 
 		throw MemberAccessException::undefinedMethodCall($this, $name);
