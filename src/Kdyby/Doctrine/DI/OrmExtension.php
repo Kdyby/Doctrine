@@ -617,7 +617,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			);
 		}
 
-		$serviceName = $this->prefix($prefix . '.driver.' . str_replace('\\', '_', $namespace) . '.' . $impl . 'Impl');
+		$serviceName = $this->prefix($prefix . '.driver.' . str_replace('\\', '_', $namespace) . '.' . str_replace('\\', '_', $impl) . 'Impl');
 
 		$this->getContainerBuilder()->addDefinition($serviceName)
 			->setClass('Doctrine\Common\Persistence\Mapping\Driver\MappingDriver')
