@@ -146,6 +146,17 @@ class EntityDaoTest extends ORMTestCase
 		), $dao->findPairs(array('status' => 'new'), 'name', array('name' => 'ASC')));
 	}
 
+	public function testCountBy()
+	{
+		$dao = $this->em->getDao('KdybyTests\Doctrine\CmsUser');
+		$dao->save(array(
+			new CmsUser('c', 'new'),
+			new CmsUser('a', 'old'),
+			new CmsUser('b', 'new'),
+		));
+		Assert::same(2, $dao->countBy(array('status' => 'new')));
+	}
+
 }
 
 \run(new EntityDaoTest());
