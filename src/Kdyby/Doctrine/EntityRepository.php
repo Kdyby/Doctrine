@@ -74,7 +74,7 @@ class EntityRepository extends Doctrine\ORM\EntityRepository implements Persiste
 
 	public function countBy(array $criteria = array())
 	{
-		return $query = $this->createQueryBuilder('e')
+		return (int) $this->createQueryBuilder('e')
 			->whereCriteria($criteria)
 			->select('COUNT(e)')
 			->setMaxResults(1)
