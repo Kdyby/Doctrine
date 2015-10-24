@@ -1,7 +1,7 @@
 # EntityDao
 
 It extends the `Kdyby\Doctrine\EntityRepository`, and is the default "repository" class for all entities.
-Please preffer using `EntityRepository` only, unless you really know what you're doing.
+Please prefer using `EntityRepository` only, unless you really know what you're doing.
 
 
 ## `->add($entity)`
