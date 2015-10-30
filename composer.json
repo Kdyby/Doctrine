@@ -17,10 +17,10 @@
 		"issues": "https://github.com/kdyby/doctrine/issues"
 	},
 	"require": {
-		"nette/di": "~2.2@dev",
-		"nette/neon": "~2.2@dev",
-		"nette/utils": "~2.2@dev",
-		"nette/robot-loader": "~2.2@dev",
+		"nette/di": "~2.3@dev",
+		"nette/neon": "~2.3@dev",
+		"nette/utils": "~2.3@dev",
+		"nette/robot-loader": "~2.3@dev",
 
 		"doctrine/orm": "~2.5",
 		"doctrine/dbal": "~2.5",
