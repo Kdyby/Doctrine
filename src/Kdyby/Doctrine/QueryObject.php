@@ -180,8 +180,7 @@ abstract class QueryObject extends Nette\Object implements Kdyby\Persistence\Que
 	public function fetchOne(Queryable $repository)
 	{
 		$query = $this->getQuery($repository)
-			->setFirstResult(NULL)
-			->setMaxResults(1);
+			->setFirstResult(NULL);
 
 		return $query->getSingleResult();
 	}
