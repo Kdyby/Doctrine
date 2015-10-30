@@ -25,10 +25,10 @@
 		"doctrine/orm": "~2.5",
 		"doctrine/dbal": "~2.5",
 
-		"kdyby/events": "~2.3@dev",
-		"kdyby/console": "~2.3@dev",
-		"kdyby/annotations": "~2.1@dev",
-		"kdyby/doctrine-cache": "~2.3@dev"
+		"kdyby/events": "~3.0@dev",
+		"kdyby/console": "~2.5@dev",
+		"kdyby/annotations": "~2.3@dev",
+		"kdyby/doctrine-cache": "~2.5@dev"
 	},
 	"require-dev": {
 		"nette/application": "~2.3@dev",
