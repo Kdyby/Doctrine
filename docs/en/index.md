@@ -56,8 +56,10 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Entity
  */
-class Article extends \Kdyby\Doctrine\Entities\BaseEntity
+class Article
 {
+
+	use \Kdyby\Doctrine\Entities\MagicAccessors;
 
 	/**
 	 * @ORM\Id
@@ -76,14 +78,15 @@ class Article extends \Kdyby\Doctrine\Entities\BaseEntity
 
 The full name of annotation `@ORM\Entity` is `Doctrine\ORM\Mapping\Entity`, that's why there is that namespace alias before class definition.
 
-Every entity, inherited from `Kdyby\Doctrine\Entities\BaseEntity` will have some cool features, the complete behaviour is listed [here](todo).
+Every entity, using `Kdyby\Doctrine\Entities\MagicAccessors` will have some cool features, the complete behaviour is listed [here](todo).
 
 If you don't want to declare $id column in every entity, you can use Identifier trait included in Kdyby\Doctrine\Entities\Attributes\Identifier. However, traits are only available since PHP 5.4. See [documentation](http://www.php.net/manual/en/language.oop5.traits.php).
 
 ```php
-class Article extends \Kdyby\Doctrine\Entities\BaseEntity
+class Article
 {
 
+	use \Kdyby\Doctrine\Entities\MagicAccessors;
 	use \Kdyby\Doctrine\Entities\Attributes\Identifier; // Using Identifier trait for id column
 	
 	// ...
@@ -93,9 +96,10 @@ class Article extends \Kdyby\Doctrine\Entities\BaseEntity
 You can also use an UUID - [Universally unique identifier](https://en.wikipedia.org/wiki/Universally_unique_identifier) using similar approach, but different trait named UniversallyUniqueIdentifier.
 
 ```php
-class Article extends \Kdyby\Doctrine\Entities\BaseEntity
+class Article
 {
 
+	use \Kdyby\Doctrine\Entities\MagicAccessors;
 	use \Kdyby\Doctrine\Entities\Attributes\UniversallyUniqueIdentifier; // Using UUI trait for id column
 
 	// ...
