@@ -10,6 +10,7 @@
 
 namespace Kdyby\Doctrine\Tools;
 
+use Doctrine;
 use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\Common\Cache\ClearableCache;
 use Kdyby;
@@ -24,7 +25,7 @@ class CacheCleaner extends Nette\Object
 {
 
 	/**
-	 * @var \Kdyby\Doctrine\EntityManager
+	 * @var \Doctrine\ORM\EntityManager
 	 */
 	private $entityManager;
 
@@ -35,7 +36,7 @@ class CacheCleaner extends Nette\Object
 
 
 
-	public function __construct(Kdyby\Doctrine\EntityManager $entityManager)
+	public function __construct(Doctrine\ORM\EntityManager $entityManager)
 	{
 		$this->entityManager = $entityManager;
 	}
