@@ -17,6 +17,7 @@ use Kdyby\DoctrineCache\DI\Helpers as CacheHelpers;
 use Nette;
 use Nette\DI\Statement;
 use Nette\PhpGenerator as Code;
+use Nette\PhpGenerator\Method;
 use Nette\Utils\Strings;
 use Nette\Utils\Validators;
 
@@ -400,18 +401,21 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			->setAutowired(FALSE);
 
 		// entity manager
-		$builder->addDefinition($managerServiceId = $this->prefix($name . '.entityManager'))
+		$entityManager = $builder->addDefinition($managerServiceId = $this->prefix($name . '.entityManager'))
 			->setClass('Kdyby\Doctrine\EntityManager')
 			->setFactory('Kdyby\Doctrine\EntityManager::create', array(
 				$connectionService = $this->processConnection($name, $defaults, $isDefault),
 				$this->prefix('@' . $name . '.ormConfiguration'),
 				$this->prefix('@' . $name . '.evm'),
 			))
-			->addSetup('?->bindEntityManager(?)', array($this->prefix('@' . $name . '.diagnosticsPanel'), '@self'))
 			->addTag(self::TAG_ENTITY_MANAGER)
 			->addTag('kdyby.doctrine.entityManager')
 			->setAutowired($isDefault)
 			->setInject(FALSE);
+
+		if ($this->isTracyPresent()) {
+			$entityManager->addSetup('?->bindEntityManager(?)', array($this->prefix('@' . $name . '.diagnosticsPanel'), '@self'));
+		}
 
 		if ($isDefault && $config['defaultRepositoryClassName'] === 'Kdyby\Doctrine\EntityDao') {
 			// syntax sugar for config
@@ -530,9 +534,11 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		}
 
 		// tracy panel
-		$builder->addDefinition($this->prefix($name . '.diagnosticsPanel'))
-			->setClass('Kdyby\Doctrine\Diagnostics\Panel')
-			->setAutowired(FALSE);
+		if ($this->isTracyPresent()) {
+			$builder->addDefinition($this->prefix($name . '.diagnosticsPanel'))
+				->setClass('Kdyby\Doctrine\Diagnostics\Panel')
+				->setAutowired(FALSE);
+		}
 
 		// connection
 		$options = array_diff_key($config, array_flip(array('types', 'resultCache', 'connection', 'logging')));
@@ -545,11 +551,15 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			))
 			->addSetup('setSchemaTypes', array($schemaTypes))
 			->addSetup('setDbalTypes', array($dbalTypes))
-			->addSetup('$panel = ?->bindConnection(?)', array($this->prefix('@' . $name . '.diagnosticsPanel'), '@self'))
 			->addTag(self::TAG_CONNECTION)
 			->addTag('kdyby.doctrine.connection')
 			->setAutowired($isDefault)
 			->setInject(FALSE);
+
+		if ($this->isTracyPresent()) {
+			$connection->addSetup('$panel = ?->bindConnection(?)', [$this->prefix('@' . $name . '.diagnosticsPanel'), '@self']);
+		}
+
 		/** @var Nette\DI\ServiceDefinition $connection */
 
 		$this->configuredConnections[$name] = $connectionServiceId;
@@ -762,19 +772,10 @@ class OrmExtension extends Nette\DI\CompilerExtension
 
 	public function afterCompile(Code\ClassType $class)
 	{
-		$init = $class->methods['initialize'];
-
-		$init->addBody('Kdyby\Doctrine\Diagnostics\Panel::registerBluescreen($this);');
-
-		if (property_exists('Tracy\BlueScreen', 'collapsePaths')) {
-			$blueScreen = 'Tracy\Debugger::getBlueScreen()';
-			$commonDirname = dirname(Nette\Reflection\ClassType::from('Doctrine\Common\Version')->getFileName());
-
-			$init->addBody($blueScreen . '->collapsePaths[] = ?;', array(dirname(Nette\Reflection\ClassType::from('Kdyby\Doctrine\Exception')->getFileName())));
-			$init->addBody($blueScreen . '->collapsePaths[] = ?;', array(dirname(dirname(dirname(dirname($commonDirname)))))); // this should be vendor/doctrine
-			foreach ($this->proxyAutoloaders as $dir) {
-				$init->addBody($blueScreen . '->collapsePaths[] = ?;', array($dir));
-			}
+		if ($this->isTracyPresent()) {
+			$init = $class->methods['initialize'];
+			$init->addBody('Kdyby\Doctrine\Diagnostics\Panel::registerBluescreen($this);');
+			$this->addCollapsePathsToTracy($init);
 		}
 
 		$this->processRepositoryFactoryEntities($class);
@@ -881,6 +882,30 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			$normalized[$originalEntity] = $mapping;
 		}
 		return $normalized;
+	}
+
+
+
+	/**
+	 * @return bool
+	 */
+	private function isTracyPresent()
+	{
+		return interface_exists('Tracy\IBarPanel');
+	}
+
+
+
+	private function addCollapsePathsToTracy(Method $init)
+	{
+		$blueScreen = 'Tracy\Debugger::getBlueScreen()';
+		$commonDirname = dirname(Nette\Reflection\ClassType::from('Doctrine\Common\Version')->getFileName());
+
+		$init->addBody($blueScreen . '->collapsePaths[] = ?;', array(dirname(Nette\Reflection\ClassType::from('Kdyby\Doctrine\Exception')->getFileName())));
+		$init->addBody($blueScreen . '->collapsePaths[] = ?;', array(dirname(dirname(dirname(dirname($commonDirname)))))); // this should be vendor/doctrine
+		foreach ($this->proxyAutoloaders as $dir) {
+			$init->addBody($blueScreen . '->collapsePaths[] = ?;', array($dir));
+		}
 	}
 
 
