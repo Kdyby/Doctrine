@@ -17,6 +17,7 @@ use Kdyby\DoctrineCache\DI\Helpers as CacheHelpers;
 use Nette;
 use Nette\DI\Statement;
 use Nette\PhpGenerator as Code;
+use Nette\PhpGenerator\Method;
 use Nette\Utils\Strings;
 use Nette\Utils\Validators;
 
@@ -533,7 +534,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		}
 
 		// tracy panel
-		if (interface_exists('Tracy\IBarPanel')) {
+		if ($this->isTracyPresent()) {
 			$builder->addDefinition($this->prefix($name . '.diagnosticsPanel'))
 				->setClass('Kdyby\Doctrine\Diagnostics\Panel')
 				->setAutowired(FALSE);
@@ -555,7 +556,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			->setAutowired($isDefault)
 			->setInject(FALSE);
 
-		if (interface_exists('Tracy\IBarPanel')) {
+		if ($this->isTracyPresent()) {
 			$connection->addSetup('$panel = ?->bindConnection(?)', [$this->prefix('@' . $name . '.diagnosticsPanel'), '@self']);
 		}
 
@@ -771,19 +772,12 @@ class OrmExtension extends Nette\DI\CompilerExtension
 
 	public function afterCompile(Code\ClassType $class)
 	{
-		if (interface_exists('Tracy\IBarPanel')) {
+		if ($this->isTracyPresent()) {
 			$init = $class->methods['initialize'];
 			$init->addBody('Kdyby\Doctrine\Diagnostics\Panel::registerBluescreen($this);');
 
 			if (property_exists('Tracy\BlueScreen', 'collapsePaths')) {
-				$blueScreen = 'Tracy\Debugger::getBlueScreen()';
-				$commonDirname = dirname(Nette\Reflection\ClassType::from('Doctrine\Common\Version')->getFileName());
-
-				$init->addBody($blueScreen . '->collapsePaths[] = ?;', array(dirname(Nette\Reflection\ClassType::from('Kdyby\Doctrine\Exception')->getFileName())));
-				$init->addBody($blueScreen . '->collapsePaths[] = ?;', array(dirname(dirname(dirname(dirname($commonDirname)))))); // this should be vendor/doctrine
-				foreach ($this->proxyAutoloaders as $dir) {
-					$init->addBody($blueScreen . '->collapsePaths[] = ?;', array($dir));
-				}
+				$this->addCollapsePathsToTracy($init);
 			}
 		}
 
@@ -917,6 +911,30 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		$keys = array_flip(array_reverse($keys, TRUE));
 		$array = array_merge($keys, $array);
 		return $array;
+	}
+
+
+
+	/**
+	 * @return bool
+	 */
+	private function isTracyPresent()
+	{
+		return interface_exists('Tracy\IBarPanel');
+	}
+
+
+
+	private function addCollapsePathsToTracy(Method $init)
+	{
+		$blueScreen = 'Tracy\Debugger::getBlueScreen()';
+		$commonDirname = dirname(Nette\Reflection\ClassType::from('Doctrine\Common\Version')->getFileName());
+
+		$init->addBody($blueScreen . '->collapsePaths[] = ?;', array(dirname(Nette\Reflection\ClassType::from('Kdyby\Doctrine\Exception')->getFileName())));
+		$init->addBody($blueScreen . '->collapsePaths[] = ?;', array(dirname(dirname(dirname(dirname($commonDirname)))))); // this should be vendor/doctrine
+		foreach ($this->proxyAutoloaders as $dir) {
+			$init->addBody($blueScreen . '->collapsePaths[] = ?;', array($dir));
+		}
 	}
 
 }
