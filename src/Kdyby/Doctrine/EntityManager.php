@@ -12,10 +12,13 @@ namespace Kdyby\Doctrine;
 
 use Doctrine;
 use Doctrine\DBAL\DriverManager;
+use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\ORMException;
 use Doctrine\ORM\Query;
 use Kdyby;
+use Kdyby\Doctrine\QueryObject;
 use Kdyby\Doctrine\Tools\NonLockingUniqueInserter;
+use Kdyby\Persistence;
 use Nette;
 use Nette\Utils\ObjectMixin;
 
@@ -28,7 +31,7 @@ use Nette\Utils\ObjectMixin;
  * @method \Kdyby\Doctrine\Configuration getConfiguration()
  * @method \Kdyby\Doctrine\EntityRepository getRepository($entityName)
  */
-class EntityManager extends Doctrine\ORM\EntityManager
+class EntityManager extends Doctrine\ORM\EntityManager implements Persistence\QueryExecutor, Persistence\Queryable
 {
 
 	/**
@@ -72,10 +75,15 @@ class EntityManager extends Doctrine\ORM\EntityManager
 
 
 	/**
+	 * @throws NotSupportedException
 	 * @return \Kdyby\Doctrine\QueryBuilder
 	 */
-	public function createQueryBuilder()
+	public function createQueryBuilder($alias = NULL, $indexBy = NULL)
 	{
+		if ($alias !== NULL || $indexBy !== NULL) {
+			throw new NotSupportedException('Use EntityRepository for $alias and $indexBy arguments to work.');
+		}
+
 		if (($config = $this->getConfiguration()) instanceof Configuration) {
 			$class = $config->getQueryBuilderClassName();
 			return new $class($this);
@@ -277,6 +285,68 @@ class EntityManager extends Doctrine\ORM\EntityManager
 	public function onDaoCreate(EntityManager $em, Doctrine\Common\Persistence\ObjectRepository $dao)
 	{
 		$this->__call(__FUNCTION__, func_get_args());
+	}
+
+
+
+	/****************** Kdyby\Persistence\QueryExecutor *****************/
+
+
+
+	/**
+	 * @param \Kdyby\Persistence\Query|\Kdyby\Doctrine\QueryObject $queryObject
+	 * @param int $hydrationMode
+	 * @throws QueryException
+	 * @return array|\Kdyby\Doctrine\ResultSet
+	 */
+	public function fetch(Persistence\Query $queryObject, $hydrationMode = AbstractQuery::HYDRATE_OBJECT)
+	{
+		try {
+			return $queryObject->fetch($this, $hydrationMode);
+
+		} catch (\Exception $e) {
+			throw $this->handleQueryException($e, $queryObject);
+		}
+	}
+
+
+
+	/**
+	 * @param \Kdyby\Persistence\Query|\Kdyby\Doctrine\QueryObject $queryObject
+	 *
+	 * @throws InvalidStateException
+	 * @throws QueryException
+	 * @return object|NULL
+	 */
+	public function fetchOne(Persistence\Query $queryObject)
+	{
+		try {
+			return $queryObject->fetchOne($this);
+
+		} catch (Doctrine\ORM\NoResultException $e) {
+			return NULL;
+
+		} catch (Doctrine\ORM\NonUniqueResultException $e) { // this should never happen!
+			throw new InvalidStateException("You have to setup your query calling ->setMaxResult(1).", 0, $e);
+
+		} catch (\Exception $e) {
+			throw $this->handleQueryException($e, $queryObject);
+		}
+	}
+
+
+
+	/**
+	 * @param \Exception $e
+	 * @param \Kdyby\Persistence\Query $queryObject
+	 *
+	 * @throws \Exception
+	 */
+	private function handleQueryException(\Exception $e, Persistence\Query $queryObject)
+	{
+		$lastQuery = $queryObject instanceof QueryObject ? $queryObject->getLastQuery() : NULL;
+
+		return new QueryException($e, $lastQuery, '['.get_class($queryObject).'] '.$e->getMessage());
 	}
 
 
