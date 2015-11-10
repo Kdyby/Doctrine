@@ -13,7 +13,6 @@ namespace Kdyby\Doctrine;
 use Doctrine;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\NoResultException;
-use Doctrine\ORM\NonUniqueResultException;
 use Kdyby;
 use Kdyby\Persistence;
 use Nette;
@@ -251,12 +250,7 @@ class EntityRepository extends Doctrine\ORM\EntityRepository implements Persiste
 	 */
 	public function fetch(Persistence\Query $queryObject, $hydrationMode = AbstractQuery::HYDRATE_OBJECT)
 	{
-		try {
-			return $queryObject->fetch($this, $hydrationMode);
-
-		} catch (\Exception $e) {
-			throw $this->handleQueryException($e, $queryObject);
-		}
+		return $this->getEntityManager()->fetch($queryObject, $hydrationMode);
 	}
 
 
@@ -270,18 +264,7 @@ class EntityRepository extends Doctrine\ORM\EntityRepository implements Persiste
 	 */
 	public function fetchOne(Persistence\Query $queryObject)
 	{
-		try {
-			return $queryObject->fetchOne($this);
-
-		} catch (NoResultException $e) {
-			return NULL;
-
-		} catch (NonUniqueResultException $e) { // this should never happen!
-			throw new InvalidStateException("You have to setup your query calling ->setMaxResult(1).", 0, $e);
-
-		} catch (\Exception $e) {
-			throw $this->handleQueryException($e, $queryObject);
-		}
+		return $this->getEntityManager()->fetchOne($queryObject);
 	}
 
 
@@ -293,21 +276,6 @@ class EntityRepository extends Doctrine\ORM\EntityRepository implements Persiste
 	public function getReference($id)
 	{
 		return $this->getEntityManager()->getReference($this->_entityName, $id);
-	}
-
-
-
-	/**
-	 * @param \Exception $e
-	 * @param \Kdyby\Persistence\Query $queryObject
-	 *
-	 * @throws \Exception
-	 */
-	private function handleQueryException(\Exception $e, Persistence\Query $queryObject)
-	{
-		$lastQuery = $queryObject instanceof QueryObject ? $queryObject->getLastQuery() : NULL;
-
-		return new QueryException($e, $lastQuery, '[' . get_class($queryObject) . '] ' . $e->getMessage());
 	}
 
 
