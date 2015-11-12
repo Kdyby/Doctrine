@@ -24,15 +24,6 @@ interface Queryable
 	 * Create a new QueryBuilder instance that is prepopulated for this entity name
 	 *
 	 * @param string|NULL $alias
-	 * @return \Kdyby\Doctrine\DqlSelection
-	 */
-	function select($alias = NULL);
-
-
-	/**
-	 * Create a new QueryBuilder instance that is prepopulated for this entity name
-	 *
-	 * @param string|NULL $alias
 	 * @param string $indexBy The index for the from.
 	 * @return \Kdyby\Doctrine\QueryBuilder
 	 */
