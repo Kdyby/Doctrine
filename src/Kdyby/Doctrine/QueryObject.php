@@ -93,7 +93,7 @@ abstract class QueryObject extends Nette\Object implements Kdyby\Persistence\Que
 	 * @throws UnexpectedValueException
 	 * @return \Doctrine\ORM\Query
 	 */
-	private function getQuery(Queryable $repository)
+	protected function getQuery(Queryable $repository)
 	{
 		$query = $this->toQuery($this->doCreateQuery($repository));
 
@@ -174,6 +174,11 @@ abstract class QueryObject extends Nette\Object implements Kdyby\Persistence\Que
 
 
 	/**
+	 * If You encounter a problem with the LIMIT 1 here,
+	 * you should instead of fetching toMany relations just use postFetch.
+	 *
+	 * And if you really really need to hack it, just override this method and remove the limit.
+	 *
 	 * @param \Kdyby\Persistence\Queryable $repository
 	 * @return object
 	 */
