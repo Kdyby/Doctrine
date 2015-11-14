@@ -222,16 +222,24 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 			return '';
 		}
 
+		$connParams = $this->connection->getParams();
+		if ($connParams['driver'] === 'pdo_sqlite' && isset($connParams['path'])) {
+			$host = 'path: ' . basename($connParams['path']);
+
+		} else {
+			$host = sprintf('host: %s%s/%s',
+				$this->connection->getHost(),
+				(($p = $this->connection->getPort()) ? ':' . $p : ''),
+				$this->connection->getDatabase()
+			);
+		}
+
 		return
 			$this->renderStyles() .
-			sprintf('<h1>Queries: %s %s, host: %s</h1>',
+			sprintf('<h1>Queries: %s %s, %s</h1>',
 				count($this->queries),
 				($this->totalTime ? ', time: ' . sprintf('%0.3f', $this->totalTime * 1000) . ' ms' : ''),
-				sprintf('%s%s/%s',
-					$this->connection->getHost(),
-					(($p = $this->connection->getPort()) ? ':' . $p : ''),
-					$this->connection->getDatabase()
-				)
+				$host
 			) .
 			'<div class="nette-inner tracy-inner nette-Doctrine2Panel">' .
 				implode('<br>', array_filter(array(
