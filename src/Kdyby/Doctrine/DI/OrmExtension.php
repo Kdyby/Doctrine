@@ -728,7 +728,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 
 			if ($boundEntity = $originalDef->getTag(self::TAG_REPOSITORY_ENTITY)) {
 				if (!is_string($boundEntity) || !class_exists($boundEntity)) {
-					throw new Nette\Utils\AssertionException(sprintf('The entity "%s" for repository "%s" cannot be autoloaded.'));
+					throw new Nette\Utils\AssertionException(sprintf('The entity "%s" for repository "%s" cannot be autoloaded.', $boundEntity, $originalDef->class));
 				}
 				$entityArgument = $boundEntity;
 
