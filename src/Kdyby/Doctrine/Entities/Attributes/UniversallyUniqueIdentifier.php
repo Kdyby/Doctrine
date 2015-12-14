@@ -17,8 +17,6 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @author Martin Štekl <martin.stekl@gmail.com>
  * @author Filip Klimeš <filip@filipklimes.cz>
- *
- * @property-read string $id
  */
 trait UniversallyUniqueIdentifier
 {
