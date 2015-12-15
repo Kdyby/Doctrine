@@ -141,6 +141,15 @@ trait MagicAccessors
 
 						return $this;
 
+					} elseif (substr($prop, -1) === 's' && isset($properties[$prop = substr($prop, 0, -1) . 'ses'])) {
+						if (!$this->$prop instanceof Collection) {
+							throw UnexpectedValueException::notACollection($this, $prop);
+						}
+
+						$this->$prop->add($args[0]);
+
+						return $this;
+
 					} elseif (isset($properties[$prop])) {
 						throw UnexpectedValueException::notACollection($this, $prop);
 					}
@@ -154,6 +163,13 @@ trait MagicAccessors
 						return $this->{$prop . 's'}->contains($args[0]);
 
 					} elseif (substr($prop, -1) === 'y' && isset($properties[$prop = substr($prop, 0, -1) . 'ies'])) {
+						if (!$this->$prop instanceof Collection) {
+							throw UnexpectedValueException::notACollection($this, $prop);
+						}
+
+						return $this->$prop->contains($args[0]);
+
+					} elseif (substr($prop, -1) === 's' && isset($properties[$prop = substr($prop, 0, -1) . 'ses'])) {
 						if (!$this->$prop instanceof Collection) {
 							throw UnexpectedValueException::notACollection($this, $prop);
 						}
@@ -177,6 +193,15 @@ trait MagicAccessors
 						return $this;
 
 					} elseif (substr($prop, -1) === 'y' && isset($properties[$prop = substr($prop, 0, -1) . 'ies'])) {
+						if (!$this->$prop instanceof Collection) {
+							throw UnexpectedValueException::notACollection($this, $prop);
+						}
+
+						$this->$prop->removeElement($args[0]);
+
+						return $this;
+
+					} elseif (substr($prop, -1) === 's' && isset($properties[$prop = substr($prop, 0, -1) . 'ses'])) {
 						if (!$this->$prop instanceof Collection) {
 							throw UnexpectedValueException::notACollection($this, $prop);
 						}

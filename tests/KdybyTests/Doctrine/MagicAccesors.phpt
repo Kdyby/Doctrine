@@ -383,6 +383,23 @@ class MagicAccessorsTest extends Tester\TestCase
 		Assert::same(2, $entity->getRealSomething());
 	}
 
+
+
+	public function testPluralAccessor()
+	{
+		$entity = new BadlyNamedEntity();
+		Assert::false($entity->hasBus(1));
+
+		$entity->addBus(1);
+		$entity->addBus(2);
+		Assert::true($entity->hasBus(1));
+
+		$entity->removeBus(1);
+		Assert::false($entity->hasBus(1));
+
+		Assert::true($entity->hasBus(2));
+	}
+
 }
 
 
@@ -424,6 +441,11 @@ class BadlyNamedEntity
 	 * @var object
 	 */
 	protected $four;
+
+	/**
+	 * @var \Doctrine\Common\Collections\ArrayCollection
+	 */
+	protected $buses;
 
 	/**
 	 * @var object
@@ -469,6 +491,8 @@ class BadlyNamedEntity
 		$this->twos = new ArrayCollection(array((object) array('id' => 2)));
 		$this->proxies = new ArrayCollection(array((object) array('id' => 3)));
 		$this->threes = new ArrayCollection(array((object) array('id' => 4)));
+
+		$this->buses = new ArrayCollection();
 	}
 
 
