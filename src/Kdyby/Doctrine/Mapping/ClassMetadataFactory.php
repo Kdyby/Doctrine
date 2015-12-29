@@ -70,12 +70,7 @@ class ClassMetadataFactory extends Doctrine\ORM\Mapping\ClassMetadataFactory
 			throw new Kdyby\Doctrine\MissingClassException("Metadata of class $name was not found, because the class is missing or cannot be autoloaded.");
 		}
 
-		$result = parent::loadMetadata($name);
-		if ($name !== $origName) {
-			$this->setMetadataFor($origName, $this->getMetadataFor($name));
-		}
-
-		return $result;
+		return parent::loadMetadata($origName);
 	}
 
 

@@ -29,7 +29,10 @@ class ResolveTargetEntityListener extends Doctrine\ORM\Tools\ResolveTargetEntity
 	 */
 	public function getSubscribedEvents()
 	{
-		return array(Events::loadClassMetadata);
+		return array(
+			Events::loadClassMetadata,
+			Events::onClassMetadataNotFound,
+		);
 	}
 
 }
