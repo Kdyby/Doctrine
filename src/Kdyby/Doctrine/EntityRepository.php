@@ -72,15 +72,16 @@ class EntityRepository extends Doctrine\ORM\EntityRepository implements Persiste
 
 
 
+	/**
+	 * @param array $criteria
+	 * @return int
+	 */
 	public function countBy(array $criteria = array())
 	{
-		$result = $this->createQueryBuilder('e')
+		return (int) $this->createQueryBuilder('e')
 			->whereCriteria($criteria)
-			->select('COUNT(e) AS rowsCount')
-			->setMaxResults(1)
-			->getQuery()->getSingleResult();
-
-		return (int) $result['rowsCount'];
+			->select('COUNT(e)')
+			->getQuery()->getSingleScalarResult();
 	}
 
 
