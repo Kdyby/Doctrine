@@ -36,15 +36,15 @@ class AnnotationDriverTest extends Tester\TestCase
 
 	public function testGetAllClassNames()
 	{
-		$driver = new Kdyby\Doctrine\Mapping\AnnotationDriver(array(
+		$driver = new Kdyby\Doctrine\Mapping\AnnotationDriver([
 			__DIR__ . '/models/AnnotationDriver/App/*Entity.php',
 			__DIR__ . '/models/AnnotationDriver/Something',
-		), new AnnotationReader());
+		], new AnnotationReader());
 
-		Assert::same(array(
+		Assert::same([
 			'KdybyTests\Doctrine\AnnotationDriver\App\FooEntity',
 			'KdybyTests\Doctrine\AnnotationDriver\Something\Baz'
-		), $driver->getAllClassNames());
+		], $driver->getAllClassNames());
 
 		Assert::true(!in_array('KdybyTests\Doctrine\AnnotationDriver\App\Bar', $driver->getAllClassNames()));
 	}

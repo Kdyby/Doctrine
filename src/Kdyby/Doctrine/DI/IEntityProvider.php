@@ -19,7 +19,7 @@ use Nette;
  * Mapping definition can be
  * - absolute directory path __DIR__
  * - array of absolute directory path [__DIR__]
- * - DI\Statement instance with mapping type as entity new DI\Statement('annotations', array(__DIR__))
+ * - DI\Statement instance with mapping type as entity new DI\Statement('annotations', [__DIR__])
  *
  * @author Filip Procházka <filip@prochazka.su>
  */

@@ -234,8 +234,8 @@ class BaseEntityTest extends Tester\TestCase
 	public function testCallGetterOnProtectedCollection()
 	{
 		$entity = new ConcreteEntity();
-		Assert::equal(array((object) array('id' => 2)), $entity->getTwos());
-		Assert::equal(array((object) array('id' => 3)), $entity->getProxies());
+		Assert::equal([(object) ['id' => 2]], $entity->getTwos());
+		Assert::equal([(object) ['id' => 3]], $entity->getProxies());
 	}
 
 
@@ -254,7 +254,7 @@ class BaseEntityTest extends Tester\TestCase
 	{
 		Assert::exception(function () {
 			$entity = new ConcreteEntity();
-			$entity->addOne((object) array('id' => 1));
+			$entity->addOne((object) ['id' => 1]);
 		}, 'Kdyby\Doctrine\MemberAccessException', 'Call to undefined method KdybyTests\Doctrine\ConcreteEntity::addOne().');
 	}
 
@@ -264,7 +264,7 @@ class BaseEntityTest extends Tester\TestCase
 	{
 		Assert::exception(function () {
 			$entity = new ConcreteEntity();
-			$entity->addFour((object) array('id' => 4));
+			$entity->addFour((object) ['id' => 4]);
 		}, 'Kdyby\Doctrine\UnexpectedValueException', 'Class property KdybyTests\Doctrine\ConcreteEntity::$four is not an instance of Doctrine\Common\Collections\Collection.');
 	}
 
@@ -273,12 +273,12 @@ class BaseEntityTest extends Tester\TestCase
 	public function testCallAddOnProtectedCollection()
 	{
 		$entity = new ConcreteEntity();
-		$entity->addTwo($a = (object) array('id' => 2));
+		$entity->addTwo($a = (object) ['id' => 2]);
 		Assert::true((bool) array_filter($entity->getTwos(), function ($two) use ($a) {
 			return $two === $a;
 		}));
 
-		$entity->addProxy($b = (object) array('id' => 3));
+		$entity->addProxy($b = (object) ['id' => 3]);
 		Assert::true((bool) array_filter($entity->getProxies(), function ($two) use ($b) {
 			return $two === $b;
 		}));
@@ -290,7 +290,7 @@ class BaseEntityTest extends Tester\TestCase
 	{
 		Assert::exception(function () {
 			$entity = new ConcreteEntity();
-			$entity->hasOne((object) array('id' => 1));
+			$entity->hasOne((object) ['id' => 1]);
 		}, 'Kdyby\Doctrine\MemberAccessException', 'Call to undefined method KdybyTests\Doctrine\ConcreteEntity::hasOne().');
 	}
 
@@ -300,7 +300,7 @@ class BaseEntityTest extends Tester\TestCase
 	{
 		Assert::exception(function () {
 			$entity = new ConcreteEntity();
-			$entity->hasFour((object) array('id' => 4));
+			$entity->hasFour((object) ['id' => 4]);
 		}, 'Kdyby\Doctrine\UnexpectedValueException', 'Class property KdybyTests\Doctrine\ConcreteEntity::$four is not an instance of Doctrine\Common\Collections\Collection.');
 	}
 
@@ -309,8 +309,8 @@ class BaseEntityTest extends Tester\TestCase
 	public function testCallHasOnProtectedCollection()
 	{
 		$entity = new ConcreteEntity();
-		Assert::false($entity->hasTwo((object) array('id' => 2)));
-		Assert::false($entity->hasProxy((object) array('id' => 3)));
+		Assert::false($entity->hasTwo((object) ['id' => 2]));
+		Assert::false($entity->hasProxy((object) ['id' => 3]));
 
 		$twos = $entity->getTwos();
 		Assert::true(!empty($twos));
@@ -327,7 +327,7 @@ class BaseEntityTest extends Tester\TestCase
 	{
 		Assert::exception(function () {
 			$entity = new ConcreteEntity();
-			$entity->removeOne((object) array('id' => 1));
+			$entity->removeOne((object) ['id' => 1]);
 		}, 'Kdyby\Doctrine\MemberAccessException', 'Call to undefined method KdybyTests\Doctrine\ConcreteEntity::removeOne().');
 	}
 
@@ -337,7 +337,7 @@ class BaseEntityTest extends Tester\TestCase
 	{
 		Assert::exception(function () {
 			$entity = new ConcreteEntity();
-			$entity->removeFour((object) array('id' => 4));
+			$entity->removeFour((object) ['id' => 4]);
 		}, 'Kdyby\Doctrine\UnexpectedValueException', 'Class property KdybyTests\Doctrine\ConcreteEntity::$four is not an instance of Doctrine\Common\Collections\Collection.');
 	}
 
@@ -400,7 +400,7 @@ class ConcreteEntity extends BaseEntity
 	/**
 	 * @var array events
 	 */
-	private $onSomething = array();
+	private $onSomething = [];
 
 	/**
 	 * @var object
@@ -453,14 +453,14 @@ class ConcreteEntity extends BaseEntity
 	 */
 	public function __construct()
 	{
-		$this->one = (object) array('id' => 1);
-		$this->two = (object) array('id' => 2);
-		$this->three = (object) array('id' => 3);
+		$this->one = (object) ['id' => 1];
+		$this->two = (object) ['id' => 2];
+		$this->three = (object) ['id' => 3];
 
-		$this->ones = new ArrayCollection(array((object) array('id' => 1)));
-		$this->twos = new ArrayCollection(array((object) array('id' => 2)));
-		$this->proxies = new ArrayCollection(array((object) array('id' => 3)));
-		$this->threes = new ArrayCollection(array((object) array('id' => 4)));
+		$this->ones = new ArrayCollection([(object) ['id' => 1]]);
+		$this->twos = new ArrayCollection([(object) ['id' => 2]]);
+		$this->proxies = new ArrayCollection([(object) ['id' => 3]]);
+		$this->threes = new ArrayCollection([(object) ['id' => 4]]);
 	}
 
 

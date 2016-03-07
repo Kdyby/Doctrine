@@ -21,7 +21,7 @@ use Nette\Utils\ObjectMixin;
  * @author Filip Procházka <filip@prochazka.su>
  *
  * @method NativeQueryBuilder setParameter($key, $value, $type = null)
- * @method NativeQueryBuilder setParameters(array $params, array $types = array())
+ * @method NativeQueryBuilder setParameters(array $params, array $types = [])
  * @method NativeQueryBuilder setFirstResult($firstResult)
  * @method NativeQueryBuilder setMaxResults($maxResults)
  * @method NativeQueryBuilder select($select = NULL)
@@ -201,7 +201,7 @@ class NativeQueryBuilder extends Doctrine\DBAL\Query\QueryBuilder
 	 */
 	public function join($fromAlias, $join, $alias, $condition = null)
 	{
-		return call_user_func_array(array($this, 'innerJoin'), func_get_args());
+		return call_user_func_array([$this, 'innerJoin'], func_get_args());
 	}
 
 
@@ -270,7 +270,7 @@ class NativeQueryBuilder extends Doctrine\DBAL\Query\QueryBuilder
 		} elseif (isset($rsm->aliasMap[$joinedFrom])) {
 			$fromClass = $this->em->getClassMetadata($rsm->aliasMap[$joinedFrom]);
 
-			foreach (array_merge(array($fromClass->getName()), $fromClass->subClasses) as $fromClass) {
+			foreach (array_merge([$fromClass->getName()], $fromClass->subClasses) as $fromClass) {
 				$fromClass = $this->em->getClassMetadata($fromClass);
 
 				if ($fromClass->hasAssociation($table)) {

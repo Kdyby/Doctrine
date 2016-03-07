@@ -55,7 +55,7 @@ class ResultSetMappingBuilder extends Doctrine\ORM\Query\ResultSetMappingBuilder
 
 
 
-	protected function addAllClassFields($class, $alias, $columnAliasMap = array())
+	protected function addAllClassFields($class, $alias, $columnAliasMap = [])
 	{
 		$classMetadata = $this->em->getClassMetadata($class);
 
@@ -151,7 +151,7 @@ class ResultSetMappingBuilder extends Doctrine\ORM\Query\ResultSetMappingBuilder
 	 *
 	 * @return string
 	 */
-	private function getColumnAlias($columnName, $mode = NULL, array $customRenameColumns = array())
+	private function getColumnAlias($columnName, $mode = NULL, array $customRenameColumns = [])
 	{
 		$mode = $mode ?: $this->defaultRenameMode;
 		switch ($mode) {
@@ -180,7 +180,7 @@ class ResultSetMappingBuilder extends Doctrine\ORM\Query\ResultSetMappingBuilder
 	 * @throws \Doctrine\ORM\Mapping\MappingException
 	 * @return array
 	 */
-	private function getColumnAliasMap($className, $mode = NULL, array $customRenameColumns = array())
+	private function getColumnAliasMap($className, $mode = NULL, array $customRenameColumns = [])
 	{
 		$mode = $mode ? : $this->defaultRenameMode;
 
@@ -188,7 +188,7 @@ class ResultSetMappingBuilder extends Doctrine\ORM\Query\ResultSetMappingBuilder
 			$mode = self::COLUMN_RENAMING_CUSTOM;
 		}
 
-		$columnAlias = array();
+		$columnAlias = [];
 		$class = $this->em->getClassMetadata($className);
 
 		foreach ($class->getColumnNames() as $columnName) {
@@ -233,7 +233,7 @@ class ResultSetMappingBuilder extends Doctrine\ORM\Query\ResultSetMappingBuilder
 	 *
 	 * @return string
 	 */
-	public function generateSelectClause($tableAliases = array())
+	public function generateSelectClause($tableAliases = [])
 	{
 		$sql = "";
 

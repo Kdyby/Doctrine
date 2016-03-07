@@ -89,7 +89,7 @@ class EntityManagerMock extends EntityManager
 			$config = new Configuration();
 			$config->setProxyDir(TEMP_DIR . '/proxies');
 			$config->setProxyNamespace('KdybyTests\DoctrineProxies');
-			$config->setMetadataDriverImpl($config->newDefaultAnnotationDriver(array(), TRUE));
+			$config->setMetadataDriverImpl($config->newDefaultAnnotationDriver([], TRUE));
 		}
 
 		if (is_null($eventManager)) {

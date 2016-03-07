@@ -28,7 +28,7 @@ class InlineParamsBuilder extends Kdyby\Doctrine\QueryBuilder
 	 */
 	public function join($join, $alias, $conditionType = NULL, $condition = NULL, $indexBy = NULL)
 	{
-		return call_user_func_array(array($this, 'innerJoin'), func_get_args());
+		return call_user_func_array([$this, 'innerJoin'], func_get_args());
 	}
 
 

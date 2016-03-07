@@ -122,39 +122,39 @@ class EntityDaoTest extends ORMTestCase
 	public function testFindPairs()
 	{
 		$dao = $this->em->getDao('KdybyTests\Doctrine\CmsUser');
-		$dao->save(array(
+		$dao->save([
 			new CmsUser('c', 'new'),
 			new CmsUser('a', 'old'),
 			new CmsUser('b', 'new'),
-		));
+		]);
 
 		$this->em->clear();
 
-		Assert::same(array(
+		Assert::same([
 			1 => 'c',
 			3 => 'b',
-		), $dao->findPairs(array('status' => 'new'), 'name'));
+		], $dao->findPairs(['status' => 'new'], 'name'));
 
-		Assert::same(array(
+		Assert::same([
 			3 => 'b',
 			1 => 'c',
-		), $dao->findPairs(array('status' => 'new'), 'name', array('name')));
+		], $dao->findPairs(['status' => 'new'], 'name', ['name']));
 
-		Assert::same(array(
+		Assert::same([
 			3 => 'b',
 			1 => 'c',
-		), $dao->findPairs(array('status' => 'new'), 'name', array('name' => 'ASC')));
+		], $dao->findPairs(['status' => 'new'], 'name', ['name' => 'ASC']));
 	}
 
 	public function testCountBy()
 	{
 		$dao = $this->em->getDao('KdybyTests\Doctrine\CmsUser');
-		$dao->save(array(
+		$dao->save([
 			new CmsUser('c', 'new'),
 			new CmsUser('a', 'old'),
 			new CmsUser('b', 'new'),
-		));
-		Assert::same(2, $dao->countBy(array('status' => 'new')));
+		]);
+		Assert::same(2, $dao->countBy(['status' => 'new']));
 	}
 
 }

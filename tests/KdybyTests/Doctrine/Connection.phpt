@@ -71,7 +71,7 @@ class ConnectionTest extends Tester\TestCase
 	 */
 	public function testDriverExceptions_MySQL($exception, $class, array $props)
 	{
-		$conn = new ConnectionMock(array(), new MysqlDriverMock());
+		$conn = new ConnectionMock([], new MysqlDriverMock());
 		$conn->setDatabasePlatform(new Doctrine\DBAL\Platforms\MySqlPlatform());
 		$conn->throwOldKdybyExceptions = TRUE;
 
@@ -90,41 +90,41 @@ class ConnectionTest extends Tester\TestCase
 	public function dataMySqlExceptions()
 	{
 		$e = new \PDOException('SQLSTATE[23000]: Integrity constraint violation: 1048 Column \'name\' cannot be null', '23000');
-		$e->errorInfo = array('23000', 1048, 'Column \'name\' cannot be null');
+		$e->errorInfo = ['23000', 1048, 'Column \'name\' cannot be null'];
 		$emptyPdo = new PDOException($e);
 
 		$driver = new MysqlDriverMock();
 
 		$empty = Doctrine\DBAL\DBALException::driverExceptionDuringQuery(
-			$driver, $emptyPdo, "INSERT INTO `test_empty` (`name`) VALUES (NULL)", array()
+			$driver, $emptyPdo, "INSERT INTO `test_empty` (`name`) VALUES (NULL)", []
 		);
 
 		$e = new \PDOException('SQLSTATE[23000]: Integrity constraint violation: 1062 Duplicate entry \'filip-prochazka\' for key \'uniq_name_surname\'', '23000');
-		$e->errorInfo = array('23000', 1062, 'Duplicate entry \'filip-prochazka\' for key \'uniq_name_surname\'');
+		$e->errorInfo = ['23000', 1062, 'Duplicate entry \'filip-prochazka\' for key \'uniq_name_surname\''];
 		$uniquePdo = new PDOException($e);
 
 		$unique = Doctrine\DBAL\DBALException::driverExceptionDuringQuery(
-			$driver, $uniquePdo, "INSERT INTO `test_empty` (`name`, `surname`) VALUES ('filip', 'prochazka')", array()
+			$driver, $uniquePdo, "INSERT INTO `test_empty` (`name`, `surname`) VALUES ('filip', 'prochazka')", []
 		);
 
-		return array(
-			array($empty, 'Kdyby\Doctrine\EmptyValueException', array('column' => 'name')),
-			array($unique, 'Kdyby\Doctrine\DuplicateEntryException', array('columns' => array('uniq_name_surname' => array('name', 'surname')))),
-		);
+		return [
+			[$empty, 'Kdyby\Doctrine\EmptyValueException', ['column' => 'name']],
+			[$unique, 'Kdyby\Doctrine\DuplicateEntryException', ['columns' => ['uniq_name_surname' => ['name', 'surname']]]],
+		];
 	}
 
 
 	public function testDatabasePlatform_types()
 	{
-		$conn = new Kdyby\Doctrine\Connection(array(
+		$conn = new Kdyby\Doctrine\Connection([
 			'memory' => TRUE,
-		), new Doctrine\DBAL\Driver\PDOSqlite\Driver());
-		$conn->setSchemaTypes(array(
+		], new Doctrine\DBAL\Driver\PDOSqlite\Driver());
+		$conn->setSchemaTypes([
 			'enum' => 'enum',
-		));
-		$conn->setDbalTypes(array(
+		]);
+		$conn->setDbalTypes([
 			'enum' => 'Kdyby\\Doctrine\\Types\\Enum',
-		));
+		]);
 		$platform = $conn->getDatabasePlatform();
 		Assert::same('enum', $platform->getDoctrineTypeMapping('enum'));
 	}
@@ -160,9 +160,9 @@ class SchemaManagerMock extends Doctrine\DBAL\Schema\MySqlSchemaManager
 	 */
 	public function listTableIndexes($table)
 	{
-		$tables = array(
-			'test_empty' => array('uniq_name_surname' => new Doctrine\DBAL\Schema\Index('uniq_name_surname', array('name', 'surname'), TRUE)),
-		);
+		$tables = [
+			'test_empty' => ['uniq_name_surname' => new Doctrine\DBAL\Schema\Index('uniq_name_surname', ['name', 'surname'], TRUE)],
+		];
 
 		if (!isset($tables[$table])) {
 			Assert::fail("Table `$table` not found.");

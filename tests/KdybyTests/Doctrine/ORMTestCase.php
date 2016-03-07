@@ -44,10 +44,10 @@ abstract class ORMTestCase extends Tester\TestCase
 		$container = $config->setTempDirectory(TEMP_DIR)
 			->addConfig(__DIR__ . '/../nette-reset.neon', !isset($config->defaultExtensions['nette']) ? 'v23' : 'v22')
 			->addConfig(__DIR__ . '/config/memory.neon')
-			->addParameters(array(
+			->addParameters([
 				'appDir' => $rootDir,
 				'wwwDir' => $rootDir,
-			))
+			])
 			->createContainer();
 		/** @var Nette\DI\Container $container */
 
@@ -69,7 +69,7 @@ abstract class ORMTestCase extends Tester\TestCase
 	 * @param array $props
 	 * @return object
 	 */
-	protected function newInstance($className, $props = array())
+	protected function newInstance($className, $props = [])
 	{
 		return Code\Helpers::createObject($className, $props);
 	}

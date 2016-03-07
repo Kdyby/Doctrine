@@ -37,7 +37,7 @@ class Element extends Nette\Object
 	/**
 	 * @var Coordinates[]
 	 */
-	private $coordinates = array();
+	private $coordinates = [];
 
 	/**
 	 * @var string
@@ -132,9 +132,9 @@ class Element extends Nette\Object
 			$this->init();
 		}
 
-		$list = array();
+		$list = [];
 		foreach ($this->coordinates as $coords) {
-			$list[] = array($lat => $coords->getLatitude(), $lon => $coords->getLongitude());
+			$list[] = [$lat => $coords->getLatitude(), $lon => $coords->getLongitude()];
 		}
 		return $list;
 	}
@@ -203,7 +203,7 @@ class Element extends Nette\Object
 		if (!$this->stringValue) {
 			$this->frozen = FALSE;
 
-			$list = array();
+			$list = [];
 			foreach ($this->coordinates as $coords) {
 				$list[] = clone $coords;
 			}
@@ -223,7 +223,7 @@ class Element extends Nette\Object
 		}
 
 		$coordinates = implode($this->separator, $this->coordinates);
-		if (in_array($this->name, array(self::POINT, self::LINE_STRING))) {
+		if (in_array($this->name, [self::POINT, self::LINE_STRING])) {
 			return strtoupper($this->name) . '(' . $coordinates . ')';
 		} else {
 			return strtoupper($this->name) . '((' . $coordinates . '))';

@@ -49,69 +49,69 @@ class QueryBuilderTest extends KdybyTests\Doctrine\ORMTestCase
 	{
 		$qb = $this->em->createQueryBuilder()
 			->select('e')->from(__NAMESPACE__ . '\\CmsUser', 'e')
-			->whereCriteria(array('name' => 'Filip'));
+			->whereCriteria(['name' => 'Filip']);
 
-		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsUser e WHERE e.name = :param_1', array('param_1' => 'Filip'), $qb->getQuery());
-
-		$qb = $this->em->createQueryBuilder()
-			->select('e')->from(__NAMESPACE__ . '\\CmsUser', 'e')
-			->whereCriteria(array('name =' => 'Filip'));
-
-		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsUser e WHERE e.name = :param_1', array('param_1' => 'Filip'), $qb->getQuery());
+		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsUser e WHERE e.name = :param_1', ['param_1' => 'Filip'], $qb->getQuery());
 
 		$qb = $this->em->createQueryBuilder()
 			->select('e')->from(__NAMESPACE__ . '\\CmsUser', 'e')
-			->whereCriteria(array('name eq' => 'Filip'));
+			->whereCriteria(['name =' => 'Filip']);
 
-		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsUser e WHERE e.name = :param_1', array('param_1' => 'Filip'), $qb->getQuery());
-
-		$qb = $this->em->createQueryBuilder()
-			->select('e')->from(__NAMESPACE__ . '\\CmsUser', 'e')
-			->whereCriteria(array('name !=' => 'Filip'));
-
-		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsUser e WHERE e.name != :param_1', array('param_1' => 'Filip'), $qb->getQuery());
+		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsUser e WHERE e.name = :param_1', ['param_1' => 'Filip'], $qb->getQuery());
 
 		$qb = $this->em->createQueryBuilder()
 			->select('e')->from(__NAMESPACE__ . '\\CmsUser', 'e')
-			->whereCriteria(array('name !=' => array(1, 2, 3)));
+			->whereCriteria(['name eq' => 'Filip']);
 
-		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsUser e WHERE e.name NOT IN (:param_1)', array('param_1' => array(1, 2, 3)), $qb->getQuery());
-
-		$qb = $this->em->createQueryBuilder()
-			->select('e')->from(__NAMESPACE__ . '\\CmsUser', 'e')
-			->whereCriteria(array('name !' => array(1, 2, 3)));
-
-		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsUser e WHERE e.name NOT IN (:param_1)', array('param_1' => array(1, 2, 3)), $qb->getQuery());
+		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsUser e WHERE e.name = :param_1', ['param_1' => 'Filip'], $qb->getQuery());
 
 		$qb = $this->em->createQueryBuilder()
 			->select('e')->from(__NAMESPACE__ . '\\CmsUser', 'e')
-			->whereCriteria(array('name !=' => NULL));
+			->whereCriteria(['name !=' => 'Filip']);
 
-		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsUser e WHERE e.name IS NOT NULL', array(), $qb->getQuery());
-
-		$qb = $this->em->createQueryBuilder()
-			->select('e')->from(__NAMESPACE__ . '\\CmsUser', 'e')
-			->whereCriteria(array('name !' => NULL));
-
-		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsUser e WHERE e.name IS NOT NULL', array(), $qb->getQuery());
+		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsUser e WHERE e.name != :param_1', ['param_1' => 'Filip'], $qb->getQuery());
 
 		$qb = $this->em->createQueryBuilder()
 			->select('e')->from(__NAMESPACE__ . '\\CmsUser', 'e')
-			->whereCriteria(array('name neq' => 'Filip'));
+			->whereCriteria(['name !=' => [1, 2, 3]]);
 
-		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsUser e WHERE e.name != :param_1', array('param_1' => 'Filip'), $qb->getQuery());
-
-		$qb = $this->em->createQueryBuilder()
-			->select('e')->from(__NAMESPACE__ . '\\CmsUser', 'e')
-			->whereCriteria(array('name not' => array(1, 2, 3)));
-
-		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsUser e WHERE e.name NOT IN (:param_1)', array('param_1' => array(1, 2, 3)), $qb->getQuery());
+		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsUser e WHERE e.name NOT IN (:param_1)', ['param_1' => [1, 2, 3]], $qb->getQuery());
 
 		$qb = $this->em->createQueryBuilder()
 			->select('e')->from(__NAMESPACE__ . '\\CmsUser', 'e')
-			->whereCriteria(array('name not' => NULL));
+			->whereCriteria(['name !' => [1, 2, 3]]);
 
-		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsUser e WHERE e.name IS NOT NULL', array(), $qb->getQuery());
+		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsUser e WHERE e.name NOT IN (:param_1)', ['param_1' => [1, 2, 3]], $qb->getQuery());
+
+		$qb = $this->em->createQueryBuilder()
+			->select('e')->from(__NAMESPACE__ . '\\CmsUser', 'e')
+			->whereCriteria(['name !=' => NULL]);
+
+		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsUser e WHERE e.name IS NOT NULL', [], $qb->getQuery());
+
+		$qb = $this->em->createQueryBuilder()
+			->select('e')->from(__NAMESPACE__ . '\\CmsUser', 'e')
+			->whereCriteria(['name !' => NULL]);
+
+		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsUser e WHERE e.name IS NOT NULL', [], $qb->getQuery());
+
+		$qb = $this->em->createQueryBuilder()
+			->select('e')->from(__NAMESPACE__ . '\\CmsUser', 'e')
+			->whereCriteria(['name neq' => 'Filip']);
+
+		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsUser e WHERE e.name != :param_1', ['param_1' => 'Filip'], $qb->getQuery());
+
+		$qb = $this->em->createQueryBuilder()
+			->select('e')->from(__NAMESPACE__ . '\\CmsUser', 'e')
+			->whereCriteria(['name not' => [1, 2, 3]]);
+
+		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsUser e WHERE e.name NOT IN (:param_1)', ['param_1' => [1, 2, 3]], $qb->getQuery());
+
+		$qb = $this->em->createQueryBuilder()
+			->select('e')->from(__NAMESPACE__ . '\\CmsUser', 'e')
+			->whereCriteria(['name not' => NULL]);
+
+		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsUser e WHERE e.name IS NOT NULL', [], $qb->getQuery());
 	}
 
 
@@ -120,15 +120,15 @@ class QueryBuilderTest extends KdybyTests\Doctrine\ORMTestCase
 	{
 		$qb = $this->em->createQueryBuilder()
 			->select('e')->from(__NAMESPACE__ . '\\CmsUser', 'e')
-			->whereCriteria(array('name <' => 10));
+			->whereCriteria(['name <' => 10]);
 
-		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsUser e WHERE e.name < :param_1', array('param_1' => 10), $qb->getQuery());
+		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsUser e WHERE e.name < :param_1', ['param_1' => 10], $qb->getQuery());
 
 		$qb = $this->em->createQueryBuilder()
 			->select('e')->from(__NAMESPACE__ . '\\CmsUser', 'e')
-			->whereCriteria(array('name lt' => 10));
+			->whereCriteria(['name lt' => 10]);
 
-		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsUser e WHERE e.name < :param_1', array('param_1' => 10), $qb->getQuery());
+		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsUser e WHERE e.name < :param_1', ['param_1' => 10], $qb->getQuery());
 	}
 
 
@@ -137,15 +137,15 @@ class QueryBuilderTest extends KdybyTests\Doctrine\ORMTestCase
 	{
 		$qb = $this->em->createQueryBuilder()
 			->select('e')->from(__NAMESPACE__ . '\\CmsUser', 'e')
-			->whereCriteria(array('name <=' => 10));
+			->whereCriteria(['name <=' => 10]);
 
-		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsUser e WHERE e.name <= :param_1', array('param_1' => 10), $qb->getQuery());
+		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsUser e WHERE e.name <= :param_1', ['param_1' => 10], $qb->getQuery());
 
 		$qb = $this->em->createQueryBuilder()
 			->select('e')->from(__NAMESPACE__ . '\\CmsUser', 'e')
-			->whereCriteria(array('name lte' => 10));
+			->whereCriteria(['name lte' => 10]);
 
-		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsUser e WHERE e.name <= :param_1', array('param_1' => 10), $qb->getQuery());
+		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsUser e WHERE e.name <= :param_1', ['param_1' => 10], $qb->getQuery());
 	}
 
 
@@ -154,15 +154,15 @@ class QueryBuilderTest extends KdybyTests\Doctrine\ORMTestCase
 	{
 		$qb = $this->em->createQueryBuilder()
 			->select('e')->from(__NAMESPACE__ . '\\CmsUser', 'e')
-			->whereCriteria(array('name >' => 10));
+			->whereCriteria(['name >' => 10]);
 
-		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsUser e WHERE e.name > :param_1', array('param_1' => 10), $qb->getQuery());
+		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsUser e WHERE e.name > :param_1', ['param_1' => 10], $qb->getQuery());
 
 		$qb = $this->em->createQueryBuilder()
 			->select('e')->from(__NAMESPACE__ . '\\CmsUser', 'e')
-			->whereCriteria(array('name gt' => 10));
+			->whereCriteria(['name gt' => 10]);
 
-		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsUser e WHERE e.name > :param_1', array('param_1' => 10), $qb->getQuery());
+		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsUser e WHERE e.name > :param_1', ['param_1' => 10], $qb->getQuery());
 	}
 
 
@@ -171,15 +171,15 @@ class QueryBuilderTest extends KdybyTests\Doctrine\ORMTestCase
 	{
 		$qb = $this->em->createQueryBuilder()
 			->select('e')->from(__NAMESPACE__ . '\\CmsUser', 'e')
-			->whereCriteria(array('name >=' => 10));
+			->whereCriteria(['name >=' => 10]);
 
-		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsUser e WHERE e.name >= :param_1', array('param_1' => 10), $qb->getQuery());
+		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsUser e WHERE e.name >= :param_1', ['param_1' => 10], $qb->getQuery());
 
 		$qb = $this->em->createQueryBuilder()
 			->select('e')->from(__NAMESPACE__ . '\\CmsUser', 'e')
-			->whereCriteria(array('name gte' => 10));
+			->whereCriteria(['name gte' => 10]);
 
-		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsUser e WHERE e.name >= :param_1', array('param_1' => 10), $qb->getQuery());
+		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsUser e WHERE e.name >= :param_1', ['param_1' => 10], $qb->getQuery());
 	}
 
 
@@ -188,9 +188,9 @@ class QueryBuilderTest extends KdybyTests\Doctrine\ORMTestCase
 	{
 		$qb = $this->em->createQueryBuilder()
 			->select('e')->from(__NAMESPACE__ . '\\CmsUser', 'e')
-			->whereCriteria(array('name' => NULL));
+			->whereCriteria(['name' => NULL]);
 
-		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsUser e WHERE e.name IS NULL', array(), $qb->getQuery());
+		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsUser e WHERE e.name IS NULL', [], $qb->getQuery());
 	}
 
 
@@ -199,9 +199,9 @@ class QueryBuilderTest extends KdybyTests\Doctrine\ORMTestCase
 	{
 		$qb = $this->em->createQueryBuilder()
 			->select('e')->from(__NAMESPACE__ . '\\CmsUser', 'c')
-			->whereCriteria(array('id' => array(1, 2, 3)));
+			->whereCriteria(['id' => [1, 2, 3]]);
 
-		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsUser c WHERE c.id IN (:param_1)', array('param_1' => array(1, 2, 3)), $qb->getQuery());
+		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsUser c WHERE c.id IN (:param_1)', ['param_1' => [1, 2, 3]], $qb->getQuery());
 	}
 
 
@@ -210,9 +210,9 @@ class QueryBuilderTest extends KdybyTests\Doctrine\ORMTestCase
 	{
 		$qb = $this->em->createQueryBuilder()
 			->select('e')->from(__NAMESPACE__ . '\\CmsUser', 'u')
-			->whereCriteria(array('groups.name' => 'Devel'));
+			->whereCriteria(['groups.name' => 'Devel']);
 
-		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsUser u INNER JOIN u.groups g0 WHERE g0.name = :param_1', array('param_1' => 'Devel'), $qb->getQuery());
+		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsUser u INNER JOIN u.groups g0 WHERE g0.name = :param_1', ['param_1' => 'Devel'], $qb->getQuery());
 	}
 
 
@@ -221,9 +221,9 @@ class QueryBuilderTest extends KdybyTests\Doctrine\ORMTestCase
 	{
 		$qb = $this->em->createQueryBuilder()
 			->select('e')->from(__NAMESPACE__ . '\\CmsUser', 'u')
-			->whereCriteria(array('groups.name' => 'Devel', 'groups.title' => 'Nemam'));
+			->whereCriteria(['groups.name' => 'Devel', 'groups.title' => 'Nemam']);
 
-		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsUser u INNER JOIN u.groups g0 WHERE g0.name = :param_1 AND g0.title = :param_2', array('param_1' => 'Devel', 'param_2' => 'Nemam'), $qb->getQuery());
+		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsUser u INNER JOIN u.groups g0 WHERE g0.name = :param_1 AND g0.title = :param_2', ['param_1' => 'Devel', 'param_2' => 'Nemam'], $qb->getQuery());
 	}
 
 
@@ -232,9 +232,9 @@ class QueryBuilderTest extends KdybyTests\Doctrine\ORMTestCase
 	{
 		$qb = $this->em->createQueryBuilder()
 			->select('e')->from(__NAMESPACE__ . '\\CmsAddress', 'a')
-			->whereCriteria(array('user.groups.name' => 'Devel'));
+			->whereCriteria(['user.groups.name' => 'Devel']);
 
-		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsAddress a INNER JOIN a.user u0 INNER JOIN u0.groups g0 WHERE g0.name = :param_1', array('param_1' => 'Devel'), $qb->getQuery());
+		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsAddress a INNER JOIN a.user u0 INNER JOIN u0.groups g0 WHERE g0.name = :param_1', ['param_1' => 'Devel'], $qb->getQuery());
 	}
 
 
@@ -243,9 +243,9 @@ class QueryBuilderTest extends KdybyTests\Doctrine\ORMTestCase
 	{
 		$qb = $this->em->createQueryBuilder()
 			->select('e')->from(__NAMESPACE__ . '\\CmsUser', 'u')
-			->whereCriteria(array('u.order1.status' => 'draft', 'u.order2.status' => 'draft'));
+			->whereCriteria(['u.order1.status' => 'draft', 'u.order2.status' => 'draft']);
 
-		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsUser u INNER JOIN u.order1 o0 INNER JOIN u.order2 o1 WHERE o0.status = :param_1 AND o1.status = :param_2', array('param_1' => 'draft', 'param_2' => 'draft'), $qb->getQuery());
+		self::assertQuery('SELECT e FROM KdybyTests\Doctrine\CmsUser u INNER JOIN u.order1 o0 INNER JOIN u.order2 o1 WHERE o0.status = :param_1 AND o1.status = :param_2', ['param_1' => 'draft', 'param_2' => 'draft'], $qb->getQuery());
 	}
 
 
@@ -273,7 +273,7 @@ class QueryBuilderTest extends KdybyTests\Doctrine\ORMTestCase
 	{
 		Assert::same($expectedDql, $query->getDQL());
 
-		$actualParameters = array();
+		$actualParameters = [];
 		foreach ($query->getParameters() as $key => $value) {
 			if ($value instanceof Doctrine\ORM\Query\Parameter) {
 				$actualParameters[$value->getName()] = $value->getValue();

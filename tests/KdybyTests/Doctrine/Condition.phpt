@@ -33,14 +33,14 @@ class ConditionTest extends Tester\TestCase
 	 */
 	public function dataBasic()
 	{
-		return array(
-			array('id = ?', array(1), array("id", 1)),
-			array('id IS NULL', array(), array("id", NULL)),
-			array('(column < ? OR column > ?)', array(1, 2), array('column < ? OR column > ?', array(1, 2))),
-			array('(column < ? OR column > ?)', array(1, 2), array('column < ? OR column > ?', 1, 2)),
-			array('column IN (?)', array(array(1, 2)), array('column', array(1, 2))),
-			array('column IS NULL', array(), array('column', array())),
-		);
+		return [
+			['id = ?', [1], ["id", 1]],
+			['id IS NULL', [], ["id", NULL]],
+			['(column < ? OR column > ?)', [1, 2], ['column < ? OR column > ?', [1, 2]]],
+			['(column < ? OR column > ?)', [1, 2], ['column < ? OR column > ?', 1, 2]],
+			['column IN (?)', [[1, 2]], ['column', [1, 2]]],
+			['column IS NULL', [], ['column', []]],
+		];
 	}
 
 
@@ -51,7 +51,7 @@ class ConditionTest extends Tester\TestCase
 	public function testSimpleAnd($expectedCond, $expectedParams, $arguments)
 	{
 		$condition = new Condition();
-		call_user_func_array(array($condition, 'addAnd'), $arguments);
+		call_user_func_array([$condition, 'addAnd'], $arguments);
 
 		Assert::same($expectedCond, (string) $condition);
 		Assert::same($expectedParams, $condition->params);
@@ -64,14 +64,14 @@ class ConditionTest extends Tester\TestCase
 	 */
 	public function dataBasic_withRootAlias()
 	{
-		return array(
-			array('e.id = ?', array(1), array("id", 1)),
-			array('e.id IS NULL', array(), array("id", NULL)),
-			array('(e.column < ? OR e.column > ?)', array(1, 2), array('e.column < ? OR column > ?', array(1, 2))),
-			array('(e.column < ? OR e.column > ?)', array(1, 2), array('column < ? OR column > ?', 1, 2)),
-			array('e.column IN (?)', array(array(1, 2)), array('column', array(1, 2))),
-			array('e.column IS NULL', array(), array('column', array())),
-		);
+		return [
+			['e.id = ?', [1], ["id", 1]],
+			['e.id IS NULL', [], ["id", NULL]],
+			['(e.column < ? OR e.column > ?)', [1, 2], ['e.column < ? OR column > ?', [1, 2]]],
+			['(e.column < ? OR e.column > ?)', [1, 2], ['column < ? OR column > ?', 1, 2]],
+			['e.column IN (?)', [[1, 2]], ['column', [1, 2]]],
+			['e.column IS NULL', [], ['column', []]],
+		];
 	}
 
 
@@ -83,7 +83,7 @@ class ConditionTest extends Tester\TestCase
 	{
 		$condition = new Condition();
 		$condition->rootAlias = 'e';
-		call_user_func_array(array($condition, 'addAnd'), $arguments);
+		call_user_func_array([$condition, 'addAnd'], $arguments);
 
 		Assert::same($expectedCond, (string) $condition);
 		Assert::same($expectedParams, $condition->params);
@@ -94,34 +94,34 @@ class ConditionTest extends Tester\TestCase
 	public function testBuild_InExpression()
 	{
 		$condition = new Condition();
-		$condition->addAnd('column', array(10, 20, 30));
+		$condition->addAnd('column', [10, 20, 30]);
 
 		$params = new ArrayCollection();
 		Assert::same("column IN (:h9c25e_0_0, :h9c25e_0_1, :h9c25e_0_2)", $condition->build($params));
-		Assert::equal(array(
+		Assert::equal([
 			':h9c25e_0_0' => new Parameter('h9c25e_0_0', 10),
 			':h9c25e_0_1' => new Parameter('h9c25e_0_1', 20),
 			':h9c25e_0_2' => new Parameter('h9c25e_0_2', 30),
-		), $params->toArray());
+		], $params->toArray());
 
 		$condition = new Condition();
-		$condition->addAnd('column', array(10, 20));
+		$condition->addAnd('column', [10, 20]);
 
 		$params = new ArrayCollection();
 		Assert::same("column IN (:h9c25e_0_0, :h9c25e_0_1)", $condition->build($params));
-		Assert::equal(array(
+		Assert::equal([
 			':h9c25e_0_0' => new Parameter('h9c25e_0_0', 10),
 			':h9c25e_0_1' => new Parameter('h9c25e_0_1', 20),
-		), $params->toArray());
+		], $params->toArray());
 
 		$condition = new Condition();
-		$condition->addAnd('column', array(10));
+		$condition->addAnd('column', [10]);
 
 		$params = new ArrayCollection();
 		Assert::same("column IN (:h9c25e_0_0)", $condition->build($params));
-		Assert::equal(array(
+		Assert::equal([
 			':h9c25e_0_0' => new Parameter('h9c25e_0_0', 10),
-		), $params->toArray());
+		], $params->toArray());
 	}
 
 
@@ -133,9 +133,9 @@ class ConditionTest extends Tester\TestCase
 
 		$params = new ArrayCollection();
 		Assert::same("column = :h126fc_0_0", $condition->build($params));
-		Assert::equal(array(
+		Assert::equal([
 			':h126fc_0_0' => new Parameter('h126fc_0_0', 10),
-		), $params->toArray());
+		], $params->toArray());
 	}
 
 }

@@ -47,17 +47,17 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 	/**
 	 * @var array
 	 */
-	public $queries = array();
+	public $queries = [];
 
 	/**
 	 * @var array
 	 */
-	public $failed = array();
+	public $failed = [];
 
 	/**
 	 * @var array
 	 */
-	public $skipPaths = array(
+	public $skipPaths = [
 		'vendor/nette/', 'src/Nette/',
 		'vendor/doctrine/collections/', 'lib/Doctrine/Collections/',
 		'vendor/doctrine/common/', 'lib/Doctrine/Common/',
@@ -65,7 +65,7 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 		'vendor/doctrine/orm/', 'lib/Doctrine/ORM/',
 		'vendor/kdyby/doctrine/', 'src/Kdyby/Doctrine/',
 		'vendor/phpunit',
-	);
+	];
 
 	/**
 	 * @var \Doctrine\DBAL\Connection
@@ -139,12 +139,12 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 					continue;
 				}
 
-				$source = array($row['file'], (int) $row['line']);
+				$source = [$row['file'], (int) $row['line']];
 				break;
 			}
 		}
 
-		$this->queries[] = array($sql, $params, NULL, $types, $source);
+		$this->queries[] = [$sql, $params, NULL, $types, $source];
 	}
 
 
@@ -242,10 +242,10 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 				$host
 			) .
 			'<div class="nette-inner tracy-inner nette-Doctrine2Panel">' .
-				implode('<br>', array_filter(array(
+				implode('<br>', array_filter([
 					$this->renderPanelCacheStatistics(),
 					$this->renderPanelQueries()
-				))) .
+				])) .
 			'</div>';
 	}
 
@@ -342,7 +342,7 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 	public function renderQueryException($e)
 	{
 		if ($e instanceof \PDOException && count($this->queries)) {
-			$types = $params = array();
+			$types = $params = [];
 
 			if ($this->connection !== NULL) {
 				if (!$e instanceof Kdyby\Doctrine\DBALException || $e->connection !== $this->connection) {
@@ -362,23 +362,23 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 				return NULL;
 			}
 
-			return array(
+			return [
 				'tab' => 'SQL',
 				'panel' => $this->dumpQuery($sql, $params, $types, $source),
-			);
+			];
 
 		} elseif ($e instanceof Kdyby\Doctrine\QueryException && $e->query !== NULL) {
 			if ($e->query instanceof Doctrine\ORM\Query) {
-				return array(
+				return [
 					'tab' => 'DQL',
 					'panel' => $this->dumpQuery($e->query->getDQL(), $e->query->getParameters()),
-				);
+				];
 
 			} elseif ($e->query instanceof Kdyby\Doctrine\NativeQueryWrapper) {
-				return array(
+				return [
 					'tab' => 'Native SQL',
 					'panel' => $this->dumpQuery($e->query->getSQL(), $e->query->getParameters()),
-				);
+				];
 			}
 		}
 	}
@@ -421,10 +421,10 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 					'</div>';
 			}
 
-			return array(
+			return [
 				'tab' => 'Doctrine\\ORM\\UnitOfWork',
 				'panel' => $panel,
-			);
+			];
 		}
 	}
 
@@ -439,10 +439,10 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 	{
 		if ($e instanceof AnnotationException) {
 			if ($dump = self::highlightAnnotationLine($e)) {
-				return array(
+				return [
 					'tab' => 'Annotation',
 					'panel' => $dump,
-				);
+				];
 			}
 
 		} elseif ($e instanceof Doctrine\ORM\Mapping\MappingException) {
@@ -451,11 +451,11 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 				$file = $refl->getFileName();
 				$errorLine = $refl->getStartLine();
 
-				return array(
+				return [
 					'tab' => 'Invalid entity',
 					'panel' => '<p><b>File:</b> ' . self::editorLink($file, $errorLine) . '</p>' .
 						BlueScreen::highlightFile($file, $errorLine),
-				);
+				];
 			}
 
 		} elseif ($e instanceof Doctrine\DBAL\Schema\SchemaException && $dic && ($em = $dic->getByType('Kdyby\Doctrine\EntityManager', FALSE))) {
@@ -477,41 +477,41 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 				$file = $refl->getFileName();
 				$errorLine = $refl->getStartLine();
 
-				return array(
+				return [
 					'tab' => 'Invalid schema',
 					'panel' => '<p><b>File:</b> ' . self::editorLink($file, $errorLine) . '</p>' .
 						BlueScreen::highlightFile($file, $errorLine),
-				);
+				];
 			}
 
 		} elseif ($e instanceof Kdyby\Doctrine\DBALException && $e->query) {
-			return array(
+			return [
 				'tab' => 'SQL',
-				'panel' => self::highlightQuery(static::formatQuery($e->query, $e->params, array())),
-			);
+				'panel' => self::highlightQuery(static::formatQuery($e->query, $e->params, [])),
+			];
 
 		} elseif ($e instanceof Doctrine\DBAL\Exception\DriverException) {
 			if (($prev = $e->getPrevious()) && ($item = Helpers::findTrace($e->getTrace(), 'Doctrine\DBAL\DBALException::driverExceptionDuringQuery'))) {
 				/** @var \Doctrine\DBAL\Driver $driver */
 				$driver = $item['args'][0];
-				$params = isset($item['args'][3]) ? $item['args'][3] : array();
+				$params = isset($item['args'][3]) ? $item['args'][3] : [];
 
-				return array(
+				return [
 					'tab' => 'SQL',
-					'panel' => self::highlightQuery(static::formatQuery($item['args'][2], $params, array(), $driver->getDatabasePlatform())),
-				);
+					'panel' => self::highlightQuery(static::formatQuery($item['args'][2], $params, [], $driver->getDatabasePlatform())),
+				];
 			}
 
 		} elseif ($e instanceof Doctrine\ORM\Query\QueryException) {
 			if (($prev = $e->getPrevious()) && preg_match('~^(SELECT|INSERT|UPDATE|DELETE)\s+.*~i', $prev->getMessage())) {
-				return array(
+				return [
 					'tab' => 'DQL',
-					'panel' => self::highlightQuery(static::formatQuery($prev->getMessage(), array(), array())),
-				);
+					'panel' => self::highlightQuery(static::formatQuery($prev->getMessage(), [], [])),
+				];
 			}
 
 		} elseif ($e instanceof \PDOException) {
-			$params = array();
+			$params = [];
 
 			if (isset($e->queryString)) {
 				$sql = $e->queryString;
@@ -527,10 +527,10 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 				$sql = $item['args'][0];
 			}
 
-			return isset($sql) ? array(
+			return isset($sql) ? [
 				'tab' => 'SQL',
-				'panel' => self::highlightQuery(static::formatQuery($sql, $params, array())),
-			) : NULL;
+				'panel' => self::highlightQuery(static::formatQuery($sql, $params, [])),
+			] : NULL;
 		}
 
 		return NULL;
@@ -546,11 +546,11 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 	 *
 	 * @return array
 	 */
-	protected function dumpQuery($query, $params, array $types = array(), $source = NULL)
+	protected function dumpQuery($query, $params, array $types = [], $source = NULL)
 	{
 		if ($params instanceof ArrayCollection) {
-			$tmp = array();
-			$tmpTypes = array();
+			$tmp = [];
+			$tmpTypes = [];
 			foreach ($params as $key => $param) {
 				if ($param instanceof Doctrine\ORM\Query\Parameter) {
 					$tmpTypes[$param->getName()] = $param->getType();
@@ -634,7 +634,7 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 	 * @throws \Nette\Utils\RegexpException
 	 * @return string
 	 */
-	public static function formatQuery($query, $params, array $types = array(), AbstractPlatform $platform = NULL)
+	public static function formatQuery($query, $params, array $types = [], AbstractPlatform $platform = NULL)
 	{
 		if (!$platform) {
 			$platform = new Doctrine\DBAL\Platforms\MySqlPlatform();
@@ -656,7 +656,7 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 		} catch (Doctrine\DBAL\SQLParserUtilsException $e) {
 		}
 
-		$formattedParams = array();
+		$formattedParams = [];
 		foreach ($params as $key => $param) {
 			if (isset($types[$key])) {
 				if (is_scalar($types[$key]) && array_key_exists($types[$key], Type::getTypesMap())) {
@@ -858,7 +858,7 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 	{
 		if (Debugger::$editor && is_file($file) && $text !== NULL) {
 			return Nette\Utils\Html::el('a')
-				->href(strtr(Debugger::$editor, array('%file' => rawurlencode($file), '%line' => $line)))
+				->href(strtr(Debugger::$editor, ['%file' => rawurlencode($file), '%line' => $line]))
 				->title("$file:$line")
 				->setHtml($text);
 

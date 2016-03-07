@@ -50,12 +50,12 @@ class Connection extends Doctrine\DBAL\Connection
 	/**
 	 * @var array
 	 */
-	private $schemaTypes = array();
+	private $schemaTypes = [];
 
 	/**
 	 * @var array
 	 */
-	private $dbalTypes = array();
+	private $dbalTypes = [];
 
 
 
@@ -93,9 +93,9 @@ class Connection extends Doctrine\DBAL\Connection
 	/**
 	 * {@inheritdoc}
 	 */
-	public function delete($tableExpression, array $identifier, array $types = array())
+	public function delete($tableExpression, array $identifier, array $types = [])
 	{
-		$fixedIdentifier = array();
+		$fixedIdentifier = [];
 		foreach ($identifier as $columnName => $value) {
 			$fixedIdentifier[$this->quoteIdentifier($columnName)] = $value;
 		}
@@ -108,14 +108,14 @@ class Connection extends Doctrine\DBAL\Connection
 	/**
 	 * {@inheritdoc}
 	 */
-	public function update($tableExpression, array $data, array $identifier, array $types = array())
+	public function update($tableExpression, array $data, array $identifier, array $types = [])
 	{
-		$fixedData = array();
+		$fixedData = [];
 		foreach ($data as $columnName => $value) {
 			$fixedData[$this->quoteIdentifier($columnName)] = $value;
 		}
 
-		$fixedIdentifier = array();
+		$fixedIdentifier = [];
 		foreach ($identifier as $columnName => $value) {
 			$fixedIdentifier[$this->quoteIdentifier($columnName)] = $value;
 		}
@@ -128,9 +128,9 @@ class Connection extends Doctrine\DBAL\Connection
 	/**
 	 * {@inheritdoc}
 	 */
-	public function insert($tableExpression, array $data, array $types = array())
+	public function insert($tableExpression, array $data, array $types = [])
 	{
-		$fixedData = array();
+		$fixedData = [];
 		foreach ($data as $columnName => $value) {
 			$fixedData[$this->quoteIdentifier($columnName)] = $value;
 		}
@@ -148,7 +148,7 @@ class Connection extends Doctrine\DBAL\Connection
 	 * @return \Doctrine\DBAL\Driver\Statement
 	 * @throws DBALException
 	 */
-	public function executeQuery($query, array $params = array(), $types = array(), Doctrine\DBAL\Cache\QueryCacheProfile $qcp = NULL)
+	public function executeQuery($query, array $params = [], $types = [], Doctrine\DBAL\Cache\QueryCacheProfile $qcp = NULL)
 	{
 		try {
 			return parent::executeQuery($query, $params, $types, $qcp);
@@ -167,7 +167,7 @@ class Connection extends Doctrine\DBAL\Connection
 	 * @return int
 	 * @throws DBALException
 	 */
-	public function executeUpdate($query, array $params = array(), array $types = array())
+	public function executeUpdate($query, array $params = [], array $types = [])
 	{
 		try {
 			return parent::executeUpdate($query, $params, $types);
@@ -374,7 +374,7 @@ class Connection extends Doctrine\DBAL\Connection
 	 * @param array $params
 	 * @return DBALException
 	 */
-	public function resolveException($e, $query = NULL, $params = array())
+	public function resolveException($e, $query = NULL, $params = [])
 	{
 		if ($this->throwOldKdybyExceptions !== TRUE) {
 			return $e;
@@ -392,7 +392,7 @@ class Connection extends Doctrine\DBAL\Connection
 
 		if ($this->getDriver() instanceof Doctrine\DBAL\Driver\PDOMySql\Driver) {
 			if ($info[0] == 23000 && $info[1] == self::MYSQL_ERR_UNIQUE) { // unique fail
-				$columns = array();
+				$columns = [];
 
 				try {
 					if (preg_match('~Duplicate entry .*? for key \'([^\']+)\'~', $info[2], $m)

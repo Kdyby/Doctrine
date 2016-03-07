@@ -36,7 +36,7 @@ class GeometryTypeTest extends Tester\TestCase
 
 	protected function setUp()
 	{
-		$this->polygon = Code\Helpers::createObject('Kdyby\Doctrine\Types\Polygon', array());
+		$this->polygon = Code\Helpers::createObject('Kdyby\Doctrine\Types\Polygon', []);
 	}
 
 

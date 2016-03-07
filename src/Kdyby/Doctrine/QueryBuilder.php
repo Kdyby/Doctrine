@@ -34,7 +34,7 @@ class QueryBuilder extends Doctrine\ORM\QueryBuilder implements \IteratorAggrega
 	/**
 	 * @var array
 	 */
-	private $criteriaJoins = array();
+	private $criteriaJoins = [];
 
 
 
@@ -50,14 +50,14 @@ class QueryBuilder extends Doctrine\ORM\QueryBuilder implements \IteratorAggrega
 			$operator = '=';
 			if (preg_match('~(?P<key>[^\\s]+)\\s+(?P<operator>.+)\\s*~', $key, $m)) {
 				$key = $m['key'];
-				$operator = strtr(strtolower($m['operator']), array(
+				$operator = strtr(strtolower($m['operator']), [
 					'neq' => '!=',
 					'eq' => '=',
 					'lt' => '<',
 					'lte' => '<=',
 					'gt' => '>',
 					'gte' => '>=',
-				));
+				]);
 			}
 
 			$not = substr($operator, 0, 1) === '!';
@@ -167,7 +167,7 @@ class QueryBuilder extends Doctrine\ORM\QueryBuilder implements \IteratorAggrega
 			do {
 				$joinAs = substr($property, 0, 1) . (string) $j++;
 			} while (isset($this->criteriaJoins[$joinAs]));
-			$this->criteriaJoins[$joinAs] = array();
+			$this->criteriaJoins[$joinAs] = [];
 
 			$this->{$methodJoin}("$alias.$property", $joinAs);
 			$this->criteriaJoins[$alias][$property] = $joinAs;

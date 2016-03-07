@@ -90,7 +90,7 @@ class EntityDao extends EntityRepository implements Persistence\ObjectDao
 		}
 
 		$this->flush();
-		return array();
+		return [];
 	}
 
 
@@ -167,7 +167,7 @@ class EntityDao extends EntityRepository implements Persistence\ObjectDao
 		return array_merge(
 			$UoW->getScheduledEntityDeletions(),
 			$UoW->getScheduledEntityInsertions(),
-			!empty($im[$this->_entityName]) ? Arrays::flatten($im[$this->_entityName]) : array()
+			!empty($im[$this->_entityName]) ? Arrays::flatten($im[$this->_entityName]) : []
 		);
 	}
 
@@ -207,10 +207,10 @@ class EntityDao extends EntityRepository implements Persistence\ObjectDao
 	private static function iterableArgs($args)
 	{
 		if (empty($args)) {
-			return array();
+			return [];
 		}
 
-		return !is_array($args) && !$args instanceof \Traversable ? array($args) : $args;
+		return !is_array($args) && !$args instanceof \Traversable ? [$args] : $args;
 	}
 
 }

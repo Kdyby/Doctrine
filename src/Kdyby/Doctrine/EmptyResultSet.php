@@ -91,7 +91,7 @@ class EmptyResultSet extends ResultSet
 
 	public function toArray($hydrationMode = ORM\AbstractQuery::HYDRATE_OBJECT)
 	{
-		return array();
+		return [];
 	}
 
 

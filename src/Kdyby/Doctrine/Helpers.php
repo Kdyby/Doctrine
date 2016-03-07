@@ -34,7 +34,7 @@ class Helpers extends Nette\Object
 				continue;
 			}
 
-			$repeatedArgs = array();
+			$repeatedArgs = [];
 			foreach ($m['name'] as $l => $name) {
 				if (isset($repeatedArgs[$name])) {
 					continue;
@@ -107,13 +107,13 @@ class Helpers extends Nette\Object
 	 */
 	public static function zipper(array $one, array $two)
 	{
-		$output = array();
+		$output = [];
 		while ($one && $two) {
 			$output[] = array_shift($one);
 			$output[] = array_shift($two);
 		}
 
-		return array_merge($output, $one ? : array(), $two ? : array());
+		return array_merge($output, $one ? : [], $two ? : []);
 	}
 
 

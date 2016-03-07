@@ -22,6 +22,6 @@ interface ObjectFactory
 	 * @param array $arguments
 	 * @return object
 	 */
-	function createNew($arguments = array());
+	function createNew($arguments = []);
 
 }

@@ -27,12 +27,12 @@ final class SerializableMixin
 	/**
 	 * @var array|\Nette\Reflection\ClassType[]
 	 */
-	private static $classes = array();
+	private static $classes = [];
 
 	/**
 	 * @var array|\Nette\Reflection\Property
 	 */
-	private static $properties = array();
+	private static $properties = [];
 
 
 
@@ -53,7 +53,7 @@ final class SerializableMixin
 	 */
 	public static function serialize(Serializable $object)
 	{
-		$data = array();
+		$data = [];
 
 		$allowed = FALSE;
 		if (method_exists($object, '__sleep')) {
@@ -140,7 +140,7 @@ final class SerializableMixin
 		$propRefl->setAccessible(TRUE);
 
 		if (!isset(self::$properties[$class])) {
-			self::$properties[$class] = array();
+			self::$properties[$class] = [];
 		}
 		return self::$properties[$class][$name] = $propRefl;
 	}

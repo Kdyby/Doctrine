@@ -39,12 +39,12 @@ class AnnotationDriver extends Doctrine\ORM\Mapping\Driver\AnnotationDriver
 	/**
 	 * @var array
 	 */
-	protected $fileExtensions = array();
+	protected $fileExtensions = [];
 
 	/**
 	 * @var RobotLoader[]
 	 */
-	private $loaders = array();
+	private $loaders = [];
 
 	/**
 	 * @var CacheProvider
@@ -96,7 +96,7 @@ class AnnotationDriver extends Doctrine\ORM\Mapping\Driver\AnnotationDriver
 	{
 		$loader = new RobotLoader($this->cache ? new ReversedStorageDecorator($this->cache) : new MemoryStorage());
 
-		$exts = isset($this->fileExtensions[$path]) ? $this->fileExtensions[$path] : array($this->fileExtension);
+		$exts = isset($this->fileExtensions[$path]) ? $this->fileExtensions[$path] : [$this->fileExtension];
 		$loader->acceptFiles = array_map(function ($ext) { return '*' . $ext; }, $exts);
 
 		$loader->addDirectory($path);
@@ -117,7 +117,7 @@ class AnnotationDriver extends Doctrine\ORM\Mapping\Driver\AnnotationDriver
 			return $this->classNames;
 		}
 
-		$classes = array();
+		$classes = [];
 		foreach ($this->paths as $path) {
 			if ( ! is_dir($path)) {
 				throw MappingException::fileMappingDriversRequireConfiguredDirectoryPath($path);
