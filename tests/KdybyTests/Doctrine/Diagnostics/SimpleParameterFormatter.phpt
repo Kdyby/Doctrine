@@ -65,10 +65,10 @@ class SimpleParameterFormatterTest extends Tester\TestCase
 
 	public function testArray()
 	{
-		Assert::same("1, 2, 3, 4", SimpleParameterFormatter::format(array(1, 2, 3, 4)));
-		Assert::same("1, 'dog', NULL, TRUE, '2014-04-18 15:00:00'", SimpleParameterFormatter::format(array(1, "dog", NULL, TRUE,
-					new \DateTime("2014-04-18 15:00:00"))));
-		Assert::same("1, 2, 3, 4", SimpleParameterFormatter::format(array(array(1, 2), array(3, 4))));
+		Assert::same("1, 2, 3, 4", SimpleParameterFormatter::format([1, 2, 3, 4]));
+		Assert::same("1, 'dog', NULL, TRUE, '2014-04-18 15:00:00'", SimpleParameterFormatter::format([1, "dog", NULL, TRUE,
+					new \DateTime("2014-04-18 15:00:00")]));
+		Assert::same("1, 2, 3, 4", SimpleParameterFormatter::format([[1, 2], [3, 4]]));
 	}
 
 

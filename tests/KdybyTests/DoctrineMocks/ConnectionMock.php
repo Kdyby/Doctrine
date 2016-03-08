@@ -24,9 +24,9 @@ class ConnectionMock extends Kdyby\Doctrine\Connection
 
 	private $_lastInsertId = 0;
 
-	private $_inserts = array();
+	private $_inserts = [];
 
-	private $_executeUpdates = array();
+	private $_executeUpdates = [];
 
 
 
@@ -35,7 +35,7 @@ class ConnectionMock extends Kdyby\Doctrine\Connection
 		$this->_platformMock = new DatabasePlatformMock();
 
 		// Override possible assignment of platform to database platform mock
-		parent::__construct(array('platform' => $this->_platformMock) + $params, $driver, $config, $eventManager);
+		parent::__construct(['platform' => $this->_platformMock] + $params, $driver, $config, $eventManager);
 
 	}
 
@@ -58,7 +58,7 @@ class ConnectionMock extends Kdyby\Doctrine\Connection
 	/**
 	 * @override
 	 */
-	public function insert($tableName, array $data, array $types = array())
+	public function insert($tableName, array $data, array $types = [])
 	{
 		$this->_inserts[$tableName][] = $data;
 	}
@@ -68,9 +68,9 @@ class ConnectionMock extends Kdyby\Doctrine\Connection
 	/**
 	 * @override
 	 */
-	public function executeUpdate($query, array $params = array(), array $types = array())
+	public function executeUpdate($query, array $params = [], array $types = [])
 	{
-		$this->_executeUpdates[] = array('query' => $query, 'params' => $params, 'types' => $types);
+		$this->_executeUpdates[] = ['query' => $query, 'params' => $params, 'types' => $types];
 	}
 
 
@@ -88,7 +88,7 @@ class ConnectionMock extends Kdyby\Doctrine\Connection
 	/**
 	 * @override
 	 */
-	public function fetchColumn($statement, array $params = array(), $column = 0, array $types = array())
+	public function fetchColumn($statement, array $params = [], $column = 0, array $types = [])
 	{
 		return $this->_fetchOneResult;
 	}
@@ -148,7 +148,7 @@ class ConnectionMock extends Kdyby\Doctrine\Connection
 
 	public function reset()
 	{
-		$this->_inserts = array();
+		$this->_inserts = [];
 		$this->_lastInsertId = 0;
 	}
 }

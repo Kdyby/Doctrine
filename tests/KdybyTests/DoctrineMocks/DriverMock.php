@@ -24,7 +24,7 @@ class DriverMock implements Doctrine\DBAL\Driver
 
 
 
-	public function connect(array $params, $username = NULL, $password = NULL, array $driverOptions = array())
+	public function connect(array $params, $username = NULL, $password = NULL, array $driverOptions = [])
 	{
 		return new DriverConnectionMock();
 	}

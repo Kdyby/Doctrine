@@ -36,8 +36,8 @@ class ExtensionTest extends Tester\TestCase
 
 		$config = new Nette\Configurator();
 		$config->setTempDirectory(TEMP_DIR);
-		$config->addParameters(array('container' => array('class' => 'SystemContainer_' . md5($configFile))));
-		$config->addParameters(array('appDir' => $rootDir = __DIR__ . '/..', 'wwwDir' => $rootDir));
+		$config->addParameters(['container' => ['class' => 'SystemContainer_' . md5($configFile)]]);
+		$config->addParameters(['appDir' => $rootDir = __DIR__ . '/..', 'wwwDir' => $rootDir]);
 		$config->addConfig(__DIR__ . '/../nette-reset.neon', !isset($config->defaultExtensions['nette']) ? 'v23' : 'v22');
 		$config->addConfig(__DIR__ . '/config/' . $configFile . '.neon');
 
@@ -87,7 +87,7 @@ class ExtensionTest extends Tester\TestCase
 
 		sort($entityClasses);
 
-		Assert::same(array(
+		Assert::same([
 			'KdybyTests\\Doctrine\\AnnotationDriver\\App\\Bar',
 			'KdybyTests\\Doctrine\\AnnotationDriver\\App\\FooEntity',
 			'KdybyTests\\Doctrine\\AnnotationDriver\\Something\\Baz',
@@ -106,7 +106,7 @@ class ExtensionTest extends Tester\TestCase
 			'KdybyTests\\Doctrine\\StiUser',
 			'Kdyby\\Doctrine\\Entities\\BaseEntity',
 			'Kdyby\\Doctrine\\Entities\\IdentifiedEntity',
-		), $entityClasses);
+		], $entityClasses);
 	}
 
 }

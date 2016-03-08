@@ -35,7 +35,7 @@ class PDOStatement extends Statement
 		} catch (\Exception $e) {
 			$conn = $this->conn;
 			/** @var Connection $conn */
-			throw $conn->resolveException($e, $this->sql, (is_array($params) ? $params : array()) + $this->params);
+			throw $conn->resolveException($e, $this->sql, (is_array($params) ? $params : []) + $this->params);
 		}
 	}
 

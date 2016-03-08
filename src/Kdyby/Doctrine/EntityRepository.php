@@ -76,7 +76,7 @@ class EntityRepository extends Doctrine\ORM\EntityRepository implements Persiste
 	 * @param array $criteria
 	 * @return int
 	 */
-	public function countBy(array $criteria = array())
+	public function countBy(array $criteria = [])
 	{
 		return (int) $this->createQueryBuilder('e')
 			->whereCriteria($criteria)
@@ -114,18 +114,18 @@ class EntityRepository extends Doctrine\ORM\EntityRepository implements Persiste
 	 * @throws QueryException
 	 * @return array
 	 */
-	public function findPairs($criteria, $value = NULL, $orderBy = array(), $key = NULL)
+	public function findPairs($criteria, $value = NULL, $orderBy = [], $key = NULL)
 	{
 		if (!is_array($criteria)) {
 			$key = $orderBy;
 			$orderBy = $value;
 			$value = $criteria;
-			$criteria = array();
+			$criteria = [];
 		}
 
 		if (!is_array($orderBy)) {
 			$key = $orderBy;
-			$orderBy = array();
+			$orderBy = [];
 		}
 
 		if (empty($key)) {
@@ -164,7 +164,7 @@ class EntityRepository extends Doctrine\ORM\EntityRepository implements Persiste
 	{
 		if (!is_array($criteria)) {
 			$key = $criteria;
-			$criteria = array();
+			$criteria = [];
 		}
 
 		$query = $this->createQueryBuilder('e')

@@ -69,7 +69,7 @@ class RobotLoader extends Nette\Loaders\RobotLoader
 	protected function initialize()
 	{
 		$this->register();
-		spl_autoload_unregister(array($this, 'tryLoad'));
+		spl_autoload_unregister([$this, 'tryLoad']);
 		$this->initialized = TRUE;
 	}
 

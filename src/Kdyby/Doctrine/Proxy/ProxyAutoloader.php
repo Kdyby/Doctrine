@@ -34,7 +34,7 @@ class ProxyAutoloader extends Nette\Object implements Kdyby\Events\Subscriber
 	/**
 	 * @var array list of registered loaders
 	 */
-	static private $loaders = array();
+	static private $loaders = [];
 
 
 
@@ -57,9 +57,9 @@ class ProxyAutoloader extends Nette\Object implements Kdyby\Events\Subscriber
 	 */
 	public function getSubscribedEvents()
 	{
-		return array(
+		return [
 			'Nette\DI\Container::onInitialize' => 'initialize',
-		);
+		];
 	}
 
 
@@ -99,7 +99,7 @@ class ProxyAutoloader extends Nette\Object implements Kdyby\Events\Subscriber
 			throw new Nette\NotSupportedException('spl_autoload does not exist in this PHP installation.');
 		}
 
-		spl_autoload_register(array($this, 'tryLoad'), TRUE, (bool) $prepend);
+		spl_autoload_register([$this, 'tryLoad'], TRUE, (bool) $prepend);
 		self::$loaders[spl_object_hash($this)] = $this;
 	}
 
@@ -112,7 +112,7 @@ class ProxyAutoloader extends Nette\Object implements Kdyby\Events\Subscriber
 	public function unregister()
 	{
 		unset(self::$loaders[spl_object_hash($this)]);
-		return spl_autoload_unregister(array($this, 'tryLoad'));
+		return spl_autoload_unregister([$this, 'tryLoad']);
 	}
 
 

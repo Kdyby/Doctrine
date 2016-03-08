@@ -28,23 +28,23 @@ class GeoElementTest extends Tester\TestCase
 
 	public function dataValidConversion()
 	{
-		return array(
-			array(
+		return [
+			[
 				'POINT(1 2)',
-				$this->stubElement('POINT', array(array(1.0, 2.0))),
+				$this->stubElement('POINT', [[1.0, 2.0]]),
 				'POINT(1.0000000000000 2.0000000000000)'
-			),
-			array(
+			],
+			[
 				'LINESTRING(1 2,3 4)',
-				$this->stubElement('LINESTRING', array(array(1.0, 2.0), array(3.0, 4.0))),
+				$this->stubElement('LINESTRING', [[1.0, 2.0], [3.0, 4.0]]),
 				'LINESTRING(1.0000000000000 2.0000000000000,3.0000000000000 4.0000000000000)',
-			),
-			array(
+			],
+			[
 				"POLYGON((1.0000000000000  2.0000000000000, 3.0000000000000 \t4.0000000000000))",
-				$this->stubElement('POLYGON', array(array(1.0, 2.0), array(3.0, 4.0))),
+				$this->stubElement('POLYGON', [[1.0, 2.0], [3.0, 4.0]]),
 				'POLYGON((1.0000000000000 2.0000000000000,3.0000000000000 4.0000000000000))',
-			),
-		);
+			],
+		];
 	}
 
 

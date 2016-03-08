@@ -44,7 +44,7 @@ class EventsCompatibilityTest extends ORMTestCase
 
 		$outerEvm->dispatchEvent(Doctrine\ORM\Events::onFlush, $args = new OnFlushEventArgs($em));
 
-		Assert::same(array(array($args)), $new->calls);
+		Assert::same([[$args]], $new->calls);
 	}
 
 
@@ -65,7 +65,7 @@ class EventsCompatibilityTest extends ORMTestCase
 
 		$outerEvm->dispatchEvent(Doctrine\ORM\Events::onFlush, $args = new OnFlushEventArgs($em));
 
-		Assert::same(array(array($args)), $old->calls);
+		Assert::same([[$args]], $old->calls);
 	}
 
 
@@ -87,8 +87,8 @@ class EventsCompatibilityTest extends ORMTestCase
 
 		$outerEvm->dispatchEvent(Doctrine\ORM\Events::onFlush, $args = new OnFlushEventArgs($em));
 
-		Assert::same(array(array($args)), $old->calls);
-		Assert::same(array(array($args)), $new->calls);
+		Assert::same([[$args]], $old->calls);
+		Assert::same([[$args]], $new->calls);
 	}
 
 
@@ -116,7 +116,7 @@ class EventsCompatibilityTest extends ORMTestCase
 
 		$outerEvm->dispatchEvent(Doctrine\ORM\Events::onFlush, $args = new OnFlushEventArgs($em));
 
-		Assert::same(array(array($args)), $new->calls);
+		Assert::same([[$args]], $new->calls);
 	}
 
 
@@ -144,7 +144,7 @@ class EventsCompatibilityTest extends ORMTestCase
 
 		$outerEvm->dispatchEvent(Doctrine\ORM\Events::onFlush, $args = new OnFlushEventArgs($em));
 
-		Assert::same(array(array($args)), $old->calls);
+		Assert::same([[$args]], $old->calls);
 	}
 
 
@@ -173,8 +173,8 @@ class EventsCompatibilityTest extends ORMTestCase
 
 		$outerEvm->dispatchEvent(Doctrine\ORM\Events::onFlush, $args = new OnFlushEventArgs($em));
 
-		Assert::same(array(array($args)), $old->calls);
-		Assert::same(array(array($args)), $new->calls);
+		Assert::same([[$args]], $old->calls);
+		Assert::same([[$args]], $new->calls);
 	}
 
 }
@@ -183,11 +183,11 @@ class EventsCompatibilityTest extends ORMTestCase
 class OldListener implements Kdyby\Events\Subscriber
 {
 
-	public $calls = array();
+	public $calls = [];
 
 	public function getSubscribedEvents()
 	{
-		return array('onFlush');
+		return ['onFlush'];
 	}
 
 
@@ -203,11 +203,11 @@ class OldListener implements Kdyby\Events\Subscriber
 class NewListener implements Kdyby\Events\Subscriber
 {
 
-	public $calls = array();
+	public $calls = [];
 
 	public function getSubscribedEvents()
 	{
-		return array(Kdyby\Doctrine\Events::onFlush);
+		return [Kdyby\Doctrine\Events::onFlush];
 	}
 
 

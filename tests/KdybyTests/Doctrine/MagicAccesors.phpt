@@ -241,8 +241,8 @@ class MagicAccessorsTest extends Tester\TestCase
 	public function testCallGetterOnProtectedCollection()
 	{
 		$entity = new BadlyNamedEntity();
-		Assert::equal(array((object) array('id' => 2)), $entity->getTwos()->toArray());
-		Assert::equal(array((object) array('id' => 3)), $entity->getProxies()->toArray());
+		Assert::equal([(object) ['id' => 2]], $entity->getTwos()->toArray());
+		Assert::equal([(object) ['id' => 3]], $entity->getProxies()->toArray());
 	}
 
 
@@ -261,7 +261,7 @@ class MagicAccessorsTest extends Tester\TestCase
 	{
 		Assert::exception(function () {
 			$entity = new BadlyNamedEntity();
-			$entity->addOne((object) array('id' => 1));
+			$entity->addOne((object) ['id' => 1]);
 		}, 'Kdyby\Doctrine\MemberAccessException', 'Call to undefined method KdybyTests\Doctrine\BadlyNamedEntity::addOne().');
 	}
 
@@ -271,7 +271,7 @@ class MagicAccessorsTest extends Tester\TestCase
 	{
 		Assert::exception(function () {
 			$entity = new BadlyNamedEntity();
-			$entity->addFour((object) array('id' => 4));
+			$entity->addFour((object) ['id' => 4]);
 		}, 'Kdyby\Doctrine\UnexpectedValueException', 'Class property KdybyTests\Doctrine\BadlyNamedEntity::$four is not an instance of Doctrine\Common\Collections\Collection.');
 	}
 
@@ -280,12 +280,12 @@ class MagicAccessorsTest extends Tester\TestCase
 	public function testCallAddOnProtectedCollection()
 	{
 		$entity = new BadlyNamedEntity();
-		$entity->addTwo($a = (object) array('id' => 2));
+		$entity->addTwo($a = (object) ['id' => 2]);
 		Assert::truthy($entity->getTwos()->filter(function ($two) use ($a) {
 			return $two === $a;
 		}));
 
-		$entity->addProxy($b = (object) array('id' => 3));
+		$entity->addProxy($b = (object) ['id' => 3]);
 		Assert::truthy((bool) $entity->getProxies()->filter(function ($two) use ($b) {
 			return $two === $b;
 		}));
@@ -297,7 +297,7 @@ class MagicAccessorsTest extends Tester\TestCase
 	{
 		Assert::exception(function () {
 			$entity = new BadlyNamedEntity();
-			$entity->hasOne((object) array('id' => 1));
+			$entity->hasOne((object) ['id' => 1]);
 		}, 'Kdyby\Doctrine\MemberAccessException', 'Call to undefined method KdybyTests\Doctrine\BadlyNamedEntity::hasOne().');
 	}
 
@@ -307,7 +307,7 @@ class MagicAccessorsTest extends Tester\TestCase
 	{
 		Assert::exception(function () {
 			$entity = new BadlyNamedEntity();
-			$entity->hasFour((object) array('id' => 4));
+			$entity->hasFour((object) ['id' => 4]);
 		}, 'Kdyby\Doctrine\UnexpectedValueException', 'Class property KdybyTests\Doctrine\BadlyNamedEntity::$four is not an instance of Doctrine\Common\Collections\Collection.');
 	}
 
@@ -316,8 +316,8 @@ class MagicAccessorsTest extends Tester\TestCase
 	public function testCallHasOnProtectedCollection()
 	{
 		$entity = new BadlyNamedEntity();
-		Assert::false($entity->hasTwo((object) array('id' => 2)));
-		Assert::false($entity->hasProxy((object) array('id' => 3)));
+		Assert::false($entity->hasTwo((object) ['id' => 2]));
+		Assert::false($entity->hasProxy((object) ['id' => 3]));
 
 		$twos = $entity->getTwos();
 		Assert::false($twos->isEmpty());
@@ -334,7 +334,7 @@ class MagicAccessorsTest extends Tester\TestCase
 	{
 		Assert::exception(function () {
 			$entity = new BadlyNamedEntity();
-			$entity->removeOne((object) array('id' => 1));
+			$entity->removeOne((object) ['id' => 1]);
 		}, 'Kdyby\Doctrine\MemberAccessException', 'Call to undefined method KdybyTests\Doctrine\BadlyNamedEntity::removeOne().');
 	}
 
@@ -344,7 +344,7 @@ class MagicAccessorsTest extends Tester\TestCase
 	{
 		Assert::exception(function () {
 			$entity = new BadlyNamedEntity();
-			$entity->removeFour((object) array('id' => 4));
+			$entity->removeFour((object) ['id' => 4]);
 		}, 'Kdyby\Doctrine\UnexpectedValueException', 'Class property KdybyTests\Doctrine\BadlyNamedEntity::$four is not an instance of Doctrine\Common\Collections\Collection.');
 	}
 
@@ -408,7 +408,7 @@ class BadlyNamedEntity
 	/**
 	 * @var array events
 	 */
-	private $onSomething = array();
+	private $onSomething = [];
 
 	/**
 	 * @var object
@@ -461,14 +461,14 @@ class BadlyNamedEntity
 	 */
 	public function __construct()
 	{
-		$this->one = (object) array('id' => 1);
-		$this->two = (object) array('id' => 2);
-		$this->three = (object) array('id' => 3);
+		$this->one = (object) ['id' => 1];
+		$this->two = (object) ['id' => 2];
+		$this->three = (object) ['id' => 3];
 
-		$this->ones = new ArrayCollection(array((object) array('id' => 1)));
-		$this->twos = new ArrayCollection(array((object) array('id' => 2)));
-		$this->proxies = new ArrayCollection(array((object) array('id' => 3)));
-		$this->threes = new ArrayCollection(array((object) array('id' => 4)));
+		$this->ones = new ArrayCollection([(object) ['id' => 1]]);
+		$this->twos = new ArrayCollection([(object) ['id' => 2]]);
+		$this->proxies = new ArrayCollection([(object) ['id' => 3]]);
+		$this->threes = new ArrayCollection([(object) ['id' => 4]]);
 	}
 
 

@@ -38,7 +38,7 @@ class EntityManager extends Doctrine\ORM\EntityManager implements Persistence\Qu
 	 * @deprecated
 	 * @var array
 	 */
-	public $onDaoCreate = array();
+	public $onDaoCreate = [];
 
 	/**
 	 * @var NonLockingUniqueInserter
@@ -111,7 +111,7 @@ class EntityManager extends Doctrine\ORM\EntityManager implements Persistence\Qu
 	 */
 	public function clear($entityName = null)
 	{
-		foreach (is_array($entityName) ? $entityName : (func_get_args() + array(0 => NULL)) as $item) {
+		foreach (is_array($entityName) ? $entityName : (func_get_args() + [0 => NULL]) as $item) {
 			parent::clear($item);
 		}
 

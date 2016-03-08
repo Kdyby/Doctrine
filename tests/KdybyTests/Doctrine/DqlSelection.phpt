@@ -72,7 +72,7 @@ class DqlSelectionTest extends KdybyTests\Doctrine\ORMTestCase
 	public function testSimpleUpdate()
 	{
 		$qb = $this->em->createSelection()
-			->update('test:CmsUser', 'u', array('username' => ':username'));
+			->update('test:CmsUser', 'u', ['username' => ':username']);
 
 		Assert::match('UPDATE test:CmsUser u SET u.username = :u_username', $qb->getDQL());
 	}
@@ -242,7 +242,7 @@ class DqlSelectionTest extends KdybyTests\Doctrine\ORMTestCase
 		$qb->select('u')
 			->from('test:CmsUser', 'u')
 			->where('u.id = :uid')
-			->where($qb->expr()->in('u.id', array(1, 2, 3)));
+			->where($qb->expr()->in('u.id', [1, 2, 3]));
 
 		Assert::match('SELECT u FROM test:CmsUser u WHERE u.id = :uid AND u.id IN(1, 2, 3)', $qb->getDQL());
 	}
@@ -254,7 +254,7 @@ class DqlSelectionTest extends KdybyTests\Doctrine\ORMTestCase
 		$qb = $this->em->createSelection();
 		$qb->select('u')
 			->from('test:CmsUser', 'u')
-			->where('u.id', array());
+			->where('u.id', []);
 
 		Assert::match('SELECT u FROM test:CmsUser u WHERE u.id IS NULL', $qb->getDQL());
 	}
@@ -267,7 +267,7 @@ class DqlSelectionTest extends KdybyTests\Doctrine\ORMTestCase
 		$qb->select('u')
 			->from('test:CmsUser', 'u')
 			->where('u.id = :uid')
-			->orWhere($qb->expr()->in('u.id', array(1, 2, 3)));
+			->orWhere($qb->expr()->in('u.id', [1, 2, 3]));
 
 		Assert::match('SELECT u FROM test:CmsUser u WHERE u.id = :uid OR u.id IN(1, 2, 3)', $qb->getDQL());
 	}
@@ -280,7 +280,7 @@ class DqlSelectionTest extends KdybyTests\Doctrine\ORMTestCase
 		$qb->select('u')
 			->from('test:CmsUser', 'u')
 			->where('u.id = :uid')
-			->where($qb->expr()->notIn('u.id', array(1, 2, 3)));
+			->where($qb->expr()->notIn('u.id', [1, 2, 3]));
 
 		Assert::match('SELECT u FROM test:CmsUser u WHERE u.id = :uid AND u.id NOT IN(1, 2, 3)', $qb->getDQL());
 	}
@@ -293,7 +293,7 @@ class DqlSelectionTest extends KdybyTests\Doctrine\ORMTestCase
 		$qb->select('u')
 			->from('test:CmsUser', 'u')
 			->where('u.id = :uid')
-			->orWhere($qb->expr()->notIn('u.id', array(1, 2, 3)));
+			->orWhere($qb->expr()->notIn('u.id', [1, 2, 3]));
 
 		Assert::match('SELECT u FROM test:CmsUser u WHERE u.id = :uid OR u.id NOT IN(1, 2, 3)', $qb->getDQL());
 	}
@@ -540,10 +540,10 @@ class DqlSelectionTest extends KdybyTests\Doctrine\ORMTestCase
 			->where('u.id', 87);
 
 		Assert::match('SELECT u FROM test:CmsUser u WHERE u.id = :h5f727_0_0 AND u.id = :h5f727_1_0', $qb->getDQL());
-		Assert::equal(array(
+		Assert::equal([
 			':h5f727_0_0' => new Parameter('h5f727_0_0', 23),
 			':h5f727_1_0' => new Parameter('h5f727_1_0', 87),
-		), $qb->getParameters()->toArray());
+		], $qb->getParameters()->toArray());
 	}
 
 
@@ -580,7 +580,7 @@ class DqlSelectionTest extends KdybyTests\Doctrine\ORMTestCase
 
 		$orExpr = $qb->expr()->orX();
 		$orExpr->add($qb->expr()->eq('u.id', ':uid3'));
-		$orExpr->add($qb->expr()->in('u.id', array(1)));
+		$orExpr->add($qb->expr()->in('u.id', [1]));
 
 		$qb->select('u')
 			->from('test:CmsUser', 'u')
@@ -596,14 +596,14 @@ class DqlSelectionTest extends KdybyTests\Doctrine\ORMTestCase
 		$qb = $this->em->createSelection();
 		$qb->select('u')
 			->from('test:CmsUser', 'u')
-			->where($qb->expr()->in('u.name', array('one', 'two', 'three')));
+			->where($qb->expr()->in('u.name', ['one', 'two', 'three']));
 
 		Assert::match("SELECT u FROM test:CmsUser u WHERE u.name IN('one', 'two', 'three')", $qb->getDQL());
 
 		$qb = $this->em->createSelection();
 		$qb->select('u')
 			->from('test:CmsUser', 'u')
-			->where($qb->expr()->in('u.name', array("O'Reilly", "O'Neil", 'Smith')));
+			->where($qb->expr()->in('u.name', ["O'Reilly", "O'Neil", 'Smith']));
 
 		Assert::match("SELECT u FROM test:CmsUser u WHERE u.name IN('O''Reilly', 'O''Neil', 'Smith')", $qb->getDQL());
 	}
@@ -616,14 +616,14 @@ class DqlSelectionTest extends KdybyTests\Doctrine\ORMTestCase
 		$expr = $this->em->getExpressionBuilder();
 		$qb->select('u')
 			->from('test:CmsUser', 'u')
-			->where($expr->in('u.name', array($expr->literal('one'), $expr->literal('two'), $expr->literal('three'))));
+			->where($expr->in('u.name', [$expr->literal('one'), $expr->literal('two'), $expr->literal('three')]));
 
 		Assert::match("SELECT u FROM test:CmsUser u WHERE u.name IN('one', 'two', 'three')", $qb->getDQL());
 
 		$qb = $this->em->createSelection();
 		$qb->select('u')
 			->from('test:CmsUser', 'u')
-			->where($expr->in('u.name', array($expr->literal("O'Reilly"), $expr->literal("O'Neil"), $expr->literal('Smith'))));
+			->where($expr->in('u.name', [$expr->literal("O'Reilly"), $expr->literal("O'Neil"), $expr->literal('Smith')]));
 
 		Assert::match("SELECT u FROM test:CmsUser u WHERE u.name IN('O''Reilly', 'O''Neil', 'Smith')", $qb->getDQL());
 	}
@@ -635,7 +635,7 @@ class DqlSelectionTest extends KdybyTests\Doctrine\ORMTestCase
 		$expr = $this->em->getExpressionBuilder();
 		$orExpr = $expr->orX();
 		$orExpr->add($expr->eq('u.id', ':uid3'));
-		$orExpr->add($expr->not($expr->in('u.id', array(1))));
+		$orExpr->add($expr->not($expr->in('u.id', [1])));
 
 		$qb = $this->em->createSelection();
 		$qb->select('u')
@@ -763,7 +763,7 @@ class DqlSelectionTest extends KdybyTests\Doctrine\ORMTestCase
 			->select('u')
 			->from('test:CmsUser', 'u');
 
-		Assert::equal(array('u'), $qb->getRootAliases());
+		Assert::equal(['u'], $qb->getRootAliases());
 	}
 
 
@@ -774,7 +774,7 @@ class DqlSelectionTest extends KdybyTests\Doctrine\ORMTestCase
 			->select('u')
 			->from('test:CmsUser', 'u');
 
-		Assert::equal(array('u' => 'test:CmsUser'), $qb->getRootEntities());
+		Assert::equal(['u' => 'test:CmsUser'], $qb->getRootEntities());
 	}
 
 
@@ -786,7 +786,7 @@ class DqlSelectionTest extends KdybyTests\Doctrine\ORMTestCase
 			->from('test:CmsUser', 'u')
 			->from('test:CmsUser', 'u2');
 
-		Assert::equal(array('u', 'u2'), $qb->getRootAliases());
+		Assert::equal(['u', 'u2'], $qb->getRootAliases());
 		Assert::equal('u', $qb->getRootAlias());
 	}
 

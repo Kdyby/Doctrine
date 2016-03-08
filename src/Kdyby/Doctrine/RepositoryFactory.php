@@ -33,12 +33,12 @@ class RepositoryFactory extends Nette\Object implements Doctrine\ORM\Repository\
 	 *
 	 * @var \Doctrine\Common\Persistence\ObjectRepository[]
 	 */
-	private $repositoryList = array();
+	private $repositoryList = [];
 
 	/**
 	 * @var array
 	 */
-	private $repositoryServicesMap = array();
+	private $repositoryServicesMap = [];
 
 	/**
 	 * @var string

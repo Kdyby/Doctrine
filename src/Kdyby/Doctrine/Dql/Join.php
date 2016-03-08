@@ -67,7 +67,7 @@ class Join extends Expr\Join
 	 */
 	public function __call($name, $arguments)
 	{
-		if (in_array($name = strtolower($name), array('with', 'on'))) {
+		if (in_array($name = strtolower($name), ['with', 'on'])) {
 			$this->conditionType = $name === 'with' ? self::WITH : self::ON;
 			$name = 'and';
 		}
@@ -81,12 +81,12 @@ class Join extends Expr\Join
 				$this->conditionType = self::ON;
 			}
 
-			call_user_func_array(array($this->condition, $method), $arguments);
+			call_user_func_array([$this->condition, $method], $arguments);
 
 			return $this;
 		}
 
-		return call_user_func_array(array($this->query, $name), $arguments);
+		return call_user_func_array([$this->query, $name], $arguments);
 	}
 
 }

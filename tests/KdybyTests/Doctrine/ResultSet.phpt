@@ -111,7 +111,7 @@ class ResultSetTest extends KdybyTests\Doctrine\ORMTestCase
 		$resultSet->applySorting('u.name ASC');
 		Assert::same($basicSelect . ' ORDER BY u.name ASC', $query->getDQL());
 
-		$resultSet->applySorting(array('u.status' => 'DESC'));
+		$resultSet->applySorting(['u.status' => 'DESC']);
 		Assert::same($basicSelect . ' ORDER BY u.name ASC, u.status DESC', $query->getDQL());
 
 		$query->setDQL($basicSelect);
@@ -153,7 +153,7 @@ class ResultSetTest extends KdybyTests\Doctrine\ORMTestCase
 		$resultSet->applySorting('u.name ASC');
 		Assert::same($basicSelect . ' ORDER BY u.name ASC', $query->getDQL());
 
-		$resultSet->applySorting(array('u.status' => 'DESC'));
+		$resultSet->applySorting(['u.status' => 'DESC']);
 		Assert::same($basicSelect . ' ORDER BY u.name ASC, u.status DESC', $query->getDQL());
 
 		$query->setDQL($basicSelect);

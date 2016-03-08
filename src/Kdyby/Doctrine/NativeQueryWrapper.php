@@ -104,10 +104,10 @@ final class NativeQueryWrapper extends AbstractQuery
 	protected function getLimitedQuery()
 	{
 		$copy = clone $this->nativeQuery;
-		$copy->setParameters(array());
+		$copy->setParameters([]);
 
 		try {
-			$params = $types = array();
+			$params = $types = [];
 			/** @var Query\Parameter $param */
 			foreach ($this->nativeQuery->getParameters() as $param) {
 				$params[$param->getName()] = $param->getValue();

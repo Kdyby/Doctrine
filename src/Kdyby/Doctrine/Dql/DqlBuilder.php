@@ -27,22 +27,22 @@ class DqlBuilder extends Nette\Object
 	/**
 	 * @var array
 	 */
-	public $select = array();
+	public $select = [];
 
 	/**
 	 * @var array
 	 */
-	public $from = array();
+	public $from = [];
 
 	/**
 	 * @var array
 	 */
-	public $join = array();
+	public $join = [];
 
 	/**
 	 * @var array
 	 */
-	public $set = array();
+	public $set = [];
 
 	/**
 	 * @var Condition
@@ -62,7 +62,7 @@ class DqlBuilder extends Nette\Object
 	/**
 	 * @var array
 	 */
-	public $orderBy = array();
+	public $orderBy = [];
 
 	/**
 	 * The query parameters.
@@ -108,7 +108,7 @@ class DqlBuilder extends Nette\Object
 	 */
 	public function buildUpdateDQL()
 	{
-		$set = array();
+		$set = [];
 		foreach ($this->set as $alias => $values) {
 			foreach ($values as $column => $value) {
 				$this->parameters[$param = $alias . '_' . $column] = $value;

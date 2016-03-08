@@ -190,7 +190,7 @@ class ResultSet extends Nette\Object implements \Countable, \IteratorAggregate
 	{
 		$this->updating();
 
-		$sorting = array();
+		$sorting = [];
 		foreach (is_array($columns) ? $columns : func_get_args() as $name => $column) {
 			if (!is_numeric($name)) {
 				$column = $name . ' ' . $column;

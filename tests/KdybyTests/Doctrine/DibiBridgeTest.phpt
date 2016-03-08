@@ -32,16 +32,16 @@ class DibiBridgeTest extends Tester\TestCase
 	public function testFunctional()
 	{
 		// create doctrine
-		$doctrine = Connection::create(array(
+		$doctrine = Connection::create([
 			'driver' => 'pdo_sqlite',
 			'memory' => TRUE,
-		), new Doctrine\DBAL\Configuration(), new Kdyby\Events\EventManager());
+		], new Doctrine\DBAL\Configuration(), new Kdyby\Events\EventManager());
 
 		// create dibi
-		$dibi = new \DibiConnection(array(
+		$dibi = new \DibiConnection([
 			'driver' => 'pdo',
 			'resource' => $doctrine->getWrappedConnection(),
-		));
+		]);
 
 		// resource is same
 		Assert::same($doctrine->getWrappedConnection(), $dibi->getDriver()->getResource());

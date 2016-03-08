@@ -40,7 +40,7 @@ class SimpleParameterFormatter extends Nette\Object
 			return $param ? "TRUE" : "FALSE";
 
 		} elseif (is_array($param)) {
-			$formatted = array();
+			$formatted = [];
 			foreach ($param as $value) {
 				$formatted[] = self::format($value);
 			}

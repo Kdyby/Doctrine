@@ -34,12 +34,12 @@ abstract class BaseEntity extends Nette\Object implements \Serializable
 	/**
 	 * @var array
 	 */
-	private static $properties = array();
+	private static $properties = [];
 
 	/**
 	 * @var array
 	 */
-	private static $methods = array();
+	private static $methods = [];
 
 
 

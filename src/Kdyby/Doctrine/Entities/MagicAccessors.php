@@ -30,12 +30,12 @@ trait MagicAccessors
 	/**
 	 * @var array
 	 */
-	private static $__properties = array();
+	private static $__properties = [];
 
 	/**
 	 * @var array
 	 */
-	private static $__methods = array();
+	private static $__methods = [];
 
 
 

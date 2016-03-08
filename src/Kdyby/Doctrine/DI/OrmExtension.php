@@ -39,22 +39,22 @@ class OrmExtension extends Nette\DI\CompilerExtension
 	/**
 	 * @var array
 	 */
-	public $managerDefaults = array(
+	public $managerDefaults = [
 		'metadataCache' => 'default',
 		'queryCache' => 'default',
 		'resultCache' => 'default',
 		'hydrationCache' => 'default',
-		'secondLevelCache' => array(
+		'secondLevelCache' => [
 			'enabled' => FALSE,
 			'factoryClass' => 'Doctrine\ORM\Cache\DefaultCacheFactory',
 			'driver' => 'default',
-			'regions' => array(
+			'regions' => [
 				'defaultLifetime' => 3600,
 				'defaultLockLifetime' => 60,
-			),
+			],
 			'fileLockRegionDirectory' => '%tempDir%/cache/Doctrine.Cache.Locks', // todo fix
 			'logging' => '%debugMode%',
-		),
+		],
 		'classMetadataFactory' => 'Kdyby\Doctrine\Mapping\ClassMetadataFactory',
 		'defaultRepositoryClassName' => 'Kdyby\Doctrine\EntityDao',
 		'repositoryFactoryClassName' => 'Kdyby\Doctrine\RepositoryFactory',
@@ -65,18 +65,18 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		'entityListenerResolver' => 'Kdyby\Doctrine\Mapping\EntityListenerResolver',
 		'proxyDir' => '%tempDir%/proxies',
 		'proxyNamespace' => 'Kdyby\GeneratedProxy',
-		'dql' => array('string' => array(), 'numeric' => array(), 'datetime' => array(), 'hints' => array()),
-		'hydrators' => array(),
-		'metadata' => array(),
-		'filters' => array(),
-		'namespaceAlias' => array(),
-		'targetEntityMappings' => array(),
-	);
+		'dql' => ['string' => [], 'numeric' => [], 'datetime' => [], 'hints' => []],
+		'hydrators' => [],
+		'metadata' => [],
+		'filters' => [],
+		'namespaceAlias' => [],
+		'targetEntityMappings' => [],
+	];
 
 	/**
 	 * @var array
 	 */
-	public $connectionDefaults = array(
+	public $connectionDefaults = [
 		'dbname' => NULL,
 		'host' => '127.0.0.1',
 		'port' => NULL,
@@ -91,9 +91,9 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		'unix_socket' => NULL,
 		'logging' => '%debugMode%',
 		'platformService' => NULL,
-		'defaultTableOptions' => array(),
+		'defaultTableOptions' => [],
 		'resultCache' => 'default',
-		'types' => array(
+		'types' => [
 			'enum' => 'Kdyby\Doctrine\Types\Enum',
 			'point' => 'Kdyby\Doctrine\Types\Point',
 			'lineString' => 'Kdyby\Doctrine\Types\LineString',
@@ -101,51 +101,51 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			'polygon' => 'Kdyby\Doctrine\Types\Polygon',
 			'multiPolygon' => 'Kdyby\Doctrine\Types\MultiPolygon',
 			'geometryCollection' => 'Kdyby\Doctrine\Types\GeometryCollection',
-		),
+		],
 		'schemaFilter' => NULL,
-	);
+	];
 
 	/**
 	 * @var array
 	 */
-	public $metadataDriverClasses = array(
+	public $metadataDriverClasses = [
 		self::ANNOTATION_DRIVER => 'Kdyby\Doctrine\Mapping\AnnotationDriver',
 		'static' => 'Doctrine\Common\Persistence\Mapping\Driver\StaticPHPDriver',
 		'yml' => 'Doctrine\ORM\Mapping\Driver\YamlDriver',
 		'yaml' => 'Doctrine\ORM\Mapping\Driver\YamlDriver',
 		'xml' => 'Doctrine\ORM\Mapping\Driver\XmlDriver',
 		'db' => 'Doctrine\ORM\Mapping\Driver\DatabaseDriver',
-	);
+	];
 
 	/**
 	 * @var array
 	 */
-	private $proxyAutoloaders = array();
+	private $proxyAutoloaders = [];
 
 	/**
 	 * @var array
 	 */
-	private $targetEntityMappings = array();
+	private $targetEntityMappings = [];
 
 	/**
 	 * @var array
 	 */
-	private $configuredManagers = array();
+	private $configuredManagers = [];
 
 	/**
 	 * @var array
 	 */
-	private $managerConfigs = array();
+	private $managerConfigs = [];
 
 	/**
 	 * @var array
 	 */
-	private $configuredConnections = array();
+	private $configuredConnections = [];
 
 	/**
 	 * @var array
 	 */
-	private $postCompileRepositoriesQueue = array();
+	private $postCompileRepositoriesQueue = [];
 
 
 
@@ -156,7 +156,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		$this->configuredConnections =
 		$this->managerConfigs =
 		$this->configuredManagers =
-		$this->postCompileRepositoriesQueue = array();
+		$this->postCompileRepositoriesQueue = [];
 
 		$extensions = array_filter($this->compiler->getExtensions(), function ($item) {
 			return $item instanceof Kdyby\Annotations\DI\AnnotationsExtension;
@@ -170,13 +170,13 @@ class OrmExtension extends Nette\DI\CompilerExtension
 
 		$builder->parameters[$this->prefix('debug')] = !empty($config['debug']);
 		if (isset($config['dbname']) || isset($config['driver']) || isset($config['connection'])) {
-			$config = array('default' => $config);
-			$defaults = array('debug' => $builder->parameters['debugMode']);
+			$config = ['default' => $config];
+			$defaults = ['debug' => $builder->parameters['debugMode']];
 
 		} else {
 			$defaults = array_intersect_key($config, $this->managerDefaults)
 				+ array_intersect_key($config, $this->connectionDefaults)
-				+ array('debug' => $builder->parameters['debugMode']);
+				+ ['debug' => $builder->parameters['debugMode']];
 
 			$config = array_diff_key($config, $defaults);
 		}
@@ -213,7 +213,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 
 		foreach ($this->compiler->getExtensions('Kdyby\Annotations\DI\AnnotationsExtension') as $extension) {
 			/** @var Kdyby\Annotations\DI\AnnotationsExtension $extension */
-			$cacheCleaner->addSetup('addCacheStorage', array($extension->prefix('@cache.annotations')));
+			$cacheCleaner->addSetup('addCacheStorage', [$extension->prefix('@cache.annotations')]);
 		}
 
 		if ($this->targetEntityMappings) {
@@ -223,19 +223,19 @@ class OrmExtension extends Nette\DI\CompilerExtension
 				->setInject(FALSE);
 
 			foreach ($this->targetEntityMappings as $originalEntity => $mapping) {
-				$listener->addSetup('addResolveTargetEntity', array($originalEntity, $mapping['targetEntity'], $mapping));
+				$listener->addSetup('addResolveTargetEntity', [$originalEntity, $mapping['targetEntity'], $mapping]);
 			}
 		}
 
 		$this->loadConsole();
 
 		$builder->addDefinition($this->prefix('registry'))
-			->setClass('Kdyby\Doctrine\Registry', array(
+			->setClass('Kdyby\Doctrine\Registry', [
 				$this->configuredConnections,
 				$this->configuredManagers,
 				$builder->parameters[$this->name]['dbal']['defaultConnection'],
 				$builder->parameters[$this->name]['orm']['defaultEntityManager'],
-			));
+			]);
 	}
 
 
@@ -304,7 +304,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 				Validators::assert($providedTypes, 'array');
 
 				if (!isset($defaults['types'])) {
-					$defaults['types'] = array();
+					$defaults['types'] = [];
 				}
 
 				$defaults['types'] = array_merge($defaults['types'], $providedTypes);
@@ -318,12 +318,12 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		$this->processMetadataDriver($metadataDriver, 'Kdyby\\Doctrine', __DIR__ . '/../Entities', $name);
 
 		if (empty($config['metadata'])) {
-			$metadataDriver->addSetup('setDefaultDriver', array(
-				new Statement($this->metadataDriverClasses[self::ANNOTATION_DRIVER], array(
-					array($builder->expand('%appDir%')),
+			$metadataDriver->addSetup('setDefaultDriver', [
+				new Statement($this->metadataDriverClasses[self::ANNOTATION_DRIVER], [
+					[$builder->expand('%appDir%')],
 					2 => $this->prefix('@cache.' . $name . '.metadata')
-				))
-			));
+				])
+			]);
 		}
 
 		if ($config['repositoryFactoryClassName'] === 'default') {
@@ -347,24 +347,24 @@ class OrmExtension extends Nette\DI\CompilerExtension
 
 		$configuration = $builder->addDefinition($this->prefix($name . '.ormConfiguration'))
 			->setClass('Kdyby\Doctrine\Configuration')
-			->addSetup('setMetadataCacheImpl', array($this->processCache($config['metadataCache'], $name . '.metadata')))
-			->addSetup('setQueryCacheImpl', array($this->processCache($config['queryCache'], $name . '.query')))
-			->addSetup('setResultCacheImpl', array($this->processCache($config['resultCache'], $name . '.ormResult')))
-			->addSetup('setHydrationCacheImpl', array($this->processCache($config['hydrationCache'], $name . '.hydration')))
-			->addSetup('setMetadataDriverImpl', array($this->prefix('@' . $name . '.metadataDriver')))
-			->addSetup('setClassMetadataFactoryName', array($config['classMetadataFactory']))
-			->addSetup('setDefaultRepositoryClassName', array($config['defaultRepositoryClassName']))
-			->addSetup('setQueryBuilderClassName', array($config['queryBuilderClassName']))
-			->addSetup('setRepositoryFactory', array($this->prefix('@' . $name . '.repositoryFactory')))
-			->addSetup('setProxyDir', array($config['proxyDir']))
-			->addSetup('setProxyNamespace', array($config['proxyNamespace']))
-			->addSetup('setAutoGenerateProxyClasses', array($autoGenerateProxyClasses))
-			->addSetup('setEntityNamespaces', array($config['namespaceAlias']))
-			->addSetup('setCustomHydrationModes', array($config['hydrators']))
-			->addSetup('setCustomStringFunctions', array($config['dql']['string']))
-			->addSetup('setCustomNumericFunctions', array($config['dql']['numeric']))
-			->addSetup('setCustomDatetimeFunctions', array($config['dql']['datetime']))
-			->addSetup('setDefaultQueryHints', array($config['dql']['hints']))
+			->addSetup('setMetadataCacheImpl', [$this->processCache($config['metadataCache'], $name . '.metadata')])
+			->addSetup('setQueryCacheImpl', [$this->processCache($config['queryCache'], $name . '.query')])
+			->addSetup('setResultCacheImpl', [$this->processCache($config['resultCache'], $name . '.ormResult')])
+			->addSetup('setHydrationCacheImpl', [$this->processCache($config['hydrationCache'], $name . '.hydration')])
+			->addSetup('setMetadataDriverImpl', [$this->prefix('@' . $name . '.metadataDriver')])
+			->addSetup('setClassMetadataFactoryName', [$config['classMetadataFactory']])
+			->addSetup('setDefaultRepositoryClassName', [$config['defaultRepositoryClassName']])
+			->addSetup('setQueryBuilderClassName', [$config['queryBuilderClassName']])
+			->addSetup('setRepositoryFactory', [$this->prefix('@' . $name . '.repositoryFactory')])
+			->addSetup('setProxyDir', [$config['proxyDir']])
+			->addSetup('setProxyNamespace', [$config['proxyNamespace']])
+			->addSetup('setAutoGenerateProxyClasses', [$autoGenerateProxyClasses])
+			->addSetup('setEntityNamespaces', [$config['namespaceAlias']])
+			->addSetup('setCustomHydrationModes', [$config['hydrators']])
+			->addSetup('setCustomStringFunctions', [$config['dql']['string']])
+			->addSetup('setCustomNumericFunctions', [$config['dql']['numeric']])
+			->addSetup('setCustomDatetimeFunctions', [$config['dql']['datetime']])
+			->addSetup('setDefaultQueryHints', [$config['dql']['hints']])
 			->addSetup('setNamingStrategy', CacheHelpers::filterArgs($config['namingStrategy']))
 			->addSetup('setQuoteStrategy', CacheHelpers::filterArgs($config['quoteStrategy']))
 			->addSetup('setEntityListenerResolver', CacheHelpers::filterArgs($config['entityListenerResolver']))
@@ -374,7 +374,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 
 		$builder->addDefinition($this->prefix($name . '.proxyAutoloader'))
 			->setClass('Kdyby\Doctrine\Proxy\ProxyAutoloader')
-			->setArguments(array($config['proxyDir'], $config['proxyNamespace']))
+			->setArguments([$config['proxyDir'], $config['proxyNamespace']])
 			->addTag(Kdyby\Events\DI\EventsExtension::SUBSCRIBER_TAG)
 			->setAutowired(FALSE)
 			->setInject(FALSE);
@@ -385,51 +385,51 @@ class OrmExtension extends Nette\DI\CompilerExtension
 
 		Validators::assertField($config, 'filters', 'array');
 		foreach ($config['filters'] as $filterName => $filterClass) {
-			$configuration->addSetup('addFilter', array($filterName, $filterClass));
+			$configuration->addSetup('addFilter', [$filterName, $filterClass]);
 		}
 
 		if ($config['targetEntityMappings']) {
-			$configuration->addSetup('setTargetEntityMap', array(array_map(function ($mapping) {
+			$configuration->addSetup('setTargetEntityMap', [array_map(function ($mapping) {
 				return $mapping['targetEntity'];
-			}, $config['targetEntityMappings'])));
+			}, $config['targetEntityMappings'])]);
 			$this->targetEntityMappings = Nette\Utils\Arrays::mergeTree($this->targetEntityMappings, $config['targetEntityMappings']);
 		}
 
 		$builder->addDefinition($this->prefix($name . '.evm'))
-			->setClass('Kdyby\Events\NamespacedEventManager', array(Kdyby\Doctrine\Events::NS . '::'))
-			->addSetup('$dispatchGlobalEvents', array(TRUE)) // for BC
+			->setClass('Kdyby\Events\NamespacedEventManager', [Kdyby\Doctrine\Events::NS . '::'])
+			->addSetup('$dispatchGlobalEvents', [TRUE]) // for BC
 			->setAutowired(FALSE);
 
 		// entity manager
 		$entityManager = $builder->addDefinition($managerServiceId = $this->prefix($name . '.entityManager'))
 			->setClass('Kdyby\Doctrine\EntityManager')
-			->setFactory('Kdyby\Doctrine\EntityManager::create', array(
+			->setFactory('Kdyby\Doctrine\EntityManager::create', [
 				$connectionService = $this->processConnection($name, $defaults, $isDefault),
 				$this->prefix('@' . $name . '.ormConfiguration'),
 				$this->prefix('@' . $name . '.evm'),
-			))
+			])
 			->addTag(self::TAG_ENTITY_MANAGER)
 			->addTag('kdyby.doctrine.entityManager')
 			->setAutowired($isDefault)
 			->setInject(FALSE);
 
 		if ($this->isTracyPresent()) {
-			$entityManager->addSetup('?->bindEntityManager(?)', array($this->prefix('@' . $name . '.diagnosticsPanel'), '@self'));
+			$entityManager->addSetup('?->bindEntityManager(?)', [$this->prefix('@' . $name . '.diagnosticsPanel'), '@self']);
 		}
 
 		if ($isDefault && $config['defaultRepositoryClassName'] === 'Kdyby\Doctrine\EntityDao') {
 			// syntax sugar for config
 			$builder->addDefinition($this->prefix('dao'))
 				->setClass('Kdyby\Doctrine\EntityDao')
-				->setFactory('@Kdyby\Doctrine\EntityManager::getDao', array(new Code\PhpLiteral('$entityName')))
-				->setParameters(array('entityName'))
+				->setFactory('@Kdyby\Doctrine\EntityManager::getDao', [new Code\PhpLiteral('$entityName')])
+				->setParameters(['entityName'])
 				->setInject(FALSE);
 
 			// interface for models & presenters
 			$builder->addDefinition($this->prefix('daoFactory'))
 				->setClass('Kdyby\Doctrine\EntityDao')
-				->setFactory('@Kdyby\Doctrine\EntityManager::getDao', array(new Code\PhpLiteral('$entityName')))
-				->setParameters(array('entityName'))
+				->setFactory('@Kdyby\Doctrine\EntityManager::getDao', [new Code\PhpLiteral('$entityName')])
+				->setParameters(['entityName'])
 				->setImplement('Kdyby\Doctrine\EntityDaoFactory')
 				->setInject(FALSE)->setAutowired(TRUE);
 		}
@@ -438,7 +438,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 				->setClass($config['defaultRepositoryClassName'])
 				->setImplement('Kdyby\Doctrine\DI\IRepositoryFactory')
 				->setArguments([new Code\PhpLiteral('$entityManager'), new Code\PhpLiteral('$classMetadata')])
-				->setParameters(array('Doctrine\ORM\EntityManagerInterface entityManager', 'Doctrine\ORM\Mapping\ClassMetadata classMetadata'))
+				->setParameters(['Doctrine\ORM\EntityManagerInterface entityManager', 'Doctrine\ORM\Mapping\ClassMetadata classMetadata'])
 				->setAutowired(FALSE);
 
 		$this->configuredManagers[$name] = $managerServiceId;
@@ -457,23 +457,23 @@ class OrmExtension extends Nette\DI\CompilerExtension
 
 		$cacheFactory = $builder->addDefinition($this->prefix($name . '.cacheFactory'))
 			->setClass('Doctrine\ORM\Cache\CacheFactory')
-			->setFactory($config['factoryClass'], array(
+			->setFactory($config['factoryClass'], [
 				$this->prefix('@' . $name . '.cacheRegionsConfiguration'),
 				$this->processCache($config['driver'], $name . '.secondLevel'),
-			))
+			])
 			->setAutowired($isDefault);
 
 		if ($config['factoryClass'] === $this->managerDefaults['secondLevelCache']['factoryClass']
 			|| is_subclass_of($config['factoryClass'], $this->managerDefaults['secondLevelCache']['factoryClass'])
 		) {
-			$cacheFactory->addSetup('setFileLockRegionDirectory', array($config['fileLockRegionDirectory']));
+			$cacheFactory->addSetup('setFileLockRegionDirectory', [$config['fileLockRegionDirectory']]);
 		}
 
 		$builder->addDefinition($this->prefix($name . '.cacheRegionsConfiguration'))
-			->setClass('Doctrine\ORM\Cache\RegionsConfiguration', array(
+			->setClass('Doctrine\ORM\Cache\RegionsConfiguration', [
 				$config['regions']['defaultLifetime'],
 				$config['regions']['defaultLockLifetime'],
-			))
+			])
 			->setAutowired($isDefault);
 
 		$logger = $builder->addDefinition($this->prefix($name . '.cacheLogger'))
@@ -482,21 +482,21 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			->setAutowired(FALSE);
 
 		if ($config['logging']) {
-			$logger->addSetup('setLogger', array(
+			$logger->addSetup('setLogger', [
 				'statistics',
 				new Statement('Doctrine\ORM\Cache\Logging\StatisticsCacheLogger')
-			));
+			]);
 		}
 
 		$builder->addDefinition($cacheConfigName = $this->prefix($name . '.ormCacheConfiguration'))
 			->setClass('Doctrine\ORM\Cache\CacheConfiguration')
-			->addSetup('setCacheFactory', array($this->prefix('@' . $name . '.cacheFactory')))
-			->addSetup('setCacheLogger', array($this->prefix('@' . $name . '.cacheLogger')))
+			->addSetup('setCacheFactory', [$this->prefix('@' . $name . '.cacheFactory')])
+			->addSetup('setCacheLogger', [$this->prefix('@' . $name . '.cacheLogger')])
 			->setAutowired($isDefault);
 
 		$configuration = $builder->getDefinition($this->prefix($name . '.ormConfiguration'));
 		$configuration->addSetup('setSecondLevelCacheEnabled');
-		$configuration->addSetup('setSecondLevelCacheConfiguration', array('@' . $cacheConfigName));
+		$configuration->addSetup('setSecondLevelCacheConfiguration', ['@' . $cacheConfigName]);
 	}
 
 
@@ -517,17 +517,17 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		// config
 		$configuration = $builder->addDefinition($this->prefix($name . '.dbalConfiguration'))
 			->setClass('Doctrine\DBAL\Configuration')
-			->addSetup('setResultCacheImpl', array($this->processCache($config['resultCache'], $name . '.dbalResult')))
-			->addSetup('setSQLLogger', array(new Statement('Doctrine\DBAL\Logging\LoggerChain')))
-			->addSetup('setFilterSchemaAssetsExpression', array($config['schemaFilter']))
+			->addSetup('setResultCacheImpl', [$this->processCache($config['resultCache'], $name . '.dbalResult')])
+			->addSetup('setSQLLogger', [new Statement('Doctrine\DBAL\Logging\LoggerChain')])
+			->addSetup('setFilterSchemaAssetsExpression', [$config['schemaFilter']])
 			->setAutowired(FALSE)
 			->setInject(FALSE);
 
 		// types
 		Validators::assertField($config, 'types', 'array');
-		$schemaTypes = $dbalTypes = array();
+		$schemaTypes = $dbalTypes = [];
 		foreach ($config['types'] as $dbType => $className) {
-			$typeInst = Code\Helpers::createObject($className, array());
+			$typeInst = Code\Helpers::createObject($className, []);
 			/** @var Doctrine\DBAL\Types\Type $typeInst */
 			$dbalTypes[$typeInst->getName()] = $className;
 			$schemaTypes[$dbType] = $typeInst->getName();
@@ -541,16 +541,16 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		}
 
 		// connection
-		$options = array_diff_key($config, array_flip(array('types', 'resultCache', 'connection', 'logging')));
+		$options = array_diff_key($config, array_flip(['types', 'resultCache', 'connection', 'logging']));
 		$connection = $builder->addDefinition($connectionServiceId = $this->prefix($name . '.connection'))
 			->setClass('Kdyby\Doctrine\Connection')
-			->setFactory('Kdyby\Doctrine\Connection::create', array(
+			->setFactory('Kdyby\Doctrine\Connection::create', [
 				$options,
 				$this->prefix('@' . $name . '.dbalConfiguration'),
 				$this->prefix('@' . $name . '.evm')
-			))
-			->addSetup('setSchemaTypes', array($schemaTypes))
-			->addSetup('setDbalTypes', array($dbalTypes))
+			])
+			->addSetup('setSchemaTypes', [$schemaTypes])
+			->addSetup('setDbalTypes', [$dbalTypes])
 			->addTag(self::TAG_CONNECTION)
 			->addTag('kdyby.doctrine.connection')
 			->setAutowired($isDefault)
@@ -565,11 +565,11 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		$this->configuredConnections[$name] = $connectionServiceId;
 
 		if (!is_bool($config['logging'])) {
-			$fileLogger = new Statement('Kdyby\Doctrine\Diagnostics\FileLogger', array($builder->expand($config['logging'])));
-			$configuration->addSetup('$service->getSQLLogger()->addLogger(?)', array($fileLogger));
+			$fileLogger = new Statement('Kdyby\Doctrine\Diagnostics\FileLogger', [$builder->expand($config['logging'])]);
+			$configuration->addSetup('$service->getSQLLogger()->addLogger(?)', [$fileLogger]);
 
 		} elseif ($config['logging']) {
-			$connection->addSetup('?->enableLogging()', array(new Code\PhpLiteral('$panel')));
+			$connection->addSetup('?->enableLogging()', [new Code\PhpLiteral('$panel')]);
 		}
 
 		return $this->prefix('@' . $name . '.connection');
@@ -593,7 +593,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		$namespace = ltrim($namespace, '\\');
 
 		if (is_string($driver) || is_array($driver)) {
-			$paths = is_array($driver) ? $driver : array($driver);
+			$paths = is_array($driver) ? $driver : [$driver];
 			foreach ($paths as $path) {
 				if (($pos = strrpos($path, '*')) !== FALSE) {
 					$path = substr($path, 0, $pos);
@@ -604,7 +604,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 				}
 			}
 
-			$driver = new Statement(self::ANNOTATION_DRIVER, is_array($paths) ? $paths : array($paths));
+			$driver = new Statement(self::ANNOTATION_DRIVER, is_array($paths) ? $paths : [$paths]);
 		}
 
 		$impl = $driver instanceof \stdClass ? $driver->value : ($driver instanceof Statement ? $driver->entity : (string) $driver);
@@ -616,15 +616,15 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		}
 
 		if (is_string($driver->entity) && substr($driver->entity, 0, 1) === '@') {
-			$metadataDriver->addSetup('addDriver', array($driver->entity, $namespace));
+			$metadataDriver->addSetup('addDriver', [$driver->entity, $namespace]);
 			return $driver->entity;
 		}
 
 		if ($impl === self::ANNOTATION_DRIVER) {
-			$driver->arguments = array(
+			$driver->arguments = [
 				Nette\Utils\Arrays::flatten($driver->arguments),
 				2 => $this->prefix('@cache.' . $prefix . '.metadata')
-			);
+			];
 		}
 
 		$serviceName = $this->prefix($prefix . '.driver.' . str_replace('\\', '_', $namespace) . '.' . str_replace('\\', '_', $impl) . 'Impl');
@@ -635,7 +635,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			->setAutowired(FALSE)
 			->setInject(FALSE);
 
-		$metadataDriver->addSetup('addDriver', array('@' . $serviceName, $namespace));
+		$metadataDriver->addSetup('addDriver', ['@' . $serviceName, $namespace]);
 		return '@' . $serviceName;
 	}
 
@@ -691,13 +691,13 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		if (!method_exists($builder, 'findByType')) {
 			foreach ($this->configuredManagers as $managerName => $_) {
 				$builder->getDefinition($this->prefix($managerName . '.repositoryFactory'))
-					->addSetup('setServiceIdsMap', array(array(), $this->prefix('repositoryFactory.' . $managerName . '.defaultRepositoryFactory')));
+					->addSetup('setServiceIdsMap', [[], $this->prefix('repositoryFactory.' . $managerName . '.defaultRepositoryFactory')]);
 			}
 
 			return;
 		}
 
-		$serviceMap = array_fill_keys(array_keys($this->configuredManagers), array());
+		$serviceMap = array_fill_keys(array_keys($this->configuredManagers), []);
 		foreach ($builder->findByType('Doctrine\ORM\EntityRepository', FALSE) as $originalServiceName => $originalDef) {
 			if (is_string($originalDef)) {
 				$originalServiceName = $originalDef;
@@ -716,7 +716,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			$factoryServiceName = $this->prefix('repositoryFactory.' . $originalServiceName);
 			$factoryDef = $builder->addDefinition($factoryServiceName, $originalDef)
 				->setImplement('Kdyby\Doctrine\DI\IRepositoryFactory')
-				->setParameters(array('Doctrine\ORM\EntityManagerInterface entityManager', 'Doctrine\ORM\Mapping\ClassMetadata classMetadata'))
+				->setParameters(['Doctrine\ORM\EntityManagerInterface entityManager', 'Doctrine\ORM\Mapping\ClassMetadata classMetadata'])
 				->setAutowired(FALSE);
 			$factoryStatement = $factoryDef->getFactory() ?: new Statement($factoryDef->getClass());
 			$factoryStatement->arguments[0] = new Code\PhpLiteral('$entityManager');
@@ -740,17 +740,17 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			$builder->removeDefinition($originalServiceName);
 			$builder->addDefinition($originalServiceName)
 				->setClass($originalDef->class)
-				->setFactory(sprintf('@%s::getRepository', $this->configuredManagers[$boundManagers[0]]), array($entityArgument));
+				->setFactory(sprintf('@%s::getRepository', $this->configuredManagers[$boundManagers[0]]), [$entityArgument]);
 
 			$serviceMap[$boundManagers[0]][$originalDef->class] = $factoryServiceName;
 		}
 
 		foreach ($this->configuredManagers as $managerName => $_) {
 			$builder->getDefinition($this->prefix($managerName . '.repositoryFactory'))
-				->addSetup('setServiceIdsMap', array(
+				->addSetup('setServiceIdsMap', [
 					$serviceMap[$managerName],
 					$this->prefix('repositoryFactory.' . $managerName . '.defaultRepositoryFactory')
-				));
+				]);
 		}
 	}
 
@@ -765,7 +765,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		$builder = $this->getContainerBuilder();
 		$boundManagers = $def->getTag(self::TAG_BIND_TO_MANAGER);
 
-		return is_array($boundManagers) ? $boundManagers : array($builder->parameters[$this->name]['orm']['defaultEntityManager']);
+		return is_array($boundManagers) ? $boundManagers : [$builder->parameters[$this->name]['orm']['defaultEntityManager']];
 	}
 
 
@@ -849,7 +849,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 	 * @param $diff
 	 * @return array
 	 */
-	private function resolveConfig(array $provided, array $defaults, array $diff = array())
+	private function resolveConfig(array $provided, array $defaults, array $diff = [])
 	{
 		return $this->getContainerBuilder()->expand(Nette\DI\Config\Helpers::merge(
 			array_diff_key($provided, array_diff_key($diff, $defaults)),
@@ -864,20 +864,20 @@ class OrmExtension extends Nette\DI\CompilerExtension
 	 */
 	private function normalizeTargetEntityMappings(array $targetEntityMappings)
 	{
-		$normalized = array();
+		$normalized = [];
 		foreach ($targetEntityMappings as $originalEntity => $targetEntity) {
 			$originalEntity = ltrim($originalEntity, '\\');
 			Validators::assert($targetEntity, 'array|string');
 			if (is_array($targetEntity)) {
 				Validators::assertField($targetEntity, 'targetEntity', 'string');
-				$mapping = array_merge($targetEntity, array(
+				$mapping = array_merge($targetEntity, [
 					'targetEntity' => ltrim($targetEntity['targetEntity'], '\\')
-				));
+				]);
 
 			} else {
-				$mapping = array(
+				$mapping = [
 					'targetEntity' => ltrim($targetEntity, '\\'),
-				);
+				];
 			}
 			$normalized[$originalEntity] = $mapping;
 		}
@@ -901,10 +901,10 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		$blueScreen = 'Tracy\Debugger::getBlueScreen()';
 		$commonDirname = dirname(Nette\Reflection\ClassType::from('Doctrine\Common\Version')->getFileName());
 
-		$init->addBody($blueScreen . '->collapsePaths[] = ?;', array(dirname(Nette\Reflection\ClassType::from('Kdyby\Doctrine\Exception')->getFileName())));
-		$init->addBody($blueScreen . '->collapsePaths[] = ?;', array(dirname(dirname(dirname(dirname($commonDirname)))))); // this should be vendor/doctrine
+		$init->addBody($blueScreen . '->collapsePaths[] = ?;', [dirname(Nette\Reflection\ClassType::from('Kdyby\Doctrine\Exception')->getFileName())]);
+		$init->addBody($blueScreen . '->collapsePaths[] = ?;', [dirname(dirname(dirname(dirname($commonDirname))))]); // this should be vendor/doctrine
 		foreach ($this->proxyAutoloaders as $dir) {
-			$init->addBody($blueScreen . '->collapsePaths[] = ?;', array($dir));
+			$init->addBody($blueScreen . '->collapsePaths[] = ?;', [$dir]);
 		}
 	}
 
