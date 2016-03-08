@@ -23,11 +23,5 @@ abstract class DbalType extends Doctrine\DBAL\Types\Type
 {
 
 	const ENUM = 'enum';
-	const POINT = 'point';
-	const LINE_STRING = 'lineString';
-	const MULTI_LINE_STRING = 'multiLineString';
-	const POLYGON = 'polygon';
-	const MULTI_POLYGON = 'multiPolygon';
-	const GEOMETRY_COLLECTION = 'geometryCollection';
 
 }

@@ -11,8 +11,6 @@
 namespace KdybyTests\Doctrine\Diagnostics;
 
 use Kdyby\Doctrine\Diagnostics\SimpleParameterFormatter;
-use Kdyby\Doctrine\Geo\Coordinates;
-use Kdyby\Doctrine\Geo\Element;
 use Tester;
 use Tester\Assert;
 
@@ -82,19 +80,9 @@ class SimpleParameterFormatterTest extends Tester\TestCase
 
 
 
-	public function testGeo()
-	{
-		$element = new Element();
-		$element->addCoordinate(14.000000, 51.000000);
-		Assert::same('"POINT(51.0000000000000 14.0000000000000)"', SimpleParameterFormatter::format($element));
-	}
-
-
-
 	public function testObject()
 	{
 		Assert::same('stdClass', SimpleParameterFormatter::format(new \stdClass));
-		Assert::same('Kdyby\Doctrine\Geo\Coordinates', SimpleParameterFormatter::format(new Coordinates(14.000000, 51.000000)));
 	}
 
 }
