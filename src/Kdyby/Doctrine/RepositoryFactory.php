@@ -85,9 +85,7 @@ class RepositoryFactory extends Nette\Object implements Doctrine\ORM\Repository\
 
 		/** @var Doctrine\ORM\Mapping\ClassMetadata $metadata */
 		$metadata = $entityManager->getClassMetadata($entityName);
-
 		$repository = $this->createRepository($entityManager, $metadata);
-		$entityManager->onDaoCreate($entityManager, $repository);
 
 		return $this->repositoryList[$emId][$entityName] = $repository;
 	}

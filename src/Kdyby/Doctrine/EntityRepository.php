@@ -353,14 +353,14 @@ class EntityRepository extends Doctrine\ORM\EntityRepository implements Persiste
 
 	/**
 	 * @param string $relation
-	 * @return EntityDao
+	 * @return EntityRepository
 	 */
 	public function related($relation)
 	{
 		$meta = $this->getClassMetadata();
 		$targetClass = $meta->getAssociationTargetClass($relation);
 
-		return $this->getEntityManager()->getDao($targetClass);
+		return $this->getEntityManager()->getRepository($targetClass);
 	}
 
 

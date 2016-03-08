@@ -56,7 +56,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			'logging' => '%debugMode%',
 		],
 		'classMetadataFactory' => 'Kdyby\Doctrine\Mapping\ClassMetadataFactory',
-		'defaultRepositoryClassName' => 'Kdyby\Doctrine\EntityDao',
+		'defaultRepositoryClassName' => 'Kdyby\Doctrine\EntityRepository',
 		'repositoryFactoryClassName' => 'Kdyby\Doctrine\RepositoryFactory',
 		'queryBuilderClassName' => 'Kdyby\Doctrine\QueryBuilder',
 		'autoGenerateProxyClasses' => '%debugMode%',
@@ -417,23 +417,6 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			$entityManager->addSetup('?->bindEntityManager(?)', [$this->prefix('@' . $name . '.diagnosticsPanel'), '@self']);
 		}
 
-		if ($isDefault && $config['defaultRepositoryClassName'] === 'Kdyby\Doctrine\EntityDao') {
-			// syntax sugar for config
-			$builder->addDefinition($this->prefix('dao'))
-				->setClass('Kdyby\Doctrine\EntityDao')
-				->setFactory('@Kdyby\Doctrine\EntityManager::getDao', [new Code\PhpLiteral('$entityName')])
-				->setParameters(['entityName'])
-				->setInject(FALSE);
-
-			// interface for models & presenters
-			$builder->addDefinition($this->prefix('daoFactory'))
-				->setClass('Kdyby\Doctrine\EntityDao')
-				->setFactory('@Kdyby\Doctrine\EntityManager::getDao', [new Code\PhpLiteral('$entityName')])
-				->setParameters(['entityName'])
-				->setImplement('Kdyby\Doctrine\EntityDaoFactory')
-				->setInject(FALSE)->setAutowired(TRUE);
-		}
-
 		$builder->addDefinition($this->prefix('repositoryFactory.' . $name . '.defaultRepositoryFactory'))
 				->setClass($config['defaultRepositoryClassName'])
 				->setImplement('Kdyby\Doctrine\DI\IRepositoryFactory')
@@ -709,7 +692,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			}
 
 			$factory = $originalDef->getFactory() ? $originalDef->getFactory()->getEntity() : $originalDef->getClass();
-			if (stripos($factory, '::getRepository') !== FALSE || stripos($factory, '::getDao') !== FALSE) {
+			if (stripos($factory, '::getRepository') !== FALSE) {
 				continue; // ignore
 			}
 
