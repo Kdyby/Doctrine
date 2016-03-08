@@ -52,11 +52,6 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 	/**
 	 * @var array
 	 */
-	public $failed = [];
-
-	/**
-	 * @var array
-	 */
 	public $skipPaths = [
 		'vendor/nette/', 'src/Nette/',
 		'vendor/doctrine/collections/', 'lib/Doctrine/Collections/',
@@ -179,16 +174,6 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 		$this->totalTime += $time;
 
 		return $this->queries[$key] + array_fill_keys(range(0, 4), NULL);
-	}
-
-
-
-	/**
-	 * @param \Exception|\Throwable $exception
-	 */
-	public function queryFailed($exception)
-	{
-		$this->failed[spl_object_hash($exception)] = $this->stopQuery();
 	}
 
 
@@ -344,19 +329,8 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 		if ($e instanceof \PDOException && count($this->queries)) {
 			$types = $params = [];
 
-			if ($this->connection !== NULL) {
-				if (!$e instanceof Kdyby\Doctrine\DBALException || $e->connection !== $this->connection) {
-					return NULL;
 
-				} elseif (!isset($this->failed[spl_object_hash($e)])) {
-					return NULL;
-				}
-
-				list($sql, $params, , , $source) = $this->failed[spl_object_hash($e)];
-
-			} else {
-				list($sql, $params, , $types, $source) = end($this->queries) + range(1, 5);
-			}
+			list($sql, $params, , $types, $source) = end($this->queries) + range(1, 5);
 
 			if (!$sql) {
 				return NULL;
@@ -483,12 +457,6 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 						BlueScreen::highlightFile($file, $errorLine),
 				];
 			}
-
-		} elseif ($e instanceof Kdyby\Doctrine\DBALException && $e->query) {
-			return [
-				'tab' => 'SQL',
-				'panel' => self::highlightQuery(static::formatQuery($e->query, $e->params, [])),
-			];
 
 		} elseif ($e instanceof Doctrine\DBAL\Exception\DriverException) {
 			if (($prev = $e->getPrevious()) && ($item = Helpers::findTrace($e->getTrace(), 'Doctrine\DBAL\DBALException::driverExceptionDuringQuery'))) {

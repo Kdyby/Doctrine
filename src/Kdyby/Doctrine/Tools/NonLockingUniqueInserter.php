@@ -83,7 +83,7 @@ class NonLockingUniqueInserter extends Nette\Object
 	 * @todo fix error codes! PDO is returning database-specific codes
 	 *
 	 * @param object $entity
-	 * @throws \Doctrine\DBAL\DBALException
+	 * @throws DBALException
 	 * @throws \Exception
 	 * @return bool|object
 	 */
@@ -102,11 +102,6 @@ class NonLockingUniqueInserter extends Nette\Object
 
 			return FALSE;
 
-		} catch (Kdyby\Doctrine\DuplicateEntryException $e) {
-			$this->db->rollback();
-
-			return FALSE;
-
 		} catch (DBALException $e) {
 			$this->db->rollback();
 
@@ -114,7 +109,7 @@ class NonLockingUniqueInserter extends Nette\Object
 				return FALSE;
 			}
 
-			throw $this->db->resolveException($e);
+			throw $e;
 
 		} catch (\Exception $e) {
 			$this->db->rollback();
