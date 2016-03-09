@@ -23,7 +23,7 @@ use Nette;
  * @method EntityManager getManager($name = NULL)
  * @method EntityManager getManagerForClass($class)
  * @method EntityManager[] getManagers()
- * @method EntityRepository|EntityDao getRepository($persistentObjectName, $persistentManagerName = NULL)
+ * @method EntityRepository getRepository($persistentObjectName, $persistentManagerName = NULL)
  * @method Connection getConnection($name = NULL)
  * @method Connection[] getConnections()
  */

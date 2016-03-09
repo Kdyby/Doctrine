@@ -13,4 +13,4 @@ services:
 
 	-
 		class: KdybyTests\Doctrine\CmsGroupRepository
-		factory: @Kdyby\Doctrine\EntityManager::getDao(KdybyTests\Doctrine\CmsGroup)
+		factory: @Kdyby\Doctrine\EntityManager::getRepository(KdybyTests\Doctrine\CmsGroup)

@@ -43,7 +43,7 @@ use Nette;
  *
  * $productsQuery->size = 'big';
  *
- * $this->template->products = $this->productsDao->fetch($productsQuery);
+ * $this->template->products = $this->productsRepository->fetch($productsQuery);
  * </code>
  *
  * @method onPostFetch(QueryObject $self, Queryable $repository, \Iterator $iterator)

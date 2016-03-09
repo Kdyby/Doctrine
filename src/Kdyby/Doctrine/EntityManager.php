@@ -35,12 +35,6 @@ class EntityManager extends Doctrine\ORM\EntityManager implements Persistence\Qu
 {
 
 	/**
-	 * @deprecated
-	 * @var array
-	 */
-	public $onDaoCreate = [];
-
-	/**
 	 * @var NonLockingUniqueInserter
 	 */
 	private $nonLockingUniqueInserter;
@@ -210,19 +204,6 @@ class EntityManager extends Doctrine\ORM\EntityManager implements Persistence\Qu
 
 
 	/**
-	 * @deprecated Use the EntityManager::getRepository(), this is a useless alias.
-	 *
-	 * @param string $entityName
-	 * @return EntityDao
-	 */
-	public function getDao($entityName)
-	{
-		return $this->getRepository($entityName);
-	}
-
-
-
-	/**
 	 * @param int $hydrationMode
 	 * @return Doctrine\ORM\Internal\Hydration\AbstractHydrator
 	 * @throws \Doctrine\ORM\ORMException
@@ -275,16 +256,6 @@ class EntityManager extends Doctrine\ORM\EntityManager implements Persistence\Qu
 		}
 
 		return new EntityManager($conn, $config, $conn->getEventManager());
-	}
-
-
-
-	/**
-	 * @deprecated
-	 */
-	public function onDaoCreate(EntityManager $em, Doctrine\Common\Persistence\ObjectRepository $dao)
-	{
-		$this->__call(__FUNCTION__, func_get_args());
 	}
 
 
