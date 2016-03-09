@@ -24,21 +24,41 @@ require_once __DIR__ . '/../../bootstrap.php';
 class GenerateProxiesCommandTest extends CommandTestCase
 {
 
-	public function testExportEntities()
+	public function testDefaultConnectionExportEntities()
 	{
-		FileSystem::createDir(TEMP_DIR . '/GenerateProxiesCommandTest');
+		$destDir = TEMP_DIR . '/GenerateProxiesCommandTest.default';
+		FileSystem::createDir($destDir);
 
-		/** @var \Symfony\Component\Console\Tester\CommandTester $commandTester */
-		$commandTester = $this->executeCommand('orm:generate-proxies', [
-			'dest-path' => TEMP_DIR . '/GenerateProxiesCommandTest',
+		$applicationTester = $this->executeCommand('orm:generate-proxies', [
+			'dest-path' => $destDir,
 		]);
 
-		$output = $commandTester->getDisplay();
+		$output = $applicationTester->getDisplay();
 
-		foreach (self::$models as $model) {
-			Assert::contains("Processing entity \"{$model}\"", $output);
+		foreach (self::$entities as $entity) {
+			Assert::contains("Processing entity \"{$entity}\"", $output);
 		}
-		Assert::contains('Proxy classes generated to "' . realpath(TEMP_DIR) . '/GenerateProxiesCommandTest"', $output);
+		Assert::notContains('Processing entity "KdybyTests\Doctrine\Models2\Foo"', $output);
+		Assert::contains('Proxy classes generated to "' . realpath($destDir) . '"', $output);
+	}
+
+
+
+	public function testSecondConnectionExportEntities()
+	{
+		$destDir = TEMP_DIR . '/GenerateProxiesCommandTest.remote';
+		FileSystem::createDir($destDir);
+
+		$applicationTester = $this->executeCommand('orm:generate-proxies', [
+			'dest-path' => $destDir,
+			'--em'      => 'remote',
+		]);
+
+		$output = $applicationTester->getDisplay();
+
+		Assert::notContains('Processing entity "' . self::$entities[0] . '"', $output);
+		Assert::contains('Processing entity "KdybyTests\Doctrine\Models2\Foo"', $output);
+		Assert::contains('Proxy classes generated to "' . realpath($destDir) . '"', $output);
 	}
 
 }

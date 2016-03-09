@@ -10,9 +10,9 @@
 
 namespace KdybyTests\Doctrine\Console;
 
+use Kdyby;
 use Nette;
-use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Tester\CommandTester;
+use Symfony\Component\Console\Tester\ApplicationTester;
 use Tester;
 
 
@@ -26,7 +26,7 @@ abstract class CommandTestCase extends Tester\TestCase
 	/**
 	 * @var array
 	 */
-	protected static $models = [
+	protected static $entities = [
 		'KdybyTests\Doctrine\CmsAddress',
 		'KdybyTests\Doctrine\CmsArticle',
 		'KdybyTests\Doctrine\CmsComment',
@@ -77,34 +77,25 @@ abstract class CommandTestCase extends Tester\TestCase
 	 * @param array  $input
 	 * @param array  $options
 	 *
-	 * @return CommandTester
+	 * @return ApplicationTester
 	 */
 	protected function executeCommand($command, array $input = [], array $options = [])
 	{
-		$command = $this->getCommand($command);
-
-		$commandTester = new CommandTester($command);
-		$commandTester->execute(['command' => $command->getName()] + $input, $options);
-
-		return $commandTester;
+		$applicationTester = new ApplicationTester($this->getApplication());
+		$applicationTester->run(['command' => $command] + $input, $options);
+		return $applicationTester;
 	}
 
 
 
 	/**
-	 * @param string $name
-	 *
-	 * @return Command
+	 * @return Kdyby\Console\Application
 	 */
-	protected function getCommand($name)
+	protected function getApplication()
 	{
-		$command = $this->getServiceLocator()
-			->getByType('Kdyby\Console\Application')
-			->find($name);
-
-		$this->getServiceLocator()->callInjects($command);
-
-		return $command;
+		$application = $this->getServiceLocator()->getByType('Kdyby\Console\Application');
+		$application->setAutoExit(FALSE);
+		return $application;
 	}
 
 
@@ -115,27 +106,27 @@ abstract class CommandTestCase extends Tester\TestCase
 	protected function getServiceLocator()
 	{
 		if (!$this->serviceLocator) {
-			$this->createServiceLocator();
+			$this->serviceLocator = $this->createServiceLocator();
 		}
 		return $this->serviceLocator;
 	}
 
 
 
+	/**
+	 * @return Nette\DI\Container
+	 */
 	private function createServiceLocator()
 	{
 		$config = new Nette\Configurator;
-		/** @var Nette\DI\Container $container */
-		$container = $config->setTempDirectory(TEMP_DIR)
+		return $config->setTempDirectory(TEMP_DIR)
 			->addConfig(TEST_DIR . '/nette-reset.neon', !isset($config->defaultExtensions['nette']) ? 'v23' : 'v22')
-			->addConfig(TEST_DIR . '/Doctrine/config/memory.neon')
+			->addConfig(TEST_DIR . '/Doctrine/config/multiple-connections.neon')
 			->addParameters([
 				'appDir' => TEST_DIR,
 				'wwwDir' => TEST_DIR,
 			])
 			->createContainer();
-
-		$this->serviceLocator = $container;
 	}
 
 }

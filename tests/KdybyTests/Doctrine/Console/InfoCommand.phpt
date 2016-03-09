@@ -23,16 +23,28 @@ require_once __DIR__ . '/../../bootstrap.php';
 class ValidateSchemaCommandTest extends CommandTestCase
 {
 
-	public function testInfo()
+	public function testDefaultConnectionInfo()
 	{
-		/** @var \Symfony\Component\Console\Tester\CommandTester $commandTester */
-		$commandTester = $this->executeCommand('orm:info');
+		$applicationTester = $this->executeCommand('orm:info');
 
-		$output = $commandTester->getDisplay();
+		$output = $applicationTester->getDisplay();
 
-		foreach (self::$models as $model) {
-			Assert::contains("[OK]   {$model}", $output);
+		foreach (self::$entities as $entity) {
+			Assert::contains("[OK]   {$entity}", $output);
 		}
+		Assert::notContains('[OK]   KdybyTests\Doctrine\Models2\Foo', $output);
+	}
+
+
+
+	public function testSecondConnectionInfo()
+	{
+		$applicationTester = $this->executeCommand('orm:info', ['--em' => 'remote']);
+
+		$output = $applicationTester->getDisplay();
+
+		Assert::contains('[OK]   KdybyTests\Doctrine\Models2\Foo', $output);
+		Assert::notContains('[OK]   ' . self::$entities[0], $output);
 	}
 
 }
