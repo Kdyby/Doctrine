@@ -50,9 +50,6 @@ class SimpleParameterFormatter extends Nette\Object
 			/** @var \Datetime $param */
 			return "'" . $param->format('Y-m-d H:i:s') . "'";
 
-		} elseif ($param instanceof Kdyby\Doctrine\Geo\Element) {
-			return '"' . $param->__toString() . '"';
-
 		} elseif (is_object($param)) {
 			return get_class($param) . (method_exists($param, 'getId') ? '(' . $param->getId() . ')' : '');
 
