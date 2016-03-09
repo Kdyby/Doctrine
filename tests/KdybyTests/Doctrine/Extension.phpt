@@ -109,6 +109,22 @@ class ExtensionTest extends Tester\TestCase
 		], $entityClasses);
 	}
 
+
+
+	public function testInheritance()
+	{
+		$container = $this->createContainer('entitymanager-decorator');
+
+		Assert::same(
+			$container->getService('kdyby.doctrine.registry')->getConnection('default'),
+			$container->getByType('Kdyby\Doctrine\EntityManager')->getConnection()
+		);
+		Assert::same(
+			$container->getService('kdyby.doctrine.registry')->getConnection('remote'),
+			$container->getByType('KdybyTests\DoctrineMocks\RemoteEntityManager')->getConnection()
+		);
+	}
+
 }
 
 \run(new ExtensionTest());
