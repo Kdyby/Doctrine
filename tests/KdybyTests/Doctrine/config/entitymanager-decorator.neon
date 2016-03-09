@@ -1,0 +1,15 @@
+kdyby.doctrine:
+	metadata:
+		KdybyTests\Doctrine: annotations(%appDir%/Doctrine/models)
+
+	default:
+		driver: pdo_sqlite
+		memory: true
+
+	remote:
+		driver: pdo_sqlite
+		memory: true
+
+
+services:
+	- KdybyTests\DoctrineMocks\RemoteEntityManager(@kdyby.doctrine.remote.entityManager)
