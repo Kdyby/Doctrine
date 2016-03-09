@@ -256,14 +256,6 @@ class OrmExtension extends Nette\DI\CompilerExtension
 				throw new Kdyby\Doctrine\NotSupportedException;
 			}
 		}
-
-		$builder->addDefinition($this->prefix('helper.entityManager'))
-			->setClass('Doctrine\ORM\Tools\Console\Helper\EntityManagerHelper')
-			->addTag(Kdyby\Console\DI\ConsoleExtension::HELPER_TAG, 'em');
-
-		$builder->addDefinition($this->prefix('helper.connection'))
-			->setClass('Doctrine\DBAL\Tools\Console\Helper\ConnectionHelper')
-			->addTag(Kdyby\Console\DI\ConsoleExtension::HELPER_TAG, 'db');
 	}
 
 
@@ -440,6 +432,20 @@ class OrmExtension extends Nette\DI\CompilerExtension
 				->setArguments([new Code\PhpLiteral('$entityManager'), new Code\PhpLiteral('$classMetadata')])
 				->setParameters(['Doctrine\ORM\EntityManagerInterface entityManager', 'Doctrine\ORM\Mapping\ClassMetadata classMetadata'])
 				->setAutowired(FALSE);
+
+		if ($isDefault) {
+			$builder->addDefinition($this->prefix('helper.entityManager'))
+				->setClass('Doctrine\ORM\Tools\Console\Helper\EntityManagerHelper', [
+					'@' . $managerServiceId
+				])
+				->addTag(Kdyby\Console\DI\ConsoleExtension::HELPER_TAG, 'em');
+
+			$builder->addDefinition($this->prefix('helper.connection'))
+				->setClass('Doctrine\DBAL\Tools\Console\Helper\ConnectionHelper', [
+					$connectionService
+				])
+				->addTag(Kdyby\Console\DI\ConsoleExtension::HELPER_TAG, 'db');
+		}
 
 		$this->configuredManagers[$name] = $managerServiceId;
 		$this->managerConfigs[$name] = $config;
