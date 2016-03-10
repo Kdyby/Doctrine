@@ -194,28 +194,6 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			$this->processEntityManager($name, $emConfig);
 		}
 
-		$builder->addDefinition($this->prefix('schemaValidator'))
-			->setClass('Doctrine\ORM\Tools\SchemaValidator')
-			->setInject(FALSE);
-
-		$builder->addDefinition($this->prefix('schemaTool'))
-			->setClass('Doctrine\ORM\Tools\SchemaTool')
-			->setInject(FALSE);
-
-		$builder->addDefinition($this->prefix('schemaManager'))
-			->setClass('Doctrine\DBAL\Schema\AbstractSchemaManager')
-			->setFactory('@Kdyby\Doctrine\Connection::getSchemaManager')
-			->setInject(FALSE);
-
-		$cacheCleaner = $builder->addDefinition($this->prefix('cacheCleaner'))
-			->setClass('Kdyby\Doctrine\Tools\CacheCleaner')
-			->setInject(FALSE);
-
-		foreach ($this->compiler->getExtensions('Kdyby\Annotations\DI\AnnotationsExtension') as $extension) {
-			/** @var Kdyby\Annotations\DI\AnnotationsExtension $extension */
-			$cacheCleaner->addSetup('addCacheStorage', [$extension->prefix('@cache.annotations')]);
-		}
-
 		if ($this->targetEntityMappings) {
 			$listener = $builder->addDefinition($this->prefix('resolveTargetEntityListener'))
 				->setClass('Kdyby\Doctrine\Tools\ResolveTargetEntityListener')
@@ -433,18 +411,41 @@ class OrmExtension extends Nette\DI\CompilerExtension
 				->setParameters(['Doctrine\ORM\EntityManagerInterface entityManager', 'Doctrine\ORM\Mapping\ClassMetadata classMetadata'])
 				->setAutowired(FALSE);
 
+		$builder->addDefinition($this->prefix($name . '.schemaValidator'))
+			->setClass('Doctrine\ORM\Tools\SchemaValidator', ['@' . $managerServiceId])
+			->setAutowired($isDefault);
+
+		$builder->addDefinition($this->prefix($name . '.schemaTool'))
+			->setClass('Doctrine\ORM\Tools\SchemaTool', ['@' . $managerServiceId])
+			->setAutowired($isDefault);
+
+		$cacheCleaner = $builder->addDefinition($this->prefix($name . '.cacheCleaner'))
+			->setClass('Kdyby\Doctrine\Tools\CacheCleaner', ['@' . $managerServiceId])
+			->setAutowired($isDefault);
+
+		$builder->addDefinition($this->prefix($name . '.schemaManager'))
+			->setClass('Doctrine\DBAL\Schema\AbstractSchemaManager')
+			->setFactory('@Kdyby\Doctrine\Connection::getSchemaManager')
+			->setAutowired($isDefault);
+
+		foreach ($this->compiler->getExtensions('Kdyby\Annotations\DI\AnnotationsExtension') as $extension) {
+			/** @var Kdyby\Annotations\DI\AnnotationsExtension $extension */
+			$cacheCleaner->addSetup('addCacheStorage', [$extension->prefix('@cache.annotations')]);
+		}
+
 		if ($isDefault) {
 			$builder->addDefinition($this->prefix('helper.entityManager'))
-				->setClass('Doctrine\ORM\Tools\Console\Helper\EntityManagerHelper', [
-					'@' . $managerServiceId
-				])
+				->setClass('Doctrine\ORM\Tools\Console\Helper\EntityManagerHelper', ['@' . $managerServiceId])
 				->addTag(Kdyby\Console\DI\ConsoleExtension::HELPER_TAG, 'em');
 
 			$builder->addDefinition($this->prefix('helper.connection'))
-				->setClass('Doctrine\DBAL\Tools\Console\Helper\ConnectionHelper', [
-					$connectionService
-				])
+				->setClass('Doctrine\DBAL\Tools\Console\Helper\ConnectionHelper', [$connectionService])
 				->addTag(Kdyby\Console\DI\ConsoleExtension::HELPER_TAG, 'db');
+
+			$builder->addAlias($this->prefix('schemaValidator'), $this->prefix($name . '.schemaValidator'));
+			$builder->addAlias($this->prefix('schemaTool'), $this->prefix($name . '.schemaTool'));
+			$builder->addAlias($this->prefix('cacheCleaner'), $this->prefix($name . '.cacheCleaner'));
+			$builder->addAlias($this->prefix('schemaManager'), $this->prefix($name . '.schemaManager'));
 		}
 
 		$this->configuredManagers[$name] = $managerServiceId;
