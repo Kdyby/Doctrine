@@ -12,7 +12,9 @@ namespace Kdyby\Doctrine;
 
 use Doctrine;
 use Doctrine\Common\EventManager;
+use Doctrine\DBAL\DBALException;
 use Doctrine\DBAL\Driver;
+use Doctrine\DBAL\Statement;
 use Kdyby;
 use Nette;
 use Nette\Utils\ObjectMixin;
@@ -141,94 +143,21 @@ class Connection extends Doctrine\DBAL\Connection
 
 
 	/**
-	 * @param string $query
-	 * @param array $params
-	 * @param array $types
-	 * @param \Doctrine\DBAL\Cache\QueryCacheProfile $qcp
-	 * @return \Doctrine\DBAL\Driver\Statement
-	 * @throws DBALException
-	 */
-	public function executeQuery($query, array $params = [], $types = [], Doctrine\DBAL\Cache\QueryCacheProfile $qcp = NULL)
-	{
-		try {
-			return parent::executeQuery($query, $params, $types, $qcp);
-
-		} catch (\Exception $e) {
-			throw $this->resolveException($e, $query, $params);
-		}
-	}
-
-
-
-	/**
-	 * @param string $query
-	 * @param array $params
-	 * @param array $types
-	 * @return int
-	 * @throws DBALException
-	 */
-	public function executeUpdate($query, array $params = [], array $types = [])
-	{
-		try {
-			return parent::executeUpdate($query, $params, $types);
-
-		} catch (\Exception $e) {
-			throw $this->resolveException($e, $query, $params);
-		}
-	}
-
-
-
-	/**
-	 * @param string $statement
-	 * @return int
-	 * @throws DBALException
-	 */
-	public function exec($statement)
-	{
-		try {
-			return parent::exec($statement);
-
-		} catch (\Exception $e) {
-			throw $this->resolveException($e, $statement);
-		}
-	}
-
-
-
-	/**
-	 * @return \Doctrine\DBAL\Driver\Statement|mixed
-	 * @throws DBALException
-	 */
-	public function query()
-	{
-		$args = func_get_args();
-		try {
-			return call_user_func_array('parent::query', $args);
-
-		} catch (\Exception $e) {
-			throw $this->resolveException($e, func_get_arg(0));
-		}
-	}
-
-
-
-	/**
 	 * Prepares an SQL statement.
 	 *
 	 * @param string $statement The SQL statement to prepare.
 	 * @throws DBALException
-	 * @return PDOStatement The prepared statement.
+	 * @return Statement The prepared statement.
 	 */
 	public function prepare($statement)
 	{
 		$this->connect();
 
 		try {
-			$stmt = new PDOStatement($statement, $this);
+			$stmt = new Statement($statement, $this);
 
 		} catch (\Exception $ex) {
-			throw $this->resolveException(Doctrine\DBAL\DBALException::driverExceptionDuringQuery($this->getDriver(), $ex, $statement), $statement);
+			throw DBALException::driverExceptionDuringQuery($this->_driver, $ex, $statement);
 		}
 
 		$stmt->setFetchMode(PDO::FETCH_ASSOC);
@@ -335,7 +264,7 @@ class Connection extends Doctrine\DBAL\Connection
 
 			return TRUE;
 
-		} catch (Doctrine\DBAL\DBALException $e) {
+		} catch (DBALException $e) {
 			restore_error_handler();
 			return FALSE;
 
@@ -362,88 +291,6 @@ class Connection extends Doctrine\DBAL\Connection
 		}
 
 		return Doctrine\DBAL\DriverManager::getConnection($params, $config, $eventManager);
-	}
-
-
-
-	/**
-	 * @deprecated
-	 * @internal
-	 * @param \Exception|\Throwable $e
-	 * @param string $query
-	 * @param array $params
-	 * @return DBALException
-	 */
-	public function resolveException($e, $query = NULL, $params = [])
-	{
-		if ($this->throwOldKdybyExceptions !== TRUE) {
-			return $e;
-		}
-
-		if ($e instanceof Doctrine\DBAL\DBALException && ($pe = $e->getPrevious()) instanceof \PDOException) {
-			$info = $pe->errorInfo;
-
-		} elseif ($e instanceof \PDOException) {
-			$info = $e->errorInfo;
-
-		} else {
-			return new DBALException($e, $query, $params, $this);
-		}
-
-		if ($this->getDriver() instanceof Doctrine\DBAL\Driver\PDOMySql\Driver) {
-			if ($info[0] == 23000 && $info[1] == self::MYSQL_ERR_UNIQUE) { // unique fail
-				$columns = [];
-
-				try {
-					if (preg_match('~Duplicate entry .*? for key \'([^\']+)\'~', $info[2], $m)
-						&& ($table = self::resolveExceptionTable($e))
-						&& ($indexes = $this->getSchemaManager()->listTableIndexes($table))
-						&& isset($indexes[$m[1]])
-					) {
-						$columns[$m[1]] = $indexes[$m[1]]->getColumns();
-					}
-
-				} catch (\Exception $e) { }
-
-				return new DuplicateEntryException($e, $columns, $query, $params, $this);
-
-			} elseif ($info[0] == 23000 && $info[1] == self::MYSQL_ERR_NOT_NULL) { // notnull fail
-				$column = NULL;
-				if (preg_match('~Column \'([^\']+)\'~', $info[2], $m)) {
-					$column = $m[1];
-				}
-
-				return new EmptyValueException($e, $column, $query, $params, $this);
-			}
-		}
-
-		$raw = $e;
-		do {
-			$raw = $raw->getPrevious();
-		} while ($raw && !$raw instanceof \PDOException);
-
-		return new DBALException($e, $query, $params, $this, $raw ? $raw->getMessage() : $e->getMessage());
-	}
-
-
-
-	/**
-	 * @param \Exception|\Throwable $e
-	 * @return string|NULL
-	 */
-	private static function resolveExceptionTable($e)
-	{
-		if (!$e instanceof Doctrine\DBAL\DBALException) {
-			return NULL;
-		}
-
-		if ($caused = Tracy\Helpers::findTrace($e->getTrace(), 'Doctrine\DBAL\DBALException::driverExceptionDuringQuery')) {
-			if (preg_match('~(?:INSERT|UPDATE|REPLACE)(?:[A-Z_\s]*)`?([^\s`]+)`?\s*~', is_string($caused['args'][1]) ? $caused['args'][1] : $caused['args'][2], $m)) {
-				return $m[1];
-			}
-		}
-
-		return NULL;
 	}
 
 
