@@ -40,14 +40,6 @@ trait MagicAccessors
 
 
 	/**
-	 */
-	public function __construct()
-	{
-	}
-
-
-
-	/**
 	 * @param string $property property name
 	 * @param array $args
 	 * @return Collection|array
