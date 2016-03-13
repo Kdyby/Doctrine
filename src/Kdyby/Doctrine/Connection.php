@@ -12,6 +12,7 @@ namespace Kdyby\Doctrine;
 
 use Doctrine;
 use Doctrine\Common\EventManager;
+use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Driver;
 use Kdyby;
 use Nette;
@@ -279,11 +280,11 @@ class Connection extends Doctrine\DBAL\Connection
 		}
 
 		foreach ($this->dbalTypes as $name => $className) {
-			if (DbalType::hasType($name)) {
-				DbalType::overrideType($name, $className);
+			if (Type::hasType($name)) {
+				Type::overrideType($name, $className);
 
 			} else {
-				DbalType::addType($name, $className);
+				Type::addType($name, $className);
 			}
 		}
 
@@ -296,7 +297,7 @@ class Connection extends Doctrine\DBAL\Connection
 		}
 
 		foreach ($this->dbalTypes as $type => $className) {
-			$platform->markDoctrineTypeCommented(DbalType::getType($type));
+			$platform->markDoctrineTypeCommented(Type::getType($type));
 		}
 
 		return TRUE;
@@ -351,8 +352,6 @@ class Connection extends Doctrine\DBAL\Connection
 	 * @param array $params
 	 * @param \Doctrine\DBAL\Configuration $config
 	 * @param \Doctrine\Common\EventManager $eventManager
-	 * @param array $dbalTypes
-	 * @param array $schemaTypes
 	 * @return Connection
 	 */
 	public static function create(array $params, Doctrine\DBAL\Configuration $config, EventManager $eventManager)

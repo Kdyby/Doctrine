@@ -120,13 +120,13 @@ class ConnectionTest extends Tester\TestCase
 			'memory' => TRUE,
 		], new Doctrine\DBAL\Driver\PDOSqlite\Driver());
 		$conn->setSchemaTypes([
-			'enum' => 'enum',
+			'test' => 'test',
 		]);
 		$conn->setDbalTypes([
-			'enum' => 'Kdyby\\Doctrine\\Types\\Enum',
+			'test' => 'KdybyTests\\DoctrineMocks\\TestTypeMock',
 		]);
 		$platform = $conn->getDatabasePlatform();
-		Assert::same('enum', $platform->getDoctrineTypeMapping('enum'));
+		Assert::same('test', $platform->getDoctrineTypeMapping('test'));
 	}
 
 }
