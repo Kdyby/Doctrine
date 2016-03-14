@@ -8,19 +8,18 @@
  * For the full copyright and license information, please view the file license.txt that was distributed with this source code.
  */
 
-namespace Kdyby\Doctrine\Types;
+namespace KdybyTests\DoctrineMocks;
 
 use Doctrine;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Kdyby;
-use Nette;
 
 
 
 /**
  * @author Filip Procházka <filip@prochazka.su>
  */
-class Enum extends Kdyby\Doctrine\DbalType
+class TestTypeMock extends Doctrine\DBAL\Types\Type
 {
 
 	/**
@@ -44,7 +43,7 @@ class Enum extends Kdyby\Doctrine\DbalType
 	 */
 	public function getName()
 	{
-		return Kdyby\Doctrine\DbalType::ENUM;
+		return 'test';
 	}
 
 }

@@ -93,9 +93,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		'platformService' => NULL,
 		'defaultTableOptions' => [],
 		'resultCache' => 'default',
-		'types' => [
-			'enum' => 'Kdyby\Doctrine\Types\Enum',
-		],
+		'types' => [],
 		'schemaFilter' => NULL,
 	];
 
