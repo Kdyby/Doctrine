@@ -1,11 +1,12 @@
 kdyby.doctrine:
-	metadata:
-		KdybyTests\Doctrine: annotations(%appDir%/Doctrine/models)
-
 	default:
 		driver: pdo_sqlite
 		memory: true
+		metadata:
+			KdybyTests\Doctrine: annotations(%appDir%/Doctrine/models)
 
 	remote:
 		driver: pdo_sqlite
 		memory: true
+		metadata:
+			KdybyTests\Doctrine\Models2: annotations(%appDir%/Doctrine/models2)
