@@ -34,7 +34,10 @@ class ConnectionTest extends Tester\TestCase
 	protected function loadMysqlConfig()
 	{
 		$configLoader = new Nette\DI\Config\Loader();
-		$config = $configLoader->load(__DIR__ . '/../../mysql.neon', isset($_ENV['TRAVIS']) ? 'travis' : 'localhost');
+		$config = $configLoader->load(__DIR__ . '/../../mysql.neon');
+		if (is_file(__DIR__ . '/../../mysql.local.neon')) {
+			$config = Nette\DI\Config\Helpers::merge($configLoader->load(__DIR__ . '/../../mysql.local.neon'), $config);
+		}
 
 		return $config['doctrine'];
 	}
