@@ -12,12 +12,9 @@ namespace Kdyby\Doctrine\Console;
 
 use Doctrine;
 use Doctrine\ORM\Tools\SchemaTool;
-use Kdyby;
-use Nette;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Tracy\Debugger;
 
 
 
@@ -43,11 +40,27 @@ class SchemaUpdateCommand extends Doctrine\ORM\Tools\Console\Command\SchemaTool\
 
 
 	/**
+	 * {@inheritDoc}
+	 */
+	protected function configure()
+	{
+		parent::configure();
+		$this->addOption('em', NULL, InputOption::VALUE_OPTIONAL, 'The entity manager to use for this command');
+	}
+
+
+
+	/**
 	 * {@inheritdoc}
 	 */
 	protected function initialize(InputInterface $input, OutputInterface $output)
 	{
 		parent::initialize($input, $output);
+
+		if ($input->getOption('em')) {
+			CommandHelper::setApplicationEntityManager($this->getHelper('container'), $input->getOption('em'));
+		}
+
 		$this->cacheCleaner->invalidate();
 	}
 

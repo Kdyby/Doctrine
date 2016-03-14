@@ -23,20 +23,41 @@ require_once __DIR__ . '/../../bootstrap.php';
 class ConvertMappingCommandTest extends CommandTestCase
 {
 
-	public function testExportXML()
+	public function testDefaultConnectionExportXML()
 	{
-		/** @var \Symfony\Component\Console\Tester\CommandTester $commandTester */
-		$commandTester = $this->executeCommand('orm:convert-mapping', [
+		$destDir = TEMP_DIR . '/ConvertMappingCommandTest.default';
+
+		$applicationTester = $this->executeCommand('orm:convert-mapping', [
 			'to-type'   => 'xml',
-			'dest-path' => TEMP_DIR . '/ConvertMappingCommandTest',
+			'dest-path' => $destDir,
 		]);
 
-		$output = $commandTester->getDisplay();
+		$output = $applicationTester->getDisplay();
 
 		foreach (self::$entities as $entity) {
 			Assert::contains("Processing entity \"{$entity}\"", $output);
 		}
-		Assert::contains('Exporting "xml" mapping information to "' . realpath(TEMP_DIR) . '/ConvertMappingCommandTest"', $output);
+		Assert::notContains('Processing entity "KdybyTests\Doctrine\Models2\Foo"', $output);
+		Assert::contains('Exporting "xml" mapping information to "' . realpath($destDir) . '"', $output);
+	}
+
+
+
+	public function testSecondConnectionExportXML()
+	{
+		$destDir = TEMP_DIR . '/ConvertMappingCommandTest.remote';
+
+		$applicationTester = $this->executeCommand('orm:convert-mapping', [
+			'to-type'   => 'xml',
+			'dest-path' => $destDir,
+			'--em'      => 'remote',
+		]);
+
+		$output = $applicationTester->getDisplay();
+
+		Assert::notContains('Processing entity "' . self::$entities[0] . '"', $output);
+		Assert::contains('Processing entity "KdybyTests\Doctrine\Models2\Foo"', $output);
+		Assert::contains('Exporting "xml" mapping information to "' . realpath($destDir) . '"', $output);
 	}
 
 }
