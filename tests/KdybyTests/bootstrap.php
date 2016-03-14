@@ -30,7 +30,6 @@ $_SERVER = array_intersect_key($_SERVER, array_flip([
 ]));
 $_SERVER['REQUEST_TIME'] = 1234567890;
 $_GET = $_POST = [];
-$_ENV = array_intersect_key($_ENV, ['TRAVIS' => TRUE]);
 
 function id($val) {
 	return $val;
