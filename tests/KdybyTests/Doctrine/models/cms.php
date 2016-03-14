@@ -296,7 +296,7 @@ class CmsPhoneNumber
 	public $phoneNumber;
 
 	/**
-	 * @ORM\ManyToOne(targetEntity="CmsUser", inversedBy="phonenumbers", cascade={"merge"})
+	 * @ORM\ManyToOne(targetEntity="CmsUser", inversedBy="phoneNumbers", cascade={"merge"})
 	 * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
 	 */
 	public $user;
