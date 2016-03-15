@@ -183,26 +183,6 @@ class EntityRepository extends Doctrine\ORM\EntityRepository implements Persiste
 
 
 	/**
-	 * Create a new QueryBuilder instance that is pre-populated for this entity name
-	 *
-	 * @param string|NULL $alias
-	 * @param string|NULL $indexBy
-	 * @return \Kdyby\Doctrine\DqlSelection
-	 */
-	public function select($alias = NULL, $indexBy = NULL)
-	{
-		if ($alias === NULL) {
-			$pos = strrpos($this->_entityName, '\\');
-			$alias = strtolower(substr($this->_entityName, $pos === FALSE ? 0 : $pos + 1, 1));
-		}
-
-		$selection = $this->getEntityManager()->createSelection();
-		return $selection->select($alias)->from($this->getEntityName(), $alias, $indexBy ? "$alias.$indexBy" : NULL);
-	}
-
-
-
-	/**
 	 * @param string $sql
 	 * @param Doctrine\ORM\Query\ResultSetMapping $rsm
 	 * @return Doctrine\ORM\NativeQuery

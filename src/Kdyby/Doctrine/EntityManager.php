@@ -89,16 +89,6 @@ class EntityManager extends Doctrine\ORM\EntityManager implements Persistence\Qu
 
 
 	/**
-	 * @return \Kdyby\Doctrine\DqlSelection
-	 */
-	public function createSelection()
-	{
-		return new DqlSelection($this);
-	}
-
-
-
-	/**
 	 * {@inheritdoc}
 	 * @param string|array $entity
 	 * @return EntityManager
