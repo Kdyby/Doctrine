@@ -42,36 +42,6 @@ class EntityRepositoryTest extends ORMTestCase
 
 
 
-	public function testSelect()
-	{
-		$users = $this->em->getRepository('KdybyTests\Doctrine\CmsUser');
-		$qb = $users->select('u');
-
-		Assert::same('SELECT u FROM KdybyTests\Doctrine\CmsUser u', $qb->getDQL());
-	}
-
-
-
-	public function testSelectIndexed()
-	{
-		$users = $this->em->getRepository('KdybyTests\Doctrine\CmsUser');
-		$qb = $users->select('u', 'id');
-
-		Assert::same('SELECT u FROM KdybyTests\Doctrine\CmsUser u INDEX BY u.id', $qb->getDQL());
-	}
-
-
-
-	public function testSelectWithoutParameters()
-	{
-		$users = $this->em->getRepository('KdybyTests\Doctrine\CmsUser');
-		$qb = $users->select();
-
-		Assert::same('SELECT c FROM KdybyTests\Doctrine\CmsUser c', $qb->getDQL());
-	}
-
-
-
 	public function testFindPairs()
 	{
 		$this->em->persist(new CmsUser('c', 'new'));

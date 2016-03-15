@@ -221,9 +221,6 @@ abstract class QueryObject extends Nette\Object implements Kdyby\Persistence\Que
 		if ($query instanceof Doctrine\ORM\QueryBuilder) {
 			$query = $query->getQuery();
 
-		} elseif ($query instanceof DqlSelection) {
-			$query = $query->createQuery();
-
 		} elseif ($query instanceof Doctrine\ORM\NativeQuery) {
 			$query = new NativeQueryWrapper($query);
 
@@ -234,7 +231,7 @@ abstract class QueryObject extends Nette\Object implements Kdyby\Persistence\Que
 		if (!$query instanceof Doctrine\ORM\AbstractQuery) {
 			throw new UnexpectedValueException(
 				"Method " . get_called_class() . "::doCreateQuery must return " .
-				"instanceof Doctrine\\ORM\\Query or Kdyby\\Doctrine\\QueryBuilder or Kdyby\\Doctrine\\DqlSelection, " .
+				"instanceof Doctrine\\ORM\\Query or Kdyby\\Doctrine\\QueryBuilder, " .
 				(is_object($query) ? 'instance of ' . get_class($query) : gettype($query)) . " given."
 			);
 		}
