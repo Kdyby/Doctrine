@@ -10,7 +10,6 @@
 
 namespace Kdyby\Doctrine\Entities;
 
-use Doctrine\ORM\Proxy\Proxy;
 use Doctrine\ORM\Mapping as ORM;
 use Nette;
 use Kdyby;
@@ -26,8 +25,10 @@ use Kdyby;
  *
  * @deprecated Use Kdyby\Doctrine\Entities\Attributes\Identifier trait instead.
  */
-abstract class IdentifiedEntity extends BaseEntity
+abstract class IdentifiedEntity
 {
+
+	use Kdyby\DoctrineMagicAccessors\MagicAccessors;
 
 	/**
 	 * @ORM\Id
