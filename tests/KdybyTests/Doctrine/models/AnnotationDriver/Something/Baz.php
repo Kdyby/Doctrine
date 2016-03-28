@@ -21,7 +21,8 @@ use Nette;
  *
  * @author Filip Procházka <filip@prochazka.su>
  */
-class Baz extends Kdyby\Doctrine\Entities\IdentifiedEntity
+class Baz
 {
+	use Kdyby\Doctrine\Entities\Attributes\Identifier;
 
 }
