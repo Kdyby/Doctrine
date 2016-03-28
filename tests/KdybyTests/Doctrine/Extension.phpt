@@ -104,8 +104,6 @@ class ExtensionTest extends Tester\TestCase
 			'KdybyTests\\Doctrine\\StiBoss',
 			'KdybyTests\\Doctrine\\StiEmployee',
 			'KdybyTests\\Doctrine\\StiUser',
-			'Kdyby\\Doctrine\\Entities\\BaseEntity',
-			'Kdyby\\Doctrine\\Entities\\IdentifiedEntity',
 		], $entityClasses);
 	}
 

@@ -21,7 +21,8 @@ use Nette;
  *
  * @author Filip Procházka <filip@prochazka.su>
  */
-class Bar extends Kdyby\Doctrine\Entities\IdentifiedEntity
+class Bar
 {
+	use Kdyby\Doctrine\Entities\Attributes\Identifier;
 
 }
