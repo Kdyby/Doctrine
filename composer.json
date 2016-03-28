@@ -31,6 +31,10 @@
 		"kdyby/annotations": "~2.3@dev",
 		"kdyby/doctrine-cache": "~2.5@dev"
 	},
+	"suggest": {
+		"kdyby/doctrine-magic-accessors": "Fast-prototyping magic accessors trait for Doctrine entities",
+		"kdyby/doctrine-collections-readonly": "Read-only collection wrapper for easier work with Doctrine entity collections"
+	},
 	"require-dev": {
 		"nette/application": "~2.3@dev",
 		"nette/bootstrap": "~2.3@dev",
