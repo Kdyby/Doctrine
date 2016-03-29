@@ -16,8 +16,6 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\Collections\Selectable;
 use Kdyby;
-use Nette;
-use Nette\Utils\Callback;
 
 
 
@@ -41,7 +39,10 @@ class LazyCollection implements Collection, Selectable
 
 	public function __construct($callback)
 	{
-		$this->callback = Callback::check($callback);
+		if (!is_callable($callback)) {
+			throw new \InvalidArgumentException('Given value is not a callable type.');
+		}
+		$this->callback = $callback;
 	}
 
 
