@@ -33,7 +33,8 @@
 	},
 	"suggest": {
 		"kdyby/doctrine-magic-accessors": "Fast-prototyping magic accessors trait for Doctrine entities",
-		"kdyby/doctrine-collections-readonly": "Read-only collection wrapper for easier work with Doctrine entity collections"
+		"kdyby/doctrine-collections-readonly": "Read-only collection wrapper for easier work with Doctrine entity collections",
+		"kdyby/doctrine-collections-lazy": "Lazy collection for doctrine/collections"
 	},
 	"require-dev": {
 		"nette/application": "~2.3@dev",
