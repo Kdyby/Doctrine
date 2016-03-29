@@ -161,7 +161,7 @@ class Helpers extends Nette\Object
 					$query = substr($query, $offset);
 					$offset = 0;
 				} else { // find matching quote or comment end
-					while (preg_match('~' . ($found == '/*' ? '\\*/' : (preg_match('~-- |#~', $found) ? "\n" : "$found|\\\\.")) . '|$~s', $query, $match, PREG_OFFSET_CAPTURE, $offset)) { //! respect sql_mode NO_BACKSLASH_ESCAPES
+					while (preg_match('~' . ($found === '/*' ? '\\*/' : (preg_match('~-- |#~', $found) ? "\n" : "$found|\\\\.")) . '|$~s', $query, $match, PREG_OFFSET_CAPTURE, $offset)) { //! respect sql_mode NO_BACKSLASH_ESCAPES
 						$s = $match[0][0];
 						$offset = $match[0][1] + strlen($s);
 						if ($s[0] !== '\\') {
