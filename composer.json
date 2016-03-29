@@ -34,7 +34,8 @@
 	"suggest": {
 		"kdyby/doctrine-magic-accessors": "Fast-prototyping magic accessors trait for Doctrine entities",
 		"kdyby/doctrine-collections-readonly": "Read-only collection wrapper for easier work with Doctrine entity collections",
-		"kdyby/doctrine-collections-lazy": "Lazy collection for doctrine/collections"
+		"kdyby/doctrine-collections-lazy": "Lazy collection for doctrine/collections",
+		"kdyby/doctrine-dbal-batchimport": "Batch import & execute utils for effective processing of SQL Imports from files and strings"
 	},
 	"require-dev": {
 		"nette/application": "~2.3@dev",
