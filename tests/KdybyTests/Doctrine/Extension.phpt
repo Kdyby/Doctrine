@@ -32,8 +32,6 @@ class ExtensionTest extends Tester\TestCase
 	 */
 	public function createContainer($configFile)
 	{
-		require_once __DIR__ . '/models/cms.php';
-
 		$config = new Nette\Configurator();
 		$config->setTempDirectory(TEMP_DIR);
 		$config->addParameters(['container' => ['class' => 'SystemContainer_' . md5($configFile)]]);
@@ -121,6 +119,45 @@ class ExtensionTest extends Tester\TestCase
 			$container->getService('kdyby.doctrine.registry')->getConnection('remote'),
 			$container->getByType('KdybyTests\DoctrineMocks\RemoteEntityManager')->getConnection()
 		);
+	}
+
+
+
+	public function testProxyAutoloading()
+	{
+		$env = ['TEMP_DIR' => $scriptTempDir = TEMP_DIR . '/script'];
+		Nette\Utils\FileSystem::createDir($scriptTempDir . '/cache');
+		Nette\Utils\FileSystem::createDir($scriptTempDir . '/sessions');
+
+		$compileOutput = explode("\n", self::runExternalScript(__DIR__ . '/proxies-sessions-test/run.php', ['compile'], $env), 2);
+		Assert::same('compiled,proxies generated,schema generated', $compileOutput[0]);
+		$env['SESSION_ID'] = $sessionId = $compileOutput[1];
+
+		$storeOutput = self::runExternalScript(__DIR__ . '/proxies-sessions-test/run.php', ['store'], $env);
+		Assert::match('Kdyby\GeneratedProxy\__CG__\KdybyTests\Doctrine\CmsOrder %A%id => 1%A%status => "new"%A%', $storeOutput);
+
+		$runOutput = self::runExternalScript(__DIR__ . '/proxies-sessions-test/run.php', ['read'], $env);
+		Assert::match('Kdyby\GeneratedProxy\__CG__\KdybyTests\Doctrine\CmsOrder %A%id => 1%A%status => "new"%A%', $runOutput);
+	}
+
+
+
+	private static function runExternalScript($script, array $args, array $env)
+	{
+		static $spec = array(
+			1 => array('pipe', 'w'),
+			2 => array('pipe', 'w'),
+		);
+		$cmd = sprintf('php %s %s', escapeshellarg(basename($script)), implode(' ', array_map('escapeshellarg', $args)));
+		$process = proc_open($cmd, $spec, $pipes, dirname($script), $env);
+
+		$output = stream_get_contents($pipes[1]); // wait for process
+		$error = stream_get_contents($pipes[2]);
+		if (proc_close($process) > 0) {
+			throw new \RuntimeException($error . "\n" . $output);
+		}
+
+		return $output;
 	}
 
 }

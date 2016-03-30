@@ -1,0 +1,8 @@
+console:
+	disabled: true
+
+kdyby.doctrine:
+	driver: pdo_sqlite
+	path: %tempDir%/db.sqlite
+	metadata:
+		KdybyTests\Doctrine: annotations(%appDir%/../models)

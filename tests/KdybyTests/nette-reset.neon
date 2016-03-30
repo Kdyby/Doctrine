@@ -33,6 +33,7 @@ v22 < common:
 
 		session:
 			autoStart: false
+			save_path: %tempDir%/sessions
 
 v23 < common:
 	http:
@@ -40,3 +41,4 @@ v23 < common:
 
 	session:
 		autoStart: false
+		save_path: %tempDir%/sessions
