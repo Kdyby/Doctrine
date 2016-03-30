@@ -478,4 +478,11 @@ class CmsOrder
 	 */
 	public $status;
 
+
+
+	public function dummyMethodForProxyInitialize()
+	{
+
+	}
+
 }

@@ -342,13 +342,6 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			->setInject(FALSE);
 		/** @var Nette\DI\ServiceDefinition $configuration */
 
-		$builder->addDefinition($this->prefix($name . '.proxyAutoloader'))
-			->setClass('Kdyby\Doctrine\Proxy\ProxyAutoloader')
-			->setArguments([$config['proxyDir'], $config['proxyNamespace']])
-			->addTag(Kdyby\Events\DI\EventsExtension::SUBSCRIBER_TAG)
-			->setAutowired(FALSE)
-			->setInject(FALSE);
-
 		$this->proxyAutoloaders[$config['proxyNamespace']] = $config['proxyDir'];
 
 		$this->processSecondLevelCache($name, $config['secondLevelCache'], $isDefault);
@@ -779,10 +772,17 @@ class OrmExtension extends Nette\DI\CompilerExtension
 
 	public function afterCompile(Code\ClassType $class)
 	{
+		$init = $class->methods['initialize'];
+
 		if ($this->isTracyPresent()) {
-			$init = $class->methods['initialize'];
 			$init->addBody('Kdyby\Doctrine\Diagnostics\Panel::registerBluescreen($this);');
 			$this->addCollapsePathsToTracy($init);
+		}
+
+		foreach ($this->proxyAutoloaders as $namespace => $dir) {
+			$originalInitialize = $init->getBody();
+			$init->setBody('Kdyby\Doctrine\Proxy\ProxyAutoloader::create(?, ?)->register();', [$dir, $namespace]);
+			$init->addBody($originalInitialize);
 		}
 
 		$this->processRepositoryFactoryEntities($class);
