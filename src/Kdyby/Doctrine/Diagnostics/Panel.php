@@ -19,7 +19,6 @@ use Doctrine\DBAL\Types\Type;
 use Kdyby;
 use Nette;
 use Nette\Utils\Strings;
-use Nette\Utils\Callback;
 use Tracy\Bar;
 use Tracy\BlueScreen;
 use Tracy\Debugger;
@@ -906,7 +905,7 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 
 		// Tracy
 		$this->registerBarPanel(Debugger::getBar());
-		Debugger::getBlueScreen()->addPanel(Callback::closure($this, 'renderQueryException'));
+		Debugger::getBlueScreen()->addPanel([$this, 'renderQueryException']);
 
 		return $this;
 	}
@@ -932,7 +931,7 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 			$this->bindConnection($em->getConnection());
 		}
 
-		Debugger::getBlueScreen()->addPanel(Callback::closure($this, 'renderEntityManagerException'));
+		Debugger::getBlueScreen()->addPanel([$this, 'renderEntityManagerException']);
 
 		return $this;
 	}
