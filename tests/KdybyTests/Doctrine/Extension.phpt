@@ -146,10 +146,10 @@ class ExtensionTest extends Tester\TestCase
 
 	private static function runExternalScript($script, array $args, array $env)
 	{
-		static $spec = array(
-			1 => array('pipe', 'w'),
-			2 => array('pipe', 'w'),
-		);
+		static $spec = [
+			1 => ['pipe', 'w'],
+			2 => ['pipe', 'w'],
+		];
 		$cmd = sprintf('php %s %s', escapeshellarg(basename($script)), implode(' ', array_map('escapeshellarg', $args)));
 		$process = proc_open($cmd, $spec, $pipes, dirname($script), $env);
 
