@@ -35,7 +35,8 @@ install:
 script:
   - vendor/bin/tester -p php -c ./tests/php.ini-unix ./tests/KdybyTests/
   - php /tmp/php-parallel-lint/parallel-lint.php -e php,phpt --exclude vendor .
-  - php /tmp/code-checker/src/code-checker.php --short-arrays
+  - php /tmp/code-checker/src/code-checker.php --short-arrays src
+  - php /tmp/code-checker/src/code-checker.php --short-arrays tests
 
 after_failure:
   - 'for i in $(find ./tests -name \*.actual); do echo "--- $i"; cat $i; echo; echo; done'
