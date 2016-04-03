@@ -9,6 +9,8 @@ if (PHP_SAPI !== 'cli') {
 	exit(1);
 }
 
+\Tracy\Debugger::enable(FALSE, getenv('TEMP_DIR'));
+
 if ($sessionId = getenv('SESSION_ID')) {
 	$GLOBALS['_COOKIE'][session_name()] = $sessionId;
 }
