@@ -23,7 +23,6 @@ $config->addConfig(__DIR__ . '/../../nette-reset.neon', !isset($config->defaultE
 $config->addConfig(__DIR__ . '/../config/proxiesSessionAutoloading.neon');
 
 $container = $config->createContainer();
-//$container->addService('')
 
 // requires disabled autostart
 $session = $container->getByType('Nette\Http\Session');
