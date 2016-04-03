@@ -127,7 +127,7 @@ class ExtensionTest extends Tester\TestCase
 
 	public function testProxyAutoloading()
 	{
-		$env = ['TEMP_DIR' => $scriptTempDir = TEMP_DIR . '/script'];
+		$env = $_ENV + ['TEMP_DIR' => $scriptTempDir = TEMP_DIR . '/script'];
 		Nette\Utils\FileSystem::createDir($scriptTempDir . '/cache');
 		Nette\Utils\FileSystem::createDir($scriptTempDir . '/sessions');
 
