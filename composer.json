@@ -26,7 +26,6 @@
 		"doctrine/orm": "~2.5",
 		"doctrine/dbal": "~2.5",
 
-		"kdyby/events": "~3.0@dev",
 		"kdyby/console": "~2.5@dev",
 		"kdyby/annotations": "~2.3@dev",
 		"kdyby/doctrine-cache": "~2.5@dev"
@@ -38,6 +37,7 @@
 		"kdyby/doctrine-dbal-batchimport": "Batch import & execute utils for effective processing of SQL Imports from files and strings"
 	},
 	"require-dev": {
+		"kdyby/events": "~3.0@dev",
 		"nette/application": "~2.3@dev",
 		"nette/bootstrap": "~2.3@dev",
 		"nette/caching": "~2.3@dev",
