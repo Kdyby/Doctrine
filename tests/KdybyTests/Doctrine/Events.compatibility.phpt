@@ -28,12 +28,27 @@ require_once __DIR__ . '/../bootstrap.php';
 class EventsCompatibilityTest extends ORMTestCase
 {
 
+	/**
+	 * @var Kdyby\Doctrine\EntityManager
+	 */
+	private $em;
+
+
+
+	protected function setUp()
+	{
+		$this->em = $this->createMemoryManager([
+			__DIR__ . '/config/events.neon',
+		]);
+	}
+
+
+
 	public function testOuterRegister_new()
 	{
-		$em = $this->createMemoryManager();
-		Assert::type('Kdyby\Events\NamespacedEventManager', $em->getEventManager());
+		Assert::type('Kdyby\Events\NamespacedEventManager', $this->em->getEventManager());
 
-		$outerEvm = $em->getEventManager();
+		$outerEvm = $this->em->getEventManager();
 		Assert::false($outerEvm->hasListeners(Doctrine\ORM\Events::onFlush));
 		Assert::false($outerEvm->hasListeners(Kdyby\Doctrine\Events::onFlush));
 
@@ -42,7 +57,7 @@ class EventsCompatibilityTest extends ORMTestCase
 		Assert::true($outerEvm->hasListeners(Doctrine\ORM\Events::onFlush));
 		Assert::true($outerEvm->hasListeners(Kdyby\Doctrine\Events::onFlush));
 
-		$outerEvm->dispatchEvent(Doctrine\ORM\Events::onFlush, $args = new OnFlushEventArgs($em));
+		$outerEvm->dispatchEvent(Doctrine\ORM\Events::onFlush, $args = new OnFlushEventArgs($this->em));
 
 		Assert::same([[$args]], $new->calls);
 	}
@@ -51,10 +66,9 @@ class EventsCompatibilityTest extends ORMTestCase
 
 	public function testOuterRegister_old()
 	{
-		$em = $this->createMemoryManager();
-		Assert::type('Kdyby\Events\NamespacedEventManager', $em->getEventManager());
+		Assert::type('Kdyby\Events\NamespacedEventManager', $this->em->getEventManager());
 
-		$outerEvm = $em->getEventManager();
+		$outerEvm = $this->em->getEventManager();
 		Assert::false($outerEvm->hasListeners(Doctrine\ORM\Events::onFlush));
 		Assert::false($outerEvm->hasListeners(Kdyby\Doctrine\Events::onFlush));
 
@@ -63,7 +77,7 @@ class EventsCompatibilityTest extends ORMTestCase
 		Assert::true($outerEvm->hasListeners(Doctrine\ORM\Events::onFlush));
 		Assert::true($outerEvm->hasListeners(Kdyby\Doctrine\Events::onFlush));
 
-		$outerEvm->dispatchEvent(Doctrine\ORM\Events::onFlush, $args = new OnFlushEventArgs($em));
+		$outerEvm->dispatchEvent(Doctrine\ORM\Events::onFlush, $args = new OnFlushEventArgs($this->em));
 
 		Assert::same([[$args]], $old->calls);
 	}
@@ -72,10 +86,9 @@ class EventsCompatibilityTest extends ORMTestCase
 
 	public function testOuterRegister_combined()
 	{
-		$em = $this->createMemoryManager();
-		Assert::type('Kdyby\Events\NamespacedEventManager', $em->getEventManager());
+		Assert::type('Kdyby\Events\NamespacedEventManager', $this->em->getEventManager());
 
-		$outerEvm = $em->getEventManager();
+		$outerEvm = $this->em->getEventManager();
 		Assert::false($outerEvm->hasListeners(Doctrine\ORM\Events::onFlush));
 		Assert::false($outerEvm->hasListeners(Kdyby\Doctrine\Events::onFlush));
 
@@ -85,7 +98,7 @@ class EventsCompatibilityTest extends ORMTestCase
 		Assert::true($outerEvm->hasListeners(Doctrine\ORM\Events::onFlush));
 		Assert::true($outerEvm->hasListeners(Kdyby\Doctrine\Events::onFlush));
 
-		$outerEvm->dispatchEvent(Doctrine\ORM\Events::onFlush, $args = new OnFlushEventArgs($em));
+		$outerEvm->dispatchEvent(Doctrine\ORM\Events::onFlush, $args = new OnFlushEventArgs($this->em));
 
 		Assert::same([[$args]], $old->calls);
 		Assert::same([[$args]], $new->calls);
@@ -95,15 +108,14 @@ class EventsCompatibilityTest extends ORMTestCase
 
 	public function testInnerRegister_new()
 	{
-		$em = $this->createMemoryManager();
-		Assert::type('Kdyby\Events\NamespacedEventManager', $em->getEventManager());
+		Assert::type('Kdyby\Events\NamespacedEventManager', $this->em->getEventManager());
 
 		/** @var Kdyby\Events\EventManager $innerEvm */
 		$innerEvm = $this->serviceLocator->getByType('Kdyby\Events\EventManager');
 		Assert::false($innerEvm->hasListeners(Doctrine\ORM\Events::onFlush));
 		Assert::false($innerEvm->hasListeners(Kdyby\Doctrine\Events::onFlush));
 
-		$outerEvm = $em->getEventManager();
+		$outerEvm = $this->em->getEventManager();
 		Assert::false($outerEvm->hasListeners(Doctrine\ORM\Events::onFlush));
 		Assert::false($outerEvm->hasListeners(Kdyby\Doctrine\Events::onFlush));
 
@@ -114,7 +126,7 @@ class EventsCompatibilityTest extends ORMTestCase
 		Assert::true($outerEvm->hasListeners(Doctrine\ORM\Events::onFlush));
 		Assert::true($outerEvm->hasListeners(Kdyby\Doctrine\Events::onFlush));
 
-		$outerEvm->dispatchEvent(Doctrine\ORM\Events::onFlush, $args = new OnFlushEventArgs($em));
+		$outerEvm->dispatchEvent(Doctrine\ORM\Events::onFlush, $args = new OnFlushEventArgs($this->em));
 
 		Assert::same([[$args]], $new->calls);
 	}
@@ -123,15 +135,14 @@ class EventsCompatibilityTest extends ORMTestCase
 
 	public function testInnerRegister_old()
 	{
-		$em = $this->createMemoryManager();
-		Assert::type('Kdyby\Events\NamespacedEventManager', $em->getEventManager());
+		Assert::type('Kdyby\Events\NamespacedEventManager', $this->em->getEventManager());
 
 		/** @var Kdyby\Events\EventManager $innerEvm */
 		$innerEvm = $this->serviceLocator->getByType('Kdyby\Events\EventManager');
 		Assert::false($innerEvm->hasListeners(Doctrine\ORM\Events::onFlush));
 		Assert::false($innerEvm->hasListeners(Kdyby\Doctrine\Events::onFlush));
 
-		$outerEvm = $em->getEventManager();
+		$outerEvm = $this->em->getEventManager();
 		Assert::false($outerEvm->hasListeners(Doctrine\ORM\Events::onFlush));
 		Assert::false($outerEvm->hasListeners(Kdyby\Doctrine\Events::onFlush));
 
@@ -142,7 +153,7 @@ class EventsCompatibilityTest extends ORMTestCase
 		Assert::true($outerEvm->hasListeners(Doctrine\ORM\Events::onFlush));
 		Assert::true($outerEvm->hasListeners(Kdyby\Doctrine\Events::onFlush));
 
-		$outerEvm->dispatchEvent(Doctrine\ORM\Events::onFlush, $args = new OnFlushEventArgs($em));
+		$outerEvm->dispatchEvent(Doctrine\ORM\Events::onFlush, $args = new OnFlushEventArgs($this->em));
 
 		Assert::same([[$args]], $old->calls);
 	}
@@ -151,15 +162,14 @@ class EventsCompatibilityTest extends ORMTestCase
 
 	public function testInnerRegister_combined()
 	{
-		$em = $this->createMemoryManager();
-		Assert::type('Kdyby\Events\NamespacedEventManager', $em->getEventManager());
+		Assert::type('Kdyby\Events\NamespacedEventManager', $this->em->getEventManager());
 
 		/** @var Kdyby\Events\EventManager $innerEvm */
 		$innerEvm = $this->serviceLocator->getByType('Kdyby\Events\EventManager');
 		Assert::false($innerEvm->hasListeners(Doctrine\ORM\Events::onFlush));
 		Assert::false($innerEvm->hasListeners(Kdyby\Doctrine\Events::onFlush));
 
-		$outerEvm = $em->getEventManager();
+		$outerEvm = $this->em->getEventManager();
 		Assert::false($outerEvm->hasListeners(Doctrine\ORM\Events::onFlush));
 		Assert::false($outerEvm->hasListeners(Kdyby\Doctrine\Events::onFlush));
 
@@ -171,7 +181,7 @@ class EventsCompatibilityTest extends ORMTestCase
 		Assert::true($outerEvm->hasListeners(Doctrine\ORM\Events::onFlush));
 		Assert::true($outerEvm->hasListeners(Kdyby\Doctrine\Events::onFlush));
 
-		$outerEvm->dispatchEvent(Doctrine\ORM\Events::onFlush, $args = new OnFlushEventArgs($em));
+		$outerEvm->dispatchEvent(Doctrine\ORM\Events::onFlush, $args = new OnFlushEventArgs($this->em));
 
 		Assert::same([[$args]], $old->calls);
 		Assert::same([[$args]], $new->calls);

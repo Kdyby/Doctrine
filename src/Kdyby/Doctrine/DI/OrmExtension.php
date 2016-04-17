@@ -150,10 +150,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		$this->configuredManagers =
 		$this->postCompileRepositoriesQueue = [];
 
-		$extensions = array_filter($this->compiler->getExtensions(), function ($item) {
-			return $item instanceof Kdyby\Annotations\DI\AnnotationsExtension;
-		});
-		if (empty($extensions)) {
+		if (!$this->compiler->getExtensions('Kdyby\Annotations\DI\AnnotationsExtension')) {
 			throw new Nette\Utils\AssertionException('You should register \'Kdyby\Annotations\DI\AnnotationsExtension\' before \'' . get_class($this) . '\'.', E_USER_NOTICE);
 		}
 
@@ -187,6 +184,10 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		}
 
 		if ($this->targetEntityMappings) {
+			if (!$this->isKdybyEventsPresent()) {
+				throw new Nette\Utils\AssertionException('The option \'targetEntityMappings\' requires \'Kdyby\Events\DI\EventsExtension\'.', E_USER_NOTICE);
+			}
+
 			$listener = $builder->addDefinition($this->prefix('resolveTargetEntityListener'))
 				->setClass('Kdyby\Doctrine\Tools\ResolveTargetEntityListener')
 				->addTag(Kdyby\Events\DI\EventsExtension::SUBSCRIBER_TAG)
@@ -350,10 +351,17 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			$this->targetEntityMappings = Nette\Utils\Arrays::mergeTree($this->targetEntityMappings, $config['targetEntityMappings']);
 		}
 
-		$builder->addDefinition($this->prefix($name . '.evm'))
-			->setClass('Kdyby\Events\NamespacedEventManager', [Kdyby\Doctrine\Events::NS . '::'])
-			->addSetup('$dispatchGlobalEvents', [TRUE]) // for BC
-			->setAutowired(FALSE);
+		if ($this->isKdybyEventsPresent()) {
+			$builder->addDefinition($this->prefix($name . '.evm'))
+				->setClass('Kdyby\Events\NamespacedEventManager', [Kdyby\Doctrine\Events::NS . '::'])
+				->addSetup('$dispatchGlobalEvents', [TRUE]) // for BC
+				->setAutowired(FALSE);
+
+		} else {
+			$builder->addDefinition($this->prefix($name . '.evm'))
+				->setClass('Doctrine\Common\EventManager')
+				->setAutowired(FALSE);
+		}
 
 		// entity manager
 		$entityManager = $builder->addDefinition($managerServiceId = $this->prefix($name . '.entityManager'))
@@ -522,7 +530,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			->setFactory('Kdyby\Doctrine\Connection::create', [
 				$options,
 				$this->prefix('@' . $name . '.dbalConfiguration'),
-				$this->prefix('@' . $name . '.evm')
+				$this->prefix('@' . $name . '.evm'),
 			])
 			->addSetup('setSchemaTypes', [$schemaTypes])
 			->addSetup('setDbalTypes', [$dbalTypes])
@@ -631,18 +639,6 @@ class OrmExtension extends Nette\DI\CompilerExtension
 
 	public function beforeCompile()
 	{
-		$eventsExt = NULL;
-		foreach ($this->compiler->getExtensions() as $extension) {
-			if ($extension instanceof Kdyby\Events\DI\EventsExtension) {
-				$eventsExt = $extension;
-				break;
-			}
-		}
-
-		if ($eventsExt === NULL) {
-			throw new Nette\Utils\AssertionException('Please register the required Kdyby\Events\DI\EventsExtension to Compiler.');
-		}
-
 		$this->processRepositories();
 	}
 
@@ -875,6 +871,16 @@ class OrmExtension extends Nette\DI\CompilerExtension
 	private function isTracyPresent()
 	{
 		return interface_exists('Tracy\IBarPanel');
+	}
+
+
+
+	/**
+	 * @return bool
+	 */
+	private function isKdybyEventsPresent()
+	{
+		return (bool) $this->compiler->getExtensions('Kdyby\Events\DI\EventsExtension');
 	}
 
 

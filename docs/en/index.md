@@ -11,6 +11,7 @@ The best way to install Kdyby/Doctrine is using [Composer](http://getcomposer.or
 
 ```sh
 $ composer require kdyby/doctrine
+$ composer require kdyby/events
 ```
 
 and now enable the extension using your neon config
@@ -26,6 +27,7 @@ extensions:
 
 Please see documentation, on how to configure [Kdyby/Events](https://github.com/Kdyby/Events/blob/master/docs/en/index.md), [Kdyby/Console](https://github.com/Kdyby/Console/blob/master/docs/en/index.md) and [Kdyby/Annotations](https://github.com/Kdyby/Annotations/blob/master/docs/en/index.md).
 
+Also, you don't have to install Kdyby/Events if you don't want to, Kdyby/Doctrine should work fine without it.
 
 Minimal configuration
 ---------------------
