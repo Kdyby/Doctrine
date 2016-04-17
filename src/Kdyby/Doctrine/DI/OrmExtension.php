@@ -582,17 +582,18 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			$driver = new Statement(self::ANNOTATION_DRIVER, is_array($paths) ? $paths : [$paths]);
 		}
 
-		$impl = $driver instanceof \stdClass ? $driver->value : ($driver instanceof Statement ? $driver->entity : (string) $driver);
+		$impl = $driver instanceof \stdClass ? $driver->value : ($driver instanceof Statement ? $driver->getEntity() : (string) $driver);
 		list($driver) = CacheHelpers::filterArgs($driver);
 		/** @var Statement $driver */
 
+		/** @var string $impl */
 		if (isset($this->metadataDriverClasses[$impl])) {
-			$driver->entity = $this->metadataDriverClasses[$impl];
+			$driver->setEntity($this->metadataDriverClasses[$impl]);
 		}
 
-		if (is_string($driver->entity) && substr($driver->entity, 0, 1) === '@') {
-			$metadataDriver->addSetup('addDriver', [$driver->entity, $namespace]);
-			return $driver->entity;
+		if (is_string($driver->getEntity()) && substr($driver->getEntity(), 0, 1) === '@') {
+			$metadataDriver->addSetup('addDriver', [$driver->getEntity(), $namespace]);
+			return $driver->getEntity();
 		}
 
 		if ($impl === self::ANNOTATION_DRIVER) {
@@ -606,7 +607,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 
 		$this->getContainerBuilder()->addDefinition($serviceName)
 			->setClass('Doctrine\Common\Persistence\Mapping\Driver\MappingDriver')
-			->setFactory($driver->entity, $driver->arguments)
+			->setFactory($driver->getEntity(), $driver->arguments)
 			->setAutowired(FALSE)
 			->setInject(FALSE);
 
@@ -653,7 +654,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 
 		$disabled = TRUE;
 		foreach ($this->configuredManagers as $managerName => $_) {
-			$factoryClassName = $builder->getDefinition($this->prefix($managerName . '.repositoryFactory'))->class;
+			$factoryClassName = $builder->getDefinition($this->prefix($managerName . '.repositoryFactory'))->getClass();
 			if ($factoryClassName === 'Kdyby\Doctrine\RepositoryFactory' || in_array('Kdyby\Doctrine\RepositoryFactory', class_parents($factoryClassName), TRUE)) {
 				$disabled = FALSE;
 			}
@@ -703,21 +704,21 @@ class OrmExtension extends Nette\DI\CompilerExtension
 
 			if ($boundEntity = $originalDef->getTag(self::TAG_REPOSITORY_ENTITY)) {
 				if (!is_string($boundEntity) || !class_exists($boundEntity)) {
-					throw new Nette\Utils\AssertionException(sprintf('The entity "%s" for repository "%s" cannot be autoloaded.', $boundEntity, $originalDef->class));
+					throw new Nette\Utils\AssertionException(sprintf('The entity "%s" for repository "%s" cannot be autoloaded.', $boundEntity, $originalDef->getClass()));
 				}
 				$entityArgument = $boundEntity;
 
 			} else {
 				$entityArgument = new Code\PhpLiteral('"%entityName%"');
-				$this->postCompileRepositoriesQueue[$boundManagers[0]][] = [ltrim($originalDef->class, '\\'), $originalServiceName];
+				$this->postCompileRepositoriesQueue[$boundManagers[0]][] = [ltrim($originalDef->getClass(), '\\'), $originalServiceName];
 			}
 
 			$builder->removeDefinition($originalServiceName);
 			$builder->addDefinition($originalServiceName)
-				->setClass($originalDef->class)
+				->setClass($originalDef->getClass())
 				->setFactory(sprintf('@%s::getRepository', $this->configuredManagers[$boundManagers[0]]), [$entityArgument]);
 
-			$serviceMap[$boundManagers[0]][$originalDef->class] = $factoryServiceName;
+			$serviceMap[$boundManagers[0]][$originalDef->getClass()] = $factoryServiceName;
 		}
 
 		foreach ($this->configuredManagers as $managerName => $_) {
@@ -747,7 +748,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 
 	public function afterCompile(Code\ClassType $class)
 	{
-		$init = $class->methods['initialize'];
+		$init = $class->getMethod('initialize');
 
 		if ($this->isTracyPresent()) {
 			$init->addBody('Kdyby\Doctrine\Diagnostics\Panel::registerBluescreen($this);');
