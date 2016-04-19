@@ -312,7 +312,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		Validators::assertField($config['dql'], 'hints', 'array');
 
 		$autoGenerateProxyClasses = is_bool($config['autoGenerateProxyClasses'])
-			? ($config['autoGenerateProxyClasses'] ? AbstractProxyFactory::AUTOGENERATE_ALWAYS : AbstractProxyFactory::AUTOGENERATE_NEVER)
+			? ($config['autoGenerateProxyClasses'] ? AbstractProxyFactory::AUTOGENERATE_ALWAYS : AbstractProxyFactory::AUTOGENERATE_FILE_NOT_EXISTS)
 			: $config['autoGenerateProxyClasses'];
 
 		$configuration = $builder->addDefinition($this->prefix($name . '.ormConfiguration'))

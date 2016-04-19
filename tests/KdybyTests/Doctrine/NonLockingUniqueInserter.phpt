@@ -70,7 +70,6 @@ class NonLockingUniqueInserterTest extends KdybyTests\Doctrine\ORMTestCase
 	public function testSavingRelations()
 	{
 		$em = $this->createMemoryManager();
-		$em->getProxyFactory()->generateProxyClasses($em->getMetadataFactory()->getAllMetadata());
 
 		$user = new CmsUser();
 		$user->username = 'HosipLan';
