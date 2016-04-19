@@ -88,7 +88,7 @@ class Article
 
 	use \Kdyby\Doctrine\Entities\MagicAccessors;
 	use \Kdyby\Doctrine\Entities\Attributes\Identifier; // Using Identifier trait for id column
-	
+
 	// ...
 }
 ```
