@@ -6,10 +6,6 @@ cache:
     directories:
         - $HOME/.composer/cache
 
-env:
-  - NETTE=nette-2.3-dev
-  - NETTE=nette-2.3
-
 php:
   - 5.4
   - 5.5
@@ -17,26 +13,32 @@ php:
   - 7.0
   - hhvm
 
+env:
+  matrix:
+    - NETTE=nette-2.3-dev
+    - NETTE=nette-2.3
+
 matrix:
+  include:
+    - php: 5.6
+      env: NETTE=nette-2.3 COMPOSER_EXTRA_ARGS="--prefer-lowest --prefer-stable"
   allow_failures:
     - php: hhvm
 
 before_install:
   - travis_retry composer self-update
-  - mkdir -p vendor/bin
-  - wget -O vendor/bin/composer-nette https://raw.githubusercontent.com/Kdyby/TesterExtras/master/bin/composer-nette.php
-  - php vendor/bin/composer-nette
+  - wget -O /tmp/composer-nette https://raw.githubusercontent.com/Kdyby/TesterExtras/master/bin/composer-nette.php
+  - php /tmp/composer-nette
 
 install:
-  - travis_retry composer update --no-interaction --prefer-dist
+  - travis_retry composer update --no-interaction --prefer-dist $COMPOSER_EXTRA_ARGS
   - travis_retry composer create-project --no-interaction jakub-onderka/php-parallel-lint /tmp/php-parallel-lint
   - travis_retry composer create-project --no-interaction nette/code-checker /tmp/code-checker ~2.5
 
 script:
-  - vendor/bin/tester -p php -c ./tests/php.ini-unix ./tests/KdybyTests/
+  - vendor/bin/tester -s -p php -c ./tests/php.ini-unix ./tests/KdybyTests/
   - php /tmp/php-parallel-lint/parallel-lint.php -e php,phpt --exclude vendor .
-  - php /tmp/code-checker/src/code-checker.php --short-arrays -d src
-  - php /tmp/code-checker/src/code-checker.php --short-arrays -d tests
+  - php /tmp/code-checker/src/code-checker.php --short-arrays
 
 after_failure:
   - 'for i in $(find ./tests -name \*.actual); do echo "--- $i"; cat $i; echo; echo; done'
