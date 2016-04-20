@@ -21,7 +21,7 @@ $config->addParameters([
 	'appDir' => __DIR__,
 	'wwwDir' => __DIR__,
 ]);
-$config->addConfig(__DIR__ . '/../../nette-reset.neon', !isset($config->defaultExtensions['nette']) ? 'v23' : 'v22');
+$config->addConfig(__DIR__ . '/../../nette-reset.neon');
 $config->addConfig(__DIR__ . '/../config/proxiesSessionAutoloading.neon');
 
 $container = $config->createContainer();
