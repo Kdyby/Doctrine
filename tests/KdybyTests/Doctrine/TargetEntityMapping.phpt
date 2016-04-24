@@ -24,7 +24,7 @@ require_once __DIR__ . '/models/cms.php';
 /**
  * @author David Matějka <matej21@matej21.cz>
  */
-class TargetEntityMapping extends KdybyTests\Doctrine\ORMTestCase
+class TargetEntityMapping extends ORMTestCase
 {
 
 	/**
@@ -33,9 +33,12 @@ class TargetEntityMapping extends KdybyTests\Doctrine\ORMTestCase
 	private $em;
 
 
+
 	protected function setUp()
 	{
-		$this->em = $this->createMemoryManager();
+		$this->em = $this->createMemoryManager([
+			__DIR__ . '/config/events.neon',
+		]);
 	}
 
 

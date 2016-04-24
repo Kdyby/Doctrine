@@ -1,0 +1,6 @@
+extensions:
+	events: Kdyby\Events\DI\EventsExtension
+
+kdyby.doctrine:
+	targetEntityMappings:
+		KdybyTests\Doctrine\ICmsAddress: KdybyTests\Doctrine\CmsAddress
