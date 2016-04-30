@@ -59,8 +59,6 @@ use Doctrine\ORM\Mapping as ORM;
 class Article
 {
 
-	use \Kdyby\Doctrine\Entities\MagicAccessors;
-
 	/**
 	 * @ORM\Id
 	 * @ORM\Column(type="integer")
@@ -78,15 +76,13 @@ class Article
 
 The full name of annotation `@ORM\Entity` is `Doctrine\ORM\Mapping\Entity`, that's why there is that namespace alias before class definition.
 
-Every entity, using `Kdyby\Doctrine\Entities\MagicAccessors` will have some cool features, the complete behaviour is listed [here](todo).
-
-If you don't want to declare $id column in every entity, you can use Identifier trait included in Kdyby\Doctrine\Entities\Attributes\Identifier. However, traits are only available since PHP 5.4. See [documentation](http://www.php.net/manual/en/language.oop5.traits.php).
+If you don't want to declare $id column in every entity, you can use Identifier trait included in Kdyby\Doctrine\Entities\Attributes\Identifier.
+However, traits are only available since PHP 5.4. See [documentation](http://www.php.net/manual/en/language.oop5.traits.php).
 
 ```php
 class Article
 {
 
-	use \Kdyby\Doctrine\Entities\MagicAccessors;
 	use \Kdyby\Doctrine\Entities\Attributes\Identifier; // Using Identifier trait for id column
 
 	// ...
@@ -99,7 +95,6 @@ You can also use an UUID - [Universally unique identifier](https://en.wikipedia.
 class Article
 {
 
-	use \Kdyby\Doctrine\Entities\MagicAccessors;
 	use \Kdyby\Doctrine\Entities\Attributes\UniversallyUniqueIdentifier; // Using UUI trait for id column
 
 	// ...
