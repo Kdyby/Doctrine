@@ -139,11 +139,6 @@ class OrmExtension extends Nette\DI\CompilerExtension
 	 */
 	private $postCompileRepositoriesQueue = [];
 
-	/**
-	 * @var bool
-	 */
-	private $kdybyEvents;
-
 
 
 	public function loadConfiguration()
@@ -154,8 +149,6 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		$this->managerConfigs =
 		$this->configuredManagers =
 		$this->postCompileRepositoriesQueue = [];
-
-		$this->kdybyEvents = (bool) $this->compiler->getExtensions('Kdyby\Events\DI\EventsExtension');
 
 		if (!$this->compiler->getExtensions('Kdyby\Annotations\DI\AnnotationsExtension')) {
 			throw new Nette\Utils\AssertionException('You should register \'Kdyby\Annotations\DI\AnnotationsExtension\' before \'' . get_class($this) . '\'.', E_USER_NOTICE);
@@ -191,7 +184,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		}
 
 		if ($this->targetEntityMappings) {
-			if (!$this->kdybyEvents) {
+			if (!$this->isKdybyEventsPresent()) {
 				throw new Nette\Utils\AssertionException('The option \'targetEntityMappings\' requires \'Kdyby\Events\DI\EventsExtension\'.', E_USER_NOTICE);
 			}
 
@@ -363,7 +356,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			$this->prefix('@' . $name . '.ormConfiguration'),
 		];
 
-		if ($this->kdybyEvents) {
+		if ($this->isKdybyEventsPresent()) {
 			$builder->addDefinition($this->prefix($name . '.evm'))
 				->setClass('Kdyby\Events\NamespacedEventManager', [Kdyby\Doctrine\Events::NS . '::'])
 				->addSetup('$dispatchGlobalEvents', [TRUE]) // for BC
@@ -536,7 +529,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			$this->prefix('@' . $name . '.dbalConfiguration'),
 		];
 
-		if ($this->kdybyEvents) {
+		if ($this->isKdybyEventsPresent()) {
 			$connectionArguments[] = $this->prefix('@' . $name . '.evm');
 		}
 
@@ -882,6 +875,16 @@ class OrmExtension extends Nette\DI\CompilerExtension
 	private function isTracyPresent()
 	{
 		return interface_exists('Tracy\IBarPanel');
+	}
+
+
+
+	/**
+	 * @return bool
+	 */
+	private function isKdybyEventsPresent()
+	{
+		return (bool) $this->compiler->getExtensions('Kdyby\Events\DI\EventsExtension');
 	}
 
 
