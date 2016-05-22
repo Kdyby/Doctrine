@@ -56,13 +56,20 @@ class ArticlesQuery extends QueryObject
 
   public function postFetch(Queryable $repository, \Iterator $iterator)
   {
-    $ids = array_keys(iterator_to_array($iterator, TRUE));
+    $articles = iterator_to_array($iterator, TRUE);
+    $ids = array_keys($articles);
 
-    $repository->createQueryBuilder()
-      ->select('partial article.{id}')->from(Article::class, 'article')
-      ->leftJoin('article.comments', 'comments')->addSelect('comments')
+    $matched = $repository->createQueryBuilder()
+      ->select('partial article.{id}')->from(Article::class, 'article', 'article.id')
+      ->innerJoin('article.comments', 'comments')->addSelect('comments')
       ->andWhere('article.id IN (:ids)')->setParameter('ids', $ids)
       ->getQuery()->getResult();
+      
+    foreach($articles as $id => $article){
+      if(!isset($matched[$id])){
+        $article->getComments()->clear();
+      }
+    }
   }
 
 }
