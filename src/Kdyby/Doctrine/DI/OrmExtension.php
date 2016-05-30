@@ -782,7 +782,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			return $config['defaultRepositoryClassName'];
 		}, $this->managerConfigs);
 
-		$init->addBody('$this->getService(?)->setup($this, ?, ?, ?);', [
+		$init->addBody('$this->getService(?)->setup($this, __FILE__, ?, ?, ?);', [
 			$this->prefix('entityLocator'),
 			$this->postCompileRepositoriesQueue,
 			$classNames,
