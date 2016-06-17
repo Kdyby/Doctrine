@@ -3,7 +3,7 @@
 Using [QueryObjects](https://github.com/Kdyby/Doctrine/blob/master/docs/en/resultset.md#queryobject) and [DQL in general](http://docs.doctrine-project.org/projects/doctrine-orm/en/latest/reference/dql-doctrine-query-language.html), we might encounter a situation, where the query has many joins and the hydratation is taking a long time.
 You should [read here, why having many entities in result set is slow](http://goo.gl/XmSJe0).
 
-To be fair, that previouse sentence is an oversimplification. In fact, having many toOne relations isn't slow, slow is to join and select toMany relations, because they are multiplying the rows and selected data, making it harder for the Doctrine hydrator to normalize it.
+To be fair, that previous sentence is an oversimplification. In fact, having many toOne relations isn't slow, slow is to join and select toMany relations, because they are multiplying the rows and selected data, making it harder for the Doctrine hydrator to normalize it.
 
 ## How not to do it
 
