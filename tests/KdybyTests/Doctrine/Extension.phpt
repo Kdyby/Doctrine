@@ -36,7 +36,7 @@ class ExtensionTest extends Tester\TestCase
 		$config->setTempDirectory(TEMP_DIR);
 		$config->addParameters(['container' => ['class' => 'SystemContainer_' . md5($configFile)]]);
 		$config->addParameters(['appDir' => $rootDir = __DIR__ . '/..', 'wwwDir' => $rootDir]);
-		$config->addConfig(__DIR__ . '/../nette-reset.neon', !isset($config->defaultExtensions['nette']) ? 'v23' : 'v22');
+		$config->addConfig(__DIR__ . '/../nette-reset.' . (!isset($config->defaultExtensions['nette']) ? 'v23' : 'v22') . '.neon');
 		$config->addConfig(__DIR__ . '/config/' . $configFile . '.neon');
 
 		return $config->createContainer();

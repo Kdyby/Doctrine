@@ -120,7 +120,7 @@ abstract class CommandTestCase extends Tester\TestCase
 	{
 		$config = new Nette\Configurator;
 		return $config->setTempDirectory(TEMP_DIR)
-			->addConfig(TEST_DIR . '/nette-reset.neon', !isset($config->defaultExtensions['nette']) ? 'v23' : 'v22')
+			->addConfig(TEST_DIR . '/nette-reset.' . (!isset($config->defaultExtensions['nette']) ? 'v23' : 'v22') . '.neon')
 			->addConfig(TEST_DIR . '/Doctrine/config/multiple-connections.neon')
 			->addParameters([
 				'appDir' => TEST_DIR,

@@ -1,0 +1,10 @@
+includes:
+	- nette-reset.neon
+
+nette:
+	security:
+		frames: null
+
+	session:
+		autoStart: false
+		save_path: %tempDir%/sessions
