@@ -613,7 +613,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 
 		/** @var string $impl */
 		if (isset($this->metadataDriverClasses[$impl])) {
-			$driver->setEntity($this->metadataDriverClasses[$impl]);
+			$driver = new Statement($this->metadataDriverClasses[$impl], $driver->arguments);
 		}
 
 		if (is_string($driver->getEntity()) && substr($driver->getEntity(), 0, 1) === '@') {
