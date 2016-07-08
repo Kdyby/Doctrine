@@ -54,9 +54,27 @@ $commentsRepository->findBy(['article.title' => $title]);
 ```
 
 And you can even use other operation than only equals!
+Those operators are:
+- `!=` or `not`
+- `<`
+- `<=`
+- `>`
+- `>=`
 
 ```php
 $commentsRepository->findBy(['article.date >=' => new \DateTime('-1 day')]);
+$commentsRepository->findBy(['article.date >' => new \DateTime('-1 day')]);
+$commentsRepository->findBy(['article.date <' => new \DateTime('-1 day')]);
+$commentsRepository->findBy(['article.date <=' => new \DateTime('-1 day')]);
+$commentsRepository->findBy(['article.date !=' => new \DateTime('-1 day')]);
+```
+
+You can also use array or `NULL` as value of the property to create SQL `IN` or `IS` command
+```php
+$commentsRepository->findBy(['article.id =' => [1, 2, 3]]);    // article.id IN
+$commentsRepository->findBy(['article.id not' => [1, 2, 3]]);  // article.id NOT IN
+$commentsRepository->findBy(['article.id' => NULL]);           // article.id IS NULL
+$commentsRepository->findBy(['article.id not' => NULL]);       // article.id IS NOT NULL
 ```
 
 You can even order by relations
