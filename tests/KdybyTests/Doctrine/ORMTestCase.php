@@ -36,19 +36,24 @@ abstract class ORMTestCase extends Tester\TestCase
 	/**
 	 * @return Kdyby\Doctrine\EntityManager
 	 */
-	protected function createMemoryManager()
+	protected function createMemoryManager(array $files = [])
 	{
 		$rootDir = __DIR__ . '/..';
 
 		$config = new Nette\Configurator();
-		$container = $config->setTempDirectory(TEMP_DIR)
+		$config->setTempDirectory(TEMP_DIR)
 			->addConfig(__DIR__ . '/../nette-reset.neon')
 			->addConfig(__DIR__ . '/config/memory.neon')
 			->addParameters([
 				'appDir' => $rootDir,
 				'wwwDir' => $rootDir,
-			])
-			->createContainer();
+			]);
+
+		foreach ($files as $file) {
+			$config->addConfig($file);
+		}
+
+		$container = $config->createContainer();
 		/** @var Nette\DI\Container $container */
 
 		$em = $container->getByType('Kdyby\Doctrine\EntityManager');
@@ -60,6 +65,12 @@ abstract class ORMTestCase extends Tester\TestCase
 		$this->serviceLocator = $container;
 
 		return $em;
+	}
+
+
+
+	protected function configure(Configurator $config)
+	{
 	}
 
 

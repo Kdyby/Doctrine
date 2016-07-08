@@ -3,7 +3,6 @@ php:
 
 
 extensions:
-	events: Kdyby\Events\DI\EventsExtension
 	console: Kdyby\Console\DI\ConsoleExtension
 	annotations: Kdyby\Annotations\DI\AnnotationsExtension
 	kdyby.doctrine: Kdyby\Doctrine\DI\OrmExtension
@@ -32,3 +31,5 @@ session:
 services:
 	cacheStorage:
 		class: Nette\Caching\Storages\MemoryStorage
+	evm:
+		class: Doctrine\Common\EventManager
