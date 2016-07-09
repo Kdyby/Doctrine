@@ -640,6 +640,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 	public function beforeCompile()
 	{
 		$this->processRepositories();
+		$this->processEventManagers();
 	}
 
 
@@ -723,6 +724,21 @@ class OrmExtension extends Nette\DI\CompilerExtension
 					$serviceMap[$managerName],
 					$this->prefix('repositoryFactory.' . $managerName . '.defaultRepositoryFactory')
 				]);
+		}
+	}
+
+
+
+	protected function processEventManagers()
+	{
+		$builder = $this->getContainerBuilder();
+		$customEvmService = $builder->getByType('Doctrine\Common\EventManager');
+		if ($this->isKdybyEventsPresent() || !$customEvmService) {
+			return;
+		}
+
+		foreach ($this->configuredManagers as $managerName => $_) {
+			$builder->getDefinition($this->prefix($managerName . '.evm'))->setFactory('@' . $customEvmService);
 		}
 	}
 
