@@ -75,7 +75,7 @@ class EntityRepository extends Doctrine\ORM\EntityRepository implements Persiste
 	 * @param array $criteria
 	 * @return bool
 	 */
-	public function exists(array $criteria = array())
+	public function exists(array $criteria = [])
 	{
 		try {
 			return (bool) $this->createQueryBuilder('e')
