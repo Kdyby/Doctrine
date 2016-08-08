@@ -1,6 +1,0 @@
-kdyby.doctrine:
-	driver: pdo_sqlite
-	memory: true
-	metadata:
-		KdybyTests\Doctrine: annotations(%appDir%/Doctrine/models)
-	defaultRepositoryClassName: Kdyby\Doctrine\EntityRepository
