@@ -130,7 +130,7 @@ abstract class QueryObject extends Nette\Object implements Kdyby\Persistence\Que
 	public function count(Queryable $repository, ResultSet $resultSet = NULL, Paginator $paginatedQuery = NULL)
 	{
 		if ($query = $this->doCreateCountQuery($repository)) {
-			return $this->toQuery($query)->getSingleScalarResult();
+			return (int)$this->toQuery($query)->getSingleScalarResult();
 		}
 
 		if ($this->lastQuery && $this->lastQuery instanceof NativeQueryWrapper) {
