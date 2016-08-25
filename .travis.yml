@@ -23,7 +23,7 @@ matrix:
   include:
     - php: 5.6
       env: NETTE=nette-2.3 COMPOSER_EXTRA_ARGS="--prefer-lowest --prefer-stable"
-    - php: 7.0.9
+    - php: 7.0
       env: NETTE=nette-2.4 COVERAGE="--coverage ./coverage.xml --coverage-src ./src" TESTER_RUNTIME="phpdbg"
   exclude:
     - php: 5.4
