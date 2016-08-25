@@ -15,23 +15,25 @@ php:
 
 env:
   matrix:
-    - NETTE=nette-2.4-dev
-    - NETTE=nette-2.4
-    - NETTE=nette-2.3
+    - NETTE=nette-2.4-dev TESTER_RUNTIME="php"
+    - NETTE=nette-2.4 TESTER_RUNTIME="php"
+    - NETTE=nette-2.3 TESTER_RUNTIME="php"
 
 matrix:
   include:
     - php: 5.6
-      env: NETTE=nette-2.3 COMPOSER_EXTRA_ARGS="--prefer-lowest --prefer-stable"
+      env: NETTE=nette-2.3 COMPOSER_EXTRA_ARGS="--prefer-lowest --prefer-stable" TESTER_RUNTIME="php"
+    - php: 7.0
+      env: NETTE=nette-2.4 COVERAGE="--coverage ./coverage.xml --coverage-src ./src" TESTER_RUNTIME="phpdbg"
   exclude:
     - php: 5.4
-      env: NETTE=nette-2.4-dev
+      env: NETTE=nette-2.4-dev TESTER_RUNTIME="php"
     - php: 5.4
-      env: NETTE=nette-2.4
+      env: NETTE=nette-2.4 TESTER_RUNTIME="php"
     - php: 5.5
-      env: NETTE=nette-2.4-dev
+      env: NETTE=nette-2.4-dev TESTER_RUNTIME="php"
     - php: 5.5
-      env: NETTE=nette-2.4
+      env: NETTE=nette-2.4 TESTER_RUNTIME="php"
   allow_failures:
     - php: hhvm
 
@@ -44,22 +46,15 @@ install:
   - travis_retry composer update --no-interaction --prefer-dist $COMPOSER_EXTRA_ARGS
   - travis_retry composer create-project --no-interaction jakub-onderka/php-parallel-lint /tmp/php-parallel-lint
   - travis_retry composer create-project --no-interaction kdyby/code-checker /tmp/code-checker
-
-before_script:
-  - if [ $TRAVIS_PHP_VERSION == "7.0" ]; then COVERAGE="-p phpdbg --coverage ./coverage.xml --coverage-src ./src"; fi
+  - travis_retry wget -0 /tmp/coveralls.phar wget https://github.com/satooshi/php-coveralls/releases/download/v1.0.1/coveralls.phar
 
 script:
-  - vendor/bin/tester $COVERAGE -s -p php -c ./tests/php.ini-unix ./tests/KdybyTests/
+  - vendor/bin/tester $COVERAGE -s -p $TESTER_RUNTIME -c ./tests/php.ini-unix ./tests/KdybyTests/
   - php /tmp/php-parallel-lint/parallel-lint.php -e php,phpt --exclude vendor .
   - php /tmp/code-checker/src/code-checker.php --short-arrays
 
 after_script:
-  # Report Code Coverage
-  - >
-    if [ "$COVERAGE" != "" ]; then
-    wget https://github.com/satooshi/php-coveralls/releases/download/v1.0.1/coveralls.phar
-    && php coveralls.phar --verbose --config tests/.coveralls.yml
-    || true; fi
+  - if [ "$COVERAGE" != "" ]; then php /tmp/coveralls.phar --verbose --config tests/.coveralls.yml || true; fi
 
 after_failure:
   - 'for i in $(find ./tests -name \*.actual); do echo "--- $i"; cat $i; echo; echo; done'
