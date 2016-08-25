@@ -45,10 +45,21 @@ install:
   - travis_retry composer create-project --no-interaction jakub-onderka/php-parallel-lint /tmp/php-parallel-lint
   - travis_retry composer create-project --no-interaction kdyby/code-checker /tmp/code-checker
 
+before_script:
+  - if [ $TRAVIS_PHP_VERSION == "7.0" ]; then COVERAGE="-p phpdbg --coverage ./coverage.xml --coverage-src ./src"; fi
+
 script:
-  - vendor/bin/tester -s -p php -c ./tests/php.ini-unix ./tests/KdybyTests/
+  - vendor/bin/tester $COVERAGE -s -p php -c ./tests/php.ini-unix ./tests/KdybyTests/
   - php /tmp/php-parallel-lint/parallel-lint.php -e php,phpt --exclude vendor .
   - php /tmp/code-checker/src/code-checker.php --short-arrays
+
+after_script:
+  # Report Code Coverage
+  - >
+    if [ "$COVERAGE" != "" ]; then
+    wget https://github.com/satooshi/php-coveralls/releases/download/v1.0.1/coveralls.phar
+    && php coveralls.phar --verbose --config tests/.coveralls.yml
+    || true; fi
 
 after_failure:
   - 'for i in $(find ./tests -name \*.actual); do echo "--- $i"; cat $i; echo; echo; done'
