@@ -859,7 +859,7 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 			return Nette\Utils\Html::el('a')
 				->href(strtr(Debugger::$editor, ['%file' => rawurlencode($file), '%line' => $line]))
 				->title("$file:$line")
-				->setHtml($text);
+				->setHtml("$text:$line");
 
 		} else {
 			return Helpers::editorLink($file, $line);
