@@ -19,6 +19,7 @@ use Tester\Assert;
 require_once __DIR__ . '/../bootstrap.php';
 require_once __DIR__ . '/models/cms.php';
 require_once __DIR__ . '/models/sti.php';
+require_once __DIR__ . '/models/readonly.php';
 
 
 
@@ -113,6 +114,24 @@ class NonLockingUniqueInserterTest extends KdybyTests\Doctrine\ORMTestCase
 
 		$row = $em->getConnection()->fetchAssoc('SELECT * FROM sti_users WHERE id = :id', [ 'id' => $boss->id ]);
 		Assert::equal('boss', $row['type']);
+	}
+
+
+
+	public function testSavingAllPropertiesOnReadOnlyEntities()
+	{
+		$em = $this->createMemoryManager();
+
+		$nonRequiredValue = 'nonRequired';
+		$requiredValue = 'required';
+
+		$entity = new ReadOnlyEntity(1, $nonRequiredValue, $requiredValue);
+		$em->safePersist($entity);
+		$em->clear();
+
+		$row = $em->getConnection()->fetchAssoc('SELECT * FROM read_only_entities WHERE id = :id', ['id' => 1]);
+		Assert::same($nonRequiredValue, $row['non_required']);
+		Assert::same($requiredValue, $row['required']);
 	}
 
 }
