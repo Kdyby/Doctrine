@@ -380,17 +380,17 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			$entityManager->addSetup('?->bindEntityManager(?)', [$this->prefix('@' . $name . '.diagnosticsPanel'), '@self']);
 		}
 
-		if ($isDefault && $config['defaultRepositoryClassName'] === 'Kdyby\Doctrine\EntityDao') {
+		if ($isDefault && ($config['defaultRepositoryClassName'] === 'Kdyby\Doctrine\EntityDao' || is_subclass_of($config['defaultRepositoryClassName'], 'Kdyby\Doctrine\EntityDao', TRUE))) {
 			// syntax sugar for config
 			$builder->addDefinition($this->prefix('dao'))
-				->setClass('Kdyby\Doctrine\EntityDao')
+				->setClass($config['defaultRepositoryClassName'])
 				->setFactory('@Kdyby\Doctrine\EntityManager::getDao', [new Code\PhpLiteral('$entityName')])
 				->setParameters(['entityName'])
 				->setInject(FALSE);
 
 			// interface for models & presenters
 			$builder->addDefinition($this->prefix('daoFactory'))
-				->setClass('Kdyby\Doctrine\EntityDao')
+				->setClass($config['defaultRepositoryClassName'])
 				->setFactory('@Kdyby\Doctrine\EntityManager::getDao', [new Code\PhpLiteral('$entityName')])
 				->setParameters(['entityName'])
 				->setImplement('Kdyby\Doctrine\EntityDaoFactory')
