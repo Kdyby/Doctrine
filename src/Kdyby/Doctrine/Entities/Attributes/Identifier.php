@@ -24,7 +24,7 @@ trait Identifier
 	 * @ORM\Id
 	 * @ORM\Column(type="integer")
 	 * @ORM\GeneratedValue
-	 * @var integer
+	 * @var integer|null
 	 */
 	private $id;
 
