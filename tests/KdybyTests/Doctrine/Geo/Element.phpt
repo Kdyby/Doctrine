@@ -84,6 +84,19 @@ class ElementTest extends Tester\TestCase
 		Assert::type("string", $property->getValue($element2));
 	}
 
+
+
+	public function testLongStringValue()
+	{
+		$stringValue = 'POLYGON((50.1049501 14.4862063' . str_repeat(', 50.1049501 14.4862063', 100000) . '))';
+		$element = Element::fromString($stringValue);
+
+		Assert::noError(function () use ($element) {
+			// force string validation
+			$element->freeze();
+		});
+	}
+
 }
 
 
