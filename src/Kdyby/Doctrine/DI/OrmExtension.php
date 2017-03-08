@@ -190,8 +190,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 
 			$listener = $builder->addDefinition($this->prefix('resolveTargetEntityListener'))
 				->setClass('Kdyby\Doctrine\Tools\ResolveTargetEntityListener')
-				->addTag(Kdyby\Events\DI\EventsExtension::SUBSCRIBER_TAG)
-				->setInject(FALSE);
+				->addTag(Kdyby\Events\DI\EventsExtension::SUBSCRIBER_TAG);
 
 			foreach ($this->targetEntityMappings as $originalEntity => $mapping) {
 				$listener->addSetup('addResolveTargetEntity', [$originalEntity, $mapping['targetEntity'], $mapping]);
@@ -218,7 +217,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		foreach ($this->loadFromFile(__DIR__ . '/console.neon') as $i => $command) {
 			$cli = $builder->addDefinition($this->prefix('cli.' . $i))
 				->addTag(Kdyby\Console\DI\ConsoleExtension::COMMAND_TAG)
-				->setInject(FALSE); // lazy injects
+				->addTag(Nette\DI\Extensions\InjectExtension::TAG_INJECT, FALSE); // lazy injects
 
 			if (is_string($command)) {
 				$cli->setClass($command);
@@ -242,8 +241,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 
 		$metadataDriver = $builder->addDefinition($this->prefix($name . '.metadataDriver'))
 			->setClass('Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain')
-			->setAutowired(FALSE)
-			->setInject(FALSE);
+			->setAutowired(FALSE);
 		/** @var Nette\DI\ServiceDefinition $metadataDriver */
 
 		Validators::assertField($config, 'metadata', 'array');
@@ -331,8 +329,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			->addSetup('setNamingStrategy', CacheHelpers::filterArgs($config['namingStrategy']))
 			->addSetup('setQuoteStrategy', CacheHelpers::filterArgs($config['quoteStrategy']))
 			->addSetup('setEntityListenerResolver', CacheHelpers::filterArgs($config['entityListenerResolver']))
-			->setAutowired(FALSE)
-			->setInject(FALSE);
+			->setAutowired(FALSE);
 		/** @var Nette\DI\ServiceDefinition $configuration */
 
 		$this->proxyAutoloaders[$config['proxyNamespace']] = $config['proxyDir'];
@@ -373,8 +370,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			])
 			->addTag(self::TAG_ENTITY_MANAGER)
 			->addTag('kdyby.doctrine.entityManager')
-			->setAutowired($isDefault)
-			->setInject(FALSE);
+			->setAutowired($isDefault);
 
 		if ($this->isTracyPresent()) {
 			$entityManager->addSetup('?->bindEntityManager(?)', [$this->prefix('@' . $name . '.diagnosticsPanel'), '@self']);
@@ -503,8 +499,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			->addSetup('setResultCacheImpl', [$this->processCache($config['resultCache'], $name . '.dbalResult')])
 			->addSetup('setSQLLogger', [new Statement('Doctrine\DBAL\Logging\LoggerChain')])
 			->addSetup('setFilterSchemaAssetsExpression', [$config['schemaFilter']])
-			->setAutowired(FALSE)
-			->setInject(FALSE);
+			->setAutowired(FALSE);
 
 		// types
 		Validators::assertField($config, 'types', 'array');
@@ -536,8 +531,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			->addSetup('setDbalTypes', [$dbalTypes])
 			->addTag(self::TAG_CONNECTION)
 			->addTag('kdyby.doctrine.connection')
-			->setAutowired($isDefault)
-			->setInject(FALSE);
+			->setAutowired($isDefault);
 
 		if ($this->isTracyPresent()) {
 			$connection->addSetup('$panel = ?->bindConnection(?)', [$this->prefix('@' . $name . '.diagnosticsPanel'), '@self']);
@@ -616,8 +610,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		$this->getContainerBuilder()->addDefinition($serviceName)
 			->setClass('Doctrine\Common\Persistence\Mapping\Driver\MappingDriver')
 			->setFactory($driver->getEntity(), $driver->arguments)
-			->setAutowired(FALSE)
-			->setInject(FALSE);
+			->setAutowired(FALSE);
 
 		$metadataDriver->addSetup('addDriver', ['@' . $serviceName, $namespace]);
 		return '@' . $serviceName;
