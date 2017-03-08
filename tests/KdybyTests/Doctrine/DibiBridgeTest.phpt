@@ -13,13 +13,17 @@ namespace KdybyTests\DibiBridge;
 use Doctrine;
 use Kdyby;
 use Kdyby\Doctrine\Connection;
-use Nette;
 use Tester;
 use Tester\Assert;
 
 require_once __DIR__ . '/../bootstrap.php';
 
 
+
+if (!function_exists('set_magic_quotes_runtime')) {
+	// BC Break fix for PHP 7.1
+	eval('namespace { function set_magic_quotes_runtime() {} } ');
+}
 
 /**
  * This test is here just to ensure compatibility of Dibi.
