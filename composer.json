@@ -60,8 +60,13 @@
 		"latte/latte": "~2.3@dev",
 		"tracy/tracy": "~2.3@dev",
 
+		"doctrine/migrations": "~1.0@dev",
+
 		"dg/dibi" : "~2.0",
 		"nette/tester": "~1.7"
+	},
+	"suggest": {
+		"doctrine/migrations": "If you want to use migrations via MigrationsExtension"
 	},
 	"autoload": {
 		"psr-0": {
