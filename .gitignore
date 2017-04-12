@@ -1,3 +1,5 @@
+.DS_Store
+.idea
 vendor
 tests/mysql.local.neon
 composer.lock
