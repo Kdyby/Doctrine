@@ -360,10 +360,10 @@ class ResultSet extends Nette\Object implements \Countable, \IteratorAggregate
 
 
 	/**
-	 * @param ORM\Query $query
+	 * @param ORM\AbstractQuery $query
 	 * @return ResultPaginator
 	 */
-	private function createPaginatedQuery(ORM\Query $query)
+	private function createPaginatedQuery(ORM\AbstractQuery $query)
 	{
 		$paginated = new ResultPaginator($query, $this->fetchJoinCollection);
 		$paginated->setUseOutputWalkers($this->useOutputWalkers);
