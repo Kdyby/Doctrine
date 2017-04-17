@@ -84,7 +84,7 @@ final class SerializableMixin
 
 		} while ($class = $class->getParentClass());
 
-		return serialize($data);
+		return base64_encode(serialize($data));
 	}
 
 
@@ -95,7 +95,7 @@ final class SerializableMixin
 	 */
 	public static function unserialize(Serializable $object, $serialized)
 	{
-		$data = unserialize($serialized);
+		$data = unserialize(base64_decode($serialized));
 
 		foreach ($data as $target => $value) {
 			if (strpos($target, '::') !== FALSE) {
