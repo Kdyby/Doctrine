@@ -1,5 +1,5 @@
 doctrine:
-	host: 127.0.0.1
+	host: mysql
 	user: root
 	password: ""
 	charset: UTF8
