@@ -98,6 +98,7 @@ class ExtensionTest extends Tester\TestCase
 			'KdybyTests\\Doctrine\\CmsOrder',
 			'KdybyTests\\Doctrine\\CmsPhoneNumber',
 			'KdybyTests\\Doctrine\\CmsUser',
+			'KdybyTests\\Doctrine\\ReadOnlyEntity',
 			'KdybyTests\\Doctrine\\StiAdmin',
 			'KdybyTests\\Doctrine\\StiBoss',
 			'KdybyTests\\Doctrine\\StiEmployee',
