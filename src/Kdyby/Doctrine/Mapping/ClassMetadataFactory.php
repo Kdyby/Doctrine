@@ -19,7 +19,6 @@ use Kdyby;
 /**
  * @author Filip Procházka <filip@prochazka.su>
  *
- * @method \Kdyby\Doctrine\Mapping\ClassMetadata getMetadataFor($className)
  * @method \Kdyby\Doctrine\Mapping\ClassMetadata[] getAllMetadata()
  */
 class ClassMetadataFactory extends Doctrine\ORM\Mapping\ClassMetadataFactory
@@ -76,6 +75,17 @@ class ClassMetadataFactory extends Doctrine\ORM\Mapping\ClassMetadataFactory
 		}
 
 		return $result;
+	}
+
+
+
+	/**
+	 * @inheritdoc
+	 * @return ClassMetadata
+	 */
+	public function getMetadataFor($className)
+	{
+		return parent::getMetadataFor($this->config->getTargetEntityClassName($className));
 	}
 
 
