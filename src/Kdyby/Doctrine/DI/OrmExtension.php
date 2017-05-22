@@ -281,7 +281,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		if (empty($config['metadata'])) {
 			$metadataDriver->addSetup('setDefaultDriver', [
 				new Statement($this->metadataDriverClasses[self::ANNOTATION_DRIVER], [
-					[$builder->expand('%appDir%')],
+					[$builder->parameters['appDir']],
 					2 => $this->prefix('@cache.' . $name . '.metadata')
 				])
 			]);
@@ -542,7 +542,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		$this->configuredConnections[$name] = $connectionServiceId;
 
 		if (!is_bool($config['logging'])) {
-			$fileLogger = new Statement('Kdyby\Doctrine\Diagnostics\FileLogger', [$builder->expand($config['logging'])]);
+			$fileLogger = new Statement('Kdyby\Doctrine\Diagnostics\FileLogger', [Nette\DI\Helpers::expand($config['logging'], $builder->parameters)]);
 			$configuration->addSetup('$service->getSQLLogger()->addLogger(?)', [$fileLogger]);
 
 		} elseif ($config['logging']) {
@@ -839,10 +839,10 @@ class OrmExtension extends Nette\DI\CompilerExtension
 	 */
 	private function resolveConfig(array $provided, array $defaults, array $diff = [])
 	{
-		return $this->getContainerBuilder()->expand(Nette\DI\Config\Helpers::merge(
+		return Nette\DI\Helpers::expand(Nette\DI\Config\Helpers::merge(
 			array_diff_key($provided, array_diff_key($diff, $defaults)),
 			$defaults
-		));
+		), $this->getContainerBuilder()->parameters);
 	}
 
 
