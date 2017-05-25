@@ -28,7 +28,7 @@ class ExtensionTest extends Tester\TestCase
 
 	/**
 	 * @param string $configFile
-	 * @return \SystemContainer|Nette\DI\Container
+	 * @return Nette\DI\Container
 	 */
 	public function createContainer($configFile)
 	{
