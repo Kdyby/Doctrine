@@ -251,7 +251,12 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			if ($extension instanceof IEntityProvider) {
 				$metadata = $extension->getEntityMappings();
 				Validators::assert($metadata, 'array');
-				$config['metadata'] = array_merge($config['metadata'], $metadata);
+				foreach ($metadata as $namespace => $config) {
+					if (array_key_exists($namespace, $config['metadata'])) {
+						throw new Nette\Utils\AssertionException(sprintf('The namespace %s is already configured, provider cannot change it', $namespace));
+					}
+					$config['metadata'][$namespace] = $config;
+				}
 			}
 
 			if ($extension instanceof ITargetEntityProvider) {
