@@ -706,8 +706,7 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 
 	/**
 	 * @param \Doctrine\Common\Annotations\AnnotationException $e
-	 *
-	 * @return string
+	 * @return string|bool
 	 */
 	public static function highlightAnnotationLine(AnnotationException $e)
 	{
@@ -748,16 +747,18 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 
 
 	/**
-	 * @param \Reflector|\Nette\Reflection\ClassType|\Nette\Reflection\Method $refl
+	 * @param \Reflector|\Nette\Reflection\ClassType|\Nette\Reflection\Method|\Nette\Reflection\Property $refl
 	 * @param \Exception|\Throwable $e
-	 * @param int $startLine
-	 *
-	 * @return int|string
+	 * @param int|NULL $startLine
+	 * @return int|string|NULL
 	 */
 	public static function calculateErrorLine(\Reflector $refl, $e, $startLine = NULL)
 	{
-		if ($startLine === NULL) {
+		if ($startLine === NULL && method_exists($refl, 'getStartLine')) {
 			$startLine = $refl->getStartLine();
+		}
+		if ($startLine === NULL) {
+			return NULL;
 		}
 
 		if ($pos = Strings::match($e->getMessage(), '~position\s*(\d+)~')) {
