@@ -818,6 +818,13 @@ class OrmExtension extends Nette\DI\CompilerExtension
 				$method->setBody(str_replace('"%entityName%"', Code\Helpers::format('?', $entityMetadata->getName()), $methodBody));
 			}
 		}
+
+		$init = $class->methods['initialize'];
+		foreach ($this->proxyAutoloaders as $namespace => $dir) {
+			$originalInitialize = $init->getBody();
+			$init->setBody('Kdyby\Doctrine\Proxy\ProxyAutoloader::create(?, ?)->register();', [$dir, $namespace]);
+			$init->addBody($originalInitialize);
+		}
 	}
 
 
