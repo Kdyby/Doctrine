@@ -31,7 +31,7 @@ class ResultSetTest extends KdybyTests\Doctrine\ORMTestCase
 
 	public function testCount()
 	{
-		$em = $this->createMemoryManager();
+		$em = $this->createMemoryManagerWithSchema();
 
 		$user1 = new CmsUser();
 		$user1->username = 'HosipLan';
@@ -84,7 +84,7 @@ class ResultSetTest extends KdybyTests\Doctrine\ORMTestCase
 	{
 		$basicSelect = "SELECT u\n FROM " . __NAMESPACE__ . '\CmsUser u';
 
-		$query = new Doctrine\ORM\Query($this->createMemoryManager());
+		$query = new Doctrine\ORM\Query($this->createMemoryManagerWithSchema());
 		$resultSet = new ResultSet($query);
 
 		$query->setDQL($basicSelect);
@@ -104,7 +104,7 @@ class ResultSetTest extends KdybyTests\Doctrine\ORMTestCase
 
 	public function testApplySorting()
 	{
-		$query = new Doctrine\ORM\Query($this->createMemoryManager());
+		$query = new Doctrine\ORM\Query($this->createMemoryManagerWithSchema());
 		$query->setDQL($basicSelect = "SELECT u\n FROM " . __NAMESPACE__ . '\CmsUser u');
 		$resultSet = new ResultSet($query);
 
@@ -126,7 +126,7 @@ class ResultSetTest extends KdybyTests\Doctrine\ORMTestCase
 	{
 		$basicSelect = "SELECT u,\n (SELECT a FROM " . __NAMESPACE__ . '\CmsArticle ORDER BY a.topic ASC) FROM ' . __NAMESPACE__ . '\CmsUser u';
 
-		$query = new Doctrine\ORM\Query($this->createMemoryManager());
+		$query = new Doctrine\ORM\Query($this->createMemoryManagerWithSchema());
 		$resultSet = new ResultSet($query);
 
 		$query->setDQL($basicSelect);
@@ -146,7 +146,7 @@ class ResultSetTest extends KdybyTests\Doctrine\ORMTestCase
 
 	public function testApplySorting_subquery()
 	{
-		$query = new Doctrine\ORM\Query($this->createMemoryManager());
+		$query = new Doctrine\ORM\Query($this->createMemoryManagerWithSchema());
 		$query->setDQL($basicSelect = "SELECT u,\n (SELECT a FROM " . __NAMESPACE__ . '\CmsArticle ORDER BY a.topic ASC) FROM ' . __NAMESPACE__ . '\CmsUser u');
 		$resultSet = new ResultSet($query);
 

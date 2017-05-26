@@ -35,7 +35,7 @@ class TargetEntityMapping extends KdybyTests\Doctrine\ORMTestCase
 
 	protected function setUp()
 	{
-		$this->em = $this->createMemoryManager();
+		$this->em = $this->createMemoryManagerWithSchema();
 	}
 
 

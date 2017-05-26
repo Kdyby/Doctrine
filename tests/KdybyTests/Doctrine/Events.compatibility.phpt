@@ -30,7 +30,7 @@ class EventsCompatibilityTest extends ORMTestCase
 
 	public function testOuterRegister_new()
 	{
-		$em = $this->createMemoryManager();
+		$em = $this->createMemoryManagerWithSchema();
 		Assert::type('Kdyby\Events\NamespacedEventManager', $em->getEventManager());
 
 		$outerEvm = $em->getEventManager();
@@ -51,7 +51,7 @@ class EventsCompatibilityTest extends ORMTestCase
 
 	public function testOuterRegister_old()
 	{
-		$em = $this->createMemoryManager();
+		$em = $this->createMemoryManagerWithSchema();
 		Assert::type('Kdyby\Events\NamespacedEventManager', $em->getEventManager());
 
 		$outerEvm = $em->getEventManager();
@@ -72,7 +72,7 @@ class EventsCompatibilityTest extends ORMTestCase
 
 	public function testOuterRegister_combined()
 	{
-		$em = $this->createMemoryManager();
+		$em = $this->createMemoryManagerWithSchema();
 		Assert::type('Kdyby\Events\NamespacedEventManager', $em->getEventManager());
 
 		$outerEvm = $em->getEventManager();
@@ -95,7 +95,7 @@ class EventsCompatibilityTest extends ORMTestCase
 
 	public function testInnerRegister_new()
 	{
-		$em = $this->createMemoryManager();
+		$em = $this->createMemoryManagerWithSchema();
 		Assert::type('Kdyby\Events\NamespacedEventManager', $em->getEventManager());
 
 		/** @var Kdyby\Events\EventManager $innerEvm */
@@ -123,7 +123,7 @@ class EventsCompatibilityTest extends ORMTestCase
 
 	public function testInnerRegister_old()
 	{
-		$em = $this->createMemoryManager();
+		$em = $this->createMemoryManagerWithSchema();
 		Assert::type('Kdyby\Events\NamespacedEventManager', $em->getEventManager());
 
 		/** @var Kdyby\Events\EventManager $innerEvm */
@@ -151,7 +151,7 @@ class EventsCompatibilityTest extends ORMTestCase
 
 	public function testInnerRegister_combined()
 	{
-		$em = $this->createMemoryManager();
+		$em = $this->createMemoryManagerWithSchema();
 		Assert::type('Kdyby\Events\NamespacedEventManager', $em->getEventManager());
 
 		/** @var Kdyby\Events\EventManager $innerEvm */
