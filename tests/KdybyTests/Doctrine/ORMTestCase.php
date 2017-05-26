@@ -36,6 +36,21 @@ abstract class ORMTestCase extends Tester\TestCase
 	/**
 	 * @return Kdyby\Doctrine\EntityManager
 	 */
+	protected function createMemoryManagerWithSchema(array $files = [])
+	{
+		$em = $this->createMemoryManager($files);
+
+		$schemaTool = new SchemaTool($em);
+		$schemaTool->createSchema($em->getMetadataFactory()->getAllMetadata());
+
+		return $em;
+	}
+
+
+
+	/**
+	 * @return Kdyby\Doctrine\EntityManager
+	 */
 	protected function createMemoryManager(array $files = [])
 	{
 		$rootDir = __DIR__ . '/..';
@@ -58,9 +73,6 @@ abstract class ORMTestCase extends Tester\TestCase
 
 		$em = $container->getByType('Kdyby\Doctrine\EntityManager');
 		/** @var Kdyby\Doctrine\EntityManager $em */
-
-		$schemaTool = new SchemaTool($em);
-		$schemaTool->createSchema($em->getMetadataFactory()->getAllMetadata());
 
 		$this->serviceLocator = $container;
 

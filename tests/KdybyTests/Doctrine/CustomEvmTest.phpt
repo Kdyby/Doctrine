@@ -33,7 +33,7 @@ class CustomEvmTest extends ORMTestCase
 
 	protected function setUp()
 	{
-		$this->em = $this->createMemoryManager([
+		$this->em = $this->createMemoryManagerWithSchema([
 			__DIR__ . '/config/custom-evm.neon',
 		]);
 	}

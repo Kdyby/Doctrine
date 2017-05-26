@@ -31,7 +31,7 @@ class NonLockingUniqueInserterTest extends KdybyTests\Doctrine\ORMTestCase
 
 	public function testFunctional()
 	{
-		$em = $this->createMemoryManager();
+		$em = $this->createMemoryManagerWithSchema();
 
 		$user1 = new CmsUser();
 		$user1->username = 'HosipLan';
@@ -70,7 +70,7 @@ class NonLockingUniqueInserterTest extends KdybyTests\Doctrine\ORMTestCase
 
 	public function testSavingRelations()
 	{
-		$em = $this->createMemoryManager();
+		$em = $this->createMemoryManagerWithSchema();
 		$em->getProxyFactory()->generateProxyClasses($em->getMetadataFactory()->getAllMetadata());
 
 		$user = new CmsUser();
@@ -102,7 +102,7 @@ class NonLockingUniqueInserterTest extends KdybyTests\Doctrine\ORMTestCase
 
 	public function testSavingDiscriminatorColumn()
 	{
-		$em = $this->createMemoryManager();
+		$em = $this->createMemoryManagerWithSchema();
 
 		$boss = new StiBoss('boss', 'Alfred Kelcey');
 
@@ -120,7 +120,7 @@ class NonLockingUniqueInserterTest extends KdybyTests\Doctrine\ORMTestCase
 
 	public function testSavingAllPropertiesOnReadOnlyEntities()
 	{
-		$em = $this->createMemoryManager();
+		$em = $this->createMemoryManagerWithSchema();
 
 		$nonRequiredValue = 'nonRequired';
 		$requiredValue = 'required';
