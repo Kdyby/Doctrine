@@ -43,6 +43,7 @@
 		"nette/tester": "~1.7",
 		"tracy/tracy": "^2.4@dev"
 	},
+	"minimum-stability": "dev",
 	"autoload": {
 		"psr-0": {
 			"Kdyby\\Doctrine\\": "src/",
