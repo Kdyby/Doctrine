@@ -108,6 +108,21 @@ class ExtensionTest extends Tester\TestCase
 
 
 
+	public function testMetadataFromReference()
+	{
+		$container = $this->createContainer('metadata-from-reference');
+
+		/** @var Kdyby\Doctrine\EntityManager $default */
+		$default = $container->getByType('Kdyby\Doctrine\EntityManager');
+		$entityClasses = array_map(function (ClassMetadata $class) {
+			return $class->getName();
+		}, $default->getMetadataFactory()->getAllMetadata());
+
+		Assert::contains('KdybyTests\\Doctrine\\CmsArticle', $entityClasses);
+	}
+
+
+
 	public function testInheritance()
 	{
 		$container = $this->createContainer('entitymanager-decorator');

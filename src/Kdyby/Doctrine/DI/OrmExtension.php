@@ -574,6 +574,11 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		}
 		$namespace = ltrim($namespace, '\\');
 
+		if (is_string($driver) && strpos($driver, '@') === 0) { // service reference
+			$metadataDriver->addSetup('addDriver', [$driver, $namespace]);
+			return $driver;
+		}
+
 		if (is_string($driver) || is_array($driver)) {
 			$paths = is_array($driver) ? $driver : [$driver];
 			foreach ($paths as $path) {
