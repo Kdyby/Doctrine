@@ -1,0 +1,11 @@
+kdyby.doctrine:
+	driver: pdo_sqlite
+	memory: true
+	metadata:
+		KdybyTests\Doctrine: @app.metadata
+
+services:
+	app.metadata: Doctrine\ORM\Mapping\Driver\AnnotationDriver(
+			reader: @Doctrine\Common\Annotations\Reader,
+			paths: '%appDir%/Doctrine/models'
+		)
