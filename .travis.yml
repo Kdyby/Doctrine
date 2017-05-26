@@ -30,6 +30,9 @@ matrix:
       env: NETTE=nette-2.3 COMPOSER_EXTRA_ARGS="--prefer-lowest --prefer-stable"
     - php: 7.1
       env: NETTE=nette-2.3 COVERAGE="--coverage ./coverage.xml --coverage-src ./src" TESTER_RUNTIME="phpdbg"
+  allow_failures:
+    - php: 7.1
+      env: NETTE=nette-2.3 COVERAGE="--coverage ./coverage.xml --coverage-src ./src" TESTER_RUNTIME="phpdbg"
 
 
 before_install:
