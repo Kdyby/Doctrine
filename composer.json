@@ -35,7 +35,6 @@
 		"kdyby/doctrine-dbal-batchimport": "Batch import & execute utils for effective processing of SQL Imports from files and strings"
 	},
 	"require-dev": {
-		"dg/dibi": "~2.0",
 		"kdyby/events": "^3.1@dev",
 		"nette/bootstrap": "^2.4@dev",
 		"nette/caching": "^2.4@dev",
@@ -47,8 +46,7 @@
 	"autoload": {
 		"psr-0": {
 			"Kdyby\\Doctrine\\": "src/",
-			"Kdyby\\Persistence\\": "src/",
-			"Kdyby\\DibiBridge\\": "src/"
+			"Kdyby\\Persistence\\": "src/"
 		},
 		"classmap": [
 			"src/Kdyby/Doctrine/exceptions.php"
