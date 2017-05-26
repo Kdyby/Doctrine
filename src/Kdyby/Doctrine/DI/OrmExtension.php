@@ -206,6 +206,10 @@ class OrmExtension extends Nette\DI\CompilerExtension
 				$builder->parameters[$this->name]['dbal']['defaultConnection'],
 				$builder->parameters[$this->name]['orm']['defaultEntityManager'],
 			]);
+
+		$builder->addDefinition($this->prefix('entityLocator'))
+			->setClass('Kdyby\Doctrine\DI\EntityLocator')
+			->setAutowired(FALSE);
 	}
 
 
@@ -709,8 +713,9 @@ class OrmExtension extends Nette\DI\CompilerExtension
 				$entityArgument = $boundEntity;
 
 			} else {
-				$entityArgument = new Code\PhpLiteral('"%entityName%"');
-				$this->postCompileRepositoriesQueue[$boundManagers[0]][] = [ltrim($originalDef->getClass(), '\\'), $originalServiceName];
+				$repository = ltrim($originalDef->getClass(), '\\');
+				$entityArgument = new Statement('$this->getService(?)->get(?)', [$this->prefix('entityLocator'), $repository]);
+				$this->postCompileRepositoriesQueue[$boundManagers[0]][] = [$repository, $originalServiceName];
 			}
 
 			$builder->removeDefinition($originalServiceName);
@@ -776,67 +781,16 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			$init->addBody($originalInitialize);
 		}
 
-		$this->processRepositoryFactoryEntities($class);
-	}
+		$classNames = array_map(function ($config) {
+			return $config['defaultRepositoryClassName'];
+		}, $this->managerConfigs);
 
-
-
-	protected function processRepositoryFactoryEntities(Code\ClassType $class)
-	{
-		if (empty($this->postCompileRepositoriesQueue)) {
-			return;
-		}
-
-		$dic = self::evalAndInstantiateContainer($class);
-
-		foreach ($this->postCompileRepositoriesQueue as $manager => $items) {
-			$config = $this->managerConfigs[$manager];
-			/** @var Kdyby\Doctrine\EntityManager $entityManager */
-			$entityManager = $dic->getService($this->configuredManagers[$manager]);
-			/** @var Doctrine\ORM\Mapping\ClassMetadata $entityMetadata */
-			$metadataFactory = $entityManager->getMetadataFactory();
-
-			$allMetadata = [];
-			foreach ($metadataFactory->getAllMetadata() as $entityMetadata) {
-				if ($config['defaultRepositoryClassName'] === $entityMetadata->customRepositoryClassName || empty($entityMetadata->customRepositoryClassName)) {
-					continue;
-				}
-
-				$allMetadata[ltrim($entityMetadata->customRepositoryClassName, '\\')] = $entityMetadata;
-			}
-
-			foreach ($items as $item) {
-				if (!isset($allMetadata[$item[0]])) {
-					throw new Nette\Utils\AssertionException(sprintf('Repository class %s have been found in DIC, but no entity has it assigned and it has no entity configured', $item[0]));
-				}
-
-				$entityMetadata = $allMetadata[$item[0]];
-				$serviceMethod = Nette\DI\Container::getMethodName($item[1]);
-
-				$method = $class->getMethod($serviceMethod);
-				$methodBody = $method->getBody();
-				$method->setBody(str_replace('"%entityName%"', Code\Helpers::format('?', $entityMetadata->getName()), $methodBody));
-			}
-		}
-	}
-
-
-
-	/**
-	 * @param Code\ClassType $class
-	 * @return Nette\DI\Container
-	 */
-	private static function evalAndInstantiateContainer(Code\ClassType $class)
-	{
-		$classCopy = clone $class;
-		$classCopy->setName($className = 'Kdyby_Doctrine_IamTheKingOfHackingNette_' . $class->getName() . '_' . rand());
-
-		$containerCode = "$classCopy";
-
-		return call_user_func(function () use ($className, $containerCode) {
-			eval($containerCode);
-			return new $className();
-		});
+		$init->addBody('$this->getService(?)->setup($this, __FILE__, ?, ?, ?);', [
+			$this->prefix('entityLocator'),
+			$this->postCompileRepositoriesQueue,
+			$classNames,
+			$this->configuredManagers,
+		]);
 	}
 
 
