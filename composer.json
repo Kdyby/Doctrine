@@ -29,7 +29,6 @@
 		"nette/robot-loader": "^2.4@dev"
 	},
 	"require-dev": {
-		"dg/dibi": "~2.0",
 		"nette/bootstrap": "^2.4@dev",
 		"nette/caching": "^2.4@dev",
 		"nette/http": "^2.4@dev",
