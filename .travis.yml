@@ -10,16 +10,14 @@ services:
   - mysql
 
 php:
-  - 5.4
-  - 5.5
   - 5.6
   - 7.0
+  - 7.1
 
 env:
   matrix:
     - NETTE=nette-2.4-dev
     - NETTE=nette-2.4
-    - NETTE=nette-2.3
 
 addons:
   hosts:
@@ -28,20 +26,11 @@ addons:
 matrix:
   include:
     - php: 5.6
-      env: NETTE=nette-2.3 COMPOSER_EXTRA_ARGS="--prefer-lowest --prefer-stable"
-    - php: 7.0
+      env: NETTE=nette-2.4 COMPOSER_EXTRA_ARGS="--prefer-lowest --prefer-stable"
+    - php: 7.1
       env: NETTE=nette-2.4 COVERAGE="--coverage ./coverage.xml --coverage-src ./src" TESTER_RUNTIME="phpdbg"
-  exclude:
-    - php: 5.4
-      env: NETTE=nette-2.4-dev
-    - php: 5.4
-      env: NETTE=nette-2.4
-    - php: 5.5
-      env: NETTE=nette-2.4-dev
-    - php: 5.5
-      env: NETTE=nette-2.4
   allow_failures:
-    - php: 7.0
+    - php: 7.1
       env: NETTE=nette-2.4 COVERAGE="--coverage ./coverage.xml --coverage-src ./src" TESTER_RUNTIME="phpdbg"
 
 before_install:
