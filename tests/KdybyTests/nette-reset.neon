@@ -20,6 +20,15 @@ console:
 	url: http://www.kdyby.org/
 
 
+http:
+	frames: null
+
+
+session:
+	autoStart: false
+	save_path: %tempDir%/sessions
+
+
 services:
 	cacheStorage:
 		class: Nette\Caching\Storages\MemoryStorage
