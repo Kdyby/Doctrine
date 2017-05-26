@@ -16,6 +16,7 @@ use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\ORMException;
 use Doctrine\ORM\Query;
 use Kdyby;
+use Kdyby\Doctrine\Diagnostics\EntityManagerUnitOfWorkSnapshotPanel;
 use Kdyby\Doctrine\QueryObject;
 use Kdyby\Doctrine\Tools\NonLockingUniqueInserter;
 use Kdyby\Persistence;
@@ -46,7 +47,7 @@ class EntityManager extends Doctrine\ORM\EntityManager implements Persistence\Qu
 	private $nonLockingUniqueInserter;
 
 	/**
-	 * @var Diagnostics\Panel
+	 * @var \Kdyby\Doctrine\Diagnostics\EntityManagerUnitOfWorkSnapshotPanel
 	 */
 	private $panel;
 
@@ -65,9 +66,9 @@ class EntityManager extends Doctrine\ORM\EntityManager implements Persistence\Qu
 
 	/**
 	 * @internal
-	 * @param Diagnostics\Panel $panel
+	 * @param EntityManagerUnitOfWorkSnapshotPanel $panel
 	 */
-	public function bindTracyPanel(Diagnostics\Panel $panel)
+	public function bindTracyPanel(EntityManagerUnitOfWorkSnapshotPanel $panel)
 	{
 		$this->panel = $panel;
 	}
