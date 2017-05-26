@@ -18,8 +18,6 @@ php:
 
 env:
   matrix:
-    - NETTE=nette-2.4-dev
-    - NETTE=nette-2.4
     - NETTE=nette-2.3
 
 addons:
@@ -31,16 +29,8 @@ matrix:
     - php: 5.6
       env: NETTE=nette-2.3 COMPOSER_EXTRA_ARGS="--prefer-lowest --prefer-stable"
     - php: 7.1
-      env: NETTE=nette-2.4 COVERAGE="--coverage ./coverage.xml --coverage-src ./src" TESTER_RUNTIME="phpdbg"
-  exclude:
-    - php: 5.4
-      env: NETTE=nette-2.4-dev
-    - php: 5.4
-      env: NETTE=nette-2.4
-    - php: 5.5
-      env: NETTE=nette-2.4-dev
-    - php: 5.5
-      env: NETTE=nette-2.4
+      env: NETTE=nette-2.3 COVERAGE="--coverage ./coverage.xml --coverage-src ./src" TESTER_RUNTIME="phpdbg"
+
 
 before_install:
   - travis_retry composer self-update
