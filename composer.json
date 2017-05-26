@@ -17,44 +17,23 @@
 		"issues": "https://github.com/kdyby/doctrine/issues"
 	},
 	"require": {
-		"php": ">=5.4",
-		"nette/di": "~2.3@dev",
-		"nette/neon": "~2.3@dev",
-		"nette/utils": "~2.3@dev",
-		"nette/robot-loader": "~2.3@dev",
-
+		"php": "^5.6 || ^7.0",
 		"doctrine/orm": "~2.5",
 		"doctrine/dbal": "~2.5",
-
-		"kdyby/events": "~3.0@dev",
-		"kdyby/console": "~2.5@dev",
-		"kdyby/annotations": "~2.3@dev",
-		"kdyby/doctrine-cache": "~2.5@dev"
+		"kdyby/events": "^3.1@dev",
+		"kdyby/console": "^2.7@dev",
+		"kdyby/annotations": "^2.4@dev",
+		"kdyby/doctrine-cache": "^2.6@dev",
+		"nette/di": "^2.4@dev",
+		"nette/utils": "^2.4@dev",
+		"nette/robot-loader": "^2.4@dev"
 	},
 	"require-dev": {
-		"nette/application": "~2.3@dev",
-		"nette/bootstrap": "~2.3@dev",
-		"nette/caching": "~2.3@dev",
-		"nette/component-model": "~2.2@dev",
-		"nette/database": "~2.3@dev",
-		"nette/deprecated": "~2.2@dev",
-		"nette/di": "~2.3@dev",
-		"nette/finder": "~2.3@dev",
-		"nette/forms": "~2.3@dev",
-		"nette/http": "~2.3@dev",
-		"nette/mail": "~2.3@dev",
-		"nette/neon": "~2.3@dev",
-		"nette/php-generator": "~2.3@dev",
-		"nette/reflection": "~2.3@dev",
-		"nette/robot-loader": "~2.3@dev",
-		"nette/safe-stream": "~2.3@dev",
-		"nette/security": "~2.3@dev",
-		"nette/tokenizer": "~2.2@dev",
-		"nette/utils": "~2.3@dev",
-		"latte/latte": "~2.3@dev",
-		"tracy/tracy": "~2.3@dev",
-
-		"dg/dibi" : "~2.0",
+		"dg/dibi": "~2.0",
+		"nette/bootstrap": "^2.4@dev",
+		"nette/caching": "^2.4@dev",
+		"nette/http": "^2.4@dev",
+		"tracy/tracy": "^2.4@dev",
 		"nette/tester": "~1.7"
 	},
 	"autoload": {
