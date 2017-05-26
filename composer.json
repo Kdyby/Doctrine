@@ -50,10 +50,5 @@
 		"classmap": [
 			"tests/KdybyTests/Doctrine"
 		]
-	},
-	"extra": {
-		"branch-alias": {
-			"dev-nette-2.3": "3.1-dev"
-		}
 	}
 }
