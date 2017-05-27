@@ -29,8 +29,10 @@ use Nette;
  * @author Filip Procházka <filip@prochazka.su>
  * @author Martin Štekl <martin.stekl@gmail.com>
  */
-class NonLockingUniqueInserter extends Nette\Object
+class NonLockingUniqueInserter
 {
+
+	use \Kdyby\StrictObjects\Scream;
 
 	/**
 	 * @var \Kdyby\Doctrine\EntityManager

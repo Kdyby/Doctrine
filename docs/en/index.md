@@ -147,7 +147,7 @@ services:
 Ideally, to not violate the [SRP](http://en.wikipedia.org/wiki/Single_responsibility_principle), you should not extend repository to add custom business logic, but rather decorate it.
 
 ```php
-class Articles extends Nette\Object
+class Articles
 {
 	private $em;
 	private $articles;
