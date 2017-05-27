@@ -67,7 +67,7 @@ class EntityManagerUnitOfWorkSnapshotPanel
 			return NULL; // ignore
 		}
 
-		if (strpos(get_class($e), 'Doctrine\\ORM\\') !== FALSE && Helpers::findTrace($e->getTrace(), 'Doctrine\ORM\EntityManager::flush')) {
+		if (strpos(get_class($e), 'Doctrine\\ORM\\') !== FALSE && Helpers::findTrace($e->getTrace(), Doctrine\ORM\EntityManager::class . '::flush')) {
 			$UoW = $this->unitOfWorkSnapshot ?: $this->em->getUnitOfWork();
 
 			$panel = '<div class="inner"><p><b>IdentityMap</b></p>' .
@@ -93,7 +93,7 @@ class EntityManagerUnitOfWorkSnapshotPanel
 			}
 
 			return [
-				'tab' => 'Doctrine\\ORM\\UnitOfWork',
+				'tab' => Doctrine\ORM\UnitOfWork::class,
 				'panel' => $panel,
 			];
 		}

@@ -37,7 +37,7 @@ class ConvertMappingCommandTest extends CommandTestCase
 		foreach (self::$entities as $entity) {
 			Assert::contains("Processing entity \"{$entity}\"", $output);
 		}
-		Assert::notContains('Processing entity "KdybyTests\Doctrine\Models2\Foo"', $output);
+		Assert::notContains(sprintf('Processing entity "%s"', \KdybyTests\Doctrine\Models2\Foo::class), $output);
 		Assert::contains('Exporting "xml" mapping information to "' . realpath($destDir) . '"', $output);
 	}
 
@@ -56,7 +56,7 @@ class ConvertMappingCommandTest extends CommandTestCase
 		$output = $applicationTester->getDisplay();
 
 		Assert::notContains('Processing entity "' . self::$entities[0] . '"', $output);
-		Assert::contains('Processing entity "KdybyTests\Doctrine\Models2\Foo"', $output);
+		Assert::contains(sprintf('Processing entity "%s"', \KdybyTests\Doctrine\Models2\Foo::class), $output);
 		Assert::contains('Exporting "xml" mapping information to "' . realpath($destDir) . '"', $output);
 	}
 

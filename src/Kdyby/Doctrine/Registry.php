@@ -44,7 +44,7 @@ class Registry extends AbstractManagerRegistry
 	 */
 	public function __construct(array $connections, array $managers, $defaultConnection, $defaultManager, Nette\DI\Container $serviceLocator)
 	{
-		parent::__construct('ORM', $connections, $managers, $defaultConnection, $defaultManager, 'Doctrine\ORM\Proxy\Proxy');
+		parent::__construct('ORM', $connections, $managers, $defaultConnection, $defaultManager, \Doctrine\ORM\Proxy\Proxy::class);
 		$this->serviceLocator = $serviceLocator;
 	}
 

@@ -451,7 +451,7 @@ class DqlSelectionTest extends KdybyTests\Doctrine\ORMTestCase
 			->from('test:CmsUser', 'u');
 		$q = $qb->createQuery();
 
-		Assert::equal('Doctrine\ORM\Query', get_class($q));
+		Assert::equal(\Doctrine\ORM\Query::class, get_class($q));
 	}
 
 

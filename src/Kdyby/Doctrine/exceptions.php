@@ -116,7 +116,7 @@ class UnexpectedValueException extends \UnexpectedValueException implements Exce
 	{
 		$class = is_object($class) ? get_class($class) : $class;
 
-		return new static("Class property $class::\$$property is not an instance of Doctrine\\Common\\Collections\\Collection.");
+		return new static(sprintf("Class property $class::\$$property is not an instance of %s.", \Doctrine\Common\Collections\Collection::class));
 	}
 
 
@@ -131,7 +131,10 @@ class UnexpectedValueException extends \UnexpectedValueException implements Exce
 	{
 		$class = is_object($class) ? get_class($class) : $class;
 
-		return new static("Class property $class::\$$property is an instance of Doctrine\\Common\\Collections\\Collection. Use add<property>() and remove<property>() methods to manipulate it or declare your own.");
+		return new static(sprintf(
+			"Class property $class::\$$property is an instance of %s. Use add<property>() and remove<property>() methods to manipulate it or declare your own.",
+			\Doctrine\Common\Collections\Collection::class
+		));
 	}
 
 }

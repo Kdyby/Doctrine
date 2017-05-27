@@ -48,7 +48,7 @@ class EntityDaoTest extends ORMTestCase
 		$user->username = 'hosiplan';
 		$user->name = 'Filip Procházka';
 
-		$users = $this->em->getDao('KdybyTests\Doctrine\CmsUser');
+		$users = $this->em->getDao(\KdybyTests\Doctrine\CmsUser::class);
 		$newId = $users->save($user)->id;
 		Assert::match('%d%', $newId);
 
@@ -74,7 +74,7 @@ class EntityDaoTest extends ORMTestCase
 
 		$this->em->clear();
 
-		$users = $this->em->getDao('KdybyTests\Doctrine\CmsUser');
+		$users = $this->em->getDao(\KdybyTests\Doctrine\CmsUser::class);
 		$user = $users->find($newId);
 
 		Assert::null($user->status);
@@ -91,7 +91,7 @@ class EntityDaoTest extends ORMTestCase
 
 	public function testSelect()
 	{
-		$users = $this->em->getDao('KdybyTests\Doctrine\CmsUser');
+		$users = $this->em->getDao(\KdybyTests\Doctrine\CmsUser::class);
 		$qb = $users->select('u');
 
 		Assert::same('SELECT u FROM KdybyTests\Doctrine\CmsUser u', $qb->getDQL());
@@ -101,7 +101,7 @@ class EntityDaoTest extends ORMTestCase
 
 	public function testSelectIndexed()
 	{
-		$users = $this->em->getDao('KdybyTests\Doctrine\CmsUser');
+		$users = $this->em->getDao(\KdybyTests\Doctrine\CmsUser::class);
 		$qb = $users->select('u', 'id');
 
 		Assert::same('SELECT u FROM KdybyTests\Doctrine\CmsUser u INDEX BY u.id', $qb->getDQL());
@@ -111,7 +111,7 @@ class EntityDaoTest extends ORMTestCase
 
 	public function testSelectWithoutParameters()
 	{
-		$users = $this->em->getDao('KdybyTests\Doctrine\CmsUser');
+		$users = $this->em->getDao(\KdybyTests\Doctrine\CmsUser::class);
 		$qb = $users->select();
 
 		Assert::same('SELECT c FROM KdybyTests\Doctrine\CmsUser c', $qb->getDQL());
@@ -121,7 +121,7 @@ class EntityDaoTest extends ORMTestCase
 
 	public function testFindPairs()
 	{
-		$dao = $this->em->getDao('KdybyTests\Doctrine\CmsUser');
+		$dao = $this->em->getDao(\KdybyTests\Doctrine\CmsUser::class);
 		$dao->save([
 			new CmsUser('c', 'new'),
 			new CmsUser('a', 'old'),
@@ -148,7 +148,7 @@ class EntityDaoTest extends ORMTestCase
 
 	public function testCountBy()
 	{
-		$dao = $this->em->getDao('KdybyTests\Doctrine\CmsUser');
+		$dao = $this->em->getDao(\KdybyTests\Doctrine\CmsUser::class);
 		$dao->save([
 			new CmsUser('c', 'new'),
 			new CmsUser('a', 'old'),

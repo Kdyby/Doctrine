@@ -111,8 +111,8 @@ class ConnectionTest extends Tester\TestCase
 		);
 
 		return [
-			[$empty, 'Kdyby\Doctrine\EmptyValueException', ['column' => 'name']],
-			[$unique, 'Kdyby\Doctrine\DuplicateEntryException', ['columns' => ['uniq_name_surname' => ['name', 'surname']]]],
+			[$empty, \Kdyby\Doctrine\EmptyValueException::class, ['column' => 'name']],
+			[$unique, \Kdyby\Doctrine\DuplicateEntryException::class, ['columns' => ['uniq_name_surname' => ['name', 'surname']]]],
 		];
 	}
 
@@ -126,7 +126,7 @@ class ConnectionTest extends Tester\TestCase
 			'enum' => 'enum',
 		]);
 		$conn->setDbalTypes([
-			'enum' => 'Kdyby\\Doctrine\\Types\\Enum',
+			'enum' => \Kdyby\Doctrine\Types\Enum::class,
 		]);
 		$platform = $conn->getDatabasePlatform();
 		Assert::same('enum', $platform->getDoctrineTypeMapping('enum'));

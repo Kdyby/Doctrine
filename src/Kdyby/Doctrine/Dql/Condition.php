@@ -25,8 +25,8 @@ use Nette;
 class Condition extends Nette\Object
 {
 
-	const COND_AND = 'Doctrine\ORM\Query\Expr\Andx';
-	const COND_OR = 'Doctrine\ORM\Query\Expr\Orx';
+	const COND_AND = Doctrine\ORM\Query\Expr\Andx::class;
+	const COND_OR = Doctrine\ORM\Query\Expr\Orx::class;
 
 	/**
 	 * @var array

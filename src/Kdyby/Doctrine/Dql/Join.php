@@ -72,7 +72,7 @@ class Join extends Expr\Join
 			$name = 'and';
 		}
 
-		if (method_exists('Kdyby\Doctrine\Dql\Condition', $method = 'add' . ucfirst($name))) {
+		if (method_exists(\Kdyby\Doctrine\Dql\Condition::class, $method = 'add' . ucfirst($name))) {
 			if (empty($this->condition)) {
 				$this->condition = new Condition();
 			}

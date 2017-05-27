@@ -32,7 +32,7 @@ class BaseEntityTest extends Tester\TestCase
 		Assert::exception(function () {
 			$entity = new ConcreteEntity();
 			unset($entity->one);
-		}, 'Nette\MemberAccessException', 'Cannot unset the property KdybyTests\Doctrine\ConcreteEntity::$one.');
+		}, \Nette\MemberAccessException::class, sprintf('Cannot unset the property %s::$one.', \KdybyTests\Doctrine\ConcreteEntity::class));
 	}
 
 
@@ -42,7 +42,7 @@ class BaseEntityTest extends Tester\TestCase
 		Assert::exception(function () {
 			$entity = new ConcreteEntity();
 			unset($entity->two);
-		}, 'Nette\MemberAccessException', 'Cannot unset the property KdybyTests\Doctrine\ConcreteEntity::$two.');
+		}, \Nette\MemberAccessException::class, sprintf('Cannot unset the property %s::$two.', \KdybyTests\Doctrine\ConcreteEntity::class));
 	}
 
 
@@ -66,7 +66,7 @@ class BaseEntityTest extends Tester\TestCase
 		Assert::exception(function () {
 			$entity = new ConcreteEntity();
 			$entity->one;
-		}, 'Kdyby\Doctrine\MemberAccessException', 'Cannot read an undeclared property KdybyTests\Doctrine\ConcreteEntity::$one.');
+		}, \Kdyby\Doctrine\MemberAccessException::class, sprintf('Cannot read an undeclared property %s::$one.', \KdybyTests\Doctrine\ConcreteEntity::class));
 	}
 
 
@@ -84,7 +84,7 @@ class BaseEntityTest extends Tester\TestCase
 		Assert::exception(function () {
 			$entity = new ConcreteEntity();
 			$entity->ones;
-		}, 'Kdyby\Doctrine\MemberAccessException', 'Cannot read an undeclared property KdybyTests\Doctrine\ConcreteEntity::$ones.');
+		}, \Kdyby\Doctrine\MemberAccessException::class, sprintf('Cannot read an undeclared property %s::$ones.', \KdybyTests\Doctrine\ConcreteEntity::class));
 	}
 
 
@@ -102,7 +102,7 @@ class BaseEntityTest extends Tester\TestCase
 		Assert::exception(function () {
 			$entity = new ConcreteEntity();
 			$entity->one = 1;
-		}, 'Kdyby\Doctrine\MemberAccessException', 'Cannot write to an undeclared property KdybyTests\Doctrine\ConcreteEntity::$one.');
+		}, \Kdyby\Doctrine\MemberAccessException::class, sprintf('Cannot write to an undeclared property %s::$one.', \KdybyTests\Doctrine\ConcreteEntity::class));
 	}
 
 
@@ -121,7 +121,7 @@ class BaseEntityTest extends Tester\TestCase
 		Assert::exception(function () {
 			$entity = new ConcreteEntity();
 			$entity->ones = 1;
-		}, 'Kdyby\Doctrine\MemberAccessException', 'Cannot write to an undeclared property KdybyTests\Doctrine\ConcreteEntity::$ones.');
+		}, \Kdyby\Doctrine\MemberAccessException::class, sprintf('Cannot write to an undeclared property %s::$ones.', \KdybyTests\Doctrine\ConcreteEntity::class));
 	}
 
 
@@ -131,7 +131,7 @@ class BaseEntityTest extends Tester\TestCase
 		Assert::exception(function () {
 			$entity = new ConcreteEntity();
 			$entity->twos = 1;
-		}, 'Kdyby\Doctrine\UnexpectedValueException', 'Class property KdybyTests\Doctrine\ConcreteEntity::$twos is an instance of Doctrine\Common\Collections\Collection. Use add<property>() and remove<property>() methods to manipulate it or declare your own.');
+		}, \Kdyby\Doctrine\UnexpectedValueException::class, sprintf('Class property %s::$twos is an instance of %s. Use add<property>() and remove<property>() methods to manipulate it or declare your own.', \KdybyTests\Doctrine\ConcreteEntity::class, \Doctrine\Common\Collections\Collection::class));
 	}
 
 
@@ -141,7 +141,7 @@ class BaseEntityTest extends Tester\TestCase
 		Assert::exception(function () {
 			$entity = new ConcreteEntity();
 			$entity->proxies = 1;
-		}, 'Kdyby\Doctrine\UnexpectedValueException', 'Class property KdybyTests\Doctrine\ConcreteEntity::$proxies is an instance of Doctrine\Common\Collections\Collection. Use add<property>() and remove<property>() methods to manipulate it or declare your own.');
+		}, \Kdyby\Doctrine\UnexpectedValueException::class, sprintf('Class property %s::$proxies is an instance of %s. Use add<property>() and remove<property>() methods to manipulate it or declare your own.', \KdybyTests\Doctrine\ConcreteEntity::class, \Doctrine\Common\Collections\Collection::class));
 	}
 
 
@@ -151,7 +151,7 @@ class BaseEntityTest extends Tester\TestCase
 		Assert::exception(function () {
 			$entity = new ConcreteEntity();
 			$entity->setOne(1);
-		}, 'Kdyby\Doctrine\MemberAccessException', 'Call to undefined method KdybyTests\Doctrine\ConcreteEntity::setOne().');
+		}, \Kdyby\Doctrine\MemberAccessException::class, sprintf('Call to undefined method %s::setOne().', \KdybyTests\Doctrine\ConcreteEntity::class));
 	}
 
 
@@ -178,7 +178,7 @@ class BaseEntityTest extends Tester\TestCase
 		Assert::exception(function () {
 			$entity = new ConcreteEntity();
 			$entity->setOnes(1);
-		}, 'Kdyby\Doctrine\MemberAccessException', 'Call to undefined method KdybyTests\Doctrine\ConcreteEntity::setOnes().');
+		}, \Kdyby\Doctrine\MemberAccessException::class, sprintf('Call to undefined method %s::setOnes().', \KdybyTests\Doctrine\ConcreteEntity::class));
 	}
 
 
@@ -188,7 +188,7 @@ class BaseEntityTest extends Tester\TestCase
 		Assert::exception(function () {
 			$entity = new ConcreteEntity();
 			$entity->setTwos(2);
-		}, 'Kdyby\Doctrine\UnexpectedValueException', 'Class property KdybyTests\Doctrine\ConcreteEntity::$twos is an instance of Doctrine\Common\Collections\Collection. Use add<property>() and remove<property>() methods to manipulate it or declare your own.');
+		}, \Kdyby\Doctrine\UnexpectedValueException::class, sprintf('Class property %s::$twos is an instance of %s. Use add<property>() and remove<property>() methods to manipulate it or declare your own.', \KdybyTests\Doctrine\ConcreteEntity::class, \Doctrine\Common\Collections\Collection::class));
 	}
 
 
@@ -198,7 +198,7 @@ class BaseEntityTest extends Tester\TestCase
 		Assert::exception(function () {
 			$entity = new ConcreteEntity();
 			$entity->setProxies(3);
-		}, 'Kdyby\Doctrine\UnexpectedValueException', 'Class property KdybyTests\Doctrine\ConcreteEntity::$proxies is an instance of Doctrine\Common\Collections\Collection. Use add<property>() and remove<property>() methods to manipulate it or declare your own.');
+		}, \Kdyby\Doctrine\UnexpectedValueException::class, sprintf('Class property %s::$proxies is an instance of %s. Use add<property>() and remove<property>() methods to manipulate it or declare your own.', \KdybyTests\Doctrine\ConcreteEntity::class, \Doctrine\Common\Collections\Collection::class));
 	}
 
 
@@ -208,7 +208,7 @@ class BaseEntityTest extends Tester\TestCase
 		Assert::exception(function () {
 			$entity = new ConcreteEntity();
 			$entity->getOne();
-		}, 'Kdyby\Doctrine\MemberAccessException', 'Call to undefined method KdybyTests\Doctrine\ConcreteEntity::getOne().');
+		}, \Kdyby\Doctrine\MemberAccessException::class, sprintf('Call to undefined method %s::getOne().', \KdybyTests\Doctrine\ConcreteEntity::class));
 	}
 
 
@@ -226,7 +226,7 @@ class BaseEntityTest extends Tester\TestCase
 		Assert::exception(function () {
 			$entity = new ConcreteEntity();
 			$entity->getOnes();
-		}, 'Kdyby\Doctrine\MemberAccessException', 'Call to undefined method KdybyTests\Doctrine\ConcreteEntity::getOnes().');
+		}, \Kdyby\Doctrine\MemberAccessException::class, sprintf('Call to undefined method %s::getOnes().', \KdybyTests\Doctrine\ConcreteEntity::class));
 	}
 
 
@@ -245,7 +245,7 @@ class BaseEntityTest extends Tester\TestCase
 		Assert::exception(function () {
 			$entity = new ConcreteEntity();
 			$entity->thousand(1000);
-		}, 'Kdyby\Doctrine\MemberAccessException', 'Call to undefined method KdybyTests\Doctrine\ConcreteEntity::thousand().');
+		}, \Kdyby\Doctrine\MemberAccessException::class, sprintf('Call to undefined method %s::thousand().', \KdybyTests\Doctrine\ConcreteEntity::class));
 	}
 
 
@@ -255,7 +255,7 @@ class BaseEntityTest extends Tester\TestCase
 		Assert::exception(function () {
 			$entity = new ConcreteEntity();
 			$entity->addOne((object) ['id' => 1]);
-		}, 'Kdyby\Doctrine\MemberAccessException', 'Call to undefined method KdybyTests\Doctrine\ConcreteEntity::addOne().');
+		}, \Kdyby\Doctrine\MemberAccessException::class, sprintf('Call to undefined method %s::addOne().', \KdybyTests\Doctrine\ConcreteEntity::class));
 	}
 
 
@@ -265,7 +265,7 @@ class BaseEntityTest extends Tester\TestCase
 		Assert::exception(function () {
 			$entity = new ConcreteEntity();
 			$entity->addFour((object) ['id' => 4]);
-		}, 'Kdyby\Doctrine\UnexpectedValueException', 'Class property KdybyTests\Doctrine\ConcreteEntity::$four is not an instance of Doctrine\Common\Collections\Collection.');
+		}, \Kdyby\Doctrine\UnexpectedValueException::class, sprintf('Class property %s::$four is not an instance of %s.', \KdybyTests\Doctrine\ConcreteEntity::class, \Doctrine\Common\Collections\Collection::class));
 	}
 
 
@@ -291,7 +291,7 @@ class BaseEntityTest extends Tester\TestCase
 		Assert::exception(function () {
 			$entity = new ConcreteEntity();
 			$entity->hasOne((object) ['id' => 1]);
-		}, 'Kdyby\Doctrine\MemberAccessException', 'Call to undefined method KdybyTests\Doctrine\ConcreteEntity::hasOne().');
+		}, \Kdyby\Doctrine\MemberAccessException::class, sprintf('Call to undefined method %s::hasOne().', \KdybyTests\Doctrine\ConcreteEntity::class));
 	}
 
 
@@ -301,7 +301,7 @@ class BaseEntityTest extends Tester\TestCase
 		Assert::exception(function () {
 			$entity = new ConcreteEntity();
 			$entity->hasFour((object) ['id' => 4]);
-		}, 'Kdyby\Doctrine\UnexpectedValueException', 'Class property KdybyTests\Doctrine\ConcreteEntity::$four is not an instance of Doctrine\Common\Collections\Collection.');
+		}, \Kdyby\Doctrine\UnexpectedValueException::class, sprintf('Class property %s::$four is not an instance of %s.', \KdybyTests\Doctrine\ConcreteEntity::class, \Doctrine\Common\Collections\Collection::class));
 	}
 
 
@@ -328,7 +328,7 @@ class BaseEntityTest extends Tester\TestCase
 		Assert::exception(function () {
 			$entity = new ConcreteEntity();
 			$entity->removeOne((object) ['id' => 1]);
-		}, 'Kdyby\Doctrine\MemberAccessException', 'Call to undefined method KdybyTests\Doctrine\ConcreteEntity::removeOne().');
+		}, \Kdyby\Doctrine\MemberAccessException::class, sprintf('Call to undefined method %s::removeOne().', \KdybyTests\Doctrine\ConcreteEntity::class));
 	}
 
 
@@ -338,7 +338,7 @@ class BaseEntityTest extends Tester\TestCase
 		Assert::exception(function () {
 			$entity = new ConcreteEntity();
 			$entity->removeFour((object) ['id' => 4]);
-		}, 'Kdyby\Doctrine\UnexpectedValueException', 'Class property KdybyTests\Doctrine\ConcreteEntity::$four is not an instance of Doctrine\Common\Collections\Collection.');
+		}, \Kdyby\Doctrine\UnexpectedValueException::class, sprintf('Class property %s::$four is not an instance of %s.', \KdybyTests\Doctrine\ConcreteEntity::class, \Doctrine\Common\Collections\Collection::class));
 	}
 
 

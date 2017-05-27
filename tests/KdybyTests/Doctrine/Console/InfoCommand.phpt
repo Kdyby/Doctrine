@@ -32,7 +32,7 @@ class ValidateSchemaCommandTest extends CommandTestCase
 		foreach (self::$entities as $entity) {
 			Assert::contains("[OK]   {$entity}", $output);
 		}
-		Assert::notContains('[OK]   KdybyTests\Doctrine\Models2\Foo', $output);
+		Assert::notContains('[OK]   ' . \KdybyTests\Doctrine\Models2\Foo::class, $output);
 	}
 
 
@@ -43,7 +43,7 @@ class ValidateSchemaCommandTest extends CommandTestCase
 
 		$output = $applicationTester->getDisplay();
 
-		Assert::contains('[OK]   KdybyTests\Doctrine\Models2\Foo', $output);
+		Assert::contains('[OK]   ' . \KdybyTests\Doctrine\Models2\Foo::class, $output);
 		Assert::notContains('[OK]   ' . self::$entities[0], $output);
 	}
 

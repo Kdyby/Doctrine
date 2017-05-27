@@ -25,7 +25,7 @@ interface ICmsAddress
  * CmsAddress
  *
  * @author Roman S. Borschel
- * @ORM\Entity(repositoryClass="\KdybyTests\Doctrine\CmsAddressRepository")
+ * @ORM\Entity(repositoryClass=\KdybyTests\Doctrine\CmsAddressRepository::class)
  * @ORM\Table(name="cms_addresses")
  */
 class CmsAddress implements ICmsAddress
@@ -58,7 +58,7 @@ class CmsAddress implements ICmsAddress
 	public $street;
 
 	/**
-	 * @ORM\OneToOne(targetEntity="CmsUser", inversedBy="address")
+	 * @ORM\OneToOne(targetEntity=CmsUser::class, inversedBy="address")
 	 * @ORM\JoinColumn(referencedColumnName="id")
 	 */
 	public $user;
@@ -85,7 +85,7 @@ class CmsAddress implements ICmsAddress
 
 
 /**
- * @ORM\Entity(repositoryClass="\KdybyTests\Doctrine\CmsArticleRepository")
+ * @ORM\Entity(repositoryClass=\KdybyTests\Doctrine\CmsArticleRepository::class)
  * @ORM\Table(name="cms_articles")
  */
 class CmsArticle
@@ -109,14 +109,14 @@ class CmsArticle
 	public $text;
 
 	/**
-	 * @ORM\ManyToOne(targetEntity="CmsUser", inversedBy="articles")
+	 * @ORM\ManyToOne(targetEntity=CmsUser::class, inversedBy="articles")
 	 * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
 	 * @var \KdybyTests\Doctrine\CmsUser
 	 */
 	public $user;
 
 	/**
-	 * @ORM\OneToMany(targetEntity="CmsComment", mappedBy="article")
+	 * @ORM\OneToMany(targetEntity=CmsComment::class, mappedBy="article")
 	 */
 	public $comments;
 
@@ -144,7 +144,7 @@ class CmsArticle
 
 
 /**
- * @ORM\Entity(repositoryClass="\KdybyTests\Doctrine\CmsCommentRepository")
+ * @ORM\Entity(repositoryClass=\KdybyTests\Doctrine\CmsCommentRepository::class)
  * @ORM\Table(name="cms_comments")
  */
 class CmsComment
@@ -167,7 +167,7 @@ class CmsComment
 	public $text;
 
 	/**
-	 * @ORM\ManyToOne(targetEntity="CmsArticle", inversedBy="comments")
+	 * @ORM\ManyToOne(targetEntity=CmsArticle::class, inversedBy="comments")
 	 * @ORM\JoinColumn(name="article_id", referencedColumnName="id")
 	 */
 	public $article;
@@ -202,7 +202,7 @@ class CmsEmail
 	public $email;
 
 	/**
-	 * @ORM\OneToOne(targetEntity="CmsUser", mappedBy="email")
+	 * @ORM\OneToOne(targetEntity=CmsUser::class, mappedBy="email")
 	 * @ORM\JoinColumn(nullable=false)
 	 */
 	public $user;
@@ -215,7 +215,7 @@ class CmsEmail
  * Description of CmsEmployee
  *
  * @author robo
- * @ORM\Entity(repositoryClass="KdybyTests\Doctrine\CmsEmployeeRepository")
+ * @ORM\Entity(repositoryClass=\KdybyTests\Doctrine\CmsEmployeeRepository::class)
  * @ORM\Table(name="cms_employees")
  */
 class CmsEmployee
@@ -234,7 +234,7 @@ class CmsEmployee
 	public $name;
 
 	/**
-	 * @ORM\OneToOne(targetEntity="CmsEmployee")
+	 * @ORM\OneToOne(targetEntity=CmsEmployee::Class)
 	 * @ORM\JoinColumn(name="spouse_id", referencedColumnName="id")
 	 */
 	public $spouse;
@@ -247,7 +247,7 @@ class CmsEmployee
  * Description of CmsGroup
  *
  * @author robo
- * @ORM\Entity(repositoryClass="KdybyTests\Doctrine\CmsGroupRepository")
+ * @ORM\Entity(repositoryClass=\KdybyTests\Doctrine\CmsGroupRepository::class)
  * @ORM\Table(name="cms_groups")
  */
 class CmsGroup
@@ -266,7 +266,7 @@ class CmsGroup
 	public $name;
 
 	/**
-	 * @ORM\ManyToMany(targetEntity="CmsUser", mappedBy="groups")
+	 * @ORM\ManyToMany(targetEntity=CmsUser::class, mappedBy="groups")
 	 * @var ArrayCollection
 	 */
 	public $users;
@@ -296,7 +296,7 @@ class CmsPhoneNumber
 	public $phoneNumber;
 
 	/**
-	 * @ORM\ManyToOne(targetEntity="CmsUser", inversedBy="phoneNumbers", cascade={"merge"})
+	 * @ORM\ManyToOne(targetEntity=CmsUser::class, inversedBy="phoneNumbers", cascade={"merge"})
 	 * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
 	 */
 	public $user;
@@ -333,28 +333,28 @@ class CmsUser
 	public $name;
 
 	/**
-	 * @ORM\OneToMany(targetEntity="CmsPhoneNumber", mappedBy="user", cascade={"persist", "merge"}, orphanRemoval=true)
+	 * @ORM\OneToMany(targetEntity=CmsPhoneNumber::class, mappedBy="user", cascade={"persist", "merge"}, orphanRemoval=true)
 	 */
 	public $phoneNumbers;
 
 	/**
-	 * @ORM\OneToMany(targetEntity="CmsArticle", mappedBy="user", cascade={"detach"})
+	 * @ORM\OneToMany(targetEntity=CmsArticle::class, mappedBy="user", cascade={"detach"})
 	 */
 	public $articles;
 
 	/**
-	 * @ORM\OneToOne(targetEntity="CmsAddress", mappedBy="user", cascade={"persist"}, orphanRemoval=true)
+	 * @ORM\OneToOne(targetEntity=CmsAddress::class, mappedBy="user", cascade={"persist"}, orphanRemoval=true)
 	 */
 	public $address;
 
 	/**
-	 * @ORM\OneToOne(targetEntity="CmsEmail", inversedBy="user", cascade={"persist"}, orphanRemoval=true)
+	 * @ORM\OneToOne(targetEntity=CmsEmail::class, inversedBy="user", cascade={"persist"}, orphanRemoval=true)
 	 * @ORM\JoinColumn(referencedColumnName="id", nullable=true)
 	 */
 	public $email;
 
 	/**
-	 * @ORM\ManyToMany(targetEntity="CmsGroup", inversedBy="users", cascade={"persist", "merge", "detach"})
+	 * @ORM\ManyToMany(targetEntity=CmsGroup::class, inversedBy="users", cascade={"persist", "merge", "detach"})
 	 * @ORM\JoinTable(name="cms_users_groups",
 	 *      joinColumns={@ORM\JoinColumn(name="user_id", referencedColumnName="id")},
 	 *      inverseJoinColumns={@ORM\JoinColumn(name="group_id", referencedColumnName="id")}
@@ -363,13 +363,13 @@ class CmsUser
 	public $groups;
 
 	/**
-	 * @ORM\ManyToOne(targetEntity="CmsOrder", cascade={"detach"})
+	 * @ORM\ManyToOne(targetEntity=CmsOrder::class, cascade={"detach"})
 	 * @var CmsOrder
 	 */
 	public $order1;
 
 	/**
-	 * @ORM\ManyToOne(targetEntity="CmsOrder", cascade={"detach"})
+	 * @ORM\ManyToOne(targetEntity=CmsOrder::class, cascade={"detach"})
 	 * @var CmsOrder
 	 */
 	public $order2;
