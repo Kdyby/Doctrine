@@ -39,7 +39,24 @@ class EntityListenerResolver extends Nette\Object implements \Doctrine\ORM\Mappi
 	 */
 	public function resolve($className)
 	{
-		return $this->serviceLocator->getByType($className);
+		$services = $this->serviceLocator->findByType($className);
+
+		// try to find the exact class match (not the inherited classes)
+		$services = array_filter($services, function($service) use ($className) {
+			return get_class($this->serviceLocator->getService($service)) === ltrim($className, '\\');
+		});
+
+		// if a listener is found, return it
+		if (count($services) === 1) {
+			return $this->serviceLocator->getService($services[0]);
+		}
+
+		// no listener found/multiple listener definitions
+		if (count($services) === 0) {
+			throw new \InvalidArgumentException("Entity listener '$className' not found");
+		} else {
+			throw new \InvalidArgumentException("Multiple definitions of entity listener '$className'");
+		}
 	}
 
 
