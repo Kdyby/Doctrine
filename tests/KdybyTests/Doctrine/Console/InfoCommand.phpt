@@ -49,4 +49,4 @@ class ValidateSchemaCommandTest extends CommandTestCase
 
 }
 
-\run(new ValidateSchemaCommandTest());
+(new ValidateSchemaCommandTest())->run();

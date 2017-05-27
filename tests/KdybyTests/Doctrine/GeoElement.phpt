@@ -79,4 +79,4 @@ class GeoElementTest extends Tester\TestCase
 
 }
 
-\run(new GeoElementTest());
+(new GeoElementTest())->run();

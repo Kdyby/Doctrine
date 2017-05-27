@@ -525,4 +525,4 @@ class BadlyNamedEntity
 
 }
 
-\run(new MagicAccessorsTest());
+(new MagicAccessorsTest())->run();

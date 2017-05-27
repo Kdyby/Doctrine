@@ -495,4 +495,4 @@ class ConcreteEntity extends BaseEntity
 
 }
 
-\run(new BaseEntityTest());
+(new BaseEntityTest())->run();

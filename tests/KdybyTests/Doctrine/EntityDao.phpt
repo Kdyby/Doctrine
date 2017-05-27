@@ -159,4 +159,4 @@ class EntityDaoTest extends ORMTestCase
 
 }
 
-\run(new EntityDaoTest());
+(new EntityDaoTest())->run();

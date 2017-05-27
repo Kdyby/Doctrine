@@ -140,4 +140,4 @@ class ConditionTest extends Tester\TestCase
 
 }
 
-\run(new ConditionTest());
+(new ConditionTest())->run();

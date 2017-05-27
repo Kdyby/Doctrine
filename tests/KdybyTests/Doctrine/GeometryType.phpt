@@ -88,4 +88,4 @@ class GeometryTypeTest extends Tester\TestCase
 
 }
 
-\run(new GeometryTypeTest());
+(new GeometryTypeTest())->run();

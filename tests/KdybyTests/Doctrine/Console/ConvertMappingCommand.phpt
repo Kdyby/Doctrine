@@ -62,4 +62,4 @@ class ConvertMappingCommandTest extends CommandTestCase
 
 }
 
-\run(new ConvertMappingCommandTest());
+(new ConvertMappingCommandTest())->run();

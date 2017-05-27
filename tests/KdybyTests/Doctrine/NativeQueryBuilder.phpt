@@ -245,4 +245,4 @@ class NativeQueryBuilderTest extends KdybyTests\Doctrine\ORMTestCase
 
 }
 
-\run(new NativeQueryBuilderTest());
+(new NativeQueryBuilderTest())->run();

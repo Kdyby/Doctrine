@@ -176,4 +176,4 @@ class SchemaManagerMock extends Doctrine\DBAL\Schema\MySqlSchemaManager
 
 }
 
-\run(new ConnectionTest());
+(new ConnectionTest())->run();

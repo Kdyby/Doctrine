@@ -101,4 +101,4 @@ class ElementTest extends Tester\TestCase
 
 
 
-\run(new ElementTest());
+(new ElementTest())->run();

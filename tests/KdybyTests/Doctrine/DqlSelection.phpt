@@ -850,4 +850,4 @@ class DqlSelectionTest extends KdybyTests\Doctrine\ORMTestCase
 
 }
 
-\run(new DqlSelectionTest());
+(new DqlSelectionTest())->run();

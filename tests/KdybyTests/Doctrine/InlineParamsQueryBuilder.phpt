@@ -213,4 +213,4 @@ class InlineParamsQueryBuilderTest extends KdybyTests\Doctrine\ORMTestCase
 
 }
 
-\run(new InlineParamsQueryBuilderTest());
+(new InlineParamsQueryBuilderTest())->run();

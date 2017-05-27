@@ -63,4 +63,4 @@ class GenerateProxiesCommandTest extends CommandTestCase
 
 }
 
-\run(new GenerateProxiesCommandTest());
+(new GenerateProxiesCommandTest())->run();
