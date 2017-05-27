@@ -31,6 +31,6 @@ interface IEntityProvider
 	 *
 	 * @return array
 	 */
-	function getEntityMappings();
+	public function getEntityMappings();
 
 }

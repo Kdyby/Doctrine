@@ -30,6 +30,6 @@ interface ITargetEntityProvider
 	 *
 	 * @return array
 	 */
-	function getTargetEntityMappings();
+	public function getTargetEntityMappings();
 
 }
