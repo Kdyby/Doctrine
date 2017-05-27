@@ -187,7 +187,6 @@ class NativeQueryBuilder extends Doctrine\DBAL\Query\QueryBuilder
 
 	/**
 	 * {@inheritdoc}
-	 * @return NativeQueryBuilder
 	 */
 	public function from($from, $alias = NULL)
 	{
@@ -254,7 +253,7 @@ class NativeQueryBuilder extends Doctrine\DBAL\Query\QueryBuilder
 
 	/**
 	 * @param string $table
-	 * @param string $alias
+	 * @param string|null $alias
 	 * @param string $joinedFrom
 	 * @throws \Doctrine\ORM\Mapping\MappingException
 	 * @return string
@@ -306,10 +305,14 @@ class NativeQueryBuilder extends Doctrine\DBAL\Query\QueryBuilder
 			return $table;
 		}
 
+		if ($alias === NULL && ($joinedFrom === NULL || $relation !== NULL)) {
+			throw new InvalidArgumentException('Parameter alias is required');
+		}
+
 		if ($joinedFrom === NULL) {
 			$rsm->addEntityResult($class->getName(), $alias);
 
-		} elseif ($relation) {
+		} elseif ($relation !== NULL) {
 			$rsm->addJoinedEntityResult($class->getName(), $alias, $joinedFrom, $relation);
 		}
 

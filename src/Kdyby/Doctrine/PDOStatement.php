@@ -33,8 +33,8 @@ class PDOStatement extends Statement
 			return parent::execute($params);
 
 		} catch (\Exception $e) {
+			/** @var \Kdyby\Doctrine\Connection $conn */
 			$conn = $this->conn;
-			/** @var Connection $conn */
 			throw $conn->resolveException($e, $this->sql, (is_array($params) ? $params : []) + $this->params);
 		}
 	}

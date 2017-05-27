@@ -76,7 +76,7 @@ class ProxyAutoloader
 			throw new Nette\NotSupportedException('spl_autoload does not exist in this PHP installation.');
 		}
 
-		spl_autoload_register([$this, 'tryLoad'], TRUE, (bool) $prepend);
+		spl_autoload_register([$this, 'tryLoad'], TRUE, $prepend);
 		self::$loaders[spl_object_hash($this)] = $this;
 	}
 

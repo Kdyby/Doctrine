@@ -96,7 +96,9 @@ class Registry extends AbstractManagerRegistry
 	{
 		foreach (array_keys($this->getManagers()) as $name) {
 			try {
-				return $this->getManager($name)->getConfiguration()->getEntityNamespace($alias);
+				/** @var \Doctrine\ORM\EntityManager $entityManager */
+				$entityManager = $this->getManager($name);
+				return $entityManager->getConfiguration()->getEntityNamespace($alias);
 			} catch (ORMException $e) {
 			}
 		}

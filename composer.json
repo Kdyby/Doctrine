@@ -55,7 +55,7 @@
 	},
 	"autoload-dev": {
 		"classmap": [
-			"tests/KdybyTests/Doctrine"
+			"tests/KdybyTests"
 		]
 	},
 	"extra": {

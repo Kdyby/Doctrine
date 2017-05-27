@@ -234,7 +234,7 @@ class CmsEmployee
 	public $name;
 
 	/**
-	 * @ORM\OneToOne(targetEntity=CmsEmployee::Class)
+	 * @ORM\OneToOne(targetEntity=CmsEmployee::class)
 	 * @ORM\JoinColumn(name="spouse_id", referencedColumnName="id")
 	 */
 	public $spouse;

@@ -26,12 +26,12 @@ class ClassMetadataFactory extends Doctrine\ORM\Mapping\ClassMetadataFactory
 {
 
 	/**
-	 * @var EntityManager
+	 * @var \Doctrine\ORM\EntityManagerInterface|\Doctrine\ORM\EntityManager
 	 */
 	private $em;
 
 	/**
-	 * @var Kdyby\Doctrine\Configuration
+	 * @var \Doctrine\ORM\Configuration|\Kdyby\Doctrine\Configuration
 	 */
 	private $config;
 
@@ -48,7 +48,7 @@ class ClassMetadataFactory extends Doctrine\ORM\Mapping\ClassMetadataFactory
 
 
 	/**
-	 * @param Doctrine\ORM\EntityManagerInterface $em
+	 * @param \Doctrine\ORM\EntityManagerInterface|\Doctrine\ORM\EntityManager $em
 	 */
 	public function setEntityManager(Doctrine\ORM\EntityManagerInterface $em)
 	{

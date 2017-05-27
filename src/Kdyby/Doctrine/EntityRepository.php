@@ -109,7 +109,7 @@ class EntityRepository extends Doctrine\ORM\EntityRepository implements Persiste
 	 *
 	 * @param array $criteria parameter can be skipped
 	 * @param string $value mandatory
-	 * @param array $orderBy parameter can be skipped
+	 * @param array|string $orderBy parameter can be skipped
 	 * @param string $key optional
 	 *
 	 * @throws QueryException
@@ -133,12 +133,12 @@ class EntityRepository extends Doctrine\ORM\EntityRepository implements Persiste
 			$key = $this->getClassMetadata()->getSingleIdentifierFieldName();
 		}
 
-		$query = $this->createQueryBuilder('e')
+		/** @var \Kdyby\Doctrine\QueryBuilder $qb */
+		$qb = $this->createQueryBuilder('e')
 			->whereCriteria($criteria)
-			->select("e.$value", "e.$key")
-			->resetDQLPart('from')->from($this->getEntityName(), 'e', 'e.' . $key)
-			->autoJoinOrderBy((array) $orderBy)
-			->getQuery();
+			->select(["e.$value", "e.$key"])
+			->resetDQLPart('from')->from($this->getEntityName(), 'e', 'e.' . $key);
+		$query = $qb->autoJoinOrderBy($orderBy)->getQuery();
 
 		try {
 			return array_map(function ($row) {
@@ -284,8 +284,7 @@ class EntityRepository extends Doctrine\ORM\EntityRepository implements Persiste
 	/**
 	 * @param \Exception $e
 	 * @param \Kdyby\Persistence\Query $queryObject
-	 *
-	 * @throws \Exception
+	 * @return \Kdyby\Doctrine\QueryException
 	 */
 	private function handleQueryException(\Exception $e, Persistence\Query $queryObject)
 	{
@@ -300,6 +299,7 @@ class EntityRepository extends Doctrine\ORM\EntityRepository implements Persiste
 	 * @param \Exception $e
 	 * @param \Doctrine\ORM\Query $query
 	 * @param string $message
+	 * @return \Exception|\Kdyby\Doctrine\QueryException
 	 */
 	private function handleException(\Exception $e, Doctrine\ORM\Query $query = NULL, $message = NULL)
 	{
@@ -313,35 +313,41 @@ class EntityRepository extends Doctrine\ORM\EntityRepository implements Persiste
 
 
 	/**
-	 * @return Mapping\ClassMetadata
+	 * @return \Kdyby\Doctrine\Mapping\ClassMetadata
 	 */
 	public function getClassMetadata()
 	{
-		return parent::getClassMetadata();
+		/** @var \Kdyby\Doctrine\Mapping\ClassMetadata $classMetadata */
+		$classMetadata = parent::getClassMetadata();
+		return $classMetadata;
 	}
 
 
 
 	/**
-	 * @return EntityManager
+	 * @return \Kdyby\Doctrine\EntityManager
 	 */
 	public function getEntityManager()
 	{
-		return parent::getEntityManager();
+		/** @var \Kdyby\Doctrine\EntityManager $entityManager */
+		$entityManager = parent::getEntityManager();
+		return $entityManager;
 	}
 
 
 
 	/**
 	 * @param string $relation
-	 * @return EntityRepository
+	 * @return \Kdyby\Doctrine\EntityRepository
 	 */
 	public function related($relation)
 	{
 		$meta = $this->getClassMetadata();
 		$targetClass = $meta->getAssociationTargetClass($relation);
 
-		return $this->getEntityManager()->getRepository($targetClass);
+		/** @var \Kdyby\Doctrine\EntityRepository $entityRepository */
+		$entityRepository = $this->getEntityManager()->getRepository($targetClass);
+		return $entityRepository;
 	}
 
 }

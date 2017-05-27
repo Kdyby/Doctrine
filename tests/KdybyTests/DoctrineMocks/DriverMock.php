@@ -13,8 +13,6 @@ namespace KdybyTests\DoctrineMocks;
 use Doctrine;
 use KdybyTests\Doctrine\SchemaManagerMock;
 
-
-
 class DriverMock implements Doctrine\DBAL\Driver
 {
 

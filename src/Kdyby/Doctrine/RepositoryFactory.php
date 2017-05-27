@@ -81,7 +81,8 @@ class RepositoryFactory implements Doctrine\ORM\Repository\RepositoryFactory
 
 		$entityName = ltrim($entityName, '\\');
 
-		if (isset($this->repositoryList[$emId = spl_object_hash($entityManager)][$entityName])) {
+		$emId = spl_object_hash($entityManager);
+		if (isset($this->repositoryList[$emId][$entityName])) {
 			return $this->repositoryList[$emId][$entityName];
 		}
 

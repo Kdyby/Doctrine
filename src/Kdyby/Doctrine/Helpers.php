@@ -69,7 +69,7 @@ final class Helpers
 
 	/**
 	 * @param \ReflectionProperty $property
-	 * @return int
+	 * @return int|NULL
 	 */
 	public static function getPropertyLine(\ReflectionProperty $property)
 	{

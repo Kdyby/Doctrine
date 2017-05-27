@@ -180,6 +180,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 				throw new Kdyby\Doctrine\UnexpectedValueException("Please configure the Doctrine extensions using the section '{$this->name}:' in your config file.");
 			}
 
+			/** @var mixed[] $emConfig */
 			$emConfig = Nette\DI\Config\Helpers::merge($emConfig, $defaults);
 			$this->processEntityManager($name, $emConfig);
 		}
@@ -675,7 +676,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		}
 
 		$serviceMap = array_fill_keys(array_keys($this->configuredManagers), []);
-		foreach ($builder->findByType(Doctrine\ORM\EntityRepository::class, FALSE) as $originalServiceName => $originalDef) {
+		foreach ($builder->findByType(Doctrine\ORM\EntityRepository::class) as $originalServiceName => $originalDef) {
 			if (is_string($originalDef)) {
 				$originalServiceName = $originalDef;
 				$originalDef = $builder->getDefinition($originalServiceName);
@@ -685,7 +686,8 @@ class OrmExtension extends Nette\DI\CompilerExtension
 				continue; // ignore
 			}
 
-			$factory = $originalDef->getFactory() ? $originalDef->getFactory()->getEntity() : $originalDef->getClass();
+			$originalDefFactory = $originalDef->getFactory();
+			$factory = ($originalDefFactory !== NULL) ? $originalDefFactory->getEntity() : $originalDef->getClass();
 			if (stripos($factory, '::getRepository') !== FALSE) {
 				continue; // ignore
 			}
@@ -779,7 +781,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		foreach ($this->proxyAutoloaders as $namespace => $dir) {
 			$originalInitialize = $init->getBody();
 			$init->setBody('?::create(?, ?)->register();', [new Code\PhpLiteral(Kdyby\Doctrine\Proxy\ProxyAutoloader::class), $dir, $namespace]);
-			$init->addBody($originalInitialize);
+			$init->addBody((string) $originalInitialize);
 		}
 	}
 

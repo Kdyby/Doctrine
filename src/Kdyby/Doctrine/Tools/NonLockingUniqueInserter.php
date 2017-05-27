@@ -67,10 +67,12 @@ class NonLockingUniqueInserter
 	public function __construct(EntityManager $em)
 	{
 		$this->em = $em;
-		$this->db = $em->getConnection();
-		$this->platform = $this->db->getDatabasePlatform();
+		/** @var \Kdyby\Doctrine\Connection $db */
+		$db = $em->getConnection();
+		$this->db = $db;
+		$this->platform = $db->getDatabasePlatform();
 		$this->quotes = $em->getConfiguration()->getQuoteStrategy();
-		$this->uow = $this->em->getUnitOfWork();
+		$this->uow = $em->getUnitOfWork();
 	}
 
 
@@ -100,17 +102,17 @@ class NonLockingUniqueInserter
 			return $persisted;
 
 		} catch (Doctrine\DBAL\Exception\UniqueConstraintViolationException $e) {
-			$this->db->rollback();
+			$this->db->rollBack();
 
 			return FALSE;
 
 		} catch (Kdyby\Doctrine\DuplicateEntryException $e) {
-			$this->db->rollback();
+			$this->db->rollBack();
 
 			return FALSE;
 
 		} catch (DBALException $e) {
-			$this->db->rollback();
+			$this->db->rollBack();
 
 			if ($this->isUniqueConstraintViolation($e)) {
 				return FALSE;
@@ -119,11 +121,11 @@ class NonLockingUniqueInserter
 			throw $this->db->resolveException($e);
 
 		} catch (\Exception $e) {
-			$this->db->rollback();
+			$this->db->rollBack();
 			throw $e;
 
 		} catch (\Throwable $e) {
-			$this->db->rollback();
+			$this->db->rollBack();
 			throw $e;
 		}
 	}
@@ -132,7 +134,7 @@ class NonLockingUniqueInserter
 
 	private function doInsert($entity)
 	{
-		// get entity metadata
+		/** @var \Kdyby\Doctrine\Mapping\ClassMetadata $meta */
 		$meta = $this->em->getClassMetadata(get_class($entity));
 
 		// fields that have to be inserted

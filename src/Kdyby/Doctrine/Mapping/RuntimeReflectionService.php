@@ -41,7 +41,7 @@ class RuntimeReflectionService extends Doctrine\Common\Persistence\Mapping\Runti
 	 *
 	 * @param string $class
 	 * @param string $property
-	 * @return \Nette\Reflection\Property
+	 * @return \Nette\Reflection\Property|NULL
 	 */
 	public function getAccessibleProperty($class, $property)
 	{
