@@ -40,8 +40,7 @@
 	"autoload": {
 		"psr-0": {
 			"Kdyby\\Doctrine\\": "src/",
-			"Kdyby\\Persistence\\": "src/",
-			"Kdyby\\DibiBridge\\": "src/"
+			"Kdyby\\Persistence\\": "src/"
 		},
 		"classmap": [
 			"src/Kdyby/Doctrine/exceptions.php"
