@@ -27,19 +27,19 @@ $config->addConfig(__DIR__ . '/../config/proxiesSessionAutoloading.neon');
 $container = $config->createContainer();
 
 // requires disabled autostart
-$session = $container->getByType('Nette\Http\Session');
+$session = $container->getByType(\Nette\Http\Session::class);
 
 if ($_SERVER['argv'][1] === 'compile') {
 	$session->start();
 
-	$em = $container->getByType('Doctrine\ORM\EntityManager');
+	$em = $container->getByType(\Doctrine\ORM\EntityManager::class);
 	$allMetadata = $em->getMetadataFactory()->getAllMetadata();
 	echo 'compiled,';
 
 	$em->getProxyFactory()->generateProxyClasses($allMetadata);
 	echo 'proxies generated,';
 
-	$schemaTool = $container->getByType('Doctrine\ORM\Tools\SchemaTool');
+	$schemaTool = $container->getByType(\Doctrine\ORM\Tools\SchemaTool::class);
 	$schemaTool->createSchema($allMetadata);
 	echo "schema generated\n";
 
@@ -48,7 +48,7 @@ if ($_SERVER['argv'][1] === 'compile') {
 } elseif ($_SERVER['argv'][1] === 'store') {
 	$session->start();
 
-	$em = $container->getByType('Doctrine\ORM\EntityManager');
+	$em = $container->getByType(\Doctrine\ORM\EntityManager::class);
 
 	$em->persist($order = new CmsOrder());
 	$order->status = 'new';
@@ -58,7 +58,7 @@ if ($_SERVER['argv'][1] === 'compile') {
 
 	$orderSession = $session->getSection('order');
 	/** @var KdybyTests\Doctrine\CmsOrder $proxy */
-	$proxy = $em->getReference('KdybyTests\Doctrine\CmsOrder', $orderId);
+	$proxy = $em->getReference(\KdybyTests\Doctrine\CmsOrder::class, $orderId);
 	$proxy->dummyMethodForProxyInitialize();
 	$orderSession->entity = $proxy;
 

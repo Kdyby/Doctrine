@@ -35,7 +35,7 @@ class HashHydrator extends ArrayHydrator
 	 */
 	public function hydrateAll($stmt, $resultSetMapping, array $hints = [])
 	{
-		return array_map('Nette\Utils\ArrayHash::from', parent::hydrateAll($stmt,$resultSetMapping,$hints));
+		return array_map(Nette\Utils\ArrayHash::class . '::from', parent::hydrateAll($stmt,$resultSetMapping,$hints));
 	}
 
 

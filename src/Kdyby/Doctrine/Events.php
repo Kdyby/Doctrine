@@ -24,12 +24,12 @@ final class Events
 	/**
 	 * The namespace for listeners on Doctrine events.
 	 */
-	const NS = 'Doctrine\\ORM\\Event';
+	const NS = \Doctrine\ORM\Events::class;
 
 	/**
 	 * @deprecated
 	 */
-	const postLoadRelations = 'Doctrine\\ORM\\Event::postLoadRelations';
+	const postLoadRelations = \Doctrine\ORM\Events::class . '::postLoadRelations';
 
 	/**
 	 * The preRemove event occurs for a given entity before the respective
@@ -39,7 +39,7 @@ final class Events
 	 *
 	 * @var string
 	 */
-	const preRemove = 'Doctrine\\ORM\\Event::preRemove';
+	const preRemove = \Doctrine\ORM\Events::class . '::preRemove';
 
 	/**
 	 * The postRemove event occurs for an entity after the entity has
@@ -49,7 +49,7 @@ final class Events
 	 *
 	 * @var string
 	 */
-	const postRemove = 'Doctrine\\ORM\\Event::postRemove';
+	const postRemove = \Doctrine\ORM\Events::class . '::postRemove';
 
 	/**
 	 * The prePersist event occurs for a given entity before the respective
@@ -59,7 +59,7 @@ final class Events
 	 *
 	 * @var string
 	 */
-	const prePersist = 'Doctrine\\ORM\\Event::prePersist';
+	const prePersist = \Doctrine\ORM\Events::class . '::prePersist';
 
 	/**
 	 * The postPersist event occurs for an entity after the entity has
@@ -70,7 +70,7 @@ final class Events
 	 *
 	 * @var string
 	 */
-	const postPersist = 'Doctrine\\ORM\\Event::postPersist';
+	const postPersist = \Doctrine\ORM\Events::class . '::postPersist';
 
 	/**
 	 * The preUpdate event occurs before the database update operations to
@@ -80,7 +80,7 @@ final class Events
 	 *
 	 * @var string
 	 */
-	const preUpdate = 'Doctrine\\ORM\\Event::preUpdate';
+	const preUpdate = \Doctrine\ORM\Events::class . '::preUpdate';
 
 	/**
 	 * The postUpdate event occurs after the database update operations to
@@ -90,7 +90,7 @@ final class Events
 	 *
 	 * @var string
 	 */
-	const postUpdate = 'Doctrine\\ORM\\Event::postUpdate';
+	const postUpdate = \Doctrine\ORM\Events::class . '::postUpdate';
 
 	/**
 	 * The postLoad event occurs for an entity after the entity has been loaded
@@ -105,7 +105,7 @@ final class Events
 	 *
 	 * @var string
 	 */
-	const postLoad = 'Doctrine\\ORM\\Event::postLoad';
+	const postLoad = \Doctrine\ORM\Events::class . '::postLoad';
 
 	/**
 	 * The loadClassMetadata event occurs after the mapping metadata for a class
@@ -113,7 +113,7 @@ final class Events
 	 *
 	 * @var string
 	 */
-	const loadClassMetadata = 'Doctrine\\ORM\\Event::loadClassMetadata';
+	const loadClassMetadata = \Doctrine\ORM\Events::class . '::loadClassMetadata';
 
 	/**
 	 * The onClassMetadataNotFound event occurs whenever loading metadata for a class
@@ -121,14 +121,14 @@ final class Events
 	 *
 	 * @var string
 	 */
-	const onClassMetadataNotFound = 'Doctrine\\ORM\\Event::onClassMetadataNotFound';
+	const onClassMetadataNotFound = \Doctrine\ORM\Events::class . '::onClassMetadataNotFound';
 
 	/**
 	 * The preFlush event occurs when the EntityManager#flush() operation is invoked,
 	 * but before any changes to managed entities have been calculated. This event is
 	 * always raised right after EntityManager#flush() call.
 	 */
-	const preFlush = 'Doctrine\\ORM\\Event::preFlush';
+	const preFlush = \Doctrine\ORM\Events::class . '::preFlush';
 
 	/**
 	 * The onFlush event occurs when the EntityManager#flush() operation is invoked,
@@ -139,7 +139,7 @@ final class Events
 	 *
 	 * @var string
 	 */
-	const onFlush = 'Doctrine\\ORM\\Event::onFlush';
+	const onFlush = \Doctrine\ORM\Events::class . '::onFlush';
 
 	/**
 	 * The postFlush event occurs when the EntityManager#flush() operation is invoked and
@@ -150,7 +150,7 @@ final class Events
 	 *
 	 * @var string
 	 */
-	const postFlush = 'Doctrine\\ORM\\Event::postFlush';
+	const postFlush = \Doctrine\ORM\Events::class . '::postFlush';
 
 	/**
 	 * The onClear event occurs when the EntityManager#clear() operation is invoked,
@@ -158,7 +158,7 @@ final class Events
 	 *
 	 * @var string
 	 */
-	const onClear = 'Doctrine\\ORM\\Event::onClear';
+	const onClear = \Doctrine\ORM\Events::class . '::onClear';
 
 
 

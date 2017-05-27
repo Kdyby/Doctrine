@@ -54,7 +54,7 @@ class EventManagerExtension extends CompilerExtension
 	{
 		$builder = $this->getContainerBuilder();
 		$builder->addDefinition($this->prefix('evm'))
-			->setClass('Doctrine\Common\EventManager');
+			->setClass(\Doctrine\Common\EventManager::class);
 	}
 }
 

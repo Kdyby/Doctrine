@@ -240,11 +240,13 @@ abstract class QueryObject extends Nette\Object implements Kdyby\Persistence\Que
 		}
 
 		if (!$query instanceof Doctrine\ORM\AbstractQuery) {
-			throw new UnexpectedValueException(
+			throw new UnexpectedValueException(sprintf(
 				"Method " . get_called_class() . "::doCreateQuery must return " .
-				"instanceof Doctrine\\ORM\\Query or Kdyby\\Doctrine\\QueryBuilder, " .
-				(is_object($query) ? 'instance of ' . get_class($query) : gettype($query)) . " given."
-			);
+				"instanceof %s or %s, " .
+				(is_object($query) ? 'instance of ' . get_class($query) : gettype($query)) . " given.",
+				\Doctrine\ORM\Query::class,
+				\Kdyby\Doctrine\QueryBuilder::class
+			));
 		}
 
 		return $query;

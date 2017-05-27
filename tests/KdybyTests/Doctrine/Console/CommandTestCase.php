@@ -27,22 +27,22 @@ abstract class CommandTestCase extends Tester\TestCase
 	 * @var array
 	 */
 	protected static $entities = [
-		'KdybyTests\Doctrine\CmsAddress',
-		'KdybyTests\Doctrine\CmsArticle',
-		'KdybyTests\Doctrine\CmsComment',
-		'KdybyTests\Doctrine\CmsEmail',
-		'KdybyTests\Doctrine\CmsEmployee',
-		'KdybyTests\Doctrine\CmsGroup',
-		'KdybyTests\Doctrine\CmsPhoneNumber',
-		'KdybyTests\Doctrine\CmsUser',
-		'KdybyTests\Doctrine\CmsOrder',
-		'KdybyTests\Doctrine\AnnotationDriver\Something\Baz',
-		'KdybyTests\Doctrine\AnnotationDriver\App\FooEntity',
-		'KdybyTests\Doctrine\AnnotationDriver\App\Bar',
-		'KdybyTests\Doctrine\StiUser',
-		'KdybyTests\Doctrine\StiAdmin',
-		'KdybyTests\Doctrine\StiEmployee',
-		'KdybyTests\Doctrine\StiBoss',
+		\KdybyTests\Doctrine\CmsAddress::class,
+		\KdybyTests\Doctrine\CmsArticle::class,
+		\KdybyTests\Doctrine\CmsComment::class,
+		\KdybyTests\Doctrine\CmsEmail::class,
+		\KdybyTests\Doctrine\CmsEmployee::class,
+		\KdybyTests\Doctrine\CmsGroup::class,
+		\KdybyTests\Doctrine\CmsPhoneNumber::class,
+		\KdybyTests\Doctrine\CmsUser::class,
+		\KdybyTests\Doctrine\CmsOrder::class,
+		\KdybyTests\Doctrine\AnnotationDriver\Something\Baz::class,
+		\KdybyTests\Doctrine\AnnotationDriver\App\FooEntity::class,
+		\KdybyTests\Doctrine\AnnotationDriver\App\Bar::class,
+		\KdybyTests\Doctrine\StiUser::class,
+		\KdybyTests\Doctrine\StiAdmin::class,
+		\KdybyTests\Doctrine\StiEmployee::class,
+		\KdybyTests\Doctrine\StiBoss::class,
 	];
 
 	/**
@@ -93,7 +93,7 @@ abstract class CommandTestCase extends Tester\TestCase
 	 */
 	protected function getApplication()
 	{
-		$application = $this->getServiceLocator()->getByType('Kdyby\Console\Application');
+		$application = $this->getServiceLocator()->getByType(\Kdyby\Console\Application::class);
 		$application->setAutoExit(FALSE);
 		return $application;
 	}

@@ -71,7 +71,7 @@ abstract class ORMTestCase extends Tester\TestCase
 		$container = $config->createContainer();
 		/** @var Nette\DI\Container $container */
 
-		$em = $container->getByType('Kdyby\Doctrine\EntityManager');
+		$em = $container->getByType(\Kdyby\Doctrine\EntityManager::class);
 		/** @var Kdyby\Doctrine\EntityManager $em */
 
 		$this->serviceLocator = $container;

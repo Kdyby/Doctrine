@@ -82,7 +82,7 @@ class SimpleParameterFormatterTest extends Tester\TestCase
 
 	public function testObject()
 	{
-		Assert::same('stdClass', SimpleParameterFormatter::format(new \stdClass));
+		Assert::same(\stdClass::class, SimpleParameterFormatter::format(new \stdClass));
 	}
 
 }

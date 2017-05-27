@@ -50,7 +50,7 @@ class EntityRepositoryTest extends ORMTestCase
 		$this->em->flush();
 		$this->em->clear();
 
-		$repository = $this->em->getRepository('KdybyTests\Doctrine\CmsUser');
+		$repository = $this->em->getRepository(\KdybyTests\Doctrine\CmsUser::class);
 
 		Assert::same([
 			1 => 'c',
@@ -76,7 +76,7 @@ class EntityRepositoryTest extends ORMTestCase
 		$this->em->flush();
 		$this->em->clear();
 
-		$repository = $this->em->getRepository('KdybyTests\Doctrine\CmsUser');
+		$repository = $this->em->getRepository(\KdybyTests\Doctrine\CmsUser::class);
 
 		Assert::same(2, $repository->countBy(['status' => 'new']));
 	}

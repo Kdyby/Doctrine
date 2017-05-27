@@ -436,7 +436,7 @@ class Connection extends Doctrine\DBAL\Connection
 			return NULL;
 		}
 
-		if ($caused = Tracy\Helpers::findTrace($e->getTrace(), 'Doctrine\DBAL\DBALException::driverExceptionDuringQuery')) {
+		if ($caused = Tracy\Helpers::findTrace($e->getTrace(), Doctrine\DBAL\DBALException::class . '::driverExceptionDuringQuery')) {
 			if (preg_match('~(?:INSERT|UPDATE|REPLACE)(?:[A-Z_\s]*)`?([^\s`]+)`?\s*~', is_string($caused['args'][1]) ? $caused['args'][1] : $caused['args'][2], $m)) {
 				return $m[1];
 			}

@@ -27,7 +27,7 @@ class Configuration extends BaseConfiguration
 	{
 		return isset($this->_attributes['queryBuilderClass'])
 			? $this->_attributes['queryBuilderClass']
-			: 'Kdyby\Doctrine\QueryBuilder';
+			: Kdyby\Doctrine\QueryBuilder::class;
 	}
 
 

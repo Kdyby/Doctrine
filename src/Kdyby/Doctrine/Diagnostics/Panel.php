@@ -95,7 +95,7 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 		foreach (debug_backtrace(FALSE) as $row) {
 			if (isset($row['file']) && $this->filterTracePaths(realpath($row['file']))) {
 				if (isset($row['class']) && stripos($row['class'], '\\' . Proxy::MARKER) !== FALSE) {
-					if (!in_array('Doctrine\Common\Persistence\Proxy', class_implements($row['class']))) {
+					if (!in_array(Doctrine\Common\Persistence\Proxy::class, class_implements($row['class']))) {
 						continue;
 
 					} elseif (isset($row['function']) && $row['function'] === '__load') {
@@ -380,7 +380,7 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 				];
 			}
 
-		} elseif ($e instanceof Doctrine\DBAL\Schema\SchemaException && $dic && ($em = $dic->getByType('Kdyby\Doctrine\EntityManager', FALSE))) {
+		} elseif ($e instanceof Doctrine\DBAL\Schema\SchemaException && $dic && ($em = $dic->getByType(Kdyby\Doctrine\EntityManager::class, FALSE))) {
 			/** @var Kdyby\Doctrine\EntityManager $em */
 
 			if ($invalidTable = Strings::match($e->getMessage(), '~table \'(.*?)\'~i')) {
@@ -413,7 +413,7 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 			];
 
 		} elseif ($e instanceof Doctrine\DBAL\Exception\DriverException) {
-			if (($prev = $e->getPrevious()) && ($item = Helpers::findTrace($e->getTrace(), 'Doctrine\DBAL\DBALException::driverExceptionDuringQuery'))) {
+			if (($prev = $e->getPrevious()) && ($item = Helpers::findTrace($e->getTrace(), Doctrine\DBAL\DBALException::class . '::driverExceptionDuringQuery'))) {
 				/** @var \Doctrine\DBAL\Driver $driver */
 				$driver = $item['args'][0];
 				$params = isset($item['args'][3]) ? $item['args'][3] : [];
@@ -438,14 +438,14 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 			if (isset($e->queryString)) {
 				$sql = $e->queryString;
 
-			} elseif ($item = Helpers::findTrace($e->getTrace(), 'Doctrine\DBAL\Connection::executeQuery')) {
+			} elseif ($item = Helpers::findTrace($e->getTrace(), Doctrine\DBAL\Connection::class . '::executeQuery')) {
 				$sql = $item['args'][0];
 				$params = $item['args'][1];
 
-			} elseif ($item = Helpers::findTrace($e->getTrace(), 'PDO::query')) {
+			} elseif ($item = Helpers::findTrace($e->getTrace(), \PDO::class . '::query')) {
 				$sql = $item['args'][0];
 
-			} elseif ($item = Helpers::findTrace($e->getTrace(), 'PDO::prepare')) {
+			} elseif ($item = Helpers::findTrace($e->getTrace(), \PDO::class . '::prepare')) {
 				$sql = $item['args'][0];
 			}
 
@@ -634,7 +634,7 @@ class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQL
 	public static function highlightAnnotationLine(AnnotationException $e)
 	{
 		foreach ($e->getTrace() as $step) {
-			if (@$step['class'] . @$step['type'] . @$step['function'] !== 'Doctrine\Common\Annotations\DocParser->parse') {
+			if (@$step['class'] . @$step['type'] . @$step['function'] !== Doctrine\Common\Annotations\DocParser::class . '->parse') {
 				continue;
 			}
 

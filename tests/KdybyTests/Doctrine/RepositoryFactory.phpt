@@ -47,22 +47,22 @@ class RepositoryFactoryTest extends Tester\TestCase
 
 	public function testCustomRepositoryFactory()
 	{
-		if (!method_exists('Nette\DI\ContainerBuilder', 'findByType')) {
+		if (!method_exists(\Nette\DI\ContainerBuilder::class, 'findByType')) {
 			Tester\Environment::skip('Custom repositories require functionality that is available only in Nette ~2.3');
 		}
 
 		$container = $this->createContainer('repository-factory');
 
 		/** @var \KdybyTests\Doctrine\CmsAddressRepository $cmsAddressRepository */
-		$cmsAddressRepository = $container->getByType('KdybyTests\Doctrine\CmsAddressRepository');
-		Assert::type('KdybyTests\Doctrine\CmsAddressRepository', $cmsAddressRepository);
-		Assert::type('Kdyby\Doctrine\EntityRepository', $cmsAddressRepository);
-		Assert::same('KdybyTests\Doctrine\CmsAddress', $cmsAddressRepository->getClassName());
-		Assert::same('KdybyTests\Doctrine\CmsAddress', $cmsAddressRepository->getClassMetadata()->getName());
+		$cmsAddressRepository = $container->getByType(\KdybyTests\Doctrine\CmsAddressRepository::class);
+		Assert::type(\KdybyTests\Doctrine\CmsAddressRepository::class, $cmsAddressRepository);
+		Assert::type(\Kdyby\Doctrine\EntityRepository::class, $cmsAddressRepository);
+		Assert::same(\KdybyTests\Doctrine\CmsAddress::class, $cmsAddressRepository->getClassName());
+		Assert::same(\KdybyTests\Doctrine\CmsAddress::class, $cmsAddressRepository->getClassMetadata()->getName());
 
 		/** @var \Kdyby\Doctrine\EntityManager $em */
-		$em = $container->getByType('Kdyby\Doctrine\EntityManager');
-		Assert::same($cmsAddressRepository, $em->getRepository('KdybyTests\Doctrine\CmsAddress'));
+		$em = $container->getByType(\Kdyby\Doctrine\EntityManager::class);
+		Assert::same($cmsAddressRepository, $em->getRepository(\KdybyTests\Doctrine\CmsAddress::class));
 	}
 
 
@@ -72,12 +72,12 @@ class RepositoryFactoryTest extends Tester\TestCase
 		$container = $this->createContainer('repository-factory.default-class');
 
 		/** @var \Kdyby\Doctrine\EntityManager $em */
-		$em = $container->getByType('Kdyby\Doctrine\EntityManager');
+		$em = $container->getByType(\Kdyby\Doctrine\EntityManager::class);
 
-		$cmsEmailRepository = $em->getRepository('KdybyTests\Doctrine\CmsEmail');
-		Assert::same('Kdyby\Doctrine\EntityRepository', get_class($cmsEmailRepository));
-		Assert::same('KdybyTests\Doctrine\CmsEmail', $cmsEmailRepository->getClassName());
-		Assert::same('KdybyTests\Doctrine\CmsEmail', $cmsEmailRepository->getClassMetadata()->getName());
+		$cmsEmailRepository = $em->getRepository(\KdybyTests\Doctrine\CmsEmail::class);
+		Assert::same(\Kdyby\Doctrine\EntityRepository::class, get_class($cmsEmailRepository));
+		Assert::same(\KdybyTests\Doctrine\CmsEmail::class, $cmsEmailRepository->getClassName());
+		Assert::same(\KdybyTests\Doctrine\CmsEmail::class, $cmsEmailRepository->getClassMetadata()->getName());
 	}
 
 
@@ -86,20 +86,20 @@ class RepositoryFactoryTest extends Tester\TestCase
 	{
 		$container = $this->createContainer('repository-factory.manual');
 
-		list($employeeRepositoryServiceName) = $container->findByType('KdybyTests\Doctrine\CmsEmployeeRepository');
+		list($employeeRepositoryServiceName) = $container->findByType(\KdybyTests\Doctrine\CmsEmployeeRepository::class);
 
 		/** @var \Kdyby\Doctrine\EntityManager $em */
-		$em = $container->getByType('Kdyby\Doctrine\EntityManager');
+		$em = $container->getByType(\Kdyby\Doctrine\EntityManager::class);
 
-		$cmsEmployeeRepository = $em->getRepository('KdybyTests\Doctrine\CmsEmployee');
-		Assert::type('Kdyby\Doctrine\EntityRepository', $cmsEmployeeRepository);
-		Assert::type('KdybyTests\Doctrine\CmsEmployeeRepository', $cmsEmployeeRepository);
-		Assert::same('KdybyTests\Doctrine\CmsEmployee', $cmsEmployeeRepository->getClassName());
-		Assert::same('KdybyTests\Doctrine\CmsEmployee', $cmsEmployeeRepository->getClassMetadata()->getName());
+		$cmsEmployeeRepository = $em->getRepository(\KdybyTests\Doctrine\CmsEmployee::class);
+		Assert::type(\Kdyby\Doctrine\EntityRepository::class, $cmsEmployeeRepository);
+		Assert::type(\KdybyTests\Doctrine\CmsEmployeeRepository::class, $cmsEmployeeRepository);
+		Assert::same(\KdybyTests\Doctrine\CmsEmployee::class, $cmsEmployeeRepository->getClassName());
+		Assert::same(\KdybyTests\Doctrine\CmsEmployee::class, $cmsEmployeeRepository->getClassMetadata()->getName());
 
 		Assert::false($container->isCreated($employeeRepositoryServiceName));
 		Assert::same($cmsEmployeeRepository, $container->getService($employeeRepositoryServiceName));
-		Assert::same($cmsEmployeeRepository, $container->getByType('KdybyTests\Doctrine\CmsEmployeeRepository'));
+		Assert::same($cmsEmployeeRepository, $container->getByType(\KdybyTests\Doctrine\CmsEmployeeRepository::class));
 	}
 
 }

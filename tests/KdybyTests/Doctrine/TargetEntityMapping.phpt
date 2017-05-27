@@ -45,15 +45,15 @@ class TargetEntityMapping extends ORMTestCase
 
 		$metadataEventSubscriber = new MetadataEventSubscriberMock();
 		/** @var \Kdyby\Events\EventManager $evm */
-		$evm = $this->serviceLocator->getByType('Kdyby\Events\EventManager');
+		$evm = $this->serviceLocator->getByType(\Kdyby\Events\EventManager::class);
 		$evm->addEventSubscriber($metadataEventSubscriber);
 
-		$meta = $em->getClassMetadata('KdybyTests\Doctrine\ICmsAddress');
-		$em->getClassMetadata('KdybyTests\Doctrine\ICmsAddress');
-		$em->getClassMetadata('KdybyTests\Doctrine\ICmsAddress');
-		$em->getClassMetadata('KdybyTests\Doctrine\ICmsAddress');
+		$meta = $em->getClassMetadata(\KdybyTests\Doctrine\ICmsAddress::class);
+		$em->getClassMetadata(\KdybyTests\Doctrine\ICmsAddress::class);
+		$em->getClassMetadata(\KdybyTests\Doctrine\ICmsAddress::class);
+		$em->getClassMetadata(\KdybyTests\Doctrine\ICmsAddress::class);
 
-		Assert::same('KdybyTests\Doctrine\CmsAddress', $meta->getName());
+		Assert::same(\KdybyTests\Doctrine\CmsAddress::class, $meta->getName());
 
 		Assert::count(1, $metadataEventSubscriber->onClassMetadataNotFoundCalled);
 		Assert::count(1, $metadataEventSubscriber->loadClassMetadataCalled);
@@ -62,15 +62,15 @@ class TargetEntityMapping extends ORMTestCase
 
 		$metadataEventSubscriber2 = new MetadataEventSubscriberMock();
 		/** @var \Kdyby\Events\EventManager $evm */
-		$evm = $this->serviceLocator->getByType('Kdyby\Events\EventManager');
+		$evm = $this->serviceLocator->getByType(\Kdyby\Events\EventManager::class);
 		$evm->addEventSubscriber($metadataEventSubscriber2);
 
-		$meta2 = $em2->getClassMetadata('KdybyTests\Doctrine\ICmsAddress');
-		$em2->getClassMetadata('KdybyTests\Doctrine\ICmsAddress');
-		$em2->getClassMetadata('KdybyTests\Doctrine\ICmsAddress');
-		$em2->getClassMetadata('KdybyTests\Doctrine\ICmsAddress');
+		$meta2 = $em2->getClassMetadata(\KdybyTests\Doctrine\ICmsAddress::class);
+		$em2->getClassMetadata(\KdybyTests\Doctrine\ICmsAddress::class);
+		$em2->getClassMetadata(\KdybyTests\Doctrine\ICmsAddress::class);
+		$em2->getClassMetadata(\KdybyTests\Doctrine\ICmsAddress::class);
 
-		Assert::same('KdybyTests\Doctrine\CmsAddress', $meta2->getName());
+		Assert::same(\KdybyTests\Doctrine\CmsAddress::class, $meta2->getName());
 
 		Assert::count(1, $metadataEventSubscriber2->onClassMetadataNotFoundCalled);
 		Assert::count(1, $metadataEventSubscriber2->loadClassMetadataCalled);
@@ -84,15 +84,15 @@ class TargetEntityMapping extends ORMTestCase
 
 		$metadataEventSubscriber = new MetadataEventSubscriberMock();
 		/** @var \Kdyby\Events\EventManager $evm */
-		$evm = $this->serviceLocator->getByType('Kdyby\Events\EventManager');
+		$evm = $this->serviceLocator->getByType(\Kdyby\Events\EventManager::class);
 		$evm->addEventSubscriber($metadataEventSubscriber);
 
-		$meta = $em->getClassMetadata('KdybyTests\Doctrine\CmsAddress');
-		$em->getClassMetadata('KdybyTests\Doctrine\CmsAddress');
-		$em->getClassMetadata('KdybyTests\Doctrine\CmsAddress');
-		$em->getClassMetadata('KdybyTests\Doctrine\CmsAddress');
+		$meta = $em->getClassMetadata(\KdybyTests\Doctrine\CmsAddress::class);
+		$em->getClassMetadata(\KdybyTests\Doctrine\CmsAddress::class);
+		$em->getClassMetadata(\KdybyTests\Doctrine\CmsAddress::class);
+		$em->getClassMetadata(\KdybyTests\Doctrine\CmsAddress::class);
 
-		Assert::same('KdybyTests\Doctrine\CmsAddress', $meta->getName());
+		Assert::same(\KdybyTests\Doctrine\CmsAddress::class, $meta->getName());
 
 		Assert::count(0, $metadataEventSubscriber->onClassMetadataNotFoundCalled);
 		Assert::count(1, $metadataEventSubscriber->loadClassMetadataCalled);
@@ -101,15 +101,15 @@ class TargetEntityMapping extends ORMTestCase
 
 		$metadataEventSubscriber2 = new MetadataEventSubscriberMock();
 		/** @var \Kdyby\Events\EventManager $evm */
-		$evm = $this->serviceLocator->getByType('Kdyby\Events\EventManager');
+		$evm = $this->serviceLocator->getByType(\Kdyby\Events\EventManager::class);
 		$evm->addEventSubscriber($metadataEventSubscriber2);
 
-		$meta2 = $em2->getClassMetadata('KdybyTests\Doctrine\CmsAddress');
-		$em2->getClassMetadata('KdybyTests\Doctrine\CmsAddress');
-		$em2->getClassMetadata('KdybyTests\Doctrine\CmsAddress');
-		$em2->getClassMetadata('KdybyTests\Doctrine\CmsAddress');
+		$meta2 = $em2->getClassMetadata(\KdybyTests\Doctrine\CmsAddress::class);
+		$em2->getClassMetadata(\KdybyTests\Doctrine\CmsAddress::class);
+		$em2->getClassMetadata(\KdybyTests\Doctrine\CmsAddress::class);
+		$em2->getClassMetadata(\KdybyTests\Doctrine\CmsAddress::class);
 
-		Assert::same('KdybyTests\Doctrine\CmsAddress', $meta2->getName());
+		Assert::same(\KdybyTests\Doctrine\CmsAddress::class, $meta2->getName());
 
 		Assert::count(0, $metadataEventSubscriber2->onClassMetadataNotFoundCalled);
 		Assert::count(0, $metadataEventSubscriber2->loadClassMetadataCalled);
@@ -122,7 +122,7 @@ class TargetEntityMapping extends ORMTestCase
 		$em = $this->createMemoryManagerWithFilesytemMetadataCache();
 
 		/** @var \Kdyby\Events\EventManager $evm */
-		$evm = $this->serviceLocator->getByType('Kdyby\Events\EventManager');
+		$evm = $this->serviceLocator->getByType(\Kdyby\Events\EventManager::class);
 		$loadClassMetadata = $evm->getListeners(Events::loadClassMetadata);
 		$onClassMetadataNotFound = $evm->getListeners(Events::onClassMetadataNotFound);
 

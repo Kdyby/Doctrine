@@ -42,11 +42,11 @@ class AnnotationDriverTest extends Tester\TestCase
 		], new AnnotationReader());
 
 		Assert::same([
-			'KdybyTests\Doctrine\AnnotationDriver\App\FooEntity',
-			'KdybyTests\Doctrine\AnnotationDriver\Something\Baz'
+			\KdybyTests\Doctrine\AnnotationDriver\App\FooEntity::class,
+			\KdybyTests\Doctrine\AnnotationDriver\Something\Baz::class
 		], $driver->getAllClassNames());
 
-		Assert::true(!in_array('KdybyTests\Doctrine\AnnotationDriver\App\Bar', $driver->getAllClassNames()));
+		Assert::true(!in_array(\KdybyTests\Doctrine\AnnotationDriver\App\Bar::class, $driver->getAllClassNames()));
 	}
 
 }

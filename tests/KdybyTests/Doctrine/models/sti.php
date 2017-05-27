@@ -21,9 +21,9 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\InheritanceType("SINGLE_TABLE")
  * @ORM\DiscriminatorColumn(name="type", type="string")
  * @ORM\DiscriminatorMap({
- *   "admin" = "StiAdmin",
- *   "employee" = "StiEmployee",
- *   "boss" = "StiBoss",
+ *   "admin" = StiAdmin::class,
+ *   "employee" = StiEmployee::class,
+ *   "boss" = StiBoss::class,
  * })
  */
 abstract class StiUser
@@ -75,7 +75,7 @@ class StiEmployee extends StiUser
 {
 
 	/**
-	 * @ORM\ManyToOne(targetEntity="StiBoss", inversedBy="subordinates")
+	 * @ORM\ManyToOne(targetEntity=StiBoss::class, inversedBy="subordinates")
 	 * @ORM\JoinColumn(name="boss_id", referencedColumnName="id")
 	 */
 	public $boss;
@@ -91,7 +91,7 @@ class StiBoss extends StiEmployee
 {
 
 	/**
-	 * @ORM\OneToMany(targetEntity="StiEmployee", mappedBy="boss")
+	 * @ORM\OneToMany(targetEntity=StiEmployee::class, mappedBy="boss")
 	 */
 	public $subordinates;
 
