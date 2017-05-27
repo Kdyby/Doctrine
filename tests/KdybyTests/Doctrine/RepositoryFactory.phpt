@@ -82,22 +82,6 @@ class RepositoryFactoryTest extends Tester\TestCase
 
 
 
-	public function testCustomRepository_withoutService()
-	{
-		$container = $this->createContainer('repository-factory.without-service');
-
-		/** @var \Kdyby\Doctrine\EntityManager $em */
-		$em = $container->getByType('Kdyby\Doctrine\EntityManager');
-
-		$cmsCommentRepository = $em->getRepository('KdybyTests\Doctrine\CmsComment');
-		Assert::type('KdybyTests\Doctrine\CmsCommentRepository', $cmsCommentRepository);
-		Assert::type('Kdyby\Doctrine\EntityRepository', $cmsCommentRepository);
-		Assert::same('KdybyTests\Doctrine\CmsComment', $cmsCommentRepository->getClassName());
-		Assert::same('KdybyTests\Doctrine\CmsComment', $cmsCommentRepository->getClassMetadata()->getName());
-	}
-
-
-
 	public function testManualRegistration()
 	{
 		$container = $this->createContainer('repository-factory.manual');
