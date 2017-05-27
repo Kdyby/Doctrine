@@ -83,4 +83,4 @@ class EntityRepositoryTest extends ORMTestCase
 
 }
 
-\run(new EntityRepositoryTest());
+(new EntityRepositoryTest())->run();

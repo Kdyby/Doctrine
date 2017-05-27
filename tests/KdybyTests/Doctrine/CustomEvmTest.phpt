@@ -58,4 +58,4 @@ class EventManagerExtension extends CompilerExtension
 	}
 }
 
-\run(new CustomEvmTest());
+(new CustomEvmTest())->run();

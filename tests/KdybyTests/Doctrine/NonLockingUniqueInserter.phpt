@@ -136,4 +136,4 @@ class NonLockingUniqueInserterTest extends KdybyTests\Doctrine\ORMTestCase
 
 }
 
-\run(new NonLockingUniqueInserterTest());
+(new NonLockingUniqueInserterTest())->run();

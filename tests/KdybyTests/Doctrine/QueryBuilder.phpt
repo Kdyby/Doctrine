@@ -286,4 +286,4 @@ class QueryBuilderTest extends KdybyTests\Doctrine\ORMTestCase
 
 }
 
-\run(new QueryBuilderTest());
+(new QueryBuilderTest())->run();

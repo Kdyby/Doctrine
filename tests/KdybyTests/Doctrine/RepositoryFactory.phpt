@@ -104,4 +104,4 @@ class RepositoryFactoryTest extends Tester\TestCase
 
 }
 
-\run(new RepositoryFactoryTest());
+(new RepositoryFactoryTest())->run();

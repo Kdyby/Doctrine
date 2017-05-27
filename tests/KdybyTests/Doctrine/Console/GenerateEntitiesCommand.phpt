@@ -63,4 +63,4 @@ class GenerateEntitiesCommandTest extends CommandTestCase
 
 }
 
-\run(new GenerateEntitiesCommandTest());
+(new GenerateEntitiesCommandTest())->run();

@@ -51,4 +51,4 @@ class AnnotationDriverTest extends Tester\TestCase
 
 }
 
-\run(new AnnotationDriverTest());
+(new AnnotationDriverTest())->run();

@@ -89,4 +89,4 @@ class SimpleParameterFormatterTest extends Tester\TestCase
 
 
 
-\run(new SimpleParameterFormatterTest());
+(new SimpleParameterFormatterTest())->run();

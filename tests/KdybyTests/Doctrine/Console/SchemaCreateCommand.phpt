@@ -54,4 +54,4 @@ class SchemaCreateCommandTest extends CommandTestCase
 
 }
 
-\run(new SchemaCreateCommandTest());
+(new SchemaCreateCommandTest())->run();

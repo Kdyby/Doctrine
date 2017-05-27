@@ -187,4 +187,4 @@ class MetadataEventSubscriberMock implements Doctrine\Common\EventSubscriber
 
 
 
-\run(new TargetEntityMapping());
+(new TargetEntityMapping())->run();

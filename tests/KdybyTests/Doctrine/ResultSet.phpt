@@ -166,4 +166,4 @@ class ResultSetTest extends KdybyTests\Doctrine\ORMTestCase
 
 
 
-\run(new ResultSetTest());
+(new ResultSetTest())->run();

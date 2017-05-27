@@ -58,4 +58,4 @@ class SchemaDropCommandTest extends CommandTestCase
 
 }
 
-\run(new SchemaDropCommandTest());
+(new SchemaDropCommandTest())->run();

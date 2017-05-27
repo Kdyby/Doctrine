@@ -229,4 +229,4 @@ class NewListener implements Kdyby\Events\Subscriber
 
 }
 
-\run(new EventsCompatibilityTest());
+(new EventsCompatibilityTest())->run();
