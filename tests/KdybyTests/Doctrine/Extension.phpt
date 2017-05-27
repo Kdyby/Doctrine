@@ -119,6 +119,23 @@ class ExtensionTest extends Tester\TestCase
 		}, $default->getMetadataFactory()->getAllMetadata());
 
 		Assert::contains('KdybyTests\\Doctrine\\CmsArticle', $entityClasses);
+		Assert::notContains('KdybyTests\Doctrine\Models2\Foo', $entityClasses);
+	}
+
+
+
+	public function testEntityMetadataMergingFromProvider()
+	{
+		$container = $this->createContainer('entity-provider-merging');
+
+		/** @var Kdyby\Doctrine\EntityManager $default */
+		$default = $container->getByType('Kdyby\Doctrine\EntityManager');
+		$entityClasses = array_map(function (ClassMetadata $class) {
+			return $class->getName();
+		}, $default->getMetadataFactory()->getAllMetadata());
+
+		Assert::contains('KdybyTests\Doctrine\CmsArticle', $entityClasses);
+		Assert::contains('KdybyTests\Doctrine\Models2\Foo', $entityClasses);
 	}
 
 
