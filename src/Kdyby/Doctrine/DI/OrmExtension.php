@@ -229,9 +229,11 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		$builder = $this->getContainerBuilder();
 		$config = $this->resolveConfig($defaults, $this->managerDefaults, $this->connectionDefaults);
 
-		if ($isDefault = !isset($builder->parameters[$this->name]['orm']['defaultEntityManager'])) {
+		if (!isset($builder->parameters[$this->name]['orm']['defaultEntityManager'])) {
 			$builder->parameters[$this->name]['orm']['defaultEntityManager'] = $name;
 		}
+
+		$isDefault = $name === $builder->parameters[$this->name]['orm']['defaultEntityManager'];
 
 		$metadataDriver = $builder->addDefinition($this->prefix($name . '.metadataDriver'))
 			->setClass('Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain')
@@ -363,7 +365,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		$entityManager = $builder->addDefinition($managerServiceId = $this->prefix($name . '.entityManager'))
 			->setClass('Kdyby\Doctrine\EntityManager')
 			->setFactory('Kdyby\Doctrine\EntityManager::create', [
-				$connectionService = $this->processConnection($name, $defaults, $isDefault),
+				$connectionService = $this->processConnection($name, $defaults),
 				$this->prefix('@' . $name . '.ormConfiguration'),
 				$this->prefix('@' . $name . '.evm'),
 			])
@@ -479,14 +481,16 @@ class OrmExtension extends Nette\DI\CompilerExtension
 
 
 
-	protected function processConnection($name, array $defaults, $isDefault = FALSE)
+	protected function processConnection($name, array $defaults)
 	{
 		$builder = $this->getContainerBuilder();
 		$config = $this->resolveConfig($defaults, $this->connectionDefaults, $this->managerDefaults);
 
-		if ($isDefault) {
+		if (!isset($builder->parameters[$this->name]['dbal']['defaultConnection'])) {
 			$builder->parameters[$this->name]['dbal']['defaultConnection'] = $name;
 		}
+
+		$isDefault = $name === $builder->parameters[$this->name]['dbal']['defaultConnection'];
 
 		if (isset($defaults['connection'])) {
 			return $this->prefix('@' . $defaults['connection'] . '.connection');
