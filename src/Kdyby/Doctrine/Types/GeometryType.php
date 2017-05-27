@@ -84,7 +84,7 @@ abstract class GeometryType extends Kdyby\Doctrine\DbalType
 
 
 	/**
-	 * @param string $value
+	 * @param string|NULL $value
 	 * @param \Doctrine\DBAL\Platforms\AbstractPlatform $platform
 	 * @return mixed|Kdyby\Doctrine\Geo\Element
 	 */

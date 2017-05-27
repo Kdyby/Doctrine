@@ -77,7 +77,7 @@ trait MagicAccessors
 	 */
 	public static function getReflection()
 	{
-		$class = class_exists(Nette\Reflection\ClassType::Class) ? Nette\Reflection\ClassType::class : \ReflectionClass::class;
+		$class = class_exists(Nette\Reflection\ClassType::class) ? Nette\Reflection\ClassType::class : \ReflectionClass::class;
 		return new $class(get_called_class());
 	}
 
@@ -261,7 +261,8 @@ trait MagicAccessors
 	 */
 	public static function __callStatic($name, $args)
 	{
-		return ObjectMixin::callStatic(get_called_class(), $name, $args);
+		ObjectMixin::callStatic(get_called_class(), $name, $args);
+		return NULL;
 	}
 
 

@@ -78,7 +78,7 @@ class EntityDao extends EntityRepository implements Persistence\ObjectDao
 	 * @param object|array|\Traversable $entity
 	 * @param object|array|\Traversable $relations
 	 * @throws InvalidArgumentException
-	 * @return array
+	 * @return object|array
 	 */
 	public function save($entity = NULL, $relations = NULL)
 	{
@@ -193,7 +193,7 @@ class EntityDao extends EntityRepository implements Persistence\ObjectDao
 			return $return ? : TRUE;
 
 		} catch (\Exception $e) {
-			$connection->rollback();
+			$connection->rollBack();
 			throw $e;
 		}
 	}
@@ -201,12 +201,12 @@ class EntityDao extends EntityRepository implements Persistence\ObjectDao
 
 
 	/**
-	 * @param array|string|\Traversable $args
+	 * @param array|string|\Traversable|NULL $args
 	 * @return array|\Traversable
 	 */
 	private static function iterableArgs($args)
 	{
-		if (empty($args)) {
+		if ($args === NULL) {
 			return [];
 		}
 

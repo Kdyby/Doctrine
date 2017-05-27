@@ -20,12 +20,12 @@ use Nette;
 /**
  * @author Filip Procházka <filip@prochazka.su>
  *
- * @method QueryBuilder select($select = null)
- * @method QueryBuilder addSelect($select = null)
- * @method QueryBuilder from($from, $alias, $indexBy = null)
- * @method QueryBuilder setMaxResults($maxResults)
- * @method QueryBuilder setFirstResult($maxResults)
- * @method QueryBuilder resetDQLPart($parts = null)
+ * @method \Kdyby\Doctrine\QueryBuilder select(array|string $select = null)
+ * @method \Kdyby\Doctrine\QueryBuilder addSelect(array|string $select = null)
+ * @method \Kdyby\Doctrine\QueryBuilder from($from, $alias, $indexBy = null)
+ * @method \Kdyby\Doctrine\QueryBuilder setMaxResults(int|NULL $maxResults)
+ * @method \Kdyby\Doctrine\QueryBuilder setFirstResult(int|NULL $maxResults)
+ * @method \Kdyby\Doctrine\QueryBuilder resetDQLPart(string $part)
  */
 class QueryBuilder extends Doctrine\ORM\QueryBuilder implements \IteratorAggregate
 {
@@ -89,7 +89,7 @@ class QueryBuilder extends Doctrine\ORM\QueryBuilder implements \IteratorAggrega
 
 	/**
 	 * @internal
-	 * @param string $sort
+	 * @param string|array $sort
 	 * @param string $order
 	 * @return Doctrine\ORM\QueryBuilder
 	 */

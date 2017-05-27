@@ -147,8 +147,8 @@ abstract class QueryObject extends Nette\Object implements Kdyby\Persistence\Que
 			->setFirstResult(NULL)
 			->setMaxResults(NULL);
 
-		$paginatedQuery = new Paginator($query, $resultSet ? $resultSet->getFetchJoinCollection() : TRUE);
-		$paginatedQuery->setUseOutputWalkers($resultSet ? $resultSet->getUseOutputWalkers() : NULL);
+		$paginatedQuery = new Paginator($query, ($resultSet !== NULL) ? $resultSet->getFetchJoinCollection() : TRUE);
+		$paginatedQuery->setUseOutputWalkers(($resultSet !== NULL) ? $resultSet->getUseOutputWalkers() : NULL);
 
 		return $paginatedQuery->count();
 	}

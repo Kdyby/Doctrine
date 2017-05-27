@@ -13,9 +13,6 @@ namespace KdybyTests\Doctrine;
 use Doctrine;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Kdyby;
-use KdybyTests\DoctrineMocks\EntityManagerMock;
-use Nette;
-use Tester;
 use Tester\Assert;
 
 require_once __DIR__ . '/../bootstrap.php';
@@ -175,46 +172,6 @@ class EventsCompatibilityTest extends ORMTestCase
 
 		Assert::same([[$args]], $old->calls);
 		Assert::same([[$args]], $new->calls);
-	}
-
-}
-
-
-class OldListener implements Kdyby\Events\Subscriber
-{
-
-	public $calls = [];
-
-	public function getSubscribedEvents()
-	{
-		return ['onFlush'];
-	}
-
-
-
-	public function onFlush()
-	{
-		$this->calls[] = func_get_args();
-	}
-
-}
-
-
-class NewListener implements Kdyby\Events\Subscriber
-{
-
-	public $calls = [];
-
-	public function getSubscribedEvents()
-	{
-		return [Kdyby\Doctrine\Events::onFlush];
-	}
-
-
-
-	public function onFlush()
-	{
-		$this->calls[] = func_get_args();
 	}
 
 }

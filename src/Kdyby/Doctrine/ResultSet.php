@@ -49,22 +49,22 @@ class ResultSet implements \Countable, \IteratorAggregate
 	use \Kdyby\StrictObjects\Scream;
 
 	/**
-	 * @var int
+	 * @var int|NULL
 	 */
 	private $totalCount;
 
 	/**
-	 * @var \Doctrine\ORM\Query
+	 * @var \Doctrine\ORM\AbstractQuery|\Doctrine\ORM\Query|\Doctrine\ORM\NativeQuery
 	 */
 	private $query;
 
 	/**
-	 * @var QueryObject
+	 * @var \Kdyby\Doctrine\QueryObject|NULL
 	 */
 	private $queryObject;
 
 	/**
-	 * @var \Kdyby\Persistence\Queryable
+	 * @var \Kdyby\Persistence\Queryable|NULL
 	 */
 	private $repository;
 
@@ -74,12 +74,12 @@ class ResultSet implements \Countable, \IteratorAggregate
 	private $fetchJoinCollection = TRUE;
 
 	/**
-	 * @var bool|null
+	 * @var bool|NULL
 	 */
 	private $useOutputWalkers;
 
 	/**
-	 * @var \Iterator
+	 * @var \ArrayIterator|NULL
 	 */
 	private $iterator;
 
@@ -91,8 +91,8 @@ class ResultSet implements \Countable, \IteratorAggregate
 
 
 	/**
-	 * @param \Doctrine\ORM\AbstractQuery $query
-	 * @param QueryObject $queryObject
+	 * @param ORM\AbstractQuery $query
+	 * @param \Kdyby\Doctrine\QueryObject $queryObject
 	 * @param \Kdyby\Persistence\Queryable $repository
 	 */
 	public function __construct(ORM\AbstractQuery $query, QueryObject $queryObject = NULL, Queryable $repository = NULL)
@@ -117,7 +117,7 @@ class ResultSet implements \Countable, \IteratorAggregate
 	{
 		$this->updating();
 
-		$this->fetchJoinCollection = (bool) $fetchJoinCollection;
+		$this->fetchJoinCollection = !is_bool($fetchJoinCollection) ? (bool) $fetchJoinCollection : $fetchJoinCollection;
 		$this->iterator = NULL;
 
 		return $this;
@@ -224,8 +224,8 @@ class ResultSet implements \Countable, \IteratorAggregate
 
 
 	/**
-	 * @param int $offset
-	 * @param int $limit
+	 * @param int|NULL $offset
+	 * @param int|NULL $limit
 	 *
 	 * @throws InvalidStateException
 	 * @return ResultSet
@@ -281,25 +281,26 @@ class ResultSet implements \Countable, \IteratorAggregate
 	 */
 	public function getTotalCount()
 	{
-		if ($this->totalCount === NULL) {
-			try {
-				$this->frozen = TRUE;
-
-				$paginatedQuery = $this->createPaginatedQuery($this->query);
-
-				if ($this->queryObject !== NULL && $this->repository !== NULL) {
-					$this->totalCount = $this->queryObject->count($this->repository, $this, $paginatedQuery);
-
-				} else {
-					$this->totalCount = $paginatedQuery->count();
-				}
-
-			} catch (ORMException $e) {
-				throw new QueryException($e, $this->query, $e->getMessage());
-			}
+		if ($this->totalCount !== NULL) {
+			return $this->totalCount;
 		}
 
-		return $this->totalCount;
+		try {
+			$paginatedQuery = $this->createPaginatedQuery($this->query);
+
+			if ($this->queryObject !== NULL && $this->repository !== NULL) {
+				$totalCount = $this->queryObject->count($this->repository, $this, $paginatedQuery);
+
+			} else {
+				$totalCount = $paginatedQuery->count();
+			}
+
+			$this->frozen = TRUE;
+			return $this->totalCount = $totalCount;
+
+		} catch (ORMException $e) {
+			throw new QueryException($e, $this->query, $e->getMessage());
+		}
 	}
 
 
@@ -318,20 +319,19 @@ class ResultSet implements \Countable, \IteratorAggregate
 		$this->query->setHydrationMode($hydrationMode);
 
 		try {
-			$this->frozen = TRUE;
-
 			if ($this->fetchJoinCollection && ($this->query->getMaxResults() > 0 || $this->query->getFirstResult() > 0)) {
-				$this->iterator = $this->createPaginatedQuery($this->query)->getIterator();
+				$iterator = $this->createPaginatedQuery($this->query)->getIterator();
 
 			} else {
-				$this->iterator = new \ArrayIterator($this->query->getResult(NULL));
+				$iterator = new \ArrayIterator($this->query->getResult(NULL));
 			}
 
 			if ($this->queryObject !== NULL && $this->repository !== NULL) {
-				$this->queryObject->postFetch($this->repository, $this->iterator);
+				$this->queryObject->postFetch($this->repository, $iterator);
 			}
 
-			return $this->iterator;
+			$this->frozen = TRUE;
+			return $this->iterator = $iterator;
 
 		} catch (ORMException $e) {
 			throw new QueryException($e, $this->query, $e->getMessage());
@@ -362,11 +362,15 @@ class ResultSet implements \Countable, \IteratorAggregate
 
 
 	/**
-	 * @param ORM\Query $query
-	 * @return ResultPaginator
+	 * @param \Doctrine\ORM\AbstractQuery|\Doctrine\ORM\Query|\Doctrine\ORM\NativeQuery $query
+	 * @return \Doctrine\ORM\Tools\Pagination\Paginator
 	 */
-	private function createPaginatedQuery(ORM\Query $query)
+	private function createPaginatedQuery(ORM\AbstractQuery $query)
 	{
+		if (!$query instanceof ORM\Query) {
+			throw new InvalidArgumentException(sprintf('QueryObject pagination only works with %s', \Doctrine\ORM\Query::class));
+		}
+
 		$paginated = new ResultPaginator($query, $this->fetchJoinCollection);
 		$paginated->setUseOutputWalkers($this->useOutputWalkers);
 

@@ -33,14 +33,14 @@ abstract class IdentifiedEntity extends BaseEntity
 	 * @ORM\Id
 	 * @ORM\Column(type="integer")
 	 * @ORM\GeneratedValue
-	 * @var integer
+	 * @var integer|NULL
 	 */
 	private $id;
 
 
 
 	/**
-	 * @return integer
+	 * @return integer|NULL
 	 */
 	public function getId()
 	{

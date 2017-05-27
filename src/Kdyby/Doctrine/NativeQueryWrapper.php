@@ -44,11 +44,9 @@ final class NativeQueryWrapper extends AbstractQuery
 
 
 
-	/**
-	 * @param NativeQuery|AbstractQuery $nativeQuery
-	 */
 	public function __construct(NativeQuery $nativeQuery)
 	{
+		parent::__construct($nativeQuery->getEntityManager());
 		$this->nativeQuery = $nativeQuery;
 	}
 

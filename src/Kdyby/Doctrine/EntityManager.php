@@ -86,7 +86,8 @@ class EntityManager extends Doctrine\ORM\EntityManager implements Persistence\Qu
 			throw new NotSupportedException('Use EntityRepository for $alias and $indexBy arguments to work.');
 		}
 
-		if (($config = $this->getConfiguration()) instanceof Configuration) {
+		$config = $this->getConfiguration();
+		if ($config instanceof Configuration) {
 			$class = $config->getQueryBuilderClassName();
 			return new $class($this);
 		}
@@ -107,8 +108,7 @@ class EntityManager extends Doctrine\ORM\EntityManager implements Persistence\Qu
 
 
 	/**
-	 * {@inheritdoc}
-	 * @param string|array $entity
+	 * @param string|array|null $entityName if given, only entities of this type will get detached
 	 * @return EntityManager
 	 */
 	public function clear($entityName = null)
@@ -123,7 +123,6 @@ class EntityManager extends Doctrine\ORM\EntityManager implements Persistence\Qu
 
 
 	/**
-	 * {@inheritdoc}
 	 * @param object|array $entity
 	 * @return EntityManager
 	 */
@@ -139,7 +138,6 @@ class EntityManager extends Doctrine\ORM\EntityManager implements Persistence\Qu
 
 
 	/**
-	 * {@inheritdoc}
 	 * @param object|array $entity
 	 * @return EntityManager
 	 */
@@ -155,8 +153,7 @@ class EntityManager extends Doctrine\ORM\EntityManager implements Persistence\Qu
 
 
 	/**
-	 * {@inheritdoc}
-	 * @param object|array $entity
+	 * @param object|array|NULL $entity
 	 * @return EntityManager
 	 */
 	public function flush($entity = null)
@@ -215,11 +212,13 @@ class EntityManager extends Doctrine\ORM\EntityManager implements Persistence\Qu
 	 * @deprecated Use the EntityManager::getRepository(), this is a useless alias.
 	 *
 	 * @param string $entityName
-	 * @return EntityDao
+	 * @return \Kdyby\Doctrine\EntityDao
 	 */
 	public function getDao($entityName)
 	{
-		return $this->getRepository($entityName);
+		/** @var \Kdyby\Doctrine\EntityDao $entityDao */
+		$entityDao = $this->getRepository($entityName);
+		return $entityDao;
 	}
 
 

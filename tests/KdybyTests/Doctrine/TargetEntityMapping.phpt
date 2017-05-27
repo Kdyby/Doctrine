@@ -10,12 +10,10 @@
 
 namespace KdybyTests\Doctrine;
 
-use Doctrine;
 use Doctrine\Common\Cache\FilesystemCache;
 use Kdyby;
-use KdybyTests;
 use Kdyby\Doctrine\Events;
-use Nette;
+use KdybyTests;
 use Tester;
 use Tester\Assert;
 
@@ -148,41 +146,5 @@ class TargetEntityMapping extends KdybyTests\Doctrine\ORMTestCase
 	}
 
 }
-
-
-
-class MetadataEventSubscriberMock implements Doctrine\Common\EventSubscriber
-{
-
-	/**
-	 * @var \Doctrine\ORM\Event\LoadClassMetadataEventArgs[]
-	 */
-	public $loadClassMetadataCalled = [];
-
-	/**
-	 * @var \Doctrine\ORM\Event\OnClassMetadataNotFoundEventArgs[]
-	 */
-	public $onClassMetadataNotFoundCalled = [];
-
-	public function getSubscribedEvents()
-	{
-		return [
-			Events::loadClassMetadata,
-			Events::onClassMetadataNotFound,
-		];
-	}
-
-	public function loadClassMetadata(Doctrine\ORM\Event\LoadClassMetadataEventArgs $args)
-	{
-		$this->loadClassMetadataCalled[] = $args;
-	}
-
-	public function onClassMetadataNotFound(Doctrine\ORM\Event\OnClassMetadataNotFoundEventArgs $args)
-	{
-		$this->onClassMetadataNotFoundCalled[] = $args;
-	}
-}
-
-
 
 (new TargetEntityMapping())->run();

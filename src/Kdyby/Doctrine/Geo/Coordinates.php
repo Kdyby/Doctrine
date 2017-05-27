@@ -46,8 +46,8 @@ class Coordinates
 
 
 	/**
-	 * @param float $lon
-	 * @param float $lat
+	 * @param float|string $lon
+	 * @param float|string $lat
 	 */
 	public function __construct($lon, $lat)
 	{

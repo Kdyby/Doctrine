@@ -65,14 +65,14 @@ class DqlSelection implements \IteratorAggregate
 	private $dql;
 
 	/**
-	 * @var integer The index of the first result to retrieve.
+	 * @var integer|NULL The index of the first result to retrieve.
 	 */
-	private $firstResult = NULL;
+	private $firstResult;
 
 	/**
-	 * @var integer The maximum number of results to retrieve.
+	 * @var integer|NULL The maximum number of results to retrieve.
 	 */
-	private $maxResults = NULL;
+	private $maxResults;
 
 
 
@@ -295,8 +295,8 @@ class DqlSelection implements \IteratorAggregate
 
 
 	/**
-	 * @param int $limit
-	 * @param int $offset
+	 * @param int|NULL $limit
+	 * @param int|NULL $offset
 	 * @return \Kdyby\Doctrine\DqlSelection
 	 */
 	public function limit($limit, $offset = NULL)

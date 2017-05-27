@@ -47,7 +47,7 @@ class AnnotationDriver extends Doctrine\ORM\Mapping\Driver\AnnotationDriver
 	private $loaders = [];
 
 	/**
-	 * @var CacheProvider
+	 * @var CacheProvider|NULL
 	 */
 	private $cache;
 
@@ -94,7 +94,7 @@ class AnnotationDriver extends Doctrine\ORM\Mapping\Driver\AnnotationDriver
 	 */
 	protected function findAllClasses($path)
 	{
-		$loader = new RobotLoader($this->cache ? new ReversedStorageDecorator($this->cache) : new MemoryStorage());
+		$loader = new RobotLoader($this->cache !== NULL ? new ReversedStorageDecorator($this->cache) : new MemoryStorage());
 
 		$exts = isset($this->fileExtensions[$path]) ? $this->fileExtensions[$path] : [$this->fileExtension];
 		$loader->acceptFiles = array_map(function ($ext) { return '*' . $ext; }, $exts);

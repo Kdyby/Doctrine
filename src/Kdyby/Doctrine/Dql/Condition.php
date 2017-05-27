@@ -111,8 +111,8 @@ class Condition
 
 
 	/**
-	 * @param $cond
-	 * @param array $params
+	 * @param string $cond
+	 * @param array|NULL $params
 	 */
 	protected function where($cond, $params = [])
 	{

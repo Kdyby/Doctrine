@@ -36,8 +36,10 @@ final class CommandHelper
 		/** @var \Kdyby\Doctrine\EntityManager $em */
 		$em = $containerHelper->getByType(\Kdyby\Doctrine\Registry::class)->getManager($emName);
 		$helperSet = $containerHelper->getHelperSet();
-		$helperSet->set(new ConnectionHelper($em->getConnection()), 'db');
-		$helperSet->set(new EntityManagerHelper($em), 'em');
+		if ($helperSet !== NULL) {
+			$helperSet->set(new ConnectionHelper($em->getConnection()), 'db');
+			$helperSet->set(new EntityManagerHelper($em), 'em');
+		}
 	}
 
 	public static function setApplicationConnection(ContainerHelper $containerHelper, $connName)
@@ -45,7 +47,9 @@ final class CommandHelper
 		/** @var \Kdyby\Doctrine\EntityManager $db */
 		$connection = $containerHelper->getByType(\Kdyby\Doctrine\Registry::class)->getConnection($connName);
 		$helperSet = $containerHelper->getHelperSet();
-		$helperSet->set(new ConnectionHelper($connection), 'db');
+		if ($helperSet !== NULL) {
+			$helperSet->set(new ConnectionHelper($connection), 'db');
+		}
 	}
 
 }

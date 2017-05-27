@@ -353,9 +353,7 @@ class Connection extends Doctrine\DBAL\Connection
 	 * @param array $params
 	 * @param \Doctrine\DBAL\Configuration $config
 	 * @param \Doctrine\Common\EventManager $eventManager
-	 * @param array $dbalTypes
-	 * @param array $schemaTypes
-	 * @return Connection
+	 * @return \Kdyby\Doctrine\Connection
 	 */
 	public static function create(array $params, Doctrine\DBAL\Configuration $config, EventManager $eventManager)
 	{
@@ -363,7 +361,9 @@ class Connection extends Doctrine\DBAL\Connection
 			$params['wrapperClass'] = get_called_class();
 		}
 
-		return Doctrine\DBAL\DriverManager::getConnection($params, $config, $eventManager);
+		/** @var \Kdyby\Doctrine\Connection $connection */
+		$connection = Doctrine\DBAL\DriverManager::getConnection($params, $config, $eventManager);
+		return $connection;
 	}
 
 
@@ -374,7 +374,7 @@ class Connection extends Doctrine\DBAL\Connection
 	 * @param \Exception|\Throwable $e
 	 * @param string $query
 	 * @param array $params
-	 * @return DBALException
+	 * @return \Kdyby\Doctrine\DBALException|\Exception|\Throwable
 	 */
 	public function resolveException($e, $query = NULL, $params = [])
 	{
@@ -397,12 +397,14 @@ class Connection extends Doctrine\DBAL\Connection
 				$columns = [];
 
 				try {
-					if (preg_match('~Duplicate entry .*? for key \'([^\']+)\'~', $info[2], $m)
-						&& ($table = self::resolveExceptionTable($e))
-						&& ($indexes = $this->getSchemaManager()->listTableIndexes($table))
-						&& isset($indexes[$m[1]])
-					) {
-						$columns[$m[1]] = $indexes[$m[1]]->getColumns();
+					if (preg_match('~Duplicate entry .*? for key \'([^\']+)\'~', $info[2], $m)) {
+						$table = self::resolveExceptionTable($e);
+						if ($table !== NULL) {
+							$indexes = $this->getSchemaManager()->listTableIndexes($table);
+							if (array_key_exists($m[1], $indexes)) {
+								$columns[$m[1]] = $indexes[$m[1]]->getColumns();
+							}
+						}
 					}
 
 				} catch (\Exception $e) { }

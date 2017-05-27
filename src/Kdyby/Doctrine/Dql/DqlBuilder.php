@@ -113,7 +113,8 @@ class DqlBuilder
 		$set = [];
 		foreach ($this->set as $alias => $values) {
 			foreach ($values as $column => $value) {
-				$this->parameters[$param = $alias . '_' . $column] = $value;
+				$param = $alias . '_' . $column;
+				$this->parameters[$param] = $value;
 				$set[] = new Expr\Comparison($alias . '.' . $column, Expr\Comparison::EQ, ':' . $param);
 			}
 		}

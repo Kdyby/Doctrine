@@ -246,7 +246,7 @@ class DBALException extends \RuntimeException implements Exception
 {
 
 	/**
-	 * @var string
+	 * @var string|NULL
 	 */
 	public $query;
 
@@ -256,18 +256,18 @@ class DBALException extends \RuntimeException implements Exception
 	public $params = [];
 
 	/**
-	 * @var \Doctrine\DBAL\Connection
+	 * @var \Doctrine\DBAL\Connection|NULL
 	 */
 	public $connection;
 
 
 
 	/**
-	 * @param \Exception $previous
-	 * @param string $query
+	 * @param \Exception|\Throwable $previous
+	 * @param string|NULL $query
 	 * @param array $params
-	 * @param \Doctrine\DBAL\Connection $connection
-	 * @param string $message
+	 * @param \Doctrine\DBAL\Connection|NULL $connection
+	 * @param string|NULL $message
 	 */
 	public function __construct($previous, $query = NULL, $params = [], Doctrine\DBAL\Connection $connection = NULL, $message = NULL)
 	{
@@ -308,7 +308,7 @@ class DuplicateEntryException extends DBALException
 
 
 	/**
-	 * @param \Exception $previous
+	 * @param \Exception|\Throwable $previous
 	 * @param array $columns
 	 * @param string $query
 	 * @param array $params
@@ -342,15 +342,15 @@ class EmptyValueException extends DBALException
 {
 
 	/**
-	 * @var string
+	 * @var string|NULL
 	 */
 	public $column;
 
 
 
 	/**
-	 * @param \Exception $previous
-	 * @param string $column
+	 * @param \Exception|\Throwable $previous
+	 * @param string|NULL $column
 	 * @param string $query
 	 * @param array $params
 	 * @param \Doctrine\DBAL\Connection $connection
@@ -382,18 +382,18 @@ class QueryException extends \RuntimeException implements Exception
 {
 
 	/**
-	 * @var \Doctrine\ORM\Query
+	 * @var \Doctrine\ORM\AbstractQuery|NULL
 	 */
 	public $query;
 
 
 
 	/**
-	 * @param \Exception $previous
-	 * @param \Doctrine\ORM\AbstractQuery $query
-	 * @param string $message
+	 * @param \Exception|\Throwable $previous
+	 * @param \Doctrine\ORM\AbstractQuery|NULL $query
+	 * @param string|NULL $message
 	 */
-	public function __construct($previous, Doctrine\ORM\AbstractQuery $query = NULL, $message = "")
+	public function __construct($previous, Doctrine\ORM\AbstractQuery $query = NULL, $message = NULL)
 	{
 		parent::__construct($message ?: $previous->getMessage(), 0, $previous);
 		$this->query = $query;

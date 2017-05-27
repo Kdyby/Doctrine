@@ -27,7 +27,7 @@ abstract class ORMTestCase extends Tester\TestCase
 {
 
 	/**
-	 * @var \Nette\DI\Container|\SystemContainer
+	 * @var \Nette\DI\Container
 	 */
 	protected $serviceLocator;
 

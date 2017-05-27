@@ -306,7 +306,7 @@ class Panel implements IBarPanel, Doctrine\DBAL\Logging\SQLLogger
 
 	/**
 	 * @param \Exception|\Throwable $e
-	 * @return void|array
+	 * @return array|NULL
 	 */
 	public function renderQueryException($e)
 	{
@@ -357,7 +357,7 @@ class Panel implements IBarPanel, Doctrine\DBAL\Logging\SQLLogger
 	/**
 	 * @param \Exception|\Throwable $e
 	 * @param \Nette\DI\Container $dic
-	 * @return array
+	 * @return array|NULL
 	 */
 	public static function renderException($e, Nette\DI\Container $dic)
 	{
@@ -408,7 +408,7 @@ class Panel implements IBarPanel, Doctrine\DBAL\Logging\SQLLogger
 				];
 			}
 
-		} elseif ($e instanceof Kdyby\Doctrine\DBALException && $e->query) {
+		} elseif ($e instanceof Kdyby\Doctrine\DBALException && $e->query !== NULL) {
 			return [
 				'tab' => 'SQL',
 				'panel' => self::highlightQuery(static::formatQuery($e->query, $e->params, [])),
@@ -467,8 +467,7 @@ class Panel implements IBarPanel, Doctrine\DBAL\Logging\SQLLogger
 	 * @param array|Doctrine\Common\Collections\ArrayCollection $params
 	 * @param array $types
 	 * @param string $source
-	 *
-	 * @return array
+	 * @return string
 	 */
 	protected function dumpQuery($query, $params, array $types = [], $source = NULL)
 	{
@@ -560,7 +559,7 @@ class Panel implements IBarPanel, Doctrine\DBAL\Logging\SQLLogger
 	 */
 	public static function formatQuery($query, $params, array $types = [], AbstractPlatform $platform = NULL)
 	{
-		if (!$platform) {
+		if ($platform === NULL) {
 			$platform = new Doctrine\DBAL\Platforms\MySqlPlatform();
 		}
 
@@ -660,7 +659,8 @@ class Panel implements IBarPanel, Doctrine\DBAL\Logging\SQLLogger
 			$refl = $refl->getProperty($context['method']);
 		}
 
-		if (($errorLine = self::calculateErrorLine($refl, $e, $line)) === NULL) {
+		$errorLine = self::calculateErrorLine($refl, $e, $line);
+		if ($errorLine === NULL) {
 			return FALSE;
 		}
 
@@ -675,7 +675,7 @@ class Panel implements IBarPanel, Doctrine\DBAL\Logging\SQLLogger
 	 * @param \Reflector|\Nette\Reflection\ClassType|\Nette\Reflection\Method|\Nette\Reflection\Property $refl
 	 * @param \Exception|\Throwable $e
 	 * @param int|NULL $startLine
-	 * @return int|string|NULL
+	 * @return int|NULL
 	 */
 	public static function calculateErrorLine(\Reflector $refl, $e, $startLine = NULL)
 	{
@@ -712,12 +712,13 @@ class Panel implements IBarPanel, Doctrine\DBAL\Logging\SQLLogger
 	/**
 	 * @param \Reflector|\Nette\Reflection\ClassType|\Nette\Reflection\Method $refl
 	 * @param int $symbolPos
-	 *
 	 * @return int
 	 */
 	protected static function calculateAffectedLine(\Reflector $refl, $symbolPos)
 	{
 		$doc = $refl->getDocComment();
+		/** @var int|NULL $atPos */
+		$atPos = NULL;
 		$cleanedDoc = self::cleanedPhpDoc($refl, $atPos);
 		$beforeCleanLines = count(Strings::split(substr($doc, 0, $atPos), '~[\n\r]+~'));
 		$parsedDoc = substr($cleanedDoc, 0, $symbolPos + 1);
@@ -760,8 +761,7 @@ class Panel implements IBarPanel, Doctrine\DBAL\Logging\SQLLogger
 
 	/**
 	 * @param \Nette\Reflection\ClassType|\Nette\Reflection\Method|\Reflector $refl
-	 * @param null $atPos
-	 *
+	 * @param int|null $atPos
 	 * @return string
 	 */
 	private static function cleanedPhpDoc(\Reflector $refl, &$atPos = NULL)
@@ -775,7 +775,7 @@ class Panel implements IBarPanel, Doctrine\DBAL\Logging\SQLLogger
 	 * Returns link to editor.
 	 * @author David Grudl
 	 * @param string $file
-	 * @param string $line
+	 * @param string|int $line
 	 * @param string $text
 	 * @return Nette\Utils\Html
 	 */
@@ -784,11 +784,11 @@ class Panel implements IBarPanel, Doctrine\DBAL\Logging\SQLLogger
 		if (Debugger::$editor && is_file($file) && $text !== NULL) {
 			return Nette\Utils\Html::el('a')
 				->href(strtr(Debugger::$editor, ['%file' => rawurlencode($file), '%line' => $line]))
-				->title("$file:$line")
+				->setAttribute('title', "$file:$line")
 				->setHtml($text);
 
 		} else {
-			return Helpers::editorLink($file, $line);
+			return Nette\Utils\Html::el()->setHtml(Helpers::editorLink($file, $line));
 		}
 	}
 

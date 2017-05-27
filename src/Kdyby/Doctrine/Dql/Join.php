@@ -46,6 +46,16 @@ class Join extends Expr\Join
 	 */
 	private $builder;
 
+	/**
+	 * @var string|NULL|\Kdyby\Doctrine\Dql\Condition
+	 */
+	protected $condition;
+
+	/**
+	 * @var string|NULL
+	 */
+	protected $conditionType;
+
 
 
 	/**
@@ -73,11 +83,11 @@ class Join extends Expr\Join
 		}
 
 		if (method_exists(\Kdyby\Doctrine\Dql\Condition::class, $method = 'add' . ucfirst($name))) {
-			if (empty($this->condition)) {
+			if ($this->condition === NULL) {
 				$this->condition = new Condition();
 			}
 
-			if (empty($this->conditionType)) {
+			if ($this->conditionType === NULL) {
 				$this->conditionType = self::ON;
 			}
 
