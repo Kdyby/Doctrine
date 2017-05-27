@@ -10,6 +10,7 @@
 
 namespace Kdyby\Doctrine;
 
+use ArrayIterator;
 use Doctrine;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\Tools\Pagination\Paginator;
@@ -188,7 +189,17 @@ abstract class QueryObject extends Nette\Object implements Kdyby\Persistence\Que
 			->setFirstResult(NULL)
 			->setMaxResults(1);
 
-		return $query->getSingleResult();
+		// getResult has to be called to have consistent result for the postFetch
+		// this is the only way to main the INDEX BY value
+		$singleResult = $query->getResult();
+
+		if (!$singleResult) {
+			throw new Doctrine\ORM\NoResultException(); // simulate getSingleResult()
+		}
+
+		$this->postFetch($repository, new ArrayIterator($singleResult));
+
+		return array_shift($singleResult);
 	}
 
 
