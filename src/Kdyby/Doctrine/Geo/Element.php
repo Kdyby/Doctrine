@@ -19,8 +19,10 @@ use Nette\Utils\Strings;
 /**
  * @author Filip Procházka <filip@prochazka.su>
  */
-class Element extends Nette\Object
+class Element
 {
+
+	use \Kdyby\StrictObjects\Scream;
 
 	const POINT = 'POINT';
 	const LINE_STRING = 'LINESTRING';

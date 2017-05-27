@@ -21,8 +21,10 @@ use Nette;
 /**
  * @author Filip Procházka <filip@prochazka.su>
  */
-class CacheCleaner extends Nette\Object
+class CacheCleaner
 {
+
+	use \Kdyby\StrictObjects\Scream;
 
 	/**
 	 * @var \Doctrine\ORM\EntityManager

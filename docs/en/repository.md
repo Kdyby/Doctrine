@@ -11,7 +11,7 @@ that you'll be adding more and more functionality to the class and eventually en
 You probably don't wanna write such a monster, so do yourself a favour and instead of extending the `EntityRepository` wrap it in a new class.
 
 ```php
-class MyArticlesCustomLogic extends Nette\Object
+class MyArticlesCustomLogic
 {
 	private $em;
 	private $articles;

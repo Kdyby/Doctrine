@@ -27,6 +27,8 @@ use Nette\Utils\Callback;
 class LazyCollection implements Collection, Selectable
 {
 
+	use \Kdyby\StrictObjects\Scream;
+
 	/**
 	 * @var ArrayCollection
 	 */

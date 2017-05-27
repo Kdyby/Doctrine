@@ -21,8 +21,10 @@ use Nette;
 /**
  * @author Filip Procházka <filip@prochazka.su>
  */
-class DqlBuilder extends Nette\Object
+class DqlBuilder
 {
+
+	use \Kdyby\StrictObjects\Scream;
 
 	/**
 	 * @var array

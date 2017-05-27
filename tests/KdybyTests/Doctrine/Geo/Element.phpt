@@ -42,7 +42,7 @@ class ElementTest extends Tester\TestCase
 	{
 		$element = Element::fromString(self::TEST_VALUE);
 		/** @var \ReflectionProperty $property */
-		$property = $element->getReflection()->getProperty("stringValue");
+		$property = new \ReflectionProperty($element, 'stringValue');
 		$property->setAccessible(TRUE);
 
 		Assert::type("string", $property->getValue($element));
@@ -57,7 +57,7 @@ class ElementTest extends Tester\TestCase
 	{
 		$element = Element::fromString(self::TEST_VALUE);
 		/** @var \ReflectionProperty $property */
-		$property = $element->getReflection()->getProperty("stringValue");
+		$property = new \ReflectionProperty($element, 'stringValue');
 		$property->setAccessible(TRUE);
 
 		$element->getName();
@@ -75,7 +75,7 @@ class ElementTest extends Tester\TestCase
 	{
 		$element = Element::fromString(self::TEST_VALUE);
 		/** @var \ReflectionProperty $property */
-		$property = $element->getReflection()->getProperty("stringValue");
+		$property = new \ReflectionProperty($element, 'stringValue');
 		$property->setAccessible(TRUE);
 
 		$element2 = clone $element;

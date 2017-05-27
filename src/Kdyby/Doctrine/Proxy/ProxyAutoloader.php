@@ -18,8 +18,10 @@ use Nette;
 /**
  * @author Filip Procházka <filip@prochazka.su>
  */
-class ProxyAutoloader extends Nette\Object
+class ProxyAutoloader
 {
+
+	use \Kdyby\StrictObjects\Scream;
 
 	/**
 	 * @var string

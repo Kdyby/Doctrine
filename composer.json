@@ -24,6 +24,7 @@
 		"kdyby/console": "^2.7@dev",
 		"kdyby/annotations": "^2.4@dev",
 		"kdyby/doctrine-cache": "^2.6@dev",
+		"kdyby/strict-objects": "^1.0",
 		"nette/di": "^2.4@dev",
 		"nette/utils": "^2.4@dev",
 		"nette/robot-loader": "^2.4@dev"

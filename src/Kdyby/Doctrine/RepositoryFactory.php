@@ -20,8 +20,10 @@ use Nette;
 /**
  * @author Filip Procházka <filip@prochazka.su>
  */
-class RepositoryFactory extends Nette\Object implements Doctrine\ORM\Repository\RepositoryFactory
+class RepositoryFactory implements Doctrine\ORM\Repository\RepositoryFactory
 {
+
+	use \Kdyby\StrictObjects\Scream;
 
 	/**
 	 * @var Nette\DI\Container

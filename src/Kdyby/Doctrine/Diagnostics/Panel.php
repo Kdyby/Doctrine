@@ -35,8 +35,10 @@ use Tracy\IBarPanel;
  * @author Patrik Votoček
  * @author Filip Procházka <filip@prochazka.su>
  */
-class Panel extends Nette\Object implements IBarPanel, Doctrine\DBAL\Logging\SQLLogger
+class Panel implements IBarPanel, Doctrine\DBAL\Logging\SQLLogger
 {
+
+	use \Kdyby\StrictObjects\Scream;
 
 	/**
 	 * @var int logged time

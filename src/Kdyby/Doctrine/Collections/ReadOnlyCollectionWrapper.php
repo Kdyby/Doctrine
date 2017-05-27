@@ -15,15 +15,17 @@ use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\Collections\Selectable;
 use Kdyby\Doctrine\NotSupportedException;
 use Kdyby\Doctrine\ReadOnlyCollectionException;
-use Nette\Object;
 
 /**
  * Read-only collection wrapper.
  * Prohibits any write/modify operations, but allows all non-modifying.
  * @author Michael Moravec
  */
-class ReadOnlyCollectionWrapper extends Object implements Collection, Selectable
+class ReadOnlyCollectionWrapper implements Collection, Selectable
 {
+
+	use \Kdyby\StrictObjects\Scream;
+
 	/** @var Collection */
 	private $inner;
 
