@@ -25,6 +25,6 @@ interface EntityDaoFactory
 	 * @param string $className
 	 * @return EntityDao
 	 */
-	function create($className);
+	public function create($className);
 
 }

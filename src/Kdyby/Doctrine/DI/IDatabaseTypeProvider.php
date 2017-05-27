@@ -26,6 +26,6 @@ interface IDatabaseTypeProvider
 	 *
 	 * @return array
 	 */
-	function getDatabaseTypes();
+	public function getDatabaseTypes();
 
 }
