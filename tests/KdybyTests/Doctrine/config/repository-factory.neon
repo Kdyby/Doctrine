@@ -7,8 +7,15 @@ kdyby.doctrine:
 
 
 services:
-	- KdybyTests\Doctrine\CmsAddressRepository
-	- KdybyTests\Doctrine\CmsArticleRepository
+	cmsAddressRepository:
+		class: KdybyTests\Doctrine\CmsAddressRepository
+		tags:
+			doctrine.repositoryEntity: KdybyTests\Doctrine\CmsAddress
+
+	cmsArticleRepository:
+		class: KdybyTests\Doctrine\CmsArticleRepository
+		tags:
+			doctrine.repositoryEntity: KdybyTests\Doctrine\CmsArticle
 
 	-
 		class: KdybyTests\Doctrine\CmsEmployeeRepository
