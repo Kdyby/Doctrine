@@ -197,7 +197,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		if ($this->targetEntityMappings) {
 			$listener = $builder->addDefinition($this->prefix('resolveTargetEntityListener'))
 				->setClass('Kdyby\Doctrine\Tools\ResolveTargetEntityListener')
-				->addTag(Kdyby\Events\DI\EventsExtension::SUBSCRIBER_TAG);
+				->addTag(Kdyby\Events\DI\EventsExtension::TAG_SUBSCRIBER);
 
 			foreach ($this->targetEntityMappings as $originalEntity => $mapping) {
 				$listener->addSetup('addResolveTargetEntity', [$originalEntity, $mapping['targetEntity'], $mapping]);
@@ -223,7 +223,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 
 		foreach ($this->loadFromFile(__DIR__ . '/console.neon') as $i => $command) {
 			$cli = $builder->addDefinition($this->prefix('cli.' . $i))
-				->addTag(Kdyby\Console\DI\ConsoleExtension::COMMAND_TAG)
+				->addTag(Kdyby\Console\DI\ConsoleExtension::TAG_COMMAND)
 				->addTag(Nette\DI\Extensions\InjectExtension::TAG_INJECT, FALSE); // lazy injects
 
 			if (is_string($command)) {
