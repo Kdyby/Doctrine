@@ -35,10 +35,17 @@ final class CommandHelper
 	{
 		/** @var \Kdyby\Doctrine\EntityManager $em */
 		$em = $containerHelper->getByType('Kdyby\Doctrine\Registry')->getManager($emName);
-		/** @var \Symfony\Component\Console\Helper\HelperSet $helperSet */
 		$helperSet = $containerHelper->getHelperSet();
 		$helperSet->set(new ConnectionHelper($em->getConnection()), 'db');
 		$helperSet->set(new EntityManagerHelper($em), 'em');
+	}
+
+	public static function setApplicationConnection(ContainerHelper $containerHelper, $connName)
+	{
+		/** @var \Kdyby\Doctrine\EntityManager $db */
+		$connection = $containerHelper->getByType('Kdyby\Doctrine\Registry')->getConnection($connName);
+		$helperSet = $containerHelper->getHelperSet();
+		$helperSet->set(new ConnectionHelper($connection), 'db');
 	}
 
 }
