@@ -5,7 +5,7 @@ There are two objects you wanna get to know. It's `QueryObject` and `ResultSet`.
 
 ## QueryObject
 
-If you have complicated DQLs, you might wanna not write them in [extended repositories](https://github.com/kdyby/doctrine/blob/master/docs/en/repository.md), but in query objects instead.
+If you have complicated DQLs, you might not want to write them in [extended repositories](https://github.com/kdyby/doctrine/blob/master/docs/en/repository.md), but in query objects instead.
 
 Your query object might for example look like this. It's real-world example of Query object in a forum that is built on Kdyby\Doctrine.
 
