@@ -27,7 +27,7 @@
 		"nette/di": "^2.4@dev",
 		"nette/utils": "^2.4@dev",
 		"nette/reflection": "^2.4@dev",
-		"nette/robot-loader": "^2.4@dev"
+		"nette/robot-loader": "^2.4@dev || ^3.0@dev"
 	},
 	"suggest": {
 		"kdyby/doctrine-magic-accessors": "Fast-prototyping magic accessors trait for Doctrine entities",

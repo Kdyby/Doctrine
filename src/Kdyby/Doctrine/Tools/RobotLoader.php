@@ -28,15 +28,11 @@ class RobotLoader extends Nette\Loaders\RobotLoader
 
 
 
-	public function __construct(Nette\Caching\IStorage $cacheStorage = NULL)
+	public function __construct()
 	{
 		parent::__construct();
 
-		if ($cacheStorage !== NULL) {
-			$this->setCacheStorage($cacheStorage);
-		}
-
-		$this->autoRebuild = TRUE;
+		$this->setAutoRefresh(TRUE);
 	}
 
 

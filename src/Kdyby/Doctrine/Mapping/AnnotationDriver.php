@@ -19,6 +19,7 @@ use Kdyby\Doctrine\Tools\RobotLoader;
 use Kdyby\DoctrineCache\ReversedStorageDecorator;
 use Nette;
 use Nette\Caching\Storages\MemoryStorage;
+use Nette\Utils\FileSystem;
 
 
 
@@ -94,7 +95,8 @@ class AnnotationDriver extends Doctrine\ORM\Mapping\Driver\AnnotationDriver
 	 */
 	protected function findAllClasses($path)
 	{
-		$loader = new RobotLoader($this->cache !== NULL ? new ReversedStorageDecorator($this->cache) : new MemoryStorage());
+		$loader = new RobotLoader();
+		$loader->setTempDirectory("$path/temp");
 
 		$exts = isset($this->fileExtensions[$path]) ? $this->fileExtensions[$path] : [$this->fileExtension];
 		$loader->acceptFiles = array_map(function ($ext) { return '*' . $ext; }, $exts);
@@ -102,7 +104,11 @@ class AnnotationDriver extends Doctrine\ORM\Mapping\Driver\AnnotationDriver
 		$loader->addDirectory($path);
 		$this->loaders[$path] = $loader;
 
-		return $loader->getIndexedClasses();
+		$indexedClasses = $loader->getIndexedClasses();
+		
+		FileSystem::delete("$path/temp");
+		
+		return $indexedClasses;
 	}
 
 
