@@ -289,7 +289,9 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			$this->processMetadataDriver($metadataDriver, $namespace, $driver, $name);
 		}
 
-		$this->processMetadataDriver($metadataDriver, self::KDYBY_METADATA_NAMESPACE, __DIR__ . '/../Entities', $name);
+		if (PHP_VERSION_ID < 70200) {
+			$this->processMetadataDriver($metadataDriver, self::KDYBY_METADATA_NAMESPACE, __DIR__ . '/../Entities', $name);
+		}
 
 		if (empty($config['metadata'])) {
 			$metadataDriver->addSetup('setDefaultDriver', [

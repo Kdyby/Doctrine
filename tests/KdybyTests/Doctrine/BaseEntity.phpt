@@ -373,6 +373,15 @@ class BaseEntityTest extends Tester\TestCase
 		Assert::same(2, $entity->getRealSomething());
 	}
 
+
+
+	protected function setUp()
+	{
+		if (PHP_VERSION_ID >= 70200) {
+			Tester\Environment::skip();
+		}
+	}
+
 }
 
 (new BaseEntityTest())->run();

@@ -13,7 +13,6 @@ namespace KdybyTests\DoctrineMocks;
 use Doctrine;
 
 
-
 /**
  * This class is a mock of the Statement interface.
  *
@@ -76,13 +75,13 @@ class StatementMock implements \IteratorAggregate, Doctrine\DBAL\Driver\Statemen
 
 
 
-	public function fetch($fetchStyle = NULL)
+	public function fetch($fetchStyle = NULL, $cursorOrientation = \PDO::FETCH_ORI_NEXT, $cursorOffset = 0)
 	{
 	}
 
 
 
-	public function fetchAll($fetchStyle = NULL)
+	public function fetchAll($fetchStyle = NULL, $fetchArgument = NULL, $ctorArgs = NULL)
 	{
 	}
 
