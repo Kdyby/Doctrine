@@ -13,7 +13,7 @@ namespace Kdyby\Doctrine\Console;
 use Doctrine\DBAL\Tools\Console\Helper\ConnectionHelper;
 use Doctrine\ORM\Tools\Console\Helper\EntityManagerHelper;
 use Kdyby\Console\ContainerHelper;
-
+use Symfony\Component\Console\Helper\HelperSet;
 
 
 /**
@@ -35,6 +35,7 @@ final class CommandHelper
 	{
 		/** @var \Kdyby\Doctrine\EntityManager $em */
 		$em = $containerHelper->getByType(\Kdyby\Doctrine\Registry::class)->getManager($emName);
+		/** @var HelperSet|NULL $helperSet */
 		$helperSet = $containerHelper->getHelperSet();
 		if ($helperSet !== NULL) {
 			$helperSet->set(new ConnectionHelper($em->getConnection()), 'db');
@@ -46,6 +47,7 @@ final class CommandHelper
 	{
 		/** @var \Kdyby\Doctrine\EntityManager $db */
 		$connection = $containerHelper->getByType(\Kdyby\Doctrine\Registry::class)->getConnection($connName);
+		/** @var HelperSet|NULL $helperSet */
 		$helperSet = $containerHelper->getHelperSet();
 		if ($helperSet !== NULL) {
 			$helperSet->set(new ConnectionHelper($connection), 'db');
