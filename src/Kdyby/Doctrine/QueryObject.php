@@ -51,8 +51,10 @@ use Nette;
  *
  * @author Filip Procházka <filip@prochazka.su>
  */
-abstract class QueryObject extends Nette\Object implements Kdyby\Persistence\Query
+abstract class QueryObject implements Kdyby\Persistence\Query
 {
+
+	use \Nette\SmartObject;
 
 	/**
 	 * @var array
