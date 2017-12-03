@@ -85,7 +85,7 @@ class ExtensionTest extends Tester\TestCase
 
 		sort($entityClasses);
 
-		Assert::same([
+		$expectedClasses = [
 			\KdybyTests\Doctrine\AnnotationDriver\App\Bar::class,
 			\KdybyTests\Doctrine\AnnotationDriver\App\FooEntity::class,
 			\KdybyTests\Doctrine\AnnotationDriver\Something\Baz::class,
@@ -103,9 +103,13 @@ class ExtensionTest extends Tester\TestCase
 			\KdybyTests\Doctrine\StiBoss::class,
 			\KdybyTests\Doctrine\StiEmployee::class,
 			\KdybyTests\Doctrine\StiUser::class,
-			\Kdyby\Doctrine\Entities\BaseEntity::class,
-			\Kdyby\Doctrine\Entities\IdentifiedEntity::class,
-		], $entityClasses);
+		];
+		if (PHP_VERSION_ID < 70200) {
+			$expectedClasses[] = \Kdyby\Doctrine\Entities\BaseEntity::class;
+			$expectedClasses[] = \Kdyby\Doctrine\Entities\IdentifiedEntity::class;
+		}
+
+		Assert::same($expectedClasses, $entityClasses);
 	}
 
 
