@@ -20,19 +20,20 @@
 		"php": "^5.6 || ^7.0",
 		"doctrine/orm": "~2.5",
 		"doctrine/dbal": "~2.5",
-		"kdyby/events": "^3.1@dev",
-		"kdyby/console": "^2.7@dev",
+		"kdyby/events": "^3.1.1@dev",
+		"kdyby/console": "^2.7.1@dev",
 		"kdyby/annotations": "^2.4@dev",
-		"kdyby/doctrine-cache": "^2.6@dev",
+		"kdyby/doctrine-cache": "^2.6.1@dev",
 		"kdyby/strict-objects": "^1.0",
-		"nette/di": "^2.4@dev",
-		"nette/utils": "^2.4@dev",
-		"nette/robot-loader": "^2.4@dev"
+		"nette/di": "^2.4.10@dev",
+		"nette/utils": "^2.4.5@dev",
+		"nette/robot-loader": "^2.4@dev",
+		"nette/finder": "^2.4.1@dev"
 	},
 	"require-dev": {
 		"nette/bootstrap": "^2.4@dev",
-		"nette/caching": "^2.4@dev",
-		"nette/http": "^2.4@dev",
+		"nette/caching": "^2.5@dev",
+		"nette/http": "^2.4.7@dev",
 		"tracy/tracy": "^2.4@dev",
 		"nette/tester": "~1.7"
 	},
