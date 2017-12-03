@@ -100,7 +100,6 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		'defaultTableOptions' => [],
 		'resultCache' => 'default',
 		'types' => [],
-		'types' => [],
 		'schemaFilter' => NULL,
 	];
 
