@@ -18,8 +18,8 @@
 	},
 	"require": {
 		"php": "^5.6 || ^7.0",
-		"doctrine/orm": "~2.5",
-		"doctrine/dbal": "~2.5",
+		"doctrine/orm": "~2.5.0",
+		"doctrine/dbal": "~2.5.0",
 		"kdyby/console": "^2.7@dev",
 		"kdyby/annotations": "^2.4@dev",
 		"kdyby/doctrine-cache": "^2.6@dev",
