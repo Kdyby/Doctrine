@@ -115,7 +115,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 	 * @var array
 	 */
 	public $metadataDriverClasses = [
-		self::ANNOTATION_DRIVER => Kdyby\Doctrine\Mapping\AnnotationDriver::class,
+		self::ANNOTATION_DRIVER => Doctrine\ORM\Mapping\Driver\AnnotationDriver::class,
 		'static' => Doctrine\Common\Persistence\Mapping\Driver\StaticPHPDriver::class,
 		'yml' => Doctrine\ORM\Mapping\Driver\YamlDriver::class,
 		'yaml' => Doctrine\ORM\Mapping\Driver\YamlDriver::class,
@@ -599,10 +599,6 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		if (is_string($driver) || is_array($driver)) {
 			$paths = is_array($driver) ? $driver : [$driver];
 			foreach ($paths as $path) {
-				if (($pos = strrpos($path, '*')) !== FALSE) {
-					$path = substr($path, 0, $pos);
-				}
-
 				if (!file_exists($path)) {
 					throw new Nette\Utils\AssertionException("The metadata path expects to be an existing directory, $path given.");
 				}
@@ -627,8 +623,8 @@ class OrmExtension extends Nette\DI\CompilerExtension
 
 		if ($impl === self::ANNOTATION_DRIVER) {
 			$driver->arguments = [
-				Nette\Utils\Arrays::flatten($driver->arguments),
-				2 => $this->prefix('@cache.' . $prefix . '.metadata')
+				'@' . self::ANNOTATION_DRIVER . '.reader',
+				Nette\Utils\Arrays::flatten($driver->arguments)
 			];
 		}
 
