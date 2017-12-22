@@ -34,7 +34,7 @@
 		"nette/caching": "^2.4@dev",
 		"nette/http": "^2.4@dev",
 		"tracy/tracy": "^2.4@dev",
-		"nette/tester": "~1.7"
+		"nette/tester": "^2.0"
 	},
 	"minimum-stability": "dev",
 	"autoload": {
