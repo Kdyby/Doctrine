@@ -6,6 +6,7 @@
  * @testCase KdybyTests\Doctrine\BaseEntityTest
  * @author Filip Procházka <filip@prochazka.su>
  * @package Kdyby\Doctrine
+ * @phpVersion < 7.2
  */
 
 namespace KdybyTests\Doctrine;
