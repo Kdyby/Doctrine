@@ -35,7 +35,7 @@ class ValidateSchemaCommandTest extends CommandTestCase
 
 		$output = $applicationTester->getDisplay();
 
-		Assert::contains('[Mapping]  OK - The mapping files are correct.', $output);
+		Assert::contains('The mapping files are correct.', $output);
 	}
 
 
@@ -49,7 +49,7 @@ class ValidateSchemaCommandTest extends CommandTestCase
 
 		$output = $applicationTester->getDisplay();
 
-		Assert::contains('[Mapping]  OK - The mapping files are correct.', $output);
+		Assert::contains('The mapping files are correct.', $output);
 	}
 
 }

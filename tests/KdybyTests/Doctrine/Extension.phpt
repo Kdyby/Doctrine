@@ -86,9 +86,6 @@ class ExtensionTest extends Tester\TestCase
 		sort($entityClasses);
 
 		Assert::same([
-			\KdybyTests\Doctrine\AnnotationDriver\App\Bar::class,
-			\KdybyTests\Doctrine\AnnotationDriver\App\FooEntity::class,
-			\KdybyTests\Doctrine\AnnotationDriver\Something\Baz::class,
 			\KdybyTests\Doctrine\CmsAddress::class,
 			\KdybyTests\Doctrine\CmsArticle::class,
 			\KdybyTests\Doctrine\CmsComment::class,

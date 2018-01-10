@@ -28,8 +28,10 @@ use Nette\Utils\Callback;
  * @deprecated
  * @ORM\MappedSuperclass()
  */
-abstract class BaseEntity extends Nette\Object implements \Serializable
+abstract class BaseEntity implements \Serializable
 {
+
+	use Nette\SmartObject;
 
 	/**
 	 * @var array
