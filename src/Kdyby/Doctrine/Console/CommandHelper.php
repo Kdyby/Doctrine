@@ -13,8 +13,7 @@ namespace Kdyby\Doctrine\Console;
 use Doctrine\DBAL\Tools\Console\Helper\ConnectionHelper;
 use Doctrine\ORM\Tools\Console\Helper\EntityManagerHelper;
 use Kdyby\Console\ContainerHelper;
-
-
+use Symfony\Component\Console\Helper\HelperSet;
 
 /**
  * @author Tomáš Jacík <tomas@jacik.cz>
@@ -33,8 +32,10 @@ final class CommandHelper
 
 	public static function setApplicationEntityManager(ContainerHelper $containerHelper, $emName)
 	{
-		/** @var \Kdyby\Doctrine\EntityManager $em */
-		$em = $containerHelper->getByType(\Kdyby\Doctrine\Registry::class)->getManager($emName);
+		/** @var \Kdyby\Doctrine\Registry $registry */
+		$registry = $containerHelper->getByType(\Kdyby\Doctrine\Registry::class);
+		$em = $registry->getManager($emName);
+		/** @var HelperSet|null $helperSet */
 		$helperSet = $containerHelper->getHelperSet();
 		if ($helperSet !== NULL) {
 			$helperSet->set(new ConnectionHelper($em->getConnection()), 'db');
@@ -44,8 +45,10 @@ final class CommandHelper
 
 	public static function setApplicationConnection(ContainerHelper $containerHelper, $connName)
 	{
-		/** @var \Kdyby\Doctrine\EntityManager $db */
-		$connection = $containerHelper->getByType(\Kdyby\Doctrine\Registry::class)->getConnection($connName);
+		/** @var \Kdyby\Doctrine\Registry $registry */
+		$registry = $containerHelper->getByType(\Kdyby\Doctrine\Registry::class);
+		$connection = $registry->getConnection($connName);
+		/** @var HelperSet|null $helperSet */
 		$helperSet = $containerHelper->getHelperSet();
 		if ($helperSet !== NULL) {
 			$helperSet->set(new ConnectionHelper($connection), 'db');

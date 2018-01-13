@@ -32,7 +32,7 @@ class CacheCleaner
 	private $entityManager;
 
 	/**
-	 * @var array|ClearableCache[]
+	 * @var (ClearableCache|Doctrine\Common\Cache\Cache|null)[]
 	 */
 	private $cacheStorages = [];
 

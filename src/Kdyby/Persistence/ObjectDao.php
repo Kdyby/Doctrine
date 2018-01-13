@@ -27,7 +27,7 @@ interface ObjectDao extends Doctrine\Common\Persistence\ObjectRepository
 	/**
 	 * Persists given entities, but does not flush.
 	 *
-	 * @param array|Doctrine\Common\Collections\Collection|\Traversable
+	 * @param array|Doctrine\Common\Collections\Collection|\Traversable $entity
 	 */
 	function add($entity);
 
@@ -35,13 +35,13 @@ interface ObjectDao extends Doctrine\Common\Persistence\ObjectRepository
 	/**
 	 * Persists given entities and flushes them down to the storage.
 	 *
-	 * @param array|Doctrine\Common\Collections\Collection|\Traversable|NULL
+	 * @param array|Doctrine\Common\Collections\Collection|\Traversable|NULL $entity
 	 */
 	function save($entity = NULL);
 
 
 	/**
-	 * @param array|Doctrine\Common\Collections\Collection|\Traversable
+	 * @param array|Doctrine\Common\Collections\Collection|\Traversable $entity
 	 * @param boolean $flush
 	 */
 	function delete($entity, $flush = self::FLUSH);
