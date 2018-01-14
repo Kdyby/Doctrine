@@ -229,7 +229,7 @@ abstract class QueryObject implements Kdyby\Persistence\Query
 	}
 
 	/**
-	 * @param \Doctrine\ORM\QueryBuilder|DqlSelection|AbstractQuery|NativeQueryBuilder $query
+	 * @param \Doctrine\ORM\QueryBuilder|AbstractQuery|NativeQueryBuilder $query
 	 * @return Doctrine\ORM\Query|NativeQueryWrapper
 	 */
 	private function toQuery($query)

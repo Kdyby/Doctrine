@@ -3,7 +3,6 @@ parameters:
 		- '#Constant TEMP_DIR not found#'
 		- '#Constant TEST_DIR not found#'
 		- '#Parameter \#1 \$firstResult of method [^\s]+::setFirstResult\(\) expects int, (int\|)?null given#'
-		- '#Method Doctrine\\DBAL\\Driver\\Connection::query\(\) invoked with \d+ parameter, 0 required#'
 		- '#Kdyby\\Doctrine\\EmptyResultSet::__construct\(\) does not call parent constructor from Kdyby\\Doctrine\\ResultSet.#'
 		- '#Call to an undefined method Serializable::__sleep\(\).#'
 		- '#Call to an undefined method Serializable::__wakeup\(\).#'
