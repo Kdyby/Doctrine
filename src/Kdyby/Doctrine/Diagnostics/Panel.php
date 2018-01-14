@@ -40,8 +40,6 @@ class Panel implements IBarPanel, Doctrine\DBAL\Logging\SQLLogger
 
 	use \Kdyby\StrictObjects\Scream;
 
-	use \Kdyby\StrictObjects\Scream;
-
 	/**
 	 * @var float logged time
 	 */
