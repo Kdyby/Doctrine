@@ -830,6 +830,16 @@ class OrmExtension extends Nette\DI\CompilerExtension
 
 
 
+	/**
+	 * @return bool
+	 */
+	private function isKdybyEventsPresent()
+	{
+		return (bool) $this->compiler->getExtensions(\Kdyby\Events\DI\EventsExtension::class);
+	}
+
+
+
 	private function addCollapsePathsToTracy(Method $init)
 	{
 		$blueScreen = \Tracy\Debugger::class . '::getBlueScreen()';
