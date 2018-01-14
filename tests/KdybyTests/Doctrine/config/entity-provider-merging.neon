@@ -1,0 +1,8 @@
+kdyby.doctrine:
+	driver: pdo_sqlite
+	memory: true
+	metadata:
+		KdybyTests\Doctrine: annotations(%appDir%/Doctrine/models)
+
+extensions:
+	- KdybyTests\Doctrine\Models2\Models2Extension
