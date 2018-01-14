@@ -622,8 +622,15 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		}
 
 		if ($impl === self::ANNOTATION_DRIVER) {
+			$annotationExtensionName = self::ANNOTATION_DRIVER;
+			foreach ($this->compiler->getExtensions(AnnotationsExtension::class) as $annotationExtension) {
+				$annotationExtensionName = $annotationExtension->name;
+
+				break;
+			}
+
 			$driver->arguments = [
-				'@' . self::ANNOTATION_DRIVER . '.reader',
+				"@{$annotationExtensionName}.reader",
 				Nette\Utils\Arrays::flatten($driver->arguments)
 			];
 		}
