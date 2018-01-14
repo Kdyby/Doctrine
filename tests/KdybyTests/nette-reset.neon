@@ -2,10 +2,10 @@ php:
 	date.timezone: Europe/Prague
 
 
-	extensions:
-		console: Kdyby\Console\DI\ConsoleExtension
-		annotations: Kdyby\Annotations\DI\AnnotationsExtension
-		kdyby.doctrine: Kdyby\Doctrine\DI\OrmExtension
+extensions:
+	console: Kdyby\Console\DI\ConsoleExtension
+	annotations: Kdyby\Annotations\DI\AnnotationsExtension
+	kdyby.doctrine: Kdyby\Doctrine\DI\OrmExtension
 
 
 kdyby.doctrine:
