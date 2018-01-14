@@ -36,9 +36,6 @@ abstract class CommandTestCase extends Tester\TestCase
 		\KdybyTests\Doctrine\CmsPhoneNumber::class,
 		\KdybyTests\Doctrine\CmsUser::class,
 		\KdybyTests\Doctrine\CmsOrder::class,
-		\KdybyTests\Doctrine\AnnotationDriver\Something\Baz::class,
-		\KdybyTests\Doctrine\AnnotationDriver\App\FooEntity::class,
-		\KdybyTests\Doctrine\AnnotationDriver\App\Bar::class,
 		\KdybyTests\Doctrine\StiUser::class,
 		\KdybyTests\Doctrine\StiAdmin::class,
 		\KdybyTests\Doctrine\StiEmployee::class,
@@ -59,9 +56,6 @@ abstract class CommandTestCase extends Tester\TestCase
 		'cms_users',
 		'cms_users_groups',
 		'cms_orders',
-		'baz',
-		'foo_entity',
-		'bar',
 		'sti_users',
 	];
 
@@ -93,6 +87,7 @@ abstract class CommandTestCase extends Tester\TestCase
 	 */
 	protected function getApplication()
 	{
+		/** @var \Kdyby\Console\Application $application */
 		$application = $this->getServiceLocator()->getByType(\Kdyby\Console\Application::class);
 		$application->setAutoExit(FALSE);
 		return $application;

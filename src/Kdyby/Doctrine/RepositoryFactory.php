@@ -33,7 +33,7 @@ class RepositoryFactory implements Doctrine\ORM\Repository\RepositoryFactory
 	/**
 	 * The list of EntityRepository instances.
 	 *
-	 * @var \Doctrine\Common\Persistence\ObjectRepository[]
+	 * @var Doctrine\ORM\EntityRepository[]
 	 */
 	private $repositoryList = [];
 
@@ -70,8 +70,8 @@ class RepositoryFactory implements Doctrine\ORM\Repository\RepositoryFactory
 
 	/**
 	 * @param EntityManagerInterface|EntityManager $entityManager
-	 * @param string $entityName
-	 * @return EntityRepository
+	 * @param object|string $entityName
+	 * @return Doctrine\ORM\EntityRepository
 	 */
 	public function getRepository(EntityManagerInterface $entityManager, $entityName)
 	{
@@ -100,7 +100,7 @@ class RepositoryFactory implements Doctrine\ORM\Repository\RepositoryFactory
 	 *
 	 * @param \Doctrine\ORM\EntityManagerInterface $entityManager The EntityManager instance.
 	 * @param Doctrine\ORM\Mapping\ClassMetadata $metadata
-	 * @return Doctrine\Common\Persistence\ObjectRepository
+	 * @return Doctrine\ORM\EntityRepository
 	 */
 	private function createRepository(EntityManagerInterface $entityManager, Doctrine\ORM\Mapping\ClassMetadata $metadata)
 	{
@@ -128,7 +128,12 @@ class RepositoryFactory implements Doctrine\ORM\Repository\RepositoryFactory
 	 */
 	protected function getRepositoryFactory($serviceName)
 	{
-		return $this->serviceLocator->getService($serviceName);
+		$factory = $this->serviceLocator->getService($serviceName);
+		if (!$factory instanceof Kdyby\Doctrine\DI\IRepositoryFactory) {
+			throw new \RuntimeException("\$factory must be instance of" . Kdyby\Doctrine\DI\IRepositoryFactory::class);
+		}
+
+		return $factory;
 	}
 
 }

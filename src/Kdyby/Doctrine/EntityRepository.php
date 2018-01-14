@@ -250,7 +250,7 @@ class EntityRepository extends Doctrine\ORM\EntityRepository implements Persiste
 	 *
 	 * @throws InvalidStateException
 	 * @throws QueryException
-	 * @return object
+	 * @return object|null
 	 */
 	public function fetchOne(Persistence\Query $queryObject)
 	{
@@ -272,11 +272,13 @@ class EntityRepository extends Doctrine\ORM\EntityRepository implements Persiste
 
 	/**
 	 * @param integer|array $id
-	 * @return \Doctrine\ORM\Proxy\Proxy
+	 * @return \Doctrine\ORM\Proxy\Proxy|null
 	 */
 	public function getReference($id)
 	{
-		return $this->getEntityManager()->getReference($this->_entityName, $id);
+		/** @var \Doctrine\ORM\Proxy\Proxy|null $reference */
+		$reference = $this->getEntityManager()->getReference($this->_entityName, $id);
+		return $reference;
 	}
 
 

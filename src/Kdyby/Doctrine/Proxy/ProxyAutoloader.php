@@ -101,7 +101,7 @@ class ProxyAutoloader
 	 * 2. Remove namespace seperators from remaining class name.
 	 * 3. Return PHP filename from proxy-dir with the result from 2.
 	 *
-	 * @param  string
+	 * @param  string $type
 	 * @return void
 	 */
 	public function tryLoad($type)

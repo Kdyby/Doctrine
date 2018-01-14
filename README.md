@@ -7,20 +7,6 @@ Kdyby/Doctrine
 [![Coverage Status](https://coveralls.io/repos/github/Kdyby/Doctrine/badge.svg?branch=master)](https://coveralls.io/github/Kdyby/Doctrine?branch=master)
 
 
-
-Requirements
-------------
-
-Kdyby/Doctrine requires PHP 5.4 with pdo extension.
-
-- [Nette Framework](https://github.com/nette/nette)
-- [Doctrine ORM >=2.4](https://github.com/doctrine/doctrine2)
-- [Kdyby/Annotations](https://github.com/kdyby/annotations)
-- [Kdyby/Console](https://github.com/kdyby/console)
-- [Kdyby/Events](https://github.com/kdyby/events)
-- [Kdyby/DoctrineCache](https://github.com/kdyby/doctrineCache)
-
-
 Installation
 ------------
 
@@ -30,12 +16,10 @@ The best way to install Kdyby/Doctrine is using  [Composer](http://getcomposer.o
 $ composer require kdyby/doctrine
 ```
 
-
 Documentation
 ------------
 
 Learn more in the [documentation](https://github.com/Kdyby/Doctrine/blob/master/docs/en/index.md).
-
 
 -----
 

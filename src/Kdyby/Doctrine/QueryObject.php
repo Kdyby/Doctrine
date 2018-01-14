@@ -51,8 +51,10 @@ use Nette;
  *
  * @author Filip Procházka <filip@prochazka.su>
  */
-abstract class QueryObject extends Nette\Object implements Kdyby\Persistence\Query
+abstract class QueryObject implements Kdyby\Persistence\Query
 {
+
+	use Nette\SmartObject;
 
 	/**
 	 * @var array
@@ -60,7 +62,7 @@ abstract class QueryObject extends Nette\Object implements Kdyby\Persistence\Que
 	public $onPostFetch = [];
 
 	/**
-	 * @var \Doctrine\ORM\Query
+	 * @var \Doctrine\ORM\Query|NativeQueryWrapper|null
 	 */
 	private $lastQuery;
 
@@ -92,13 +94,14 @@ abstract class QueryObject extends Nette\Object implements Kdyby\Persistence\Que
 	 * @param \Kdyby\Persistence\Queryable $repository
 	 *
 	 * @throws UnexpectedValueException
-	 * @return \Doctrine\ORM\Query
+	 * @return \Doctrine\ORM\Query|NativeQueryWrapper
 	 */
 	protected function getQuery(Queryable $repository)
 	{
 		$query = $this->toQuery($this->doCreateQuery($repository));
 
-		if ($this->lastQuery && $this->lastQuery->getDQL() === $query->getDQL()) {
+		if ($this->lastQuery instanceof Doctrine\ORM\Query && $query instanceof Doctrine\ORM\Query &&
+			$this->lastQuery->getDQL() === $query->getDQL()) {
 			$query = $this->lastQuery;
 		}
 
@@ -218,15 +221,17 @@ abstract class QueryObject extends Nette\Object implements Kdyby\Persistence\Que
 
 	/**
 	 * @internal For Debugging purposes only!
-	 * @return \Doctrine\ORM\Query
+	 * @return \Doctrine\ORM\Query|NativeQueryWrapper|null
 	 */
 	public function getLastQuery()
 	{
 		return $this->lastQuery;
 	}
 
-
-
+	/**
+	 * @param \Doctrine\ORM\QueryBuilder|DqlSelection|AbstractQuery|NativeQueryBuilder $query
+	 * @return Doctrine\ORM\Query|NativeQueryWrapper
+	 */
 	private function toQuery($query)
 	{
 		if ($query instanceof Doctrine\ORM\QueryBuilder) {
@@ -239,7 +244,7 @@ abstract class QueryObject extends Nette\Object implements Kdyby\Persistence\Que
 			$query = $query->getQuery();
 		}
 
-		if (!$query instanceof Doctrine\ORM\AbstractQuery) {
+		if (!$query instanceof Doctrine\ORM\Query && !$query instanceof NativeQueryWrapper) {
 			throw new UnexpectedValueException(sprintf(
 				"Method " . get_called_class() . "::doCreateQuery must return " .
 				"instanceof %s or %s, " .

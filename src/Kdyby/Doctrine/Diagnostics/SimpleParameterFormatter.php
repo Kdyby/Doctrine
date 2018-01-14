@@ -48,8 +48,7 @@ class SimpleParameterFormatter
 			}
 			return implode(', ', $formatted);
 
-		} elseif ($param instanceof \Datetime) {
-			/** @var \Datetime $param */
+		} elseif ($param instanceof \DateTime) {
 			return "'" . $param->format('Y-m-d H:i:s') . "'";
 
 		} elseif (is_object($param)) {

@@ -172,11 +172,13 @@ class ResultSet implements \Countable, \IteratorAggregate
 	{
 		$this->updating();
 
-		$dql = Strings::normalize($this->query->getDQL());
-		if (preg_match('~^(.+)\\s+(ORDER BY\\s+((?!FROM|WHERE|ORDER\\s+BY|GROUP\\sBY|JOIN).)*)\\z~si', $dql, $m)) {
-			$dql = $m[1];
+		if ($this->query instanceof ORM\Query) {
+			$dql = Strings::normalize($this->query->getDQL());
+			if (preg_match('~^(.+)\\s+(ORDER BY\\s+((?!FROM|WHERE|ORDER\\s+BY|GROUP\\sBY|JOIN).)*)\\z~si', $dql, $m)) {
+				$dql = $m[1];
+			}
+			$this->query->setDQL(trim($dql));
 		}
-		$this->query->setDQL(trim($dql));
 
 		return $this;
 	}
@@ -204,7 +206,7 @@ class ResultSet implements \Countable, \IteratorAggregate
 			$sorting[] = $column;
 		}
 
-		if ($sorting) {
+		if ($sorting && $this->query instanceof ORM\Query) {
 			$dql = Strings::normalize($this->query->getDQL());
 
 			if (!preg_match('~^(.+)\\s+(ORDER BY\\s+((?!FROM|WHERE|ORDER\\s+BY|GROUP\\sBY|JOIN).)*)\\z~si', $dql, $m)) {
@@ -232,7 +234,7 @@ class ResultSet implements \Countable, \IteratorAggregate
 	 */
 	public function applyPaging($offset, $limit)
 	{
-		if ($this->query->getFirstResult() != $offset || $this->query->getMaxResults() != $limit) {
+		if ($this->query instanceof ORM\Query && ($this->query->getFirstResult() != $offset || $this->query->getMaxResults() != $limit)) {
 			$this->query->setFirstResult($offset);
 			$this->query->setMaxResults($limit);
 			$this->iterator = NULL;
@@ -268,7 +270,7 @@ class ResultSet implements \Countable, \IteratorAggregate
 	public function isEmpty()
 	{
 		$count = $this->getTotalCount();
-		$offset = $this->query->getFirstResult();
+		$offset = $this->query instanceof ORM\Query ? $this->query->getFirstResult() : 0;
 
 		return $count <= $offset;
 	}
@@ -319,11 +321,11 @@ class ResultSet implements \Countable, \IteratorAggregate
 		$this->query->setHydrationMode($hydrationMode);
 
 		try {
-			if ($this->fetchJoinCollection && ($this->query->getMaxResults() > 0 || $this->query->getFirstResult() > 0)) {
+			if ($this->fetchJoinCollection && $this->query instanceof ORM\Query && ($this->query->getMaxResults() > 0 || $this->query->getFirstResult() > 0)) {
 				$iterator = $this->createPaginatedQuery($this->query)->getIterator();
 
 			} else {
-				$iterator = new \ArrayIterator($this->query->getResult(NULL));
+				$iterator = new \ArrayIterator($this->query->getResult());
 			}
 
 			if ($this->queryObject !== NULL && $this->repository !== NULL) {

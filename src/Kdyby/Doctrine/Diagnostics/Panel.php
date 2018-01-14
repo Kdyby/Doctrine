@@ -40,8 +40,10 @@ class Panel implements IBarPanel, Doctrine\DBAL\Logging\SQLLogger
 
 	use \Kdyby\StrictObjects\Scream;
 
+	use \Kdyby\StrictObjects\Scream;
+
 	/**
-	 * @var int logged time
+	 * @var float logged time
 	 */
 	public $totalTime = 0;
 
@@ -85,9 +87,9 @@ class Panel implements IBarPanel, Doctrine\DBAL\Logging\SQLLogger
 
 
 	/**
-	 * @param string
-	 * @param array
-	 * @param array
+	 * @param string $sql
+	 * @param array|null $params
+	 * @param array|null $types
 	 */
 	public function startQuery($sql, array $params = NULL, array $types = NULL)
 	{
@@ -281,7 +283,7 @@ class Panel implements IBarPanel, Doctrine\DBAL\Logging\SQLLogger
 
 
 	/**
-	 * @param array
+	 * @param array $query
 	 * @return string
 	 */
 	protected function processQuery(array $query)
@@ -314,10 +316,7 @@ class Panel implements IBarPanel, Doctrine\DBAL\Logging\SQLLogger
 			$types = $params = [];
 
 			if ($this->connection !== NULL) {
-				if (!$e instanceof Kdyby\Doctrine\DBALException || $e->connection !== $this->connection) {
-					return NULL;
-
-				} elseif (!isset($this->failed[spl_object_hash($e)])) {
+				if (!isset($this->failed[spl_object_hash($e)])) {
 					return NULL;
 				}
 
@@ -350,6 +349,8 @@ class Panel implements IBarPanel, Doctrine\DBAL\Logging\SQLLogger
 				];
 			}
 		}
+
+		return NULL;
 	}
 
 
@@ -383,7 +384,9 @@ class Panel implements IBarPanel, Doctrine\DBAL\Logging\SQLLogger
 			}
 
 		} elseif ($e instanceof Doctrine\DBAL\Schema\SchemaException && $dic && ($em = $dic->getByType(Kdyby\Doctrine\EntityManager::class, FALSE))) {
-			/** @var Kdyby\Doctrine\EntityManager $em */
+			if (!$em instanceof Kdyby\Doctrine\EntityManager) {
+				return null;
+			}
 
 			if ($invalidTable = Strings::match($e->getMessage(), '~table \'(.*?)\'~i')) {
 				foreach ($em->getMetadataFactory()->getAllMetadata() as $class) {
@@ -466,7 +469,7 @@ class Panel implements IBarPanel, Doctrine\DBAL\Logging\SQLLogger
 	 * @param string $query
 	 * @param array|Doctrine\Common\Collections\ArrayCollection $params
 	 * @param array $types
-	 * @param string $source
+	 * @param array|string $source
 	 * @return string
 	 */
 	protected function dumpQuery($query, $params, array $types = [], $source = NULL)
@@ -731,7 +734,8 @@ class Panel implements IBarPanel, Doctrine\DBAL\Logging\SQLLogger
 
 	/**
 	 * @param \Reflector|Nette\Reflection\ClassType|Nette\Reflection\Method $refl
-	 * @param $annotation
+	 * @param string $annotation
+	 * @return string
 	 */
 	private static function findRenamed(\Reflector $refl, $annotation)
 	{

@@ -107,7 +107,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 	 * @var array
 	 */
 	public $metadataDriverClasses = [
-		self::ANNOTATION_DRIVER => Kdyby\Doctrine\Mapping\AnnotationDriver::class,
+		self::ANNOTATION_DRIVER => Doctrine\ORM\Mapping\Driver\AnnotationDriver::class,
 		'static' => Doctrine\Common\Persistence\Mapping\Driver\StaticPHPDriver::class,
 		'yml' => Doctrine\ORM\Mapping\Driver\YamlDriver::class,
 		'yaml' => Doctrine\ORM\Mapping\Driver\YamlDriver::class,
@@ -309,7 +309,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		Validators::assertField($config['dql'], 'hints', 'array');
 
 		$autoGenerateProxyClasses = is_bool($config['autoGenerateProxyClasses'])
-			? ($config['autoGenerateProxyClasses'] ? AbstractProxyFactory::AUTOGENERATE_ALWAYS : AbstractProxyFactory::AUTOGENERATE_NEVER)
+			? ($config['autoGenerateProxyClasses'] ? AbstractProxyFactory::AUTOGENERATE_ALWAYS : AbstractProxyFactory::AUTOGENERATE_FILE_NOT_EXISTS)
 			: $config['autoGenerateProxyClasses'];
 
 		$configuration = $builder->addDefinition($this->prefix($name . '.ormConfiguration'))
@@ -511,8 +511,8 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		Validators::assertField($config, 'types', 'array');
 		$schemaTypes = $dbalTypes = [];
 		foreach ($config['types'] as $dbType => $className) {
-			$typeInst = Code\Helpers::createObject($className, []);
 			/** @var Doctrine\DBAL\Types\Type $typeInst */
+			$typeInst = Code\Helpers::createObject($className, []);
 			$dbalTypes[$typeInst->getName()] = $className;
 			$schemaTypes[$dbType] = $typeInst->getName();
 		}
@@ -563,7 +563,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 	/**
 	 * @param \Nette\DI\ServiceDefinition $metadataDriver
 	 * @param string $namespace
-	 * @param string|object $driver
+	 * @param string|array|\stdClass $driver
 	 * @param string $prefix
 	 * @throws \Nette\Utils\AssertionException
 	 * @return string
@@ -583,10 +583,6 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		if (is_string($driver) || is_array($driver)) {
 			$paths = is_array($driver) ? $driver : [$driver];
 			foreach ($paths as $path) {
-				if (($pos = strrpos($path, '*')) !== FALSE) {
-					$path = substr($path, 0, $pos);
-				}
-
 				if (!file_exists($path)) {
 					throw new Nette\Utils\AssertionException("The metadata path expects to be an existing directory, $path given.");
 				}
@@ -611,8 +607,8 @@ class OrmExtension extends Nette\DI\CompilerExtension
 
 		if ($impl === self::ANNOTATION_DRIVER) {
 			$driver->arguments = [
-				Nette\Utils\Arrays::flatten($driver->arguments),
-				2 => $this->prefix('@cache.' . $prefix . '.metadata')
+				'@' . self::ANNOTATION_DRIVER . '.reader',
+				Nette\Utils\Arrays::flatten($driver->arguments)
 			];
 		}
 
@@ -676,11 +672,6 @@ class OrmExtension extends Nette\DI\CompilerExtension
 
 		$serviceMap = array_fill_keys(array_keys($this->configuredManagers), []);
 		foreach ($builder->findByType(Doctrine\ORM\EntityRepository::class) as $originalServiceName => $originalDef) {
-			if (is_string($originalDef)) {
-				$originalServiceName = $originalDef;
-				$originalDef = $builder->getDefinition($originalServiceName);
-			}
-
 			if (strpos($originalServiceName, $this->name . '.') === 0) {
 				continue; // ignore
 			}
@@ -787,9 +778,9 @@ class OrmExtension extends Nette\DI\CompilerExtension
 
 
 	/**
-	 * @param $provided
-	 * @param $defaults
-	 * @param $diff
+     * @param array $provided
+     * @param array $defaults
+     * @param array $diff
 	 * @return array
 	 */
 	private function resolveConfig(array $provided, array $defaults, array $diff = [])
@@ -835,16 +826,6 @@ class OrmExtension extends Nette\DI\CompilerExtension
 	private function isTracyPresent()
 	{
 		return interface_exists(\Tracy\IBarPanel::class);
-	}
-
-
-
-	/**
-	 * @return bool
-	 */
-	private function isKdybyEventsPresent()
-	{
-		return (bool) $this->compiler->getExtensions(\Kdyby\Events\DI\EventsExtension::class);
 	}
 
 
