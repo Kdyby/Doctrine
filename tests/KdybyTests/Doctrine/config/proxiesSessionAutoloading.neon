@@ -1,4 +1,4 @@
-console:
+kdyby.console:
 	disabled: true
 
 kdyby.doctrine:
