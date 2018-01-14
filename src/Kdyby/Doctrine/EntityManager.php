@@ -192,7 +192,7 @@ class EntityManager extends Doctrine\ORM\EntityManager implements Persistence\Qu
 	 * Warning: On success you must NOT use the passed entity further
 	 * in your application. Use the returned one instead!
 	 *
-	 * @param $entity
+	 * @param mixed $entity
 	 * @throws \Doctrine\DBAL\DBALException
 	 * @throws \Exception
 	 * @return bool|object
@@ -258,24 +258,20 @@ class EntityManager extends Doctrine\ORM\EntityManager implements Persistence\Qu
 			throw ORMException::missingMappingDriverImpl();
 		}
 
-		switch (TRUE) {
-			case (is_array($conn)):
-				$conn = DriverManager::getConnection(
-					$conn, $config, ($eventManager ? : new Doctrine\Common\EventManager())
-				);
-				break;
-
-			case ($conn instanceof Doctrine\DBAL\Connection):
-				if ($eventManager !== NULL && $conn->getEventManager() !== $eventManager) {
-					throw ORMException::mismatchedEventManager();
-				}
-				break;
-
-			default:
-				throw new \InvalidArgumentException("Invalid connection");
+		if (is_array($conn)) {
+			$connection = DriverManager::getConnection(
+				$conn, $config, ($eventManager ?: new Doctrine\Common\EventManager())
+			);
+		} elseif ($conn instanceof Doctrine\DBAL\Connection) {
+			if ($eventManager !== null && $conn->getEventManager() !== $eventManager) {
+				throw ORMException::mismatchedEventManager();
+			}
+			$connection = $conn;
+		} else {
+			throw new \InvalidArgumentException("Invalid connection");
 		}
 
-		return new EntityManager($conn, $config, $conn->getEventManager());
+		return new EntityManager($connection, $config, $connection->getEventManager());
 	}
 
 

@@ -53,7 +53,7 @@ class Condition
 
 
 	/**
-	 * @param string $cond
+	 * @param array|string $cond
 	 */
 	public function addAnd($cond)
 	{
@@ -82,7 +82,7 @@ class Condition
 
 
 	/**
-	 * @param string $cond
+	 * @param array|string $cond
 	 */
 	public function addOr($cond)
 	{
@@ -112,7 +112,7 @@ class Condition
 
 	/**
 	 * @param string $cond
-	 * @param array|NULL $params
+	 * @param Kdyby\Doctrine\DqlSelection|Doctrine\ORM\Query|array|NULL $params
 	 */
 	protected function where($cond, $params = [])
 	{

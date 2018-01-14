@@ -87,6 +87,7 @@ abstract class CommandTestCase extends Tester\TestCase
 	 */
 	protected function getApplication()
 	{
+		/** @var \Kdyby\Console\Application $application */
 		$application = $this->getServiceLocator()->getByType(\Kdyby\Console\Application::class);
 		$application->setAutoExit(FALSE);
 		return $application;

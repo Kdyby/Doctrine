@@ -201,7 +201,7 @@ class EntityDao extends EntityRepository implements Persistence\ObjectDao
 
 
 	/**
-	 * @param array|string|\Traversable|NULL $args
+	 * @param array|object|string|\Traversable|NULL $args
 	 * @return array|\Traversable
 	 */
 	private static function iterableArgs($args)

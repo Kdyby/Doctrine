@@ -23,9 +23,7 @@ class PDOStatement extends Statement
 {
 
 	/**
-	 * @param null $params
-	 * @throws DBALException
-	 * @return bool
+	 * {@inheritdoc}
 	 */
 	public function execute($params = NULL)
 	{

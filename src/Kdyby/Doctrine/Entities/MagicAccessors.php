@@ -254,8 +254,8 @@ trait MagicAccessors
 	/**
 	 * Call to undefined static method.
 	 *
-	 * @param  string  method name (in lower case!)
-	 * @param  array   arguments
+	 * @param  string $name method name (in lower case!)
+	 * @param  array $args arguments
 	 * @return mixed
 	 * @throws MemberAccessException
 	 */
@@ -270,8 +270,8 @@ trait MagicAccessors
 	/**
 	 * Adding method to class.
 	 *
-	 * @param  string  method name
-	 * @param  callable
+	 * @param  string $name method name
+	 * @param  callable $callback
 	 * @return mixed
 	 */
 	public static function extensionMethod($name, $callback = NULL)
@@ -422,7 +422,7 @@ trait MagicAccessors
 	/**
 	 * Access to undeclared property.
 	 *
-	 * @param  string  property name
+	 * @param  string $name property name
 	 * @return void
 	 * @throws MemberAccessException
 	 */

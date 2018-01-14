@@ -527,8 +527,8 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		Validators::assertField($config, 'types', 'array');
 		$schemaTypes = $dbalTypes = [];
 		foreach ($config['types'] as $dbType => $className) {
-			$typeInst = Code\Helpers::createObject($className, []);
 			/** @var Doctrine\DBAL\Types\Type $typeInst */
+			$typeInst = Code\Helpers::createObject($className, []);
 			$dbalTypes[$typeInst->getName()] = $className;
 			$schemaTypes[$dbType] = $typeInst->getName();
 		}
@@ -579,7 +579,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 	/**
 	 * @param \Nette\DI\ServiceDefinition $metadataDriver
 	 * @param string $namespace
-	 * @param string|object $driver
+	 * @param string|array|\stdClass $driver
 	 * @param string $prefix
 	 * @throws \Nette\Utils\AssertionException
 	 * @return string
@@ -699,11 +699,6 @@ class OrmExtension extends Nette\DI\CompilerExtension
 
 		$serviceMap = array_fill_keys(array_keys($this->configuredManagers), []);
 		foreach ($builder->findByType(Doctrine\ORM\EntityRepository::class) as $originalServiceName => $originalDef) {
-			if (is_string($originalDef)) {
-				$originalServiceName = $originalDef;
-				$originalDef = $builder->getDefinition($originalServiceName);
-			}
-
 			if (strpos($originalServiceName, $this->name . '.') === 0) {
 				continue; // ignore
 			}
@@ -795,9 +790,9 @@ class OrmExtension extends Nette\DI\CompilerExtension
 
 
 	/**
-	 * @param $provided
-	 * @param $defaults
-	 * @param $diff
+	 * @param array $provided
+	 * @param array $defaults
+	 * @param array $diff
 	 * @return array
 	 */
 	private function resolveConfig(array $provided, array $defaults, array $diff = [])

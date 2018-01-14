@@ -39,9 +39,9 @@ class ReadOnlyEntity
 
 
 	/**
-	 * @param $id
-	 * @param $nonRequired
-	 * @param $required
+	 * @param int $id
+	 * @param bool $nonRequired
+	 * @param bool $required
 	 */
 	public function __construct($id, $nonRequired, $required)
 	{

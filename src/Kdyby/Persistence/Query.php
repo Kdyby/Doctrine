@@ -9,7 +9,7 @@
  */
 
 namespace Kdyby\Persistence;
-
+use Doctrine\ORM\AbstractQuery;
 
 
 /**
@@ -25,12 +25,12 @@ interface Query
 	function count(Queryable $repository);
 
 
-
 	/**
 	 * @param Queryable $repository
+	 * @param int $hydrationMode
 	 * @return mixed
 	 */
-	function fetch(Queryable $repository);
+	function fetch(Queryable $repository, $hydrationMode = AbstractQuery::HYDRATE_OBJECT);
 
 
 

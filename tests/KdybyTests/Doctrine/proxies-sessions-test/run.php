@@ -27,11 +27,13 @@ $config->addConfig(__DIR__ . '/../config/proxiesSessionAutoloading.neon');
 $container = $config->createContainer();
 
 // requires disabled autostart
+/** @var \Nette\Http\Session $session */
 $session = $container->getByType(\Nette\Http\Session::class);
 
 if ($_SERVER['argv'][1] === 'compile') {
 	$session->start();
 
+	/** @var \Doctrine\ORM\EntityManager $em */
 	$em = $container->getByType(\Doctrine\ORM\EntityManager::class);
 	$allMetadata = $em->getMetadataFactory()->getAllMetadata();
 	echo 'compiled,';
@@ -39,6 +41,7 @@ if ($_SERVER['argv'][1] === 'compile') {
 	$em->getProxyFactory()->generateProxyClasses($allMetadata);
 	echo 'proxies generated,';
 
+	/** @var \Doctrine\ORM\Tools\SchemaTool $schemaTool */
 	$schemaTool = $container->getByType(\Doctrine\ORM\Tools\SchemaTool::class);
 	$schemaTool->createSchema($allMetadata);
 	echo "schema generated\n";
@@ -48,6 +51,7 @@ if ($_SERVER['argv'][1] === 'compile') {
 } elseif ($_SERVER['argv'][1] === 'store') {
 	$session->start();
 
+	/** @var \Doctrine\ORM\EntityManager $em */
 	$em = $container->getByType(\Doctrine\ORM\EntityManager::class);
 
 	$em->persist($order = new CmsOrder());
