@@ -607,7 +607,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 
 		if ($impl === self::ANNOTATION_DRIVER) {
 			$driver->arguments = [
-				'@' . self::ANNOTATION_DRIVER . '.reader',
+				'@' . Doctrine\Common\Annotations\Reader::class,
 				Nette\Utils\Arrays::flatten($driver->arguments)
 			];
 		}
