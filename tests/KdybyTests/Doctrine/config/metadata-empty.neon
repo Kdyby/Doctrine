@@ -1,5 +1,5 @@
 parameters:
-	appDir: %wwwDir%/Doctrine/models2 # appDir replacing required - AnnotationDriver::getAllClassNames() require problem
+	appDir: %wwwDir%/Doctrine/models2
 
 kdyby.doctrine:
 	driver: pdo_sqlite

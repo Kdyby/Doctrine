@@ -295,7 +295,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			$metadataDriver->addSetup('setDefaultDriver', [
 				new Statement($this->metadataDriverClasses[self::ANNOTATION_DRIVER], [
 					'@' . Doctrine\Common\Annotations\Reader::class,
-					[Nette\DI\Helpers::expand('%appDir%', $builder->parameters)]
+					[$builder->expand('%appDir%')]
 				])
 			]);
 		}
