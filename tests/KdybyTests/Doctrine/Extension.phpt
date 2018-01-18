@@ -155,6 +155,21 @@ class ExtensionTest extends Tester\TestCase
 
 
 
+	public function testMetadataEmpty()
+	{
+		$container = $this->createContainer('metadata-empty');
+
+		/** @var Kdyby\Doctrine\EntityManager $default */
+		$default = $container->getByType(\Kdyby\Doctrine\EntityManager::class);
+		$entityClasses = array_map(function (ClassMetadata $class) {
+			return $class->getName();
+		}, $default->getMetadataFactory()->getAllMetadata());
+
+		Assert::contains(\KdybyTests\Doctrine\Models2\Foo::class, $entityClasses);
+	}
+
+
+
 	public function testProxyAutoloading()
 	{
 		$env = $_ENV + ['TEMP_DIR' => $scriptTempDir = TEMP_DIR . '/script'];

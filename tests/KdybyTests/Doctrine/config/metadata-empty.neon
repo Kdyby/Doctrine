@@ -1,0 +1,6 @@
+parameters:
+	appDir: %wwwDir%/Doctrine/models2
+
+kdyby.doctrine:
+	driver: pdo_sqlite
+	memory: true
