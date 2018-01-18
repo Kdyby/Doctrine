@@ -18,11 +18,11 @@ and now enable the extension using your neon config
 
 ```yml
 extensions:
-	# add theese four lines
-	console: Kdyby\Console\DI\ConsoleExtension
-	events: Kdyby\Events\DI\EventsExtension
-	annotations: Kdyby\Annotations\DI\AnnotationsExtension
-	doctrine: Kdyby\Doctrine\DI\OrmExtension
+    # add theese four lines
+    console: Kdyby\Console\DI\ConsoleExtension
+    events: Kdyby\Events\DI\EventsExtension
+    annotations: Kdyby\Annotations\DI\AnnotationsExtension
+    doctrine: Kdyby\Doctrine\DI\OrmExtension
 ```
 
 Please see documentation, on how to configure [Kdyby/Events](https://github.com/Kdyby/Events/blob/master/docs/en/index.md), [Kdyby/Console](https://github.com/Kdyby/Console/blob/master/docs/en/index.md) and [Kdyby/Annotations](https://github.com/Kdyby/Annotations/blob/master/docs/en/index.md).
@@ -36,11 +36,11 @@ This extension creates new configuration section `doctrine`, the absolute minima
 
 ```yml
 doctrine:
-	user: root
-	password: pass
-	dbname: sandbox
-	metadata:
-		App: %appDir%
+    user: root
+    password: pass
+    dbname: sandbox
+    metadata:
+        App: %appDir%
 ```
 
 The `metadata` section, as you might have guessed, configures your mapping drivers. The key is namespace and the value is usualy a directory.
@@ -141,7 +141,7 @@ Thanks to autowiring, it's really easy :)
 
 ```yml
 services:
-	- App\Articles()
+    - App\Articles()
 ```
 
 Ideally, to not violate the [SRP](http://en.wikipedia.org/wiki/Single_responsibility_principle), you should not extend repository to add custom business logic, but rather decorate it.
