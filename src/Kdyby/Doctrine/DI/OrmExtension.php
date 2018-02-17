@@ -287,8 +287,8 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		if (empty($config['metadata'])) {
 			$metadataDriver->addSetup('setDefaultDriver', [
 				new Statement($this->metadataDriverClasses[self::ANNOTATION_DRIVER], [
-					[$builder->expand('%appDir%')],
-					2 => $this->prefix('@cache.' . $name . '.metadata')
+					'@' . Doctrine\Common\Annotations\Reader::class,
+					[$builder->expand('%appDir%')]
 				])
 			]);
 		}
