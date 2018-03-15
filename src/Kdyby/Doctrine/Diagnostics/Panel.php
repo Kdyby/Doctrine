@@ -291,7 +291,7 @@ class Panel implements IBarPanel, Doctrine\DBAL\Logging\SQLLogger
 
 		$s = self::highlightQuery(static::formatQuery($sql, (array) $params, (array) $types, $this->connection ? $this->connection->getDatabasePlatform() : NULL));
 		if ($source) {
-			$s .= self::editorLink($source[0], $source[1], $h('.../' . basename(dirname($source[0]))) . '/<b>' . $h(basename($source[0])) . '</b>');
+			$s .= self::editorLink($source[0], $source[1], $h('.../' . basename(dirname($source[0]))) . '/<b>' . $h(basename($source[0])) . '</b>') . ' line: ' . $source[1];
 		}
 
 		return '<tr><td>' . sprintf('%0.3f', $time * 1000) . '</td>' .
