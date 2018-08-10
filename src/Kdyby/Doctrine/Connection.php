@@ -143,12 +143,7 @@ class Connection extends Doctrine\DBAL\Connection
 
 
 	/**
-	 * @param string $query
-	 * @param array $params
-	 * @param array $types
-	 * @param \Doctrine\DBAL\Cache\QueryCacheProfile $qcp
-	 * @return \Doctrine\DBAL\Driver\Statement
-	 * @throws DBALException
+	 * {@inheritdoc}
 	 */
 	public function executeQuery($query, array $params = [], $types = [], Doctrine\DBAL\Cache\QueryCacheProfile $qcp = NULL)
 	{
