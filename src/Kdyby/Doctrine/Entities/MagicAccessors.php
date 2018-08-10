@@ -427,10 +427,10 @@ trait MagicAccessors
 	 */
 	public function __unset($name)
 	{
-        $class = get_class($this);
-        if (!ObjectHelpers::hasProperty($class, $name)) {
-            throw new Nette\MemberAccessException("Cannot unset the property $class::\$$name.");
-        }
+		$class = get_class($this);
+		if (!ObjectHelpers::hasProperty($class, $name)) {
+			throw new Nette\MemberAccessException("Cannot unset the property $class::\$$name.");
+		}
 	}
 
 

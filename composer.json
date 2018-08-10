@@ -26,7 +26,7 @@
 		"kdyby/doctrine-cache": "^2.6.1",
 		"kdyby/strict-objects": "^1.0",
 		"nette/di": "^2.4@dev",
-		"nette/utils": "^2.4@dev",
+		"nette/utils": "^2.5@dev",
 		"nette/finder": "^2.4@dev"
 	},
 	"require-dev": {

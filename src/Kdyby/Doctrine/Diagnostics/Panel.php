@@ -388,8 +388,7 @@ class Panel implements IBarPanel, Doctrine\DBAL\Logging\SQLLogger
 
 			if ($invalidTable = Strings::match($e->getMessage(), '~table \'(.*?)\'~i')) {
 				foreach ($em->getMetadataFactory()->getAllMetadata() as $class) {
-					/** @var Kdyby\Doctrine\Mapping\ClassMetadata $class */
-					if ($class->getTableName() === $invalidTable[1]) {
+					if ($class instanceof Doctrine\ORM\Mapping\ClassMetadata && $class->getTableName() === $invalidTable[1]) {
 						$refl = $class->getReflectionClass();
 						break;
 					}
