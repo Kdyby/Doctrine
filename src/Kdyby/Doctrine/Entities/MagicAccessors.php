@@ -8,15 +8,14 @@
 
 namespace Kdyby\Doctrine\Entities;
 
-use Doctrine;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Mapping as ORM;
 use Kdyby;
 use Kdyby\Doctrine\Collections\ReadOnlyCollectionWrapper;
 use Kdyby\Doctrine\MemberAccessException;
 use Kdyby\Doctrine\UnexpectedValueException;
 use Nette;
 use Nette\Utils\Callback;
+use Nette\Utils\ObjectHelpers;
 use Nette\Utils\ObjectMixin;
 
 
@@ -261,7 +260,7 @@ trait MagicAccessors
 	 */
 	public static function __callStatic($name, $args)
 	{
-		ObjectMixin::callStatic(get_called_class(), $name, $args);
+		ObjectHelpers::strictStaticCall(get_called_class(), $name);
 		return NULL;
 	}
 
@@ -428,7 +427,10 @@ trait MagicAccessors
 	 */
 	public function __unset($name)
 	{
-		ObjectMixin::remove($this, $name);
+        $class = get_class($this);
+        if (!ObjectHelpers::hasProperty($class, $name)) {
+            throw new Nette\MemberAccessException("Cannot unset the property $class::\$$name.");
+        }
 	}
 
 
