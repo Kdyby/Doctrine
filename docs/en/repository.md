@@ -53,12 +53,6 @@ Not anymore! Kdyby adds possibility to search by relation properties.
 $commentsRepository->findBy(['article.title' => $title]);
 ```
 
-Using `like` is also possible:
-
-```php
-$commentsRepository->findBy(['article.title like' => '%' . $title . '%']);
-```
-
 And you can even use other operation than only equals!
 Those operators are:
 - `!=` or `not`
@@ -66,6 +60,7 @@ Those operators are:
 - `<=`
 - `>`
 - `>=`
+- `like`
 
 ```php
 $commentsRepository->findBy(['article.date >=' => new \DateTime('-1 day')]);
