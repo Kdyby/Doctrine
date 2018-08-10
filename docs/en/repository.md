@@ -60,6 +60,7 @@ Those operators are:
 - `<=`
 - `>`
 - `>=`
+- `like`
 
 ```php
 $commentsRepository->findBy(['article.date >=' => new \DateTime('-1 day')]);
@@ -67,6 +68,7 @@ $commentsRepository->findBy(['article.date >' => new \DateTime('-1 day')]);
 $commentsRepository->findBy(['article.date <' => new \DateTime('-1 day')]);
 $commentsRepository->findBy(['article.date <=' => new \DateTime('-1 day')]);
 $commentsRepository->findBy(['article.date !=' => new \DateTime('-1 day')]);
+$commentsRepository->findBy(['article.title like' => '%' . $title . '%']);
 ```
 
 You can also use array or `NULL` as value of the property to create SQL `IN` or `IS` command
