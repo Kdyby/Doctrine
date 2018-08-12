@@ -33,7 +33,7 @@ class RepositoryFactory implements Doctrine\ORM\Repository\RepositoryFactory
 	/**
 	 * The list of EntityRepository instances.
 	 *
-	 * @var Doctrine\ORM\EntityRepository[]
+	 * @var Doctrine\ORM\EntityRepository[][]
 	 */
 	private $repositoryList = [];
 

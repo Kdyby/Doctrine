@@ -48,7 +48,7 @@ class EntityManager extends Doctrine\ORM\EntityManager implements Persistence\Qu
 	private $nonLockingUniqueInserter;
 
 	/**
-	 * @var \Kdyby\Doctrine\Diagnostics\EntityManagerUnitOfWorkSnapshotPanel
+	 * @var \Kdyby\Doctrine\Diagnostics\EntityManagerUnitOfWorkSnapshotPanel|null
 	 */
 	private $panel;
 

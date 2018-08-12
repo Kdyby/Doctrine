@@ -9,14 +9,15 @@ if (PHP_SAPI !== 'cli') {
 	exit(1);
 }
 
-\Tracy\Debugger::enable(FALSE, getenv('TEMP_DIR'));
+$logDir = getenv('TEMP_DIR') ?: '';
+\Tracy\Debugger::enable(FALSE, $logDir);
 
 if ($sessionId = getenv('SESSION_ID')) {
 	$GLOBALS['_COOKIE'][session_name()] = $sessionId;
 }
 
 $config = new Nette\Configurator();
-$config->setTempDirectory(getenv('TEMP_DIR'));
+$config->setTempDirectory($logDir);
 $config->addParameters([
 	'appDir' => __DIR__,
 	'wwwDir' => __DIR__,

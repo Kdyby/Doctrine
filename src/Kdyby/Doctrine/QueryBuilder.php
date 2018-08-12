@@ -145,7 +145,7 @@ class QueryBuilder extends Doctrine\ORM\QueryBuilder implements \IteratorAggrega
 		$rootAliases = $this->getRootAliases();
 		$alias = reset($rootAliases);
 
-		if (($i = strpos($key, '.')) === FALSE || !in_array(substr($key, 0, $i), $rootAliases)) {
+		if (($i = strpos($key, '.')) === FALSE || !in_array(substr($key, 0, $i ?: 0), $rootAliases)) {
 			// there is no root alias to join from, assume first root alias
 			$key = $alias . '.' . $key;
 		}

@@ -45,7 +45,7 @@ class Connection extends Doctrine\DBAL\Connection
 	const POSTGRE_ERR_UNIQUE = 23505; // todo: verify, source: http://www.postgresql.org/docs/8.2/static/errcodes-appendix.html
 
 	/**
-	 * @var Doctrine\ORM\EntityManager
+	 * @var Doctrine\ORM\EntityManager|null
 	 */
 	private $entityManager;
 
@@ -201,7 +201,7 @@ class Connection extends Doctrine\DBAL\Connection
 	{
 		$args = func_get_args();
 		try {
-			return call_user_func_array('parent::query', $args);
+			return parent::query(...$args);
 
 		} catch (\Exception $e) {
 			throw $this->resolveException($e, func_get_arg(0));

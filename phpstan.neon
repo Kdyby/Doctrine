@@ -5,9 +5,6 @@ parameters:
 		- '#Parameter \#1 \$firstResult of method [^\s]+::setFirstResult\(\) expects int, (int\|)?null given#'
 		- '#Method Doctrine\\DBAL\\Driver\\Connection::query\(\) invoked with \d+ parameter, 0 required#'
 		- '#Kdyby\\Doctrine\\EmptyResultSet::__construct\(\) does not call parent constructor from Kdyby\\Doctrine\\ResultSet.#'
-		- '#Call to an undefined method Serializable::__sleep\(\).#'
-		- '#Call to an undefined method Serializable::__wakeup\(\).#'
 		- '#Access to an undefined property Nette\\Http\\SessionSection::\$entity#'
+		- '#Binary operation "&" between string and .+ results in an error#'
 		- '#Call to an undefined method Reflector::get#' # TODO refactoring class Panel
-		- '#Call to an undefined method object::getId\(\)#' # class SimpleParameterFormatter
-		- '#Method Kdyby\\Doctrine\\NativeQueryBuilder::(join|where|andWhere|orWhere)\(\) should return \$this but returns call_user_func_array#' # NativeQueryBuilder shortcuts

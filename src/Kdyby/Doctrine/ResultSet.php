@@ -109,7 +109,7 @@ class ResultSet implements \Countable, \IteratorAggregate
 
 
 	/**
-	 * @param bool $fetchJoinCollection
+	 * @param bool|mixed $fetchJoinCollection
 	 * @throws InvalidStateException
 	 * @return ResultSet
 	 */

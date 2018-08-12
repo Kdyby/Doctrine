@@ -60,7 +60,7 @@ abstract class CommandTestCase extends Tester\TestCase
 	];
 
 	/**
-	 * @var Nette\DI\Container
+	 * @var Nette\DI\Container|null
 	 */
 	private $serviceLocator;
 
