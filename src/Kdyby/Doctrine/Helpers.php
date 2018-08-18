@@ -76,7 +76,12 @@ final class Helpers
 
 		$context = 'file';
 		$contextBrackets = 0;
-		foreach (token_get_all(file_get_contents($class->getFileName())) as $token) {
+		$fileContent = file_get_contents($class->getFileName() ?: '');
+		if ($fileContent === FALSE) {
+			return NULL;
+		}
+
+		foreach (token_get_all($fileContent) as $token) {
 			if ($token === '{') {
 				$contextBrackets += 1;
 
@@ -141,7 +146,7 @@ final class Helpers
 				$delimiter = $match[1];
 				$query = substr($query, strlen($match[0]));
 			} else {
-				preg_match('(' . preg_quote($delimiter) . '|[\'`"]|/\\*|-- |#|$)', $query, $match, PREG_OFFSET_CAPTURE, $offset); // should always match
+				preg_match('(' . preg_quote($delimiter) . '|[\'`"]|/\\*|-- |#|$)', $query, $match, PREG_OFFSET_CAPTURE, (int) $offset); // should always match
 				$found = $match[0][0];
 				$offset = $match[0][1] + strlen($found);
 
@@ -196,7 +201,7 @@ final class Helpers
 		$delimiter = ';';
 		$sql = '';
 		while (!feof($handle)) {
-			$s = rtrim(fgets($handle));
+			$s = rtrim(fgets($handle) ?: '');
 			if (substr($s, 0, 10) === 'DELIMITER ') {
 				$delimiter = substr($s, 10);
 

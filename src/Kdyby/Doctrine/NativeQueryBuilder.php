@@ -327,7 +327,9 @@ class NativeQueryBuilder extends Doctrine\DBAL\Query\QueryBuilder
 	 */
 	public function where($predicates)
 	{
-		return call_user_func_array('parent::where', Helpers::separateParameters($this, func_get_args()));
+		$args = Helpers::separateParameters($this, func_get_args());
+		parent::where(...$args);
+		return $this;
 	}
 
 
@@ -338,7 +340,9 @@ class NativeQueryBuilder extends Doctrine\DBAL\Query\QueryBuilder
 	 */
 	public function andWhere($where)
 	{
-		return call_user_func_array('parent::andWhere', Helpers::separateParameters($this, func_get_args()));
+		$args = Helpers::separateParameters($this, func_get_args());
+		parent::andWhere(...$args);
+		return $this;
 	}
 
 
@@ -349,7 +353,9 @@ class NativeQueryBuilder extends Doctrine\DBAL\Query\QueryBuilder
 	 */
 	public function orWhere($where)
 	{
-		return call_user_func_array('parent::orWhere', Helpers::separateParameters($this, func_get_args()));
+		$args = Helpers::separateParameters($this, func_get_args());
+		parent::orWhere(...$args);
+		return $this;
 	}
 
 }

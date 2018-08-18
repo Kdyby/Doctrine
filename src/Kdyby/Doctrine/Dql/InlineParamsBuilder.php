@@ -28,7 +28,8 @@ class InlineParamsBuilder extends Kdyby\Doctrine\QueryBuilder
 	 */
 	public function join($join, $alias, $conditionType = NULL, $condition = NULL, $indexBy = NULL)
 	{
-		call_user_func_array([$this, 'innerJoin'], func_get_args());
+		$args = func_get_args();
+		$this->innerJoin(...$args);
 		return $this;
 	}
 
@@ -82,7 +83,8 @@ class InlineParamsBuilder extends Kdyby\Doctrine\QueryBuilder
 	 */
 	public function where($predicates)
 	{
-		call_user_func_array('parent::where', Helpers::separateParameters($this, func_get_args()));
+		$args = Helpers::separateParameters($this, func_get_args());
+		parent::where(...$args);
 		return $this;
 	}
 
@@ -94,7 +96,8 @@ class InlineParamsBuilder extends Kdyby\Doctrine\QueryBuilder
 	 */
 	public function andWhere()
 	{
-		call_user_func_array('parent::andWhere', Helpers::separateParameters($this, func_get_args()));
+		$args = Helpers::separateParameters($this, func_get_args());
+		parent::andWhere(...$args);
 		return $this;
 	}
 
@@ -106,7 +109,8 @@ class InlineParamsBuilder extends Kdyby\Doctrine\QueryBuilder
 	 */
 	public function orWhere()
 	{
-		call_user_func_array('parent::orWhere', Helpers::separateParameters($this, func_get_args()));
+		$args = Helpers::separateParameters($this, func_get_args());
+		parent::orWhere(...$args);
 		return $this;
 	}
 

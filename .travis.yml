@@ -40,7 +40,7 @@ matrix:
       env: COMPOSER_EXTRA_ARGS="--prefer-stable" COVERAGE="--coverage ./coverage.xml --coverage-src ./src" TESTER_RUNTIME="phpdbg"
 
 install:
-  - if [ "$PHPSTAN" = "1" ]; then composer require --dev --no-update phpstan/phpstan-shim:^0.9; fi
+  - if [ "$PHPSTAN" = "1" ]; then composer require --dev --no-update phpstan/phpstan-shim:^0.10; fi
   - travis_retry composer update --no-interaction --prefer-dist $COMPOSER_EXTRA_ARGS
   - travis_retry composer create-project --no-interaction jakub-onderka/php-parallel-lint /tmp/php-parallel-lint
 #  - travis_retry composer create-project --no-interaction kdyby/code-checker /tmp/code-checker

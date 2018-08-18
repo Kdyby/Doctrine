@@ -389,7 +389,7 @@ class DqlSelection implements \IteratorAggregate
 	{
 		reset($this->builder->from);
 
-		return key($this->builder->from);
+		return (string) key($this->builder->from);
 	}
 
 

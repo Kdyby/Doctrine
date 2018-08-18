@@ -148,7 +148,9 @@ class NonLockingUniqueInserter
 		$this->prepareInsert($meta, array_merge($fields, $associations, $discriminator))->execute();
 
 		// assign ID to entity
-		if ($idGen = $meta->idGenerator) {
+		/** @var \Doctrine\ORM\Id\AbstractIdGenerator|null $idGen */
+		$idGen = $meta->idGenerator;
+		if ($idGen) {
 			if ($idGen->isPostInsertGenerator()) {
 				$id = $idGen->generate($this->em, $entity);
 				$identifierFields = $meta->getIdentifierFieldNames();
@@ -184,7 +186,7 @@ class NonLockingUniqueInserter
 		// bind values
 		$paramIndex = 1;
 		foreach ($data as $column) {
-			$statement->bindValue($paramIndex++, $column['value'], $column['type']);
+			$statement->bindValue((string) ($paramIndex++), $column['value'], $column['type']);
 		}
 
 		return $statement;
