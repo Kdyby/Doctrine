@@ -244,7 +244,7 @@ class Element
 
 		$separator = $this->separator;
 		$coordsSeparator = $this->coordsSeparator;
-		$coordsRegexp = '~^\s*[\d\.]+\s*' . preg_quote($coordsSeparator) . '\s*[\d\.]+\s*$~i';
+		$coordsRegexp = '~^\s*-?[\d\.]+\s*' . preg_quote($coordsSeparator) . '\s*-?[\d\.]+\s*$~i';
 
 		$coordinates = [];
 		foreach (explode($separator, $coordsList) as $coords) {
