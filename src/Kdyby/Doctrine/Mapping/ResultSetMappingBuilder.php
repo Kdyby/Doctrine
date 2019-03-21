@@ -252,7 +252,7 @@ class ResultSetMappingBuilder extends Doctrine\ORM\Query\ResultSetMappingBuilder
 
 				if (!$class->hasField($fieldName)) {
 					if (!$class->isInheritanceTypeSingleTable() && !$class->isInheritanceTypeJoined()) {
-						throw new Kdyby\Doctrine\UnexpectedValueException("Entity " . $class->getName() . " has no field '$fieldName' for column '$columnName'.");
+						throw new Kdyby\Doctrine\Exception\UnexpectedValueException("Entity " . $class->getName() . " has no field '$fieldName' for column '$columnName'.");
 					}
 
 					foreach ($class->subClasses as $subClass) {

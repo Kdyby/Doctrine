@@ -15,6 +15,7 @@ use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\NoResultException;
 use Doctrine\ORM\NonUniqueResultException;
 use Kdyby;
+use Kdyby\Doctrine\Exception\QueryException;
 use Kdyby\Persistence;
 use Nette;
 
@@ -286,7 +287,7 @@ class EntityRepository extends Doctrine\ORM\EntityRepository implements Persiste
 	/**
 	 * @param \Exception $e
 	 * @param \Kdyby\Persistence\Query $queryObject
-	 * @return \Kdyby\Doctrine\QueryException
+	 * @return \Kdyby\Doctrine\Exception\QueryException
 	 */
 	private function handleQueryException(\Exception $e, Persistence\Query $queryObject)
 	{
@@ -301,7 +302,7 @@ class EntityRepository extends Doctrine\ORM\EntityRepository implements Persiste
 	 * @param \Exception $e
 	 * @param \Doctrine\ORM\Query $query
 	 * @param string $message
-	 * @return \Exception|\Kdyby\Doctrine\QueryException
+	 * @return \Exception|\Kdyby\Doctrine\Exception\QueryException
 	 */
 	private function handleException(\Exception $e, Doctrine\ORM\Query $query = NULL, $message = NULL)
 	{

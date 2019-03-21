@@ -171,12 +171,12 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		}
 
 		if (empty($config)) {
-			throw new Kdyby\Doctrine\UnexpectedValueException("Please configure the Doctrine extensions using the section '{$this->name}:' in your config file.");
+			throw new Kdyby\Doctrine\Exception\UnexpectedValueException("Please configure the Doctrine extensions using the section '{$this->name}:' in your config file.");
 		}
 
 		foreach ($config as $name => $emConfig) {
 			if (!is_array($emConfig) || (empty($emConfig['dbname']) && empty($emConfig['driver']))) {
-				throw new Kdyby\Doctrine\UnexpectedValueException("Please configure the Doctrine extensions using the section '{$this->name}:' in your config file.");
+				throw new Kdyby\Doctrine\Exception\UnexpectedValueException("Please configure the Doctrine extensions using the section '{$this->name}:' in your config file.");
 			}
 
 			/** @var mixed[] $emConfig */
@@ -224,7 +224,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 				$cli->setClass($command);
 
 			} else {
-				throw new Kdyby\Doctrine\NotSupportedException;
+				throw new Kdyby\Doctrine\Exception\NotSupportedException;
 			}
 		}
 	}
@@ -845,7 +845,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		$blueScreen = \Tracy\Debugger::class . '::getBlueScreen()';
 		$commonDirname = dirname(Nette\Reflection\ClassType::from(Doctrine\Common\Version::class)->getFileName());
 
-		$init->addBody($blueScreen . '->collapsePaths[] = ?;', [dirname(Nette\Reflection\ClassType::from(Kdyby\Doctrine\Exception::class)->getFileName())]);
+		$init->addBody($blueScreen . '->collapsePaths[] = ?;', [dirname(Nette\Reflection\ClassType::from(Kdyby\Doctrine\Exception\IException::class)->getFileName())]);
 		$init->addBody($blueScreen . '->collapsePaths[] = ?;', [dirname(dirname(dirname(dirname($commonDirname))))]); // this should be vendor/doctrine
 		foreach ($this->proxyAutoloaders as $dir) {
 			$init->addBody($blueScreen . '->collapsePaths[] = ?;', [$dir]);
