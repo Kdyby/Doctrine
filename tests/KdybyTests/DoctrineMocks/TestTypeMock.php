@@ -26,12 +26,12 @@ class TestTypeMock extends Doctrine\DBAL\Types\Type
 	 * @param array $fieldDeclaration
 	 * @param \Doctrine\DBAL\Platforms\AbstractPlatform $platform
 	 *
-	 * @throws \Kdyby\Doctrine\InvalidStateException
+	 * @throws \Kdyby\Doctrine\Exception\InvalidStateException
 	 * @return mixed
 	 */
 	public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
 	{
-		throw new Kdyby\Doctrine\InvalidStateException(
+		throw new Kdyby\Doctrine\Exception\InvalidStateException(
 			"Please, use the 'columnDefinition' property of @Column() annotation."
 		);
 	}

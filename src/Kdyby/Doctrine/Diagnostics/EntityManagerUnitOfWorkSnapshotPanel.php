@@ -108,7 +108,7 @@ class EntityManagerUnitOfWorkSnapshotPanel
 	public function bindEntityManager(Doctrine\ORM\EntityManager $em)
 	{
 		if ($this->em !== NULL) {
-			throw new Kdyby\Doctrine\InvalidStateException(sprintf('%s is already bound to an entity manager.', __CLASS__));
+			throw new Kdyby\Doctrine\Exception\InvalidStateException(sprintf('%s is already bound to an entity manager.', __CLASS__));
 		}
 
 		$this->em = $em;

@@ -14,6 +14,8 @@ use Doctrine\ORM;
 use Doctrine\ORM\ORMException;
 use Doctrine\ORM\Tools\Pagination\Paginator as ResultPaginator;
 use Kdyby;
+use Kdyby\Doctrine\Exception\InvalidArgumentException;
+use Kdyby\Doctrine\Exception\QueryException;
 use Kdyby\Persistence\Queryable;
 use Nette;
 use Nette\Utils\Strings;
@@ -278,7 +280,7 @@ class ResultSet implements \Countable, \IteratorAggregate
 
 
 	/**
-	 * @throws \Kdyby\Doctrine\QueryException
+	 * @throws \Kdyby\Doctrine\Exception\QueryException
 	 * @return int
 	 */
 	public function getTotalCount()

@@ -67,7 +67,7 @@ class ClassMetadataFactory extends Doctrine\ORM\Mapping\ClassMetadataFactory
 		}
 
 		if (!class_exists($name)) {
-			throw new Kdyby\Doctrine\MissingClassException("Metadata of class $name was not found, because the class is missing or cannot be autoloaded.");
+			throw new Kdyby\Doctrine\Exception\MissingClassException("Metadata of class $name was not found, because the class is missing or cannot be autoloaded.");
 		}
 
 		return parent::loadMetadata($origName);

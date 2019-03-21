@@ -11,7 +11,7 @@
 namespace Kdyby\Doctrine\Entities;
 
 use Kdyby;
-use Kdyby\Doctrine\StaticClassException;
+use Kdyby\Doctrine\Exception\StaticClassException;
 use Nette;
 use Nette\Reflection\ClassType;
 use Serializable;

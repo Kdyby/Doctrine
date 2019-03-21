@@ -15,6 +15,9 @@ use Doctrine\Common\EventManager;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Driver;
 use Kdyby;
+use Kdyby\Doctrine\Exception\DBALException;
+use Kdyby\Doctrine\Exception\DuplicateEntryException;
+use Kdyby\Doctrine\Exception\EmptyValueException;
 use Nette;
 use PDO;
 use Tracy;
@@ -375,7 +378,7 @@ class Connection extends Doctrine\DBAL\Connection
 	 * @param \Exception|\Throwable $e
 	 * @param string $query
 	 * @param array $params
-	 * @return \Kdyby\Doctrine\DBALException|\Exception|\Throwable
+	 * @return \Kdyby\Doctrine\Exception\DBALException|\Exception|\Throwable
 	 */
 	public function resolveException($e, $query = NULL, $params = [])
 	{

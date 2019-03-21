@@ -106,7 +106,7 @@ class NonLockingUniqueInserter
 
 			return FALSE;
 
-		} catch (Kdyby\Doctrine\DuplicateEntryException $e) {
+		} catch (Kdyby\Doctrine\Exception\DuplicateEntryException $e) {
 			$this->db->rollBack();
 
 			return FALSE;

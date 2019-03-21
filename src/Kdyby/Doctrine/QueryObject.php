@@ -15,6 +15,8 @@ use Doctrine;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use Kdyby;
+use Kdyby\Doctrine\Exception\NotSupportedException;
+use Kdyby\Doctrine\Exception\UnexpectedValueException;
 use Kdyby\Persistence\Queryable;
 use Nette;
 

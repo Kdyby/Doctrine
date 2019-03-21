@@ -12,6 +12,7 @@ namespace Kdyby\Doctrine;
 
 use Doctrine;
 use Kdyby;
+use Kdyby\Doctrine\Exception\InvalidArgumentException;
 use Nette;
 
 

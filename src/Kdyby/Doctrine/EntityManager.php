@@ -17,6 +17,8 @@ use Doctrine\ORM\ORMException;
 use Doctrine\ORM\Query;
 use Kdyby;
 use Kdyby\Doctrine\Diagnostics\EntityManagerUnitOfWorkSnapshotPanel;
+use Kdyby\Doctrine\Exception\NotSupportedException;
+use Kdyby\Doctrine\Exception\QueryException;
 use Kdyby\Doctrine\QueryObject;
 use Kdyby\Doctrine\Tools\NonLockingUniqueInserter;
 use Kdyby\Persistence;

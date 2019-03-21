@@ -333,7 +333,7 @@ class Panel implements IBarPanel, Doctrine\DBAL\Logging\SQLLogger
 				'panel' => $this->dumpQuery($sql, $params, $types, $source),
 			];
 
-		} elseif ($e instanceof Kdyby\Doctrine\QueryException && $e->query !== NULL) {
+		} elseif ($e instanceof Kdyby\Doctrine\Exception\QueryException && $e->query !== NULL) {
 			if ($e->query instanceof Doctrine\ORM\Query) {
 				return [
 					'tab' => 'DQL',
@@ -409,7 +409,7 @@ class Panel implements IBarPanel, Doctrine\DBAL\Logging\SQLLogger
 				];
 			}
 
-		} elseif ($e instanceof Kdyby\Doctrine\DBALException && $e->query !== NULL) {
+		} elseif ($e instanceof Kdyby\Doctrine\Exception\DBALException && $e->query !== NULL) {
 			return [
 				'tab' => 'SQL',
 				'panel' => self::highlightQuery(static::formatQuery($e->query, $e->params, [])),
@@ -600,7 +600,7 @@ class Panel implements IBarPanel, Doctrine\DBAL\Logging\SQLLogger
 		if (Nette\Utils\Validators::isList($params)) {
 			$parts = explode('?', $query);
 			if (count($params) > $parts) {
-				throw new Kdyby\Doctrine\InvalidStateException("Too mny parameters passed to query.");
+				throw new Kdyby\Doctrine\Exception\InvalidStateException("Too mny parameters passed to query.");
 			}
 
 			return implode('', Kdyby\Doctrine\Helpers::zipper($parts, $params));
@@ -803,7 +803,7 @@ class Panel implements IBarPanel, Doctrine\DBAL\Logging\SQLLogger
 	public function enableLogging()
 	{
 		if ($this->connection === NULL) {
-			throw new Kdyby\Doctrine\InvalidStateException("Doctrine Panel is not bound to connection.");
+			throw new Kdyby\Doctrine\Exception\InvalidStateException("Doctrine Panel is not bound to connection.");
 		}
 
 		$config = $this->connection->getConfiguration();
@@ -826,7 +826,7 @@ class Panel implements IBarPanel, Doctrine\DBAL\Logging\SQLLogger
 	public function bindConnection(Doctrine\DBAL\Connection $connection)
 	{
 		if ($this->connection !== NULL) {
-			throw new Kdyby\Doctrine\InvalidStateException("Doctrine Panel is already bound to connection.");
+			throw new Kdyby\Doctrine\Exception\InvalidStateException("Doctrine Panel is already bound to connection.");
 		}
 
 		$this->connection = $connection;

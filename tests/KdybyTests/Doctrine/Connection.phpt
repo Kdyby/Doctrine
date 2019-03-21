@@ -111,8 +111,8 @@ class ConnectionTest extends Tester\TestCase
 		);
 
 		return [
-			[$empty, \Kdyby\Doctrine\EmptyValueException::class, ['column' => 'name']],
-			[$unique, \Kdyby\Doctrine\DuplicateEntryException::class, ['columns' => ['uniq_name_surname' => ['name', 'surname']]]],
+			[$empty, \Kdyby\Doctrine\Exception\EmptyValueException::class, ['column' => 'name']],
+			[$unique, \Kdyby\Doctrine\Exception\DuplicateEntryException::class, ['columns' => ['uniq_name_surname' => ['name', 'surname']]]],
 		];
 	}
 

@@ -17,6 +17,7 @@ use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\NativeQuery;
 use Doctrine\ORM\Query;
 use Kdyby;
+use Kdyby\Doctrine\Exception\NotImplementedException;
 use Nette;
 
 

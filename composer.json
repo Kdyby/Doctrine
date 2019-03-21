@@ -17,7 +17,7 @@
     "issues": "https://github.com/kdyby/doctrine/issues"
   },
   "require": {
-    "php": "^5.6 || ^7.0",
+    "php": "^7.1",
     "doctrine/orm": "~2.5",
     "doctrine/dbal": "~2.5",
     "kdyby/console": "^2.7.1",
@@ -40,17 +40,17 @@
     "nette/caching": "^2.5.3",
     "nette/http": "^2.4.7@dev",
     "tracy/tracy": "^2.4@dev",
-    "nette/tester": "^2.0"
+    "nette/tester": "^2.0",
+    "kdyby/coding-standard": "^1.0@dev",
+    "phpstan/phpstan-shim": "^0.11",
+    "jakub-onderka/php-parallel-lint": "^1.0"
   },
   "minimum-stability": "dev",
   "autoload": {
-    "psr-0": {
-      "Kdyby\\Doctrine\\": "src/",
-      "Kdyby\\Persistence\\": "src/"
-    },
-    "classmap": [
-      "src/Kdyby/Doctrine/exceptions.php"
-    ]
+    "psr-4": {
+      "Kdyby\\Doctrine\\": "src/Kdyby/Doctrine/",
+      "Kdyby\\Persistence\\": "src/Kdyby/Persistence/"
+    }
   },
   "autoload-dev": {
     "classmap": [
