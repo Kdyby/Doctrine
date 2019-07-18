@@ -21,8 +21,8 @@
     "doctrine/orm": "~2.7",
     "doctrine/dbal": "~2.9",
     "kdyby/console": "^2.7.1",
-    "kdyby/annotations": "^2.4@dev",
-    "kdyby/doctrine-cache": "^2.6.1",
+    "kdyby/annotations": "dev-nette-3.0 as 2.6.0",
+    "kdyby/doctrine-cache": "dev-nette-3.0 as 2.7.0",
     "kdyby/strict-objects": "^2.0",
     "nette/di": "^3.0",
     "nette/utils": "^3.0",
@@ -61,5 +61,15 @@
     "branch-alias": {
       "dev-master": "4.0-dev"
     }
-  }
+  },
+  "repositories": [
+      {
+          "type": "git",
+          "url": "https://github.com/haltuf/DoctrineCache.git"
+      },
+      {
+          "type": "git",
+          "url": "https://github.com/haltuf/Annotations.git"
+      }
+  ]
 }
