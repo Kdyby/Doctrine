@@ -37,8 +37,12 @@ class EntityListenerResolver implements \Doctrine\ORM\Mapping\EntityListenerReso
 
 
 	/**
-	 * {@inheritdoc}
-	 */
+     * Returns a entity listener instance for the given class name.
+     *
+     * @param string $className The fully-qualified class name
+     *
+     * @return object|null An entity listener
+     */
 	public function resolve($className)
 	{
 		return $this->serviceLocator->getByType($className);

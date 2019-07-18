@@ -480,6 +480,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			->addSetup('setCacheLogger', [$this->prefix('@' . $name . '.cacheLogger')])
 			->setAutowired($isDefault);
 
+		/** @var Nette\DI\ServiceDefinition $configuration */
 		$configuration = $builder->getDefinition($this->prefix($name . '.ormConfiguration'));
 		$configuration->addSetup('setSecondLevelCacheEnabled');
 		$configuration->addSetup('setSecondLevelCacheConfiguration', ['@' . $cacheConfigName]);
@@ -549,7 +550,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		$this->configuredConnections[$name] = $connectionServiceId;
 
 		if (!is_bool($config['logging'])) {
-			$fileLogger = new Statement(Kdyby\Doctrine\Diagnostics\FileLogger::class, [$builder->expand($config['logging'])]);
+			$fileLogger = new Statement(Kdyby\Doctrine\Diagnostics\FileLogger::class, [Nette\DI\Helpers::expand($config['logging'], $this->compiler->getContainerBuilder()->parameters)]);
 			$configuration->addSetup('$service->getSQLLogger()->addLogger(?)', [$fileLogger]);
 
 		} elseif ($config['logging']) {
@@ -664,28 +665,33 @@ class OrmExtension extends Nette\DI\CompilerExtension
 
 		if (!method_exists($builder, 'findByType')) {
 			foreach ($this->configuredManagers as $managerName => $_) {
-				$builder->getDefinition($this->prefix($managerName . '.repositoryFactory'))
-					->addSetup('setServiceIdsMap', [[], $this->prefix('repositoryFactory.' . $managerName . '.defaultRepositoryFactory')]);
+				/** @var Nette\DI\ServiceDefinition $def */
+				$def = $builder->getDefinition($this->prefix($managerName . '.repositoryFactory'));
+				$def->addSetup('setServiceIdsMap', [[], $this->prefix('repositoryFactory.' . $managerName . '.defaultRepositoryFactory')]);
 			}
 
 			return;
 		}
 
 		$serviceMap = array_fill_keys(array_keys($this->configuredManagers), []);
+
+		/**
+		 * @var Nette\DI\ServiceDefinition $originalDef
+		 */
 		foreach ($builder->findByType(Doctrine\ORM\EntityRepository::class) as $originalServiceName => $originalDef) {
 			if (strpos($originalServiceName, $this->name . '.') === 0) {
 				continue; // ignore
 			}
 
 			$originalDefFactory = $originalDef->getFactory();
-			$factory = ($originalDefFactory !== NULL) ? $originalDefFactory->getEntity() : $originalDef->getClass();
+			$factory = !empty($originalDefFactory) ? $originalDefFactory->getEntity() : $originalDef->getClass();
 
 			if ((is_string($factory) && stripos($factory, '::getRepository') !== FALSE)
 				|| (is_array($factory) && array_search('::getRepository', $factory) === FALSE)) {
 				continue; // ignore
 			}
 			$factoryServiceName = $this->prefix('repositoryFactory.' . $originalServiceName);
-			$factoryDef = $builder->addFactoryDefinition($factoryServiceName, $originalDef)
+			$factoryDef = $builder->addFactoryDefinition($factoryServiceName)
 				->setImplement(IRepositoryFactory::class)
 				->setParameters([Doctrine\ORM\EntityManagerInterface::class . ' entityManager', Doctrine\ORM\Mapping\ClassMetadata::class . ' classMetadata'])
 				->setAutowired(FALSE)
@@ -721,8 +727,9 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		}
 
 		foreach ($this->configuredManagers as $managerName => $_) {
-			$builder->getDefinition($this->prefix($managerName . '.repositoryFactory'))
-				->addSetup('setServiceIdsMap', [
+			/** @var Nette\DI\ServiceDefinition $def */
+			$def = $builder->getDefinition($this->prefix($managerName . '.repositoryFactory'));
+			$def->addSetup('setServiceIdsMap', [
 					$serviceMap[$managerName],
 					$this->prefix('repositoryFactory.' . $managerName . '.defaultRepositoryFactory')
 				]);
@@ -740,7 +747,9 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		}
 
 		foreach ($this->configuredManagers as $managerName => $_) {
-			$builder->getDefinition($this->prefix($managerName . '.evm'))->setFactory('@' . $customEvmService);
+			/** @var Nette\DI\ServiceDefinition $def */
+			$def = $builder->getDefinition($this->prefix($managerName . '.evm'));
+			$def->setFactory('@' . $customEvmService);
 		}
 	}
 

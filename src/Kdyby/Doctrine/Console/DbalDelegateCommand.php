@@ -37,7 +37,7 @@ abstract class DbalDelegateCommand extends Command
 	abstract protected function createCommand();
 
 	/**
-	 * @param string $connectionName
+	 * @param string[]|bool|string|null $connectionName
 	 * @return \Symfony\Component\Console\Command\Command
 	 */
 	protected function wrapCommand($connectionName)

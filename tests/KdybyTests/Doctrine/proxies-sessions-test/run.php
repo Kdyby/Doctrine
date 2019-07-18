@@ -15,7 +15,7 @@ if ($sessionId = getenv('SESSION_ID')) {
 	$GLOBALS['_COOKIE'][session_name()] = $sessionId;
 }
 
-$TEMP_DIR = empty(getenv('TEMP_DIR')) ? __DIR__ : getenv('TEMP_DIR');
+$TEMP_DIR = empty(getenv('TEMP_DIR')) ? __DIR__ . '/../../../tmp' : getenv('TEMP_DIR');
 
 $config = new Nette\Configurator();
 $config->setTempDirectory($TEMP_DIR);
