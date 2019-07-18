@@ -32,7 +32,7 @@ use Nette;
 class EntityRepository extends Doctrine\ORM\EntityRepository implements Persistence\QueryExecutor, Persistence\Queryable //, Persistence\ObjectFactory
 {
 
-	use \Kdyby\StrictObjects\Scream;
+	//use \Kdyby\StrictObjects\Scream;
 
 	public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
 	{
