@@ -17,6 +17,8 @@ use Doctrine\ORM\Repository\DefaultRepositoryFactory;
 use Kdyby;
 use Kdyby\DoctrineCache\DI\Helpers as CacheHelpers;
 use Nette;
+use Nette\DI\ContainerBuilder;
+use Nette\DI\ServiceDefinition;
 use Nette\DI\Statement;
 use Nette\PhpGenerator as Code;
 use Nette\PhpGenerator\Method;
@@ -288,7 +290,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			$metadataDriver->addSetup('setDefaultDriver', [
 				new Statement($this->metadataDriverClasses[self::ANNOTATION_DRIVER], [
 					'@' . Doctrine\Common\Annotations\Reader::class,
-					[Nette\DI\Helpers::expand('%appDir%', $this->compiler->getContainerBuilder()->parameters)]
+					[Nette\DI\Helpers::expand('%appDir%', $builder->parameters)]
 				])
 			]);
 		}
@@ -480,10 +482,9 @@ class OrmExtension extends Nette\DI\CompilerExtension
 			->addSetup('setCacheLogger', [$this->prefix('@' . $name . '.cacheLogger')])
 			->setAutowired($isDefault);
 
-		/** @var Nette\DI\ServiceDefinition $configuration */
-		$configuration = $builder->getDefinition($this->prefix($name . '.ormConfiguration'));
-		$configuration->addSetup('setSecondLevelCacheEnabled');
-		$configuration->addSetup('setSecondLevelCacheConfiguration', ['@' . $cacheConfigName]);
+		$this->getServiceDefinition($builder, $this->prefix($name . '.ormConfiguration'))
+			->addSetup('setSecondLevelCacheEnabled')
+			->addSetup('setSecondLevelCacheConfiguration', ['@' . $cacheConfigName]);
 	}
 
 
@@ -550,7 +551,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		$this->configuredConnections[$name] = $connectionServiceId;
 
 		if (!is_bool($config['logging'])) {
-			$fileLogger = new Statement(Kdyby\Doctrine\Diagnostics\FileLogger::class, [Nette\DI\Helpers::expand($config['logging'], $this->compiler->getContainerBuilder()->parameters)]);
+			$fileLogger = new Statement(Kdyby\Doctrine\Diagnostics\FileLogger::class, [Nette\DI\Helpers::expand($config['logging'], $builder->parameters)]);
 			$configuration->addSetup('$service->getSQLLogger()->addLogger(?)', [$fileLogger]);
 
 		} elseif ($config['logging']) {
@@ -665,9 +666,8 @@ class OrmExtension extends Nette\DI\CompilerExtension
 
 		if (!method_exists($builder, 'findByType')) {
 			foreach ($this->configuredManagers as $managerName => $_) {
-				/** @var Nette\DI\ServiceDefinition $def */
-				$def = $builder->getDefinition($this->prefix($managerName . '.repositoryFactory'));
-				$def->addSetup('setServiceIdsMap', [[], $this->prefix('repositoryFactory.' . $managerName . '.defaultRepositoryFactory')]);
+				$this->getServiceDefinition($builder, $this->prefix($managerName . '.repositoryFactory'))
+					->addSetup('setServiceIdsMap', [[], $this->prefix('repositoryFactory.' . $managerName . '.defaultRepositoryFactory')]);
 			}
 
 			return;
@@ -727,9 +727,9 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		}
 
 		foreach ($this->configuredManagers as $managerName => $_) {
-			/** @var Nette\DI\ServiceDefinition $def */
-			$def = $builder->getDefinition($this->prefix($managerName . '.repositoryFactory'));
-			$def->addSetup('setServiceIdsMap', [
+
+			$this->getServiceDefinition($builder, $this->prefix($managerName . '.repositoryFactory'))
+				->addSetup('setServiceIdsMap', [
 					$serviceMap[$managerName],
 					$this->prefix('repositoryFactory.' . $managerName . '.defaultRepositoryFactory')
 				]);
@@ -747,9 +747,9 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		}
 
 		foreach ($this->configuredManagers as $managerName => $_) {
-			/** @var Nette\DI\ServiceDefinition $def */
-			$def = $builder->getDefinition($this->prefix($managerName . '.evm'));
-			$def->setFactory('@' . $customEvmService);
+
+			$this->getServiceDefinition($builder, $this->prefix($managerName . '.evm'))
+				->setFactory('@' . $customEvmService);
 		}
 	}
 
@@ -886,6 +886,13 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		$keys = array_flip(array_reverse($keys, TRUE));
 		$array = array_merge($keys, $array);
 		return $array;
+	}
+
+	private function getServiceDefinition(ContainerBuilder $builder, string $name): ServiceDefinition
+	{
+		$definition = $builder->getDefinition($name);
+    	assert($definition instanceof ServiceDefinition);
+    	return $definition;
 	}
 
 }
