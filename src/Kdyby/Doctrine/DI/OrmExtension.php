@@ -388,9 +388,9 @@ class OrmExtension extends Nette\DI\CompilerExtension
 				->setImplement(IRepositoryFactory::class)
 				->setParameters([EntityManagerInterface::class . ' entityManager', Doctrine\ORM\Mapping\ClassMetadata::class . ' classMetadata'])
 				->getResultDefinition()
-					->setFactory($config['defaultRepositoryClassName'])
-					->setArguments([new Code\PhpLiteral('$entityManager'), new Code\PhpLiteral('$classMetadata')])
-					->setAutowired(FALSE);
+				->setFactory($config['defaultRepositoryClassName'])
+				->setArguments([new Code\PhpLiteral('$entityManager'), new Code\PhpLiteral('$classMetadata')])
+				->setAutowired(FALSE);
 
 		$builder->addDefinition($this->prefix($name . '.schemaValidator'))
 			->setFactory(Doctrine\ORM\Tools\SchemaValidator::class, ['@' . $managerServiceId])
@@ -696,7 +696,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 				->setParameters([Doctrine\ORM\EntityManagerInterface::class . ' entityManager', Doctrine\ORM\Mapping\ClassMetadata::class . ' classMetadata'])
 				->setAutowired(FALSE)
 				->getResultDefinition()
-					->setFactory($originalDef->getFactory());
+				->setFactory($originalDef->getFactory());
 			$factoryStatement = $originalDef->getFactory() ?: new Statement($originalDef->getFactory());
 			$factoryStatement->arguments[0] = new Code\PhpLiteral('$entityManager');
 			$factoryStatement->arguments[1] = new Code\PhpLiteral('$classMetadata');
@@ -891,8 +891,8 @@ class OrmExtension extends Nette\DI\CompilerExtension
 	private function getServiceDefinition(ContainerBuilder $builder, string $name): ServiceDefinition
 	{
 		$definition = $builder->getDefinition($name);
-    	assert($definition instanceof ServiceDefinition);
-    	return $definition;
+		assert($definition instanceof ServiceDefinition);
+		return $definition;
 	}
 
 }
