@@ -40,7 +40,6 @@
     "nette/caching": "^3.0",
     "nette/http": "^3.0",
     "tracy/tracy": "^3.0",
-    "phpstan/phpstan-shim": "0.9"
     "nette/tester": "^2.2"
   },
   "minimum-stability": "dev",
