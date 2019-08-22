@@ -36,6 +36,7 @@ class GenerateEntitiesCommandTest extends CommandTestCase
 		$output = $applicationTester->getDisplay();
 		$output = str_replace('  ', '', $output);
 		$output = preg_replace("/\r|\n/", '', $output);
+		$output = preg_replace('!\s+!', ' ', $output);
 
 		foreach (self::$entities as $entity) {
 			Assert::contains("Processing entity \"{$entity}\"", $output);
@@ -59,6 +60,7 @@ class GenerateEntitiesCommandTest extends CommandTestCase
 		$output = $applicationTester->getDisplay();
 		$output = str_replace('  ', '', $output);
 		$output = preg_replace("/\r|\n/", '', $output);
+		$output = preg_replace('!\s+!', ' ', $output);
 
 		Assert::notContains('Processing entity "' . self::$entities[0] . '"', $output);
 		Assert::contains(sprintf('Processing entity "%s"', \KdybyTests\Doctrine\Models2\Foo::class), $output);

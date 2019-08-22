@@ -169,7 +169,7 @@ class Panel implements IBarPanel, Doctrine\DBAL\Logging\SQLLogger
 	/**
 	 * @return string
 	 */
-	public function getTab()
+	public function getTab(): ?string
 	{
 		return '<span title="Doctrine 2">'
 			. '<svg viewBox="0 0 2048 2048"><path fill="#aaa" d="M1024 896q237 0 443-43t325-127v170q0 69-103 128t-280 93.5-385 34.5-385-34.5-280-93.5-103-128v-170q119 84 325 127t443 43zm0 768q237 0 443-43t325-127v170q0 69-103 128t-280 93.5-385 34.5-385-34.5-280-93.5-103-128v-170q119 84 325 127t443 43zm0-384q237 0 443-43t325-127v170q0 69-103 128t-280 93.5-385 34.5-385-34.5-280-93.5-103-128v-170q119 84 325 127t443 43zm0-1152q208 0 385 34.5t280 93.5 103 128v128q0 69-103 128t-280 93.5-385 34.5-385-34.5-280-93.5-103-128v-128q0-69 103-128t280-93.5 385-34.5z"></path></svg>'
@@ -185,7 +185,7 @@ class Panel implements IBarPanel, Doctrine\DBAL\Logging\SQLLogger
 	/**
 	 * @return string
 	 */
-	public function getPanel()
+	public function getPanel(): ?string
 	{
 		if (empty($this->queries)) {
 			return '';
@@ -387,8 +387,8 @@ class Panel implements IBarPanel, Doctrine\DBAL\Logging\SQLLogger
 			}
 
 			if ($invalidTable = Strings::match($e->getMessage(), '~table \'(.*?)\'~i')) {
+				/** @var Kdyby\Doctrine\Mapping\ClassMetadata $class */
 				foreach ($em->getMetadataFactory()->getAllMetadata() as $class) {
-					/** @var Kdyby\Doctrine\Mapping\ClassMetadata $class */
 					if ($class->getTableName() === $invalidTable[1]) {
 						$refl = $class->getReflectionClass();
 						break;
@@ -777,7 +777,7 @@ class Panel implements IBarPanel, Doctrine\DBAL\Logging\SQLLogger
 	 * Returns link to editor.
 	 * @author David Grudl
 	 * @param string $file
-	 * @param string|int $line
+	 * @param int|null $line
 	 * @param string $text
 	 * @return Nette\Utils\Html
 	 */

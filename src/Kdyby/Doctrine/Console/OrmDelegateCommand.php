@@ -37,7 +37,7 @@ abstract class OrmDelegateCommand extends Command
 	abstract protected function createCommand();
 
 	/**
-	 * @param string $entityManagerName
+	 * @param string[]|bool|string|null $entityManagerName
 	 * @return \Symfony\Component\Console\Command\Command
 	 */
 	protected function wrapCommand($entityManagerName)
