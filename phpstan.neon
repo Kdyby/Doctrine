@@ -10,3 +10,4 @@ parameters:
 		- '#Call to an undefined method Reflector::get#' # TODO refactoring class Panel
 		- '#Call to an undefined method object::getId\(\)#' # class SimpleParameterFormatter
 		- '#Method Kdyby\\Doctrine\\NativeQueryBuilder::(join|where|andWhere|orWhere)\(\) should return \$this but returns call_user_func_array#' # NativeQueryBuilder shortcuts
+		- '#Parameter \#1 \$parameters of method Doctrine\\ORM\\AbstractQuery::setParameters\(\) expects Doctrine\\Common\\Collections\\ArrayCollection&iterable, array given\.#'

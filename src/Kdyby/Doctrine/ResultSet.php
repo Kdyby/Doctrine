@@ -173,7 +173,7 @@ class ResultSet implements \Countable, \IteratorAggregate
 		$this->updating();
 
 		if ($this->query instanceof ORM\Query) {
-			$dql = Strings::normalize($this->query->getDQL());
+			$dql = Strings::normalize((string) $this->query->getDQL());
 			if (preg_match('~^(.+)\\s+(ORDER BY\\s+((?!FROM|WHERE|ORDER\\s+BY|GROUP\\sBY|JOIN).)*)\\z~si', $dql, $m)) {
 				$dql = $m[1];
 			}
@@ -207,7 +207,7 @@ class ResultSet implements \Countable, \IteratorAggregate
 		}
 
 		if ($sorting && $this->query instanceof ORM\Query) {
-			$dql = Strings::normalize($this->query->getDQL());
+			$dql = Strings::normalize((string) $this->query->getDQL());
 
 			if (!preg_match('~^(.+)\\s+(ORDER BY\\s+((?!FROM|WHERE|ORDER\\s+BY|GROUP\\sBY|JOIN).)*)\\z~si', $dql, $m)) {
 				$dql .= ' ORDER BY ';

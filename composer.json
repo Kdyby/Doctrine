@@ -26,7 +26,7 @@
     "kdyby/strict-objects": "^2.0",
     "nette/di": "^3.0",
     "nette/utils": "^3.0",
-    "nette/finder": "^3.0"
+    "nette/finder": "^2.5"
   },
   "suggest": {
     "kdyby/doctrine-magic-accessors": "Fast-prototyping magic accessors trait for Doctrine entities",
@@ -39,7 +39,7 @@
     "nette/bootstrap": "^3.0",
     "nette/caching": "^3.0",
     "nette/http": "^3.0",
-    "tracy/tracy": "^3.0",
+    "tracy/tracy": "^2.5",
     "nette/tester": "^2.2"
   },
   "minimum-stability": "dev",
