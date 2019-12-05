@@ -42,7 +42,7 @@ class GenerateEntitiesCommandTest extends CommandTestCase
 			Assert::contains("Processing entity \"{$entity}\"", $output);
 		}
 		Assert::notContains(sprintf('Processing entity "%s"', \KdybyTests\Doctrine\Models2\Foo::class), $output);
-		Assert::contains('Entity classes generated to "' . realpath($destDir) . '"', $output);
+		Assert::contains('Entity classes generated to "' . realpath($destDir), $output);
 	}
 
 
@@ -64,7 +64,7 @@ class GenerateEntitiesCommandTest extends CommandTestCase
 
 		Assert::notContains('Processing entity "' . self::$entities[0] . '"', $output);
 		Assert::contains(sprintf('Processing entity "%s"', \KdybyTests\Doctrine\Models2\Foo::class), $output);
-		Assert::contains('Entity classes generated to "' . realpath($destDir) . '"', $output);
+		Assert::contains('Entity classes generated to "' . realpath($destDir), $output);
 	}
 
 }

@@ -337,7 +337,7 @@ class Panel implements IBarPanel, Doctrine\DBAL\Logging\SQLLogger
 			if ($e->query instanceof Doctrine\ORM\Query) {
 				return [
 					'tab' => 'DQL',
-					'panel' => $this->dumpQuery($e->query->getDQL(), $e->query->getParameters()),
+					'panel' => $this->dumpQuery((string) $e->query->getDQL(), $e->query->getParameters()),
 				];
 
 			} elseif ($e->query instanceof Kdyby\Doctrine\NativeQueryWrapper) {
