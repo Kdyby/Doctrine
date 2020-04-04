@@ -458,7 +458,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		}
 
 		$builder->addDefinition($this->prefix($name . '.cacheRegionsConfiguration'))
-			->setClass(Doctrine\ORM\Cache\RegionsConfiguration::class, [
+			->setFactory(Doctrine\ORM\Cache\RegionsConfiguration::class, [
 				$config['regions']['defaultLifetime'],
 				$config['regions']['defaultLockLifetime'],
 			])
