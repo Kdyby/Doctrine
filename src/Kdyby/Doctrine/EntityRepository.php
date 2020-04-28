@@ -70,6 +70,24 @@ class EntityRepository extends Doctrine\ORM\EntityRepository implements Persiste
 	}
 
 
+	/**
+	 * @param array $criteria
+	 * @return bool
+	 */
+	public function exists(array $criteria = [])
+	{
+		try {
+			return (bool) $this->createQueryBuilder('e')
+				->whereCriteria($criteria)
+				->select('1')
+				->setMaxResults(1)
+				->getQuery()->getSingleScalarResult();
+
+		} catch (NoResultException $e) {
+			return false;
+		}
+	}
+	
 
 	/**
 	 * @param array $criteria
