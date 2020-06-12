@@ -12,7 +12,7 @@ namespace Kdyby\Doctrine\Diagnostics;
 
 use Doctrine;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Persistence\Proxy;
+use Doctrine\Persistence\Proxy;
 use Doctrine\Common\Annotations\AnnotationException;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\Type;

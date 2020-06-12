@@ -20,7 +20,7 @@ use Nette\Reflection;
 /**
  * @author Filip Procházka <filip@prochazka.su>
  */
-class RuntimeReflectionService extends Doctrine\Common\Persistence\Mapping\RuntimeReflectionService
+class RuntimeReflectionService extends Doctrine\Persistence\Mapping\RuntimeReflectionService
 {
 
 	/**
