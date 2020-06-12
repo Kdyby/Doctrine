@@ -10,7 +10,7 @@ Metadata drivers
 There are several shortcuts for the driver implementations
 
 - `annotations` for `Kdyby\Doctrine\Mapping\AnnotationDriver`
-- `static` for `Doctrine\Common\Persistence\Mapping\Driver\StaticPHPDriver`
+- `static` for `Doctrine\Persistence\Mapping\Driver\StaticPHPDriver`
 - `yaml` for  `Doctrine\ORM\Mapping\Driver\YamlDriver`
 - `xml` for `Doctrine\ORM\Mapping\Driver\XmlDriver`
 - `db` for `Doctrine\ORM\Mapping\Driver\DatabaseDriver`

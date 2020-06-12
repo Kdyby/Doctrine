@@ -97,7 +97,7 @@ class Panel implements IBarPanel, Doctrine\DBAL\Logging\SQLLogger
 		foreach (debug_backtrace(FALSE) as $row) {
 			if (isset($row['file']) && $this->filterTracePaths(realpath($row['file']))) {
 				if (isset($row['class']) && stripos($row['class'], '\\' . Proxy::MARKER) !== FALSE) {
-					if (!in_array(Doctrine\Common\Persistence\Proxy::class, class_implements($row['class']))) {
+					if (!in_array(Doctrine\Persistence\Proxy::class, class_implements($row['class']))) {
 						continue;
 
 					} elseif (isset($row['function']) && $row['function'] === '__load') {
