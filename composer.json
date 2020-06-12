@@ -17,7 +17,7 @@
     "issues": "https://github.com/kdyby/doctrine/issues"
   },
   "require": {
-    "php": "^7.1",
+    "php": "^7.2",
     "doctrine/orm": "~2.7",
     "doctrine/dbal": "~2.10",
     "doctrine/common": "^3.0",
