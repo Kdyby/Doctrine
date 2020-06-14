@@ -52,13 +52,14 @@ abstract class DbalDelegateCommand extends Command
 	 */
 	protected function configure()
 	{
+		
 		$this->command = $this->createCommand();
 
 		$this->setName($this->command->getName());
 		$this->setHelp($this->command->getHelp());
 		$this->setDefinition($this->command->getDefinition());
 		$this->setDescription($this->command->getDescription());
-
+		$this->getDefinition()->setOptions([]);
 		$this->addOption('connection', NULL, InputOption::VALUE_OPTIONAL, 'The connection to use for this command');
 	}
 

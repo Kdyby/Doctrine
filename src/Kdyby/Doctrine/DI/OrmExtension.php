@@ -110,7 +110,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 	 */
 	public $metadataDriverClasses = [
 		self::ANNOTATION_DRIVER => Doctrine\ORM\Mapping\Driver\AnnotationDriver::class,
-		'static' => Doctrine\Common\Persistence\Mapping\Driver\StaticPHPDriver::class,
+		'static' => Doctrine\Persistence\Mapping\Driver\StaticPHPDriver::class,
 		'yml' => Doctrine\ORM\Mapping\Driver\YamlDriver::class,
 		'yaml' => Doctrine\ORM\Mapping\Driver\YamlDriver::class,
 		'xml' => Doctrine\ORM\Mapping\Driver\XmlDriver::class,
@@ -243,7 +243,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		}
 
 		$metadataDriver = $builder->addDefinition($this->prefix($name . '.metadataDriver'))
-			->setClass(Doctrine\Common\Persistence\Mapping\Driver\MappingDriverChain::class)
+			->setClass(Doctrine\Persistence\Mapping\Driver\MappingDriverChain::class)
 			->setAutowired(FALSE);
 		/** @var \Nette\DI\ServiceDefinition $metadataDriver */
 
@@ -618,7 +618,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		$serviceName = $this->prefix($prefix . '.driver.' . str_replace('\\', '_', $namespace) . '.' . str_replace('\\', '_', $impl) . 'Impl');
 
 		$this->getContainerBuilder()->addDefinition($serviceName)
-			->setClass(Doctrine\Common\Persistence\Mapping\Driver\MappingDriver::class)
+			->setClass(Doctrine\Persistence\Mapping\Driver\MappingDriver::class)
 			->setFactory($driver->getEntity(), $driver->arguments)
 			->setAutowired(FALSE);
 
@@ -853,7 +853,7 @@ class OrmExtension extends Nette\DI\CompilerExtension
 	private function addCollapsePathsToTracy(Method $init)
 	{
 		$blueScreen = \Tracy\Debugger::class . '::getBlueScreen()';
-		$commonDirname = dirname(Nette\Reflection\ClassType::from(Doctrine\Common\Version::class)->getFileName());
+		$commonDirname = dirname(Nette\Reflection\ClassType::from(\Doctrine\ORM\Version::class)->getFileName());
 
 		$init->addBody($blueScreen . '->collapsePaths[] = ?;', [dirname(Nette\Reflection\ClassType::from(Kdyby\Doctrine\Exception::class)->getFileName())]);
 		$init->addBody($blueScreen . '->collapsePaths[] = ?;', [dirname(dirname(dirname(dirname($commonDirname))))]); // this should be vendor/doctrine
