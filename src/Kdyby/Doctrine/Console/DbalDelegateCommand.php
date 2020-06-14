@@ -52,6 +52,7 @@ abstract class DbalDelegateCommand extends Command
 	 */
 	protected function configure()
 	{
+		$this->setOptions([]);
 		$this->command = $this->createCommand();
 
 		$this->setName($this->command->getName());
