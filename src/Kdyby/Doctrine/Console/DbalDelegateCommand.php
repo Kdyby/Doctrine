@@ -59,6 +59,10 @@ abstract class DbalDelegateCommand extends Command
 		$this->setDefinition($this->command->getDefinition());
 		$this->setDescription($this->command->getDescription());
 
+        if ($this->getDefinition()->hasOption('connection')) {
+            return;
+        }
+
 		$this->addOption('connection', NULL, InputOption::VALUE_OPTIONAL, 'The connection to use for this command');
 	}
 
