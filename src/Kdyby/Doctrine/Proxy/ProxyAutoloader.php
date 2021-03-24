@@ -21,7 +21,7 @@ use Nette;
 class ProxyAutoloader
 {
 
-	use \Kdyby\StrictObjects\Scream;
+	use \Nette\SmartObject;
 
 	/**
 	 * @var string

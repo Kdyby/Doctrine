@@ -24,7 +24,7 @@ use Tracy\Helpers;
 class EntityManagerUnitOfWorkSnapshotPanel
 {
 
-	use \Kdyby\StrictObjects\Scream;
+	use \Nette\SmartObject;
 
 	/**
 	 * @var \Doctrine\ORM\EntityManager

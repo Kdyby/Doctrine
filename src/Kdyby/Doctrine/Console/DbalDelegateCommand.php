@@ -24,7 +24,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 abstract class DbalDelegateCommand extends Command
 {
 
-	use \Kdyby\StrictObjects\Scream;
+	use \Nette\SmartObject;
 
 	/**
 	 * @var \Symfony\Component\Console\Command\Command

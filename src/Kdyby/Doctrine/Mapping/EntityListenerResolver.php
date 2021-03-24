@@ -10,7 +10,7 @@ use Nette;
 class EntityListenerResolver implements \Doctrine\ORM\Mapping\EntityListenerResolver
 {
 
-	use \Kdyby\StrictObjects\Scream;
+	use \Nette\SmartObject;
 
 	/**
 	 * @var \Nette\DI\Container

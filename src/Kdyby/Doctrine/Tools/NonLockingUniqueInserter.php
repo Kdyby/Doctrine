@@ -32,7 +32,7 @@ use Nette;
 class NonLockingUniqueInserter
 {
 
-	use \Kdyby\StrictObjects\Scream;
+	use \Nette\SmartObject;
 
 	/**
 	 * @var \Kdyby\Doctrine\EntityManager
