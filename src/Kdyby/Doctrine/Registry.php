@@ -30,7 +30,7 @@ use Nette;
 class Registry extends AbstractManagerRegistry
 {
 
-	use \Kdyby\StrictObjects\Scream;
+	use \Nette\SmartObject;
 
 	/**
 	 * @var Nette\DI\Container

@@ -34,7 +34,7 @@ use Nette;
 class EntityManager extends Doctrine\ORM\EntityManager implements Persistence\QueryExecutor, Persistence\Queryable
 {
 
-	use \Kdyby\StrictObjects\Scream;
+	use \Nette\SmartObject;
 
 	/**
 	 * @var NonLockingUniqueInserter

@@ -23,7 +23,7 @@ use Nette;
 class RepositoryFactory implements Doctrine\ORM\Repository\RepositoryFactory
 {
 
-	use \Kdyby\StrictObjects\Scream;
+	use \Nette\SmartObject;
 
 	/**
 	 * @var Nette\DI\Container
