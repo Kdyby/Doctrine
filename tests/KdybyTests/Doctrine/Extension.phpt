@@ -180,11 +180,11 @@ class ExtensionTest extends Tester\TestCase
 
 		$storeOutput = self::runExternalScript(__DIR__ . '/proxies-sessions-test/run.php', ['store'], $env);
 //		Assert::match(\Kdyby\Doctrine\DI\OrmExtension::DEFAULT_PROXY_NAMESPACE . '\__CG__\\' . \KdybyTests\Doctrine\CmsOrder::class . ' %A%id => 1%A%status => "new"%A%', $storeOutput);
-		Assert::match(file_get_contents(__DIR__ . '/proxies-sessions-test/data/expected-tracy-dump-store'), $storeOutput);
+		Assert::match(preg_replace('/#\w+/', '', file_get_contents(__DIR__ . '/proxies-sessions-test/data/expected-tracy-dump-store')), preg_replace('/#\w+/', '', $storeOutput));
 
 		$runOutput = self::runExternalScript(__DIR__ . '/proxies-sessions-test/run.php', ['read'], $env);
 //		Assert::match(\Kdyby\Doctrine\DI\OrmExtension::DEFAULT_PROXY_NAMESPACE . '\__CG__\\' . \KdybyTests\Doctrine\CmsOrder::class . ' %A%id => 1%A%status => "new"%A%', $runOutput);
-		Assert::match(file_get_contents(__DIR__ . '/proxies-sessions-test/data/expected-tracy-dump-read'), $runOutput);
+		Assert::match(preg_replace('/#\w+/', '', file_get_contents(__DIR__ . '/proxies-sessions-test/data/expected-tracy-dump-read')), preg_replace('/#\w+/', '', $runOutput));
 	}
 
 
