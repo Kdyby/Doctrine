@@ -37,9 +37,9 @@ matrix:
       env: COMPOSER_EXTRA_ARGS="--prefer-stable" COVERAGE="--coverage ./coverage.xml --coverage-src ./src" TESTER_RUNTIME="phpdbg"
 
 install:
-  - if [ "$PHPSTAN" = "1" ]; then composer require --dev --no-update phpstan/phpstan-shim:^0.9; fi
+#  - if [ "$PHPSTAN" = "1" ]; then composer require --dev --no-update phpstan/phpstan-shim:^0.9; fi
   - travis_retry composer update --no-interaction --no-suggest --no-progress --prefer-dist $COMPOSER_EXTRA_ARGS
-  - travis_retry composer create-project --no-interaction jakub-onderka/php-parallel-lint /tmp/php-parallel-lint
+  - travis_retry composer create-project --no-interaction  php-parallel-lint/PHP-Parallel-Lint  /tmp/php-parallel-lint
 #  - travis_retry composer create-project --no-interaction kdyby/code-checker /tmp/code-checker
   - if [ "$COVERAGE" != "" ]; then travis_retry wget -O /tmp/coveralls.phar https://github.com/satooshi/php-coveralls/releases/download/v1.0.1/coveralls.phar; fi
 
@@ -48,7 +48,8 @@ script:
   - php /tmp/php-parallel-lint/parallel-lint.php -e php,phpt --exclude vendor .
 #  - php /tmp/code-checker/src/code-checker.php --short-arrays
 #  - if [ "$PHPSTAN" = "1" ]; then php vendor/phpstan/phpstan-shim/phpstan.phar -v; fi
-  - if [ "$PHPSTAN" = "1" ]; then php vendor/phpstan/phpstan-shim/phpstan.phar analyse --ansi --no-progress -l7 -c phpstan.neon src tests/KdybyTests; fi
+#  - if [ "$PHPSTAN" = "1" ]; then php vendor/phpstan/phpstan-shim/phpstan.phar analyse --ansi --no-progress -l7 -c phpstan.neon src tests/KdybyTests; fi
+  - if [ "$PHPSTAN" = "1" ]; then composer phpstan; fi
 
 after_script:
   - if [ "$COVERAGE" != "" ]; then php /tmp/coveralls.phar --verbose --config tests/.coveralls.yml || true; fi
