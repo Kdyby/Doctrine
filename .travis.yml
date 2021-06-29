@@ -14,9 +14,7 @@ addons:
     - mysql
 
 php:
-  - 7.1
-  - 7.2
-  - 7.3
+  - 7.4
 
 env:
   - # dev
@@ -26,16 +24,16 @@ env:
 matrix:
   fast_finish: true
   include:
-    - php: 7.3
+    - php: 7.4
       env: COMPOSER_EXTRA_ARGS="--prefer-stable" COVERAGE="--coverage ./coverage.xml --coverage-src ./src" TESTER_RUNTIME="phpdbg"
-    - php: 7.3
+    - php: 7.4
       env: COMPOSER_EXTRA_ARGS="--prefer-stable" PHPSTAN=1
   exclude:
-    - php: 7.3
+    - php: 7.4
       env: COMPOSER_EXTRA_ARGS="--prefer-stable"
   allow_failures:
     - env:
-    - php: 7.3
+    - php: 7.4
       env: COMPOSER_EXTRA_ARGS="--prefer-stable" COVERAGE="--coverage ./coverage.xml --coverage-src ./src" TESTER_RUNTIME="phpdbg"
 
 install:
