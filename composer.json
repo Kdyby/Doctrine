@@ -1,9 +1,8 @@
 {
-    "name": "kdyby/doctrine",
+    "name": "dek-cz/doctrine",
     "type": "library",
     "description": "Doctrine integration into Nette Framework",
     "keywords": ["nette", "kdyby", "doctrine", "orm", "dbal"],
-    "homepage": "http://kdyby.org",
     "license": ["BSD-3-Clause", "GPL-2.0", "GPL-3.0"],
     "authors": [
         {
@@ -12,12 +11,8 @@
             "email": "filip@prochazka.su"
         }
     ],
-    "support": {
-        "email": "filip@prochazka.su",
-        "issues": "https://github.com/kdyby/doctrine/issues"
-    },
     "require": {
-        "php": "^7.1",
+        "php": "^7.4",
         "doctrine/orm": "~2.9",
         "doctrine/dbal": "~2.10",
         "kdyby/console": "^2.8.1",
