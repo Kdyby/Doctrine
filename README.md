@@ -1,19 +1,19 @@
-Kdyby/Doctrine
+dek-cz/Doctrine
 ======
 
-[![Build Status](https://travis-ci.org/Kdyby/Doctrine.svg?branch=master)](https://travis-ci.org/Kdyby/Doctrine)
-[![Downloads this Month](https://img.shields.io/packagist/dm/kdyby/doctrine.svg)](https://packagist.org/packages/kdyby/doctrine)
-[![Latest stable](https://img.shields.io/packagist/v/kdyby/doctrine.svg)](https://packagist.org/packages/kdyby/doctrine)
-[![Coverage Status](https://coveralls.io/repos/github/Kdyby/Doctrine/badge.svg?branch=master)](https://coveralls.io/github/Kdyby/Doctrine?branch=master)
+[![Build Status](https://travis-ci.org/dek-cz/Doctrine.svg?branch=master)](https://travis-ci.org/dek-cz/Doctrine)
+[![Downloads this Month](https://img.shields.io/packagist/dm/dek-cz/doctrine.svg)](https://packagist.org/packages/dek-cz/doctrine)
+[![Latest stable](https://img.shields.io/packagist/v/dek-cz/doctrine.svg)](https://packagist.org/packages/dek-cz/doctrine)
+[![Coverage Status](https://coveralls.io/repos/github/Kdyby/dek-cz/badge.svg?branch=master)](https://coveralls.io/github/Kdyby/dek-cz?branch=master)
 
 
 Installation
 ------------
 
-The best way to install Kdyby/Doctrine is using  [Composer](http://getcomposer.org/):
+The best way to install dek-cz/Doctrine is using  [Composer](http://getcomposer.org/):
 
 ```sh
-$ composer require kdyby/doctrine
+$ composer require dek-cz/doctrine
 ```
 
 Documentation

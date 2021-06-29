@@ -49,7 +49,6 @@ script:
 #  - php /tmp/code-checker/src/code-checker.php --short-arrays
 #  - if [ "$PHPSTAN" = "1" ]; then php vendor/phpstan/phpstan-shim/phpstan.phar -v; fi
 #  - if [ "$PHPSTAN" = "1" ]; then php vendor/phpstan/phpstan-shim/phpstan.phar analyse --ansi --no-progress -l7 -c phpstan.neon src tests/KdybyTests; fi
-  - if [ "$PHPSTAN" = "1" ]; then composer phpstan; fi
 
 after_script:
   - if [ "$COVERAGE" != "" ]; then php /tmp/coveralls.phar --verbose --config tests/.coveralls.yml || true; fi
