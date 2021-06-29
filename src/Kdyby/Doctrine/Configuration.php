@@ -39,7 +39,7 @@ class Configuration extends BaseConfiguration
 
 
 
-	public function setTargetEntityMap(string $targetEntityMap) : void
+	public function setTargetEntityMap(array $targetEntityMap) : void
 	{
 		$this->_attributes['targetEntityMap'] = $targetEntityMap;
 	}
