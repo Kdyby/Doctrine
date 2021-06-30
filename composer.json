@@ -15,7 +15,7 @@
         "php": "^7.4",
         "doctrine/orm": "~2.7.3",
         "doctrine/dbal": "~2.10",
-        "kdyby/console": "^2.8.1",
+        "kdyby/console": "^2.8",
         "kdyby/annotations": "^3.0",
         "kdyby/doctrine-cache": "^3.0",
         "kdyby/strict-objects": "^2.0",
