@@ -1,10 +1,10 @@
 dek-cz/Doctrine
 ======
 
-[![Build Status](https://travis-ci.org/dek-cz/Doctrine.svg?branch=master)](https://travis-ci.org/dek-cz/Doctrine)
+[![Build Status](https://travis-ci.com/dek-cz/Doctrine.svg?branch=master)](https://travis-ci.com/dek-cz/Doctrine)
 [![Downloads this Month](https://img.shields.io/packagist/dm/dek-cz/doctrine.svg)](https://packagist.org/packages/dek-cz/doctrine)
 [![Latest stable](https://img.shields.io/packagist/v/dek-cz/doctrine.svg)](https://packagist.org/packages/dek-cz/doctrine)
-[![Coverage Status](https://coveralls.io/repos/github/Kdyby/dek-cz/badge.svg?branch=master)](https://coveralls.io/github/Kdyby/dek-cz?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/dek-cz/doctrine/badge.svg?branch=master)](https://coveralls.io/github/dek-cz/doctrine?branch=master)
 
 
 Installation
