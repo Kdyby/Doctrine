@@ -13,16 +13,17 @@
     ],
     "require": {
         "php": "^7.4",
+        "psr/cache": "^1.0.1",
         "doctrine/orm": "^2.8",
         "doctrine/dbal": "~2.10",
+        "doctrine/common": "^2.13",
         "kdyby/console": "^2.8",
         "kdyby/annotations": "^3.0",
         "kdyby/doctrine-cache": "^3.0",
         "kdyby/strict-objects": "^2.0",
         "nette/di": "^3.0",
         "nette/utils": "^3.0",
-        "nette/finder": "^2.5",
-        "psr/cache": "^1.0 || ^2.0"
+        "nette/finder": "^2.5"
     },
     "suggest": {
         "kdyby/doctrine-magic-accessors": "Fast-prototyping magic accessors trait for Doctrine entities",
