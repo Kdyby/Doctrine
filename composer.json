@@ -13,7 +13,7 @@
     ],
     "require": {
         "php": "^7.4",
-        "doctrine/orm": "~2.9",
+        "doctrine/orm": "~2.7",
         "doctrine/dbal": "~2.10",
         "kdyby/console": "^2.8.1",
         "kdyby/annotations": "^3.0",
