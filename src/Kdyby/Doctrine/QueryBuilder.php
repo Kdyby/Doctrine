@@ -30,7 +30,7 @@ use Nette;
 class QueryBuilder extends Doctrine\ORM\QueryBuilder implements \IteratorAggregate
 {
 
-	use \Kdyby\StrictObjects\Scream;
+	
 
 	/**
 	 * @var array
@@ -133,7 +133,7 @@ class QueryBuilder extends Doctrine\ORM\QueryBuilder implements \IteratorAggrega
 	/**
 	 * @return \Doctrine\ORM\Internal\Hydration\IterableResult|\Traversable
 	 */
-	public function getIterator()
+	public function getIterator(): \Traversable
 	{
 		return $this->getQuery()->iterate();
 	}

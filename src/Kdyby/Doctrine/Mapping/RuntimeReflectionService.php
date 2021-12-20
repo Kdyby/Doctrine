@@ -31,7 +31,7 @@ class RuntimeReflectionService extends Doctrine\Persistence\Mapping\RuntimeRefle
 	 */
 	public function getClass($class)
 	{
-		return new Reflection\ClassType($class);
+		return new \ReflectionClass($class);
 	}
 
 
@@ -46,7 +46,7 @@ class RuntimeReflectionService extends Doctrine\Persistence\Mapping\RuntimeRefle
 	public function getAccessibleProperty($class, $property)
 	{
 		try {
-			$property = new Reflection\Property($class, $property);
+			$property = new \ReflectionProperty($class, $property);
 			$property->setAccessible(TRUE);
 
 			return $property;

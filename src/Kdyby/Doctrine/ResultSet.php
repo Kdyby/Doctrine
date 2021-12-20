@@ -46,7 +46,7 @@ use Nette\Utils\Paginator as UIPaginator;
 class ResultSet implements \Countable, \IteratorAggregate
 {
 
-	use \Kdyby\StrictObjects\Scream;
+	
 
 	/**
 	 * @var int|NULL
@@ -312,7 +312,7 @@ class ResultSet implements \Countable, \IteratorAggregate
 	 * @throws QueryException
 	 * @return \ArrayIterator
 	 */
-	public function getIterator($hydrationMode = ORM\AbstractQuery::HYDRATE_OBJECT)
+	public function getIterator($hydrationMode = ORM\AbstractQuery::HYDRATE_OBJECT): \Traversable
 	{
 		if ($this->iterator !== NULL) {
 			return $this->iterator;
@@ -356,7 +356,7 @@ class ResultSet implements \Countable, \IteratorAggregate
 	/**
 	 * @return int
 	 */
-	public function count()
+	public function count(): int
 	{
 		return $this->getIterator()->count();
 	}

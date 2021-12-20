@@ -23,7 +23,7 @@ use Tracy\Debugger;
 class FileLogger implements SQLLogger
 {
 
-	use \Kdyby\StrictObjects\Scream;
+	
 
 	/**
 	 * @var string
