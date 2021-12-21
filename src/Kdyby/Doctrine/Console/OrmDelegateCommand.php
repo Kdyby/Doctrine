@@ -58,8 +58,6 @@ abstract class OrmDelegateCommand extends Command
 		$this->setHelp($this->command->getHelp());
 		$this->setDefinition($this->command->getDefinition());
 		$this->setDescription($this->command->getDescription());
-
-		$this->addOption('em', null, InputOption::VALUE_OPTIONAL, 'The entity manager to use for this command');
 	}
 
 	/**
