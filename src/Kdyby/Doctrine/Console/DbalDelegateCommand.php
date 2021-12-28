@@ -24,7 +24,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 abstract class DbalDelegateCommand extends Command
 {
 
-	use \Kdyby\StrictObjects\Scream;
+	
 
 	/**
 	 * @var \Symfony\Component\Console\Command\Command
@@ -58,8 +58,6 @@ abstract class DbalDelegateCommand extends Command
 		$this->setHelp($this->command->getHelp());
 		$this->setDefinition($this->command->getDefinition());
 		$this->setDescription($this->command->getDescription());
-
-		$this->addOption('connection', NULL, InputOption::VALUE_OPTIONAL, 'The connection to use for this command');
 	}
 
 	/**

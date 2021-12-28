@@ -23,7 +23,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class ColoredSqlOutput implements OutputInterface
 {
 
-	use \Kdyby\StrictObjects\Scream;
+	
 
 	/**
 	 * @var \Symfony\Component\Console\Output\OutputInterface

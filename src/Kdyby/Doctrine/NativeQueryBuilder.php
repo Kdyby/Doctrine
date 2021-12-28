@@ -38,7 +38,7 @@ use Nette;
 class NativeQueryBuilder extends Doctrine\DBAL\Query\QueryBuilder
 {
 
-	use \Kdyby\StrictObjects\Scream;
+	
 
 	/**
 	 * @var Mapping\ResultSetMappingBuilder

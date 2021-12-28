@@ -16,6 +16,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Repository\DefaultRepositoryFactory;
 use Kdyby;
 use Kdyby\DoctrineCache\DI\Helpers as CacheHelpers;
+use Laminas\Code\Reflection\ClassReflection;
 use Nette;
 use Nette\DI\ContainerBuilder;
 use Nette\DI\ServiceDefinition;
@@ -853,9 +854,9 @@ class OrmExtension extends Nette\DI\CompilerExtension
 	private function addCollapsePathsToTracy(Method $init)
 	{
 		$blueScreen = \Tracy\Debugger::class . '::getBlueScreen()';
-		$commonDirname = dirname(Nette\Reflection\ClassType::from(Doctrine\Common\Comparable::class)->getFileName());
+		$commonDirname = dirname((new ClassReflection(Doctrine\Common\Comparable::class))->getFileName());
 
-		$init->addBody($blueScreen . '->collapsePaths[] = ?;', [dirname(Nette\Reflection\ClassType::from(Kdyby\Doctrine\Exception::class)->getFileName())]);
+		$init->addBody($blueScreen . '->collapsePaths[] = ?;', [dirname((new ClassReflection(Kdyby\Doctrine\Exception::class))->getFileName())]);
 		$init->addBody($blueScreen . '->collapsePaths[] = ?;', [dirname(dirname(dirname(dirname($commonDirname))))]); // this should be vendor/doctrine
 		foreach ($this->proxyAutoloaders as $dir) {
 			$init->addBody($blueScreen . '->collapsePaths[] = ?;', [$dir]);

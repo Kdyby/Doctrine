@@ -23,7 +23,7 @@ use Nette;
 class RepositoryFactory implements Doctrine\ORM\Repository\RepositoryFactory
 {
 
-	use \Kdyby\StrictObjects\Scream;
+	
 
 	/**
 	 * @var Nette\DI\Container
@@ -105,7 +105,7 @@ class RepositoryFactory implements Doctrine\ORM\Repository\RepositoryFactory
 	private function createRepository(EntityManagerInterface $entityManager, Doctrine\ORM\Mapping\ClassMetadata $metadata)
 	{
 		$defaultClass = $entityManager->getConfiguration()->getDefaultRepositoryClassName();
-		$customClass = ltrim($metadata->customRepositoryClassName, '\\');
+		$customClass = ltrim($metadata->customRepositoryClassName ?: '', '\\');
 
 		if (empty($customClass) || $customClass === $defaultClass) {
 			$factory = $this->getRepositoryFactory($this->defaultRepositoryFactory);
