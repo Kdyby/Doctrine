@@ -26,10 +26,6 @@ class GenerateEntitiesCommand extends OrmDelegateCommand
 	 */
 	public $cacheCleaner;
 
-	public function __construct()
-	{
-		parent::__construct();
-	}
 
 	protected function initialize(InputInterface $input, OutputInterface $output)
 	{

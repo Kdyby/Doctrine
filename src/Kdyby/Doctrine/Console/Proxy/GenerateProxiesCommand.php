@@ -20,16 +20,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 class GenerateProxiesCommand extends OrmDelegateCommand
 {
 
-	/**
-	 * @var \Kdyby\Doctrine\Tools\CacheCleaner
-	 * @inject
-	 */
-	public $cacheCleaner;
-
-	public function __construct()
-	{
-		parent::__construct();
-	}
 
 	protected function initialize(InputInterface $input, OutputInterface $output)
 	{
