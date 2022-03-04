@@ -47,6 +47,28 @@ class OrmExtension extends Nette\DI\CompilerExtension
 	/**
 	 * @var array
 	 */
+	public $consoleCommands = [
+		'orm:clear-cache:region:collection' => 'Kdyby\Doctrine\Console\Proxy\CacheClearCollectionRegionCommand',
+		'orm:clear-cache:region:entity' => 'Kdyby\Doctrine\Console\Proxy\CacheClearEntityRegionCommand',
+		'orm:clear-cache:metadata' => 'Kdyby\Doctrine\Console\Proxy\CacheClearMetadataCommand',
+		'orm:clear-cache:query' => 'Kdyby\Doctrine\Console\Proxy\CacheClearQueryCommand',
+		'orm:clear-cache:region:query' => 'Kdyby\Doctrine\Console\Proxy\CacheClearQueryRegionCommand',
+		'orm:clear-cache:result' => 'Kdyby\Doctrine\Console\Proxy\CacheClearResultCommand',
+		'orm:convert-mapping' => 'Kdyby\Doctrine\Console\Proxy\ConvertMappingCommand',
+		'orm:generate-entities' => 'Kdyby\Doctrine\Console\Proxy\GenerateEntitiesCommand',
+		'orm:generate-proxies' => 'Kdyby\Doctrine\Console\Proxy\GenerateProxiesCommand',
+		'dbal:import' => 'Kdyby\Doctrine\Console\Proxy\ImportCommand',
+		'orm:info' => 'Kdyby\Doctrine\Console\Proxy\InfoCommand',
+		'orm:mapping:describe' => 'Kdyby\Doctrine\Console\Proxy\MappingDescribeCommand',
+		'dbal:reserved-words' => 'Kdyby\Doctrine\Console\Proxy\ReservedWordsCommand',
+		'orm:schema-tool:create' => 'Kdyby\Doctrine\Console\Proxy\SchemaCreateCommand',
+		'orm:schema-tool:update' => 'Kdyby\Doctrine\Console\Proxy\SchemaUpdateCommand',
+		'orm:schema-tool:drop' => 'Kdyby\Doctrine\Console\Proxy\SchemaDropCommand',
+		'orm:validate-schema' => 'Kdyby\Doctrine\Console\Proxy\ValidateSchemaCommand',
+	];
+	/**
+	 * @var array
+	 */
 	public $managerDefaults = [
 		'metadataCache' => 'default',
 		'queryCache' => 'default',
@@ -217,9 +239,9 @@ class OrmExtension extends Nette\DI\CompilerExtension
 	{
 		$builder = $this->getContainerBuilder();
 
-		foreach ($this->loadFromFile(__DIR__ . '/console.neon') as $i => $command) {
-			$cli = $builder->addDefinition($this->prefix('cli.' . $i))
-				->addTag('console.command')
+		foreach ($this->consoleCommands as $name => $command) {
+			$cli = $builder->addDefinition($this->prefix(str_replace([':', '-', '_'], ['', '', ''], $name)))
+				->addTag('console.command',$name)
 				->setAutowired(false)
 				->addTag(Nette\DI\Extensions\InjectExtension::TAG_INJECT, FALSE); // lazy injects
 
