@@ -219,7 +219,8 @@ class OrmExtension extends Nette\DI\CompilerExtension
 
 		foreach ($this->loadFromFile(__DIR__ . '/console.neon') as $i => $command) {
 			$cli = $builder->addDefinition($this->prefix('cli.' . $i))
-				->addTag(Kdyby\Console\DI\ConsoleExtension::TAG_COMMAND)
+				->addTag('console.command')
+				->setAutowired(false)
 				->addTag(Nette\DI\Extensions\InjectExtension::TAG_INJECT, FALSE); // lazy injects
 
 			if (is_string($command)) {
@@ -417,11 +418,11 @@ class OrmExtension extends Nette\DI\CompilerExtension
 		if ($isDefault) {
 			$builder->addDefinition($this->prefix('helper.entityManager'))
 				->setFactory(EntityManagerHelper::class, ['@' . $managerServiceId])
-				->addTag(Kdyby\Console\DI\ConsoleExtension::HELPER_TAG, 'em');
+				->addTag('console.helpers', 'em');
 
 			$builder->addDefinition($this->prefix('helper.connection'))
 				->setFactory(ConnectionHelper::class, [$connectionService])
-				->addTag(Kdyby\Console\DI\ConsoleExtension::HELPER_TAG, 'db');
+				->addTag('console.helpers', 'db');
 
 			$builder->addAlias($this->prefix('schemaValidator'), $this->prefix($name . '.schemaValidator'));
 			$builder->addAlias($this->prefix('schemaTool'), $this->prefix($name . '.schemaTool'));
