@@ -1,6 +1,3 @@
-kdyby.console:
-	disabled: true
-
 kdyby.doctrine:
 	driver: pdo_sqlite
 	path: %tempDir%/db.sqlite

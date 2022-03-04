@@ -14,6 +14,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Kdyby\Doctrine\Tools\CacheCleaner;
 
 /**
  * Command Delegate.
@@ -24,66 +25,78 @@ use Symfony\Component\Console\Output\OutputInterface;
 abstract class OrmDelegateCommand extends Command
 {
 
-	use \Kdyby\StrictObjects\Scream;
+    use \Kdyby\StrictObjects\Scream;
 
-	/**
-	 * @var \Symfony\Component\Console\Command\Command
-	 */
-	protected $command;
+    /**
+     * @var \Symfony\Component\Console\Command\Command
+     */
+    protected $command;
 
-	/**
-	 * @return \Symfony\Component\Console\Command\Command
-	 */
-	abstract protected function createCommand();
+    /**
+     * @var CacheCleaner
+     */
+    public $cacheCleaner;
 
-	/**
-	 * @param string[]|bool|string|null $entityManagerName
-	 * @return \Symfony\Component\Console\Command\Command
-	 */
-	protected function wrapCommand($entityManagerName)
-	{
-		CommandHelper::setApplicationEntityManager($this->getHelper('container'), $entityManagerName);
-		$this->command->setApplication($this->getApplication());
-		return $this->command;
-	}
+    public function __construct(CacheCleaner $cacheCleaner)
+    {
+        parent::__construct();
+        $this->cacheCleaner = $cacheCleaner;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	protected function configure()
-	{
-		$this->command = $this->createCommand();
+    /**
+     * @return \Symfony\Component\Console\Command\Command
+     */
+    abstract protected function createCommand();
 
-		$this->setName($this->command->getName());
-		$this->setHelp($this->command->getHelp());
-		$this->setDefinition($this->command->getDefinition());
-		$this->setDescription($this->command->getDescription());
-		if (!$this->getDefinition()->hasOption('em')) {
-			$this->addOption('em', null, InputOption::VALUE_OPTIONAL, 'The entity manager to use for this command');
-		}
-	}
+    /**
+     * @param string[]|bool|string|null $entityManagerName
+     * @return \Symfony\Component\Console\Command\Command
+     */
+    protected function wrapCommand($entityManagerName)
+    {
+        CommandHelper::setApplicationEntityManager($this->getHelper('container'), $entityManagerName);
+        $this->command->setApplication($this->getApplication());
+        return $this->command;
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	protected function execute(InputInterface $input, OutputInterface $output)
-	{
-		return $this->wrapCommand($input->getOption('em'))->execute($input, $output);
-	}
+    /**
+     * {@inheritDoc}
+     */
+    protected function configure()
+    {
+        $this->command = $this->createCommand();
 
-	/**
-	 * {@inheritDoc}
-	 */
-	protected function interact(InputInterface $input, OutputInterface $output)
-	{
-		$this->wrapCommand($input->getOption('em'))->interact($input, $output);
-	}
+        $this->setName($this->command->getName());
+        $this->setHelp($this->command->getHelp());
+        $this->setDefinition($this->command->getDefinition());
+        $this->setDescription($this->command->getDescription());
+        if (!$this->getDefinition()->hasOption('em')) {
+            $this->addOption('em', null, InputOption::VALUE_OPTIONAL, 'The entity manager to use for this command');
+        }
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	protected function initialize(InputInterface $input, OutputInterface $output)
-	{
-		$this->wrapCommand($input->getOption('em'))->initialize($input, $output);
-	}
+    /**
+     * {@inheritDoc}
+     */
+    protected function execute(InputInterface $input, OutputInterface $output)
+    {
+        return $this->wrapCommand($input->getOption('em'))->execute($input, $output);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function interact(InputInterface $input, OutputInterface $output)
+    {
+        $this->wrapCommand($input->getOption('em'))->interact($input, $output);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function initialize(InputInterface $input, OutputInterface $output)
+    {
+        $this->wrapCommand($input->getOption('em'))->initialize($input, $output);
+    }
+
 }

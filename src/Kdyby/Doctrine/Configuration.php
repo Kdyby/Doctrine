@@ -23,7 +23,7 @@ use Nette;
 class Configuration extends BaseConfiguration
 {
 
-	public function getQueryBuilderClassName()
+	public function getQueryBuilderClassName() : string
 	{
 		return isset($this->_attributes['queryBuilderClass'])
 			? $this->_attributes['queryBuilderClass']
@@ -32,21 +32,21 @@ class Configuration extends BaseConfiguration
 
 
 
-	public function setQueryBuilderClassName($className)
+	public function setQueryBuilderClassName(string $className) : void
 	{
 		$this->_attributes['queryBuilderClass'] = $className;
 	}
 
 
 
-	public function setTargetEntityMap($targetEntityMap)
+	public function setTargetEntityMap(array $targetEntityMap) : void
 	{
 		$this->_attributes['targetEntityMap'] = $targetEntityMap;
 	}
 
 
 
-	public function getTargetEntityClassName($className)
+	public function getTargetEntityClassName(string $className) : string
 	{
 		return isset($this->_attributes['targetEntityMap'], $this->_attributes['targetEntityMap'][$className])
 			? $this->_attributes['targetEntityMap'][$className]

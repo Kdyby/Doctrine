@@ -3,7 +3,7 @@ php:
 
 
 extensions:
-	kdyby.console: Kdyby\Console\DI\ConsoleExtension
+	console: Contributte\Console\DI\ConsoleExtension(%consoleMode%)
 	kdyby.annotations: Kdyby\Annotations\DI\AnnotationsExtension
 	kdyby.doctrine: Kdyby\Doctrine\DI\OrmExtension
 
@@ -15,8 +15,6 @@ kdyby.doctrine:
 	hydrationCache: array
 
 
-kdyby.console:
-	url: http://www.kdyby.org/
 
 
 http:

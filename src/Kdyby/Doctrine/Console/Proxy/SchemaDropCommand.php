@@ -20,27 +20,16 @@ use Symfony\Component\Console\Output\OutputInterface;
 class SchemaDropCommand extends OrmDelegateCommand
 {
 
-	/**
-	 * @var \Kdyby\Doctrine\Tools\CacheCleaner
-	 * @inject
-	 */
-	public $cacheCleaner;
+    protected function initialize(InputInterface $input, OutputInterface $output)
+    {
+        parent::initialize($input, $output);
 
-	public function __construct()
-	{
-		parent::__construct();
-	}
+        $this->cacheCleaner->invalidate();
+    }
 
-	protected function initialize(InputInterface $input, OutputInterface $output)
-	{
-		parent::initialize($input, $output);
-
-		$this->cacheCleaner->invalidate();
-	}
-
-	protected function createCommand()
-	{
-		return new \Doctrine\ORM\Tools\Console\Command\SchemaTool\DropCommand();
-	}
+    protected function createCommand()
+    {
+        return new \Doctrine\ORM\Tools\Console\Command\SchemaTool\DropCommand();
+    }
 
 }
