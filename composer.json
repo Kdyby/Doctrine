@@ -1,65 +1,69 @@
 {
-  "name": "kdyby/doctrine",
-  "type": "library",
-  "description": "Doctrine integration into Nette Framework",
-  "keywords": ["nette", "kdyby", "doctrine", "orm", "dbal"],
-  "homepage": "http://kdyby.org",
-  "license": ["BSD-3-Clause", "GPL-2.0", "GPL-3.0"],
-  "authors": [
-    {
-      "name": "Filip Procházka",
-      "homepage": "http://filip-prochazka.com",
-      "email": "filip@prochazka.su"
-    }
-  ],
-  "support": {
-    "email": "filip@prochazka.su",
-    "issues": "https://github.com/kdyby/doctrine/issues"
-  },
-  "require": {
-    "php": "^7.1",
-    "doctrine/orm": "~2.7",
-    "doctrine/dbal": "~2.9",
-    "kdyby/console": "^2.7.1",
-    "kdyby/annotations": "^3.0",
-    "kdyby/doctrine-cache": "^3.0",
-    "kdyby/strict-objects": "^2.0",
-    "nette/di": "^3.0",
-    "nette/utils": "^3.0",
-    "nette/finder": "^2.5"
-  },
-  "suggest": {
-    "kdyby/doctrine-magic-accessors": "Fast-prototyping magic accessors trait for Doctrine entities",
-    "kdyby/doctrine-collections-readonly": "Read-only collection wrapper for easier work with Doctrine entity collections",
-    "kdyby/doctrine-collections-lazy": "Lazy collection for doctrine/collections",
-    "kdyby/doctrine-dbal-batchimport": "Batch import & execute utils for effective processing of SQL Imports from files and strings"
-  },
-  "require-dev": {
-    "kdyby/events": "^3.1.1@dev",
-    "nette/bootstrap": "^3.0",
-    "nette/caching": "^3.0",
-    "nette/http": "^3.0",
-    "tracy/tracy": "^2.5",
-    "nette/tester": "^2.2"
-  },
-  "minimum-stability": "dev",
-  "autoload": {
-    "psr-0": {
-      "Kdyby\\Doctrine\\": "src/",
-      "Kdyby\\Persistence\\": "src/"
+    "name": "dek-cz/doctrine",
+    "type": "library",
+    "description": "Doctrine integration into Nette Framework",
+    "keywords": ["nette", "kdyby", "doctrine", "orm", "dbal"],
+    "license": ["BSD-3-Clause", "GPL-2.0", "GPL-3.0"],
+    "authors": [
+        {
+            "name": "Filip Procházka",
+            "homepage": "http://filip-prochazka.com",
+            "email": "filip@prochazka.su"
+        }
+    ],
+    "require": {
+        "php": "^7.4 || ^8.0",
+        "psr/cache": "^1.0.1",
+        "doctrine/orm": "^2.7.1",
+        "doctrine/dbal": "~2.10",
+        "doctrine/common": "^2.13",
+        "kdyby/annotations": "^3.0",
+        "kdyby/doctrine-cache": "^3.0",
+        "kdyby/strict-objects": "^2.0",
+        "nette/di": "^3.0",
+        "nette/utils": "^3.0",
+        "nette/finder": "^2.5",
+        "contributte/console": "0.10.x-dev"
     },
-    "classmap": [
-      "src/Kdyby/Doctrine/exceptions.php"
-    ]
-  },
-  "autoload-dev": {
-    "classmap": [
-      "tests/KdybyTests"
-    ]
-  },
-  "extra": {
-    "branch-alias": {
-      "dev-master": "4.0-dev"
+    "suggest": {
+        "kdyby/doctrine-magic-accessors": "Fast-prototyping magic accessors trait for Doctrine entities",
+        "kdyby/doctrine-collections-readonly": "Read-only collection wrapper for easier work with Doctrine entity collections",
+        "kdyby/doctrine-collections-lazy": "Lazy collection for doctrine/collections",
+        "kdyby/doctrine-dbal-batchimport": "Batch import & execute utils for effective processing of SQL Imports from files and strings"
+    },
+    "require-dev": {
+        "kdyby/events": "^3.1.1@dev",
+        "nette/bootstrap": "^3.0",
+        "nette/caching": "^3.0",
+        "nette/http": "^3.0",
+        "tracy/tracy": "^2.8",
+        "nette/tester": "^2.4",
+        "phpstan/phpstan": "^0.12.69",
+        "phpstan/phpstan-nette": "^0.12.14",
+        "spaze/phpstan-disallowed-calls": "^1.1",
+        "phpunit/php-code-coverage": "^9.2",
+        "php-coveralls/php-coveralls": "^2.4",
+        "ninjify/qa": "^0.12.1",
+        "phpstan/phpstan-strict-rules": "^0.12.9"
+    },
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-0": {
+            "Kdyby\\Doctrine\\": "src/",
+            "Kdyby\\Persistence\\": "src/"
+        },
+        "classmap": [
+            "src/Kdyby/Doctrine/exceptions.php"
+        ]
+    },
+    "autoload-dev": {
+        "classmap": [
+            "tests/KdybyTests"
+        ]
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "4.0-dev"
+        }
     }
-  }
 }

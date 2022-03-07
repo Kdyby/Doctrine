@@ -19,7 +19,7 @@ and now enable the extension using your neon config
 ```yml
 extensions:
 	# add theese four lines
-	console: Kdyby\Console\DI\ConsoleExtension
+	console: Contributte\Console\DI\ConsoleExtension
 	events: Kdyby\Events\DI\EventsExtension
 	annotations: Kdyby\Annotations\DI\AnnotationsExtension
 	doctrine: Kdyby\Doctrine\DI\OrmExtension
