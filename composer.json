@@ -17,13 +17,12 @@
     "issues": "https://github.com/kdyby/doctrine/issues"
   },
   "require": {
-    "php": "^7.1",
-    "doctrine/orm": "~2.7",
-    "doctrine/dbal": "~2.9",
-    "kdyby/console": "^2.7.1",
+    "php": "^7.1 || ^8.0",
+    "doctrine/orm": "^2.10",
+    "kdyby/console": "dev-master",
     "kdyby/annotations": "^3.0",
-    "kdyby/doctrine-cache": "^3.0",
-    "kdyby/strict-objects": "^2.0",
+    "kdyby/doctrine-cache": "^3.1.2",
+    "kdyby/strict-objects": "dev-updates",
     "nette/di": "^3.0",
     "nette/utils": "^3.0",
     "nette/finder": "^2.5"

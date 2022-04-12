@@ -12,26 +12,22 @@ namespace Kdyby\Doctrine\Mapping;
 
 use Doctrine;
 use Kdyby;
-use Nette;
-use Nette\Reflection;
-
+use ReflectionClass;
+use ReflectionProperty;
 
 
 /**
  * @author Filip Procházka <filip@prochazka.su>
  */
-class RuntimeReflectionService extends Doctrine\Common\Persistence\Mapping\RuntimeReflectionService
+class RuntimeReflectionService extends Doctrine\Persistence\Mapping\RuntimeReflectionService
 {
 
 	/**
-	 * Return a reflection class instance or null
-	 *
 	 * @param string $class
-	 * @return \Nette\Reflection\ClassType
 	 */
-	public function getClass($class)
+	public function getClass($class): ?ReflectionClass
 	{
-		return new Reflection\ClassType($class);
+		return new ReflectionClass($class);
 	}
 
 
@@ -41,12 +37,11 @@ class RuntimeReflectionService extends Doctrine\Common\Persistence\Mapping\Runti
 	 *
 	 * @param string $class
 	 * @param string $property
-	 * @return \Nette\Reflection\Property|NULL
 	 */
-	public function getAccessibleProperty($class, $property)
+	public function getAccessibleProperty($class, $property): ?ReflectionProperty
 	{
 		try {
-			$property = new Reflection\Property($class, $property);
+			$property = new ReflectionProperty($class, $property);
 			$property->setAccessible(TRUE);
 
 			return $property;

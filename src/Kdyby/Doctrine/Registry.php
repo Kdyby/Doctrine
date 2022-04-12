@@ -10,8 +10,8 @@
 
 namespace Kdyby\Doctrine;
 
-use Doctrine\Common\Persistence\AbstractManagerRegistry;
 use Doctrine\ORM\ORMException;
+use Doctrine\Persistence\AbstractManagerRegistry;
 use Kdyby;
 use Nette;
 

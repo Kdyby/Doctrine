@@ -35,7 +35,7 @@ class ClassMetadata extends Doctrine\ORM\Mapping\ClassMetadata
 	public function getReflectionClass()
 	{
 		if ($this->reflClass === NULL) {
-			$this->reflClass = new Nette\Reflection\ClassType($this->name);
+			$this->reflClass = new \ReflectionClass($this->name);
 		}
 
 		return $this->reflClass;
