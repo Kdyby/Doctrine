@@ -20,7 +20,7 @@
     "php": "^7.1",
     "doctrine/orm": "~2.7",
     "doctrine/dbal": "~2.9",
-    "kdyby/console": "^2.7.1",
+    "kdyby/console": "^2.7.1 || ^4.0.0",
     "kdyby/annotations": "^3.0",
     "kdyby/doctrine-cache": "^3.0",
     "kdyby/strict-objects": "^2.0",
