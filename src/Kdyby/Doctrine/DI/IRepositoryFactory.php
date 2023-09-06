@@ -22,12 +22,5 @@ use Nette;
  */
 interface IRepositoryFactory
 {
-
-	/**
-	 * @param ORM\EntityManagerInterface $entityManager
-	 * @param ORM\Mapping\ClassMetadata $classMetadata
-	 * @return EntityRepository
-	 */
-	public function create(ORM\EntityManagerInterface $entityManager, ORM\Mapping\ClassMetadata $classMetadata);
-
+	public function create(ORM\EntityManagerInterface $em, ORM\Mapping\ClassMetadata $class): EntityRepository;
 }
