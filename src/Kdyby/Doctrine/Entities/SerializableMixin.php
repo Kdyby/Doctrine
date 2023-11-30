@@ -12,8 +12,7 @@ namespace Kdyby\Doctrine\Entities;
 
 use Kdyby;
 use Kdyby\Doctrine\StaticClassException;
-use Nette;
-use Nette\Reflection\ClassType;
+use ReflectionClass;
 use Serializable;
 
 
@@ -25,12 +24,12 @@ final class SerializableMixin
 {
 
 	/**
-	 * @var array|\Nette\Reflection\ClassType[]
+	 * @var array|\ReflectionClass[]
 	 */
 	private static $classes = [];
 
 	/**
-	 * @var array|\Nette\Reflection\Property
+	 * @var array|\ReflectionProperty
 	 */
 	private static $properties = [];
 
@@ -60,10 +59,10 @@ final class SerializableMixin
 			$allowed = (array)$object->__sleep();
 		}
 
-		$class = ClassType::from($object);
+		$class = new ReflectionClass($object);
 
 		do {
-			/** @var \Nette\Reflection\Property $propertyRefl */
+			/** @var \ReflectionProperty $propertyRefl */
 			foreach ($class->getProperties() as $propertyRefl) {
 				if ($allowed !== FALSE && !in_array($propertyRefl->getName(), $allowed)) {
 					continue;
@@ -99,7 +98,7 @@ final class SerializableMixin
 
 		foreach ($data as $target => $value) {
 			if (strpos($target, '::') !== FALSE) {
-				list($class, $name) = explode('::', $target, 2);
+				[$class, $name] = explode('::', $target, 2);
 				$propertyRefl = self::getProperty($name, $class);
 
 			} else {
@@ -122,7 +121,7 @@ final class SerializableMixin
 	 * @param string $name
 	 * @param string|object $class
 	 *
-	 * @return \Nette\Reflection\Property
+	 * @return \ReflectionProperty
 	 */
 	private static function getProperty($name, $class)
 	{
@@ -132,10 +131,10 @@ final class SerializableMixin
 		}
 
 		if (!isset(self::$classes[$class])) {
-			self::$classes[$class] = ClassType::from($class);
+			self::$classes[$class] = new ReflectionClass($class);
 		}
 
-		/** @var \Nette\Reflection\Property $propRefl */
+		/** @var \ReflectionProperty $propRefl */
 		$propRefl = self::$classes[$class]->getProperty($name);
 		$propRefl->setAccessible(TRUE);
 
