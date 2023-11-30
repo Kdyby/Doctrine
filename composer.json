@@ -19,14 +19,15 @@
   "require": {
     "php": "^7.1 || ^8.0",
     "doctrine/orm": "^2.10",
-    "doctrine/dbal": "~2.11.0",
-    "kdyby/console": "dev-master",
+    "doctrine/dbal": "~2.13.1",
+    "kdyby/console": "^4.0",
     "kdyby/annotations": "^3.0",
-    "kdyby/doctrine-cache": "^3.1.2",
+    "kdyby/doctrine-cache": "dev-php-8-support as 3.1.2",
     "kdyby/strict-objects": "dev-updates",
     "nette/di": "^3.0",
     "nette/utils": "^3.0",
-    "nette/finder": "^2.5"
+    "nette/finder": "^2.5",
+    "symfony/console": "^4.4"
   },
   "suggest": {
     "kdyby/doctrine-magic-accessors": "Fast-prototyping magic accessors trait for Doctrine entities",
@@ -61,5 +62,11 @@
     "branch-alias": {
       "dev-master": "4.0-dev"
     }
-  }
+  },
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://github.com/mhucik/DoctrineCache"
+    }
+  ]
 }
